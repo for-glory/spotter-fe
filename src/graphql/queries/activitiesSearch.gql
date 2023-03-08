@@ -1,0 +1,49 @@
+query activities(
+  $search: String
+  $near: NearFilter
+  $limitPerUnit: Int
+) {
+  activities(
+    search: $search
+    near: $near
+    limitPerUnit: $limitPerUnit
+  ) {
+    __typename
+    ...on User {
+      id
+      first_name
+      last_name
+      pathUrl: avatarUrl
+      facilities {
+        address {
+          street
+        }
+      }
+    }
+    ...on Workout {
+      id
+      title
+      pathUrl: previewUrl
+      description
+      type {
+        id
+        name
+      }
+    }
+    ...on Facility {
+      id
+      name
+      media {
+        pathUrl
+      }
+      organization {
+        name
+      }
+      address {
+        lat,
+        lng,
+        street
+      }
+    }
+  }
+}

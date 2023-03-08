@@ -1,0 +1,14 @@
+overwrite: true
+schema: "https://dev.spotterfitness.com/graphql"
+documents: "src/**/*.gql"
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-vue-apollo"
+    config:
+      withCompositionFunctions: false
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

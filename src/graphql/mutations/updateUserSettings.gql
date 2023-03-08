@@ -1,0 +1,12 @@
+mutation updateUserSettings(
+    $id: ID!,
+    $front_settings: JSON
+) {
+    updateUser(
+        id: $id, 
+        input: {
+            front_settings: $front_settings
+        }) {
+        id
+    }
+}

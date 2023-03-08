@@ -1,0 +1,33 @@
+query facilityItemPass (
+  $id: ID
+) {
+  facilityItemPass (
+    id: $id
+  ) {
+    id
+    start_date
+    end_date
+    is_active_pass
+    order { front_total }
+    facilityItem {
+      title
+      description
+      facility {
+        id
+        name
+				score
+        media { pathUrl }
+        address { street }
+      }
+    }
+    user {
+      id,
+      first_name
+      last_name
+      avatarUrl
+      address { street }
+      positive_reviews_count
+      negative_reviews_count
+    }
+  }
+}

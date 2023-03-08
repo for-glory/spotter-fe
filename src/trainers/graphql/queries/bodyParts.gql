@@ -1,0 +1,14 @@
+query bodyParts (
+  $first: Int
+  $page: Int
+) {
+  bodyParts (
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+    }
+  }
+}

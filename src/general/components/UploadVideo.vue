@@ -1,0 +1,274 @@
+<template>
+  <div class="upload-video">
+    <div class="video" v-if="video">
+      <span class="video__metadata">
+        {{ videoName }}
+        <ion-text color="medium">({{ videoSize }})</ion-text>
+      </span>
+      <div class="video__actions">
+        <ion-button
+          class="video__action"
+          @click="chooseVideo"
+          fill="clear"
+          expand="block"
+          color="medium"
+        >
+          <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
+        </ion-button>
+        <ion-button
+          class="video__action"
+          @click="emits('delete')"
+          fill="clear"
+          expand="block"
+          color="medium"
+        >
+          <ion-icon slot="icon-only" src="assets/icon/trash.svg" />
+        </ion-button>
+      </div>
+    </div>
+    <ion-button
+      v-else
+      fill="clear"
+      expand="block"
+      @click="chooseVideo"
+      class="upload-video__upload-btn"
+    >
+      {{ buttonText }} (max {{ bytesToSize(maxVideoSize) }} and/or
+      {{ maxVideoDuration / 1000 }} sec)
+    </ion-button>
+
+    <div class="upload-video__progress" v-if="loading || preloading">
+      <circle-progress :percent="loadingPercent" />
+    </div>
+  </div>
+
+  <discard-changes
+    v-if="alertModalError"
+    :is-open="Boolean(alertModalError)"
+    @close="alertModalError = null"
+    :title="videoErrors[alertModalError]?.title"
+    :text="videoErrors[alertModalError]?.text"
+    cancelButton="Ok"
+    hide-button
+  />
+</template>
+
+<script setup lang="ts">
+import { IonIcon, IonButton, IonText, isPlatform } from "@ionic/vue";
+import { defineEmits, defineProps, ref } from "vue";
+import {
+  CameraPro,
+  CameraVideoSource,
+  Video,
+  VideoOptions,
+} from "@deva-community/capacitor-camera-pro";
+import mime from "mime";
+import {
+  Filesystem,
+  ReadFileOptions,
+  ReadFileResult,
+} from "@capacitor/filesystem";
+import { dataURItoVideo } from "@/utils/videoUtils";
+import { v4 as uuidv4 } from "uuid";
+import CircleProgress from "@/general/components/CircleProgress.vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { EntitiesEnum } from "@/const/entities";
+
+defineProps<{
+  video: string;
+  buttonText: string;
+  loading: boolean;
+  loadingPercent?: number;
+  videoSize?: string;
+  videoName?: string;
+}>();
+
+const emits = defineEmits<{
+  (e: "change", file: File, size?: string, name?: string): void;
+  (e: "delete"): void;
+}>();
+
+const preloading = ref<boolean>(false);
+
+const videoOptions: VideoOptions = {
+  duration: 60,
+  highquality: true,
+  source: CameraVideoSource.Prompt,
+  promptLabelLibrary: "Video library",
+  promptLabelVideo: "Make a video",
+};
+
+const chooseVideo = () => {
+  if (isPlatform("capacitor")) {
+    CameraPro.getVideo(videoOptions)
+      .then(async (video: Video) => {
+        preloading.value = true;
+        const blobFile = (video?.path && (await readFile(video.path))) || "";
+        const mimeType = (video?.path && mime.getType(video?.path)) || "";
+        const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
+        const videoDuration = await getVideoDuration(file);
+        if (videoDuration > maxVideoDuration.value / 1000) {
+          alertModalError.value = EntitiesEnum.MaxVideoDuration;
+        } else if (file.size > maxVideoSize.value) {
+          alertModalError.value = EntitiesEnum.MaxVideoSize;
+        }
+
+        preloading.value = false;
+
+        if (alertModalError.value?.length) return;
+
+        const fileSize = bytesToSize(file.size);
+        const fileName = `${video.path?.split("/")?.slice(-1) || ""}`;
+        emits("change", file, fileSize, fileName);
+      })
+      .catch(async (error) => {
+        console.error("camera error: ", error);
+        preloading.value = false;
+      });
+  } else {
+    const input: HTMLInputElement = document.createElement("input");
+    input.type = "file";
+    input.accept = "video/mp4,video/x-m4v,video/*";
+    document.body.appendChild(input);
+    input.onchange = async (event) => {
+      const file = event.target?.files[0];
+
+      const videoDuration = await getVideoDuration(file);
+      if (videoDuration > maxVideoDuration.value / 1000) {
+        alertModalError.value = EntitiesEnum.MaxVideoDuration;
+      } else if (file.size > maxVideoSize.value) {
+        alertModalError.value = EntitiesEnum.MaxVideoSize;
+      }
+
+      preloading.value = false;
+
+      if (alertModalError.value?.length) return;
+
+      const fileSize = bytesToSize(file.size);
+      const fileName = file.name;
+      emits("change", file, fileSize, fileName);
+      input.remove();
+    };
+    input.click();
+  }
+};
+
+const readFile = async (path: string): Promise<ReadFileResult> => {
+  const options: ReadFileOptions = {
+    path,
+  };
+  const result = await Filesystem.readFile(options);
+  return result;
+};
+
+const bytesToSize = (bytes: number): string => {
+  if (bytes == 0) return "0 Bytes";
+  const k = 1000,
+    dm = 2,
+    sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+    i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+};
+
+const maxVideoSize = ref(Number(process.env.VUE_APP_MAX_VIDEO_SIZE));
+const maxVideoDuration = ref(Number(process.env.VUE_APP_MAX_VIDEO_DURATION));
+
+const getVideoDuration = async (file: File): Promise<number> => {
+  const video = document.createElement("video");
+  video.preload = "metadata";
+  video.src = URL.createObjectURL(file);
+  return new Promise<number>((resolve) => {
+    video.onloadedmetadata = function () {
+      window.URL.revokeObjectURL(video.src);
+      resolve(video.duration);
+    };
+  });
+};
+
+const alertModalError = ref<EntitiesEnum | null>();
+const videoErrors = {
+  [`${EntitiesEnum.MaxVideoDuration}`]: {
+    title: "The video is too long.",
+    text: `Impossible to upload this video because it's too big. Max duration ${
+      maxVideoDuration.value / 1000
+    } sec. Edit the video and try again.`,
+  },
+  [`${EntitiesEnum.MaxVideoSize}`]: {
+    title: "Video size is too big.",
+    text: `Impossible to upload this video because it's too big. Max video size is ${bytesToSize(
+      maxVideoSize.value
+    )}. Edit the video and try again.`,
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.upload-video {
+  &__upload-btn {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    --border-radius: 8px;
+    --border-width: 0.8px;
+    --border-style: solid;
+    color: var(--ion-color-secondary);
+    --border-color: var(--ion-color-medium);
+  }
+
+  &__progress {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    position: fixed;
+    z-index: 99999;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(#262626, 0.8);
+  }
+}
+
+.video {
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.4;
+  border-radius: 8px;
+  align-items: center;
+  padding: 8px 12px 8px 16px;
+  justify-content: space-between;
+  background: var(--gray-700);
+
+  &__metadata {
+    word-break: break-word;
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    margin: 0 -4px 0 12px;
+    justify-content: flex-start;
+  }
+
+  &__action {
+    width: 32px;
+    height: 32px;
+    margin: 0 4px;
+    line-height: 1;
+    font-size: 24px;
+    --border-radius: 50%;
+    --padding-end: 0;
+    --padding-start: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+
+    ion-icon {
+      font-size: 1em;
+    }
+  }
+}
+</style>

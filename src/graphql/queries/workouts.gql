@@ -1,0 +1,73 @@
+query workouts(
+  $dynamic_search: String!
+  $trainer_id: ID
+  $first: Int
+  $page: Int
+  $type_id: ID
+  $has_body_parts: [ID!]
+  $order: SortOrder!
+  $orderByColumn: QueryWorkoutsOrderByColumn!
+) {
+  workouts(
+    dynamic_search: $dynamic_search
+    trainer_id: $trainer_id
+    first: $first
+    page: $page
+    type_id: $type_id
+    has_body_parts: $has_body_parts
+    orderBy: {
+      column: $orderByColumn
+      order: $order
+    }
+  ) {
+    data {
+      id
+      preview
+      type {
+        id
+        name
+        icon
+      }
+      previewUrl
+      title
+      description
+      price
+      duration
+      was_ordered_by_me
+      exercises {
+        id
+        title
+        description
+        path
+        previewUrl
+        pathUrl
+      }
+      trainer {
+        first_name
+        last_name
+        score
+        address {
+          lat
+          lng
+        }
+        facilities {
+          media {
+            pathUrl
+          }
+          address {
+            lat
+            lng
+          }
+        }
+      }
+      state
+    }
+    paginatorInfo {
+      count
+      firstItem
+      currentPage
+      total
+      perPage
+    }
+  }
+}

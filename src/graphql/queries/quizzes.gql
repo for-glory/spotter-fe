@@ -1,0 +1,23 @@
+query quizzes (
+  $role: RoleEnum!
+) {
+  quizzes (
+    role: $role
+  ) {
+    data {
+      id
+      type
+      title
+      description
+      status
+      options {
+        id
+        title
+        value
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

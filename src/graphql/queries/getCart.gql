@@ -1,0 +1,82 @@
+query getCart($id: ID!) {
+	getCart(id: $id) {
+		id
+		start_date
+		user {
+			email
+		}
+		type
+		items {
+			id
+			front_total
+			productable {
+				... on Event {
+					id
+					title
+					description
+					start_date
+					end_date
+					price
+					max_participants
+					front_price
+					# trainer{id}
+					address{street}
+					media{pathUrl}  
+					max_participants
+					booked_count
+				}
+				... on Workout {
+					id
+					title
+					description
+					duration
+					preview
+					previewUrl
+					front_price
+					price
+					type {
+						id
+						name
+						icon
+					}
+					exercises {
+						id
+						title
+						description
+						path
+						previewUrl
+						pathUrl
+    			}
+					trainer {
+						id,
+						first_name,
+						last_name,
+						gender,
+						role,
+						score
+					}
+				}
+				... on FacilityItem {
+					id
+					facility {
+						name
+					}
+					qr_code_lifetime_value
+					qr_code_lifetime_enum
+					checkin_counter
+					is_unlimited_checkin
+					title
+					product_id
+					price
+					front_price
+				}
+				... on TrainerRate {
+					front_price
+					price
+					rate_type
+					title
+				}
+			}
+		}
+	}
+}

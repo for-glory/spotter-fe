@@ -1,0 +1,14 @@
+query workoutTypes (
+  $first: Int
+  $page: Int
+) {
+  workoutTypes (
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+    }
+  }
+}

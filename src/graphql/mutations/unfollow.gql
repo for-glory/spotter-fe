@@ -1,0 +1,10 @@
+mutation unfollow($id: ID!,$type: FollowTypeEnum!) {
+    unfollow(input: { id: $id, type: $type }) {
+      ...on User {
+        id
+      }
+      ...on Facility {
+        id
+      }
+    }
+}

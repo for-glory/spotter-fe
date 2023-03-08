@@ -1,0 +1,8 @@
+mutation showWorkout(
+  $id: ID!
+) {
+  showWorkout(id: $id) {
+    id
+    state
+  }
+}

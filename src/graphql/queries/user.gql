@@ -1,0 +1,100 @@
+query user($id: ID!) {
+    user(id: $id) {
+        id
+        first_name
+        last_name
+        avatar
+        was_commented_by_me
+        was_visited_by_me
+        avatarUrl
+        trainings_count
+        created_at
+        is_followed
+        trainer_type
+        has_password
+        currentSubscription
+        weiver_and_labilities {
+            id
+            title
+            path
+            pathUrl
+            type
+        }
+        certificates {
+            id
+            title
+            path
+            pathUrl
+            type
+        }
+        positive_reviews_count
+        negative_reviews_count
+        completed_trainings_count
+        reviews_count
+        score
+        settings {
+            setting {
+                code
+							
+            }
+            value
+        }
+        facilities {
+            id
+            name
+            media {
+                pathUrl
+            }
+            address {
+                street
+            }
+        }
+        media {
+            pathUrl
+            id
+        }
+        owned_facilities {
+            id
+            name
+            media {
+                pathUrl
+            }
+            address {
+                street
+            }
+        }
+        address {
+            street
+            city {
+                name
+                state { name }
+                country { name }
+            }
+        }
+        trainerRates {
+            rate_type
+            front_price
+            products {
+                product_id
+            }
+        }
+        facilityItemPasses {
+            is_active_pass
+            facilityItem {
+                qr_code_lifetime_value
+                qr_code_lifetime_enum
+                checkin_counter
+                is_unlimited_checkin
+                title
+                product_id
+                price
+            }
+        }
+        quizzes {
+            code
+            answers {
+                value
+            }
+        }
+    }
+}

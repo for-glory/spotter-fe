@@ -1,0 +1,88 @@
+query orders (
+$first: Int = 10
+$page: Int
+$states: [TransactionStatesEnum]
+) {
+  orders (
+    first: $first
+    page: $page
+    states: $states
+) {
+    data {
+      id
+      items {
+        price
+        orderable {
+          __typename
+          ... on FacilityItem {
+            id
+            created_at
+            facility {
+              name
+              id
+              score
+              productItems {
+                price
+                created_at
+              }
+              media {
+                pathUrl
+              }
+              address {
+                street
+                extra
+                city {
+                  name
+                }
+              }
+            }
+          }
+          ... on Workout {
+            id
+            title 
+            price
+            previewUrl
+            created_at
+          }
+          ... on Event {
+            id
+            title
+            start_date
+            # score
+            # price
+            media {
+              pathUrl
+            }
+            address {
+              street
+              extra
+              city {
+                name
+              }
+            }
+          }
+          ... on TrainerRate {
+            front_price
+            id
+            title
+            user {
+              avatarUrl
+              first_name
+              last_name
+              score
+              facilities {
+                address {
+                  street
+                  extra
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

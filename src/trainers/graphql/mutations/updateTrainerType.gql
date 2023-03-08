@@ -1,0 +1,44 @@
+mutation updateTrainerType(
+    $id: ID!
+    $trainer_type: TrainerTypeEnum
+    $facility_id: ID
+    $settings: [SetSettingInput!]
+    $address: AddressInput
+    $opening_hours: JSON
+) {
+    updateUser(
+        id: $id,
+        input: {
+            trainer_type: $trainer_type
+            facility_id: $facility_id
+            settings: $settings
+            address: $address
+            opening_hours: $opening_hours
+        }) {
+        id
+        trainer_type
+        facilities { id, name }
+        settings {
+            setting {
+                code
+            }
+            value
+        }
+        trainerRates {
+            id
+            title
+            front_price
+        }
+        address {
+            lat
+            lng
+            street
+            extra
+            city {
+                name
+                state { name }
+                country { name }
+            }
+        }
+    }
+}

@@ -1,0 +1,42 @@
+query myWorkouts (
+  $orderBy: [QueryMyWorkoutsOrderByOrderByClause!]
+  $first: Int = 10
+  $page: Int
+) {
+  myWorkouts (
+    orderBy: $orderBy
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      type {
+        id
+        name
+        icon
+      }
+      trainer {
+        first_name
+        last_name
+      }
+      previewUrl
+      title
+      description
+      price
+      duration
+      exercises {
+        id
+        title
+        description
+        path
+        pathUrl
+      }
+    }
+    paginatorInfo {
+      count
+      currentPage
+      total
+      perPage
+    }
+  }
+}

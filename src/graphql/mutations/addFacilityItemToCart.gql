@@ -1,0 +1,35 @@
+mutation addFacilityItemToCart($input: AddFacilityItemToCartInput!) {
+    addFacilityItemToCart(input: $input) {
+      id
+      type
+      discount
+      start_date
+      end_date
+      total
+      sub_total
+      front_total
+      user {
+        email
+      }
+      items {
+        id
+        productable {
+          ... on Event{
+            id
+            title
+          }
+          ... on Workout{
+            id
+            title
+          }
+          ... on FacilityItem{
+            id
+            title
+          }
+          ... on TrainerRate{
+            front_price
+          }
+        }
+      }
+    }
+}

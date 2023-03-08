@@ -1,0 +1,8 @@
+mutation hideWorkout(
+  $id: ID!
+) {
+  hideWorkout(id: $id) {
+    id
+    state
+  }
+}

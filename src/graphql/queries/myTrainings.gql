@@ -1,0 +1,32 @@
+query myTrainings (
+  $start_date: DateTimeRange
+  $end_date: DateTimeRange
+  $orderBy: [QueryMyTrainingsOrderByOrderByClause!]
+  $first: Int
+  $page: Int
+) {
+  myTrainings (
+    orderBy: $orderBy
+    first: $first
+    page: $page
+    start_date: $start_date
+    end_date: $end_date
+  ) {
+    data {
+      id
+      state
+      start_date
+      trainer {
+        avatarUrl
+        first_name
+        last_name
+        address {
+          street
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

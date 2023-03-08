@@ -1,0 +1,16 @@
+query equipments (
+  $first: Int
+  $page: Int
+) {
+  equipments (
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+      icon
+      iconUrl
+    }
+  }
+}

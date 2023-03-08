@@ -1,0 +1,9 @@
+mutation attachToFacility(
+  $input: AttachToFacilityInput!
+) {
+  attachToFacility(
+    input: $input
+  ) {
+    id
+  }
+}

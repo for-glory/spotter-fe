@@ -1,0 +1,10 @@
+query checkOrganizationRegistrationCode(
+  $code: String!
+) {
+  checkOrganizationRegistrationCode(
+    code: $code
+  ) {
+    id
+    name
+  }
+}

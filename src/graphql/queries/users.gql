@@ -1,0 +1,47 @@
+query users (
+  $role: RoleEnum
+  $near: NearFilter
+  $search: String
+  $first: Int
+  $page: Int
+  $is_followed: Boolean
+  $availability: UsersAvailabilityFilter
+  $facilities: [ID]
+) {
+  users (
+    role: $role
+    near: $near
+    search: $search
+    first: $first
+    page: $page
+    is_followed: $is_followed
+    availability: $availability
+    facilities: $facilities
+  ) {
+    data {
+      id
+      score
+      first_name
+      last_name
+      avatarUrl
+      is_followed
+      trainer_type
+      address { lat, lng, street }
+      facilities {
+        id
+        name
+        address { lat, lng, street }
+      }
+      media {
+        pathUrl
+      }
+      settings {
+        setting {
+            code
+        }
+        value
+      }
+    }
+    paginatorInfo { total, firstItem }
+  }
+}

@@ -1,0 +1,10 @@
+mutation ChangePaymentMethod($card_id: ID!) {
+    changePaymentMethod(input: { card_id: $card_id }) {
+        id
+        pm_last_four
+        brand
+        exp_year
+        exp_month
+        is_default
+    }
+}

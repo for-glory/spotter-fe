@@ -1,0 +1,24 @@
+query reviews (
+  $type: FeedbackEntityEnum
+  $id: ID!
+  $review_type: ReviewTypeEnum
+) {
+  reviews (
+    type: $type
+    id: $id
+    review_type: $review_type
+  ) {
+    data {
+      author {
+        id
+        first_name
+        last_name
+        avatarUrl
+      }
+      id
+      review
+      score
+      created_at
+    }
+  }
+}

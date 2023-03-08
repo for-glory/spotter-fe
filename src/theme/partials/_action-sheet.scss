@@ -1,0 +1,59 @@
+.sc-ion-action-sheet-ios-h {
+  --backdrop-opacity: 0.6;
+  --button-color: var(--ion-color-white);
+  --background: var(--gray-700);
+  --button-background: var(--gray-700);
+  --button-background-selected: var(--gray-700);
+
+  .action-sheet {
+    &-container {
+      padding-left: calc(var(--container-offset) + 8px);
+      padding-right: calc(var(--container-offset) + 8px);
+    }
+
+    &-group {
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    &-button {
+      height: 48px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.3;
+      padding: 13.5px 20px;
+    }
+
+    &-cancel {
+      color: var(--gray-400);
+    }
+  }
+}
+
+.sc-ion-picker-ios-h {
+  --ion-backdrop-opacity: 0.6;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  .picker-wrapper {
+    padding-top: 8px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .picker-button {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  .picker-toolbar-button {
+    .picker-button {
+      margin-right: -8px;
+    }
+
+    &.picker-toolbar-cancel {
+      .picker-button {
+        margin-right: 0;
+        margin-left: -8px;
+      }
+    }
+  }
+}

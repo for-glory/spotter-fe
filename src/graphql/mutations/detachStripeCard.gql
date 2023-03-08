@@ -1,0 +1,10 @@
+mutation detachCard(
+    $card_id: ID!
+) {
+    detachCard(input: { 
+        card_id: $card_id
+    }) {
+        success
+        message
+    }
+}

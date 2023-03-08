@@ -1,0 +1,6 @@
+mutation leftFeedback($input: LeftFeedbackInput!) {
+    leftFeedback(input: $input) {
+      state
+      message
+    }
+}

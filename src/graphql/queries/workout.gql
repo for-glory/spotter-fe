@@ -1,0 +1,40 @@
+# Write your query or mutation here
+query workout (
+  $id: ID!
+) {
+  workout (
+    id: $id
+  ) {
+    id
+    type {
+      id
+      name
+      icon
+    }
+    previewUrl
+    title
+    was_ordered_by_me
+    description
+    price
+    duration
+    exercises {
+      id
+      title
+      description
+      path
+      previewUrl
+      pathUrl
+    }
+    products {
+      product_id
+    }
+    trainer {
+      id,
+      first_name,
+      last_name,
+      gender,
+      role,
+      score
+    }
+  }
+}

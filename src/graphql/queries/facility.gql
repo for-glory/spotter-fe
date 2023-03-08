@@ -1,0 +1,77 @@
+query facility($id: ID!) {
+    facility(id: $id) {
+      address {
+        lat
+        lng
+        street
+      }
+      created_at
+      equipments {
+        name
+        id
+      }
+      id
+      is_followed
+      media {
+        path
+        pathUrl
+      }
+      name
+      score
+      description
+      not_recommended_count
+      recommended_count
+      reviews_count
+      positive_reviews_count
+      negative_reviews_count
+      amenities {
+        id
+        name
+        icon
+        iconUrl
+      }
+      productItems {
+        id
+        qr_code_lifetime_value
+        qr_code_lifetime_enum
+        checkin_counter
+        is_unlimited_checkin
+        title
+        product_id
+        price
+        front_price
+        description
+        products {
+          provider
+          price
+          product_id
+          duration
+          currency
+          start_date
+          end_date
+          checkin_number
+          state
+          gatewayProductable {
+            ... on StripeProduct {
+              id
+              name
+              product_id
+              price_id
+              unit_amount
+              currency
+              active
+            }
+            ... on PaypalProduct {
+              id
+              name
+              product_id
+              price_id
+              unit_amount
+              currency
+              active
+            }
+          }
+        }
+      }
+    }
+}

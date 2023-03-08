@@ -1,0 +1,24 @@
+mutation verifyEmail($token: String!) {
+    verifyEmail(input: { token: $token }) {
+        access_token
+        refresh_token
+        expires_in
+        user {
+            id
+            email
+            role
+            first_name
+            last_name
+            email_verified_at
+            front_settings
+            facilities {
+                address {
+                    lat
+                    lng
+                    street
+                    extra
+                }
+            }
+        }
+    }
+}

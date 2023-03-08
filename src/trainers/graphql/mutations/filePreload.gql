@@ -1,0 +1,7 @@
+mutation filePreload(
+  $file: Upload!
+) {
+  filePreload(file: $file) {
+    path
+  }
+}

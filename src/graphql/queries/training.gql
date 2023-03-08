@@ -1,0 +1,42 @@
+query training (
+  $id: ID!
+) {
+  training (
+    id: $id
+  ) {
+    id
+    start_date
+    state
+    order { id, front_total, state }
+    user {
+      id
+      first_name
+      last_name
+      avatarUrl
+      positive_reviews_count
+      negative_reviews_count
+      address { street }
+    }
+    trainer {
+      id
+      avatarUrl
+      first_name
+      last_name
+      score
+      address {
+        street
+      }
+      facilities {
+        address {
+          street
+        }
+      }
+      settings {
+        setting {
+          code
+        }
+        value
+      }
+    }
+  }
+}

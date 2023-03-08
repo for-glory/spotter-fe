@@ -1,0 +1,19 @@
+query dashboardWidget {
+  me {
+    completed_trainings_count
+    checkins_count
+    reviews_count
+    positive_reviews_count
+    negative_reviews_count
+    reviews_count
+    recommended_count
+    left_reviews_count
+    completed_trainings_count
+    trainings_count
+    trainer_dashboard_stats {
+      total_earn
+      earn_last_thirty_days
+      total_bookings
+    }
+  }
+}

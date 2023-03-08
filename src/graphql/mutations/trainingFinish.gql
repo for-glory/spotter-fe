@@ -1,0 +1,6 @@
+mutation trainingFinish($input: TrainingFinishInput!) {
+  trainingFinish(input: $input) {
+    id
+    user { first_name, last_name }
+  }
+}

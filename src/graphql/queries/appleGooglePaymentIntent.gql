@@ -1,0 +1,13 @@
+query appleGooglePaymentIntent(
+    $provider: PaymentProvidersEnum!
+    $cart_id: ID!
+) {
+    appleGooglePaymentIntent (
+        cart_id: $cart_id
+        provider: $provider
+    ) {
+        customerId,
+        paymentIntent,
+    }
+}
+

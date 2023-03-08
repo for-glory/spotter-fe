@@ -1,0 +1,13 @@
+query stripeCards {
+    cards {
+        data {
+            id
+            pm_last_four
+            brand
+            card_holder
+            exp_year
+            exp_month
+            is_default
+        }
+    }
+}

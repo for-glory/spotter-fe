@@ -1,0 +1,653 @@
+<template>
+  <div class="create-event">
+    <div class="form-row">
+      <ion-label class="label"> Choose photos for event </ion-label>
+      <photos-loader
+        @upload="uploadPhoto"
+        @delete="deletePhoto"
+        @change="uploadPhoto"
+        :circle-shape="false"
+        :photos="eventPhotos"
+        :loading="photoOnLoad"
+        :progress="percentPhotoLoaded"
+        :disabled="mediaDeleting || loading"
+      />
+    </div>
+
+    <div class="form-row">
+      <base-input
+        required
+        :disabled="loading"
+        @change="eventTitleChange"
+        v-model:value="eventTitle"
+        label="Make your event title stand out!"
+        placeholder="Enter short title for event"
+      />
+    </div>
+
+    <div class="form-row">
+      <base-input
+        :rows="3"
+        :maxlength="150"
+        :disabled="loading"
+        label="Describe your event"
+        @change="eventDescriptionChange"
+        v-model:value="eventDescription"
+        placeholder="Enter description for event"
+      />
+    </div>
+
+    <template v-if="!edit">
+      <div class="form-row">
+        <ion-label class="label"> Choose more suitable location </ion-label>
+        <choose-block
+          title="State"
+          :disabled="loading"
+          class="form-row__control"
+          @handle-click="chooseState"
+          :value="selectedState?.name"
+        />
+        <choose-block
+          title="City"
+          class="form-row__control"
+          @handle-click="chooseCity"
+          :value="selectedCity?.name"
+          :disabled="!selectedState || loading"
+        />
+        <choose-block
+          title="Address"
+          class="form-row__control"
+          @handle-click="chooseAddress"
+          :disabled="!selectedCity || loading"
+          :value="
+            selectedAddress
+              ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
+              : ''
+          "
+        />
+      </div>
+
+      <div class="form-row">
+        <ion-label class="label"> Choose date of event </ion-label>
+        <choose-block
+          title="Start date"
+          :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
+          @handle-click="
+            showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
+              title: 'Start date',
+            })
+          "
+          :disabled="loading"
+        />
+      </div>
+
+      <div class="form-row">
+        <ion-label class="label"> Choose time of event </ion-label>
+        <wheel-picker :options="startTimeOptions" name="startTime">
+          <template #button>
+            <choose-block
+              title="Start time"
+              :value="eventStartTime"
+              :disabled="!eventStartDate || loading"
+              @handle-click="openPicker('startTime')"
+            />
+          </template>
+        </wheel-picker>
+      </div>
+
+      <div class="form-row">
+        <ion-label class="label"> Choose date of event </ion-label>
+        <choose-block
+          title="End date"
+          :disabled="!eventStartTime || !eventStartDate || loading"
+          :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
+          @handle-click="
+            showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
+              min: eventStartDate ?? undefined,
+              title: 'End date',
+            })
+          "
+        />
+      </div>
+
+      <div class="form-row">
+        <ion-label class="label"> Choose time of event </ion-label>
+        <wheel-picker :options="endTimeOptions" name="endTime">
+          <template #button>
+            <choose-block
+              title="End time"
+              :value="eventEndTime"
+              :disabled="!eventEndDate || loading"
+              @handle-click="openPicker('endTime')"
+            />
+          </template>
+        </wheel-picker>
+      </div>
+    </template>
+
+    <div class="form-row">
+      <ion-label class="label"> Choose equioment and amenitites </ion-label>
+      <choose-block
+        :disabled="loading"
+        title="Equipment and amenities"
+        @handle-click="onChooseAmenities"
+        :value="
+          eventEquipments.length + eventAmenities.length > 0
+            ? String(eventEquipments.length + eventAmenities.length)
+            : ''
+        "
+      />
+    </div>
+
+    <template v-if="!edit">
+      <div class="form-row">
+        <base-input
+          type="number"
+          :disabled="loading"
+          @change="eventMaxParticipantsChange"
+          v-model:value="eventMaxParticipants"
+          placeholder="Enter quantity ex(1-100)"
+          label="Set the max participants for event"
+        />
+      </div>
+
+      <div class="form-row">
+        <base-input
+          type="number"
+          :disabled="loading"
+          @change="eventPriceChange"
+          v-model:value="eventPrice"
+          label="Set the price (USD $)"
+          placeholder="Enter price for entry"
+        />
+      </div>
+    </template>
+
+    <div class="holder-button">
+      <ion-button
+        class="button"
+        expand="block"
+        @click="submitEvent"
+        :disabled="loading || invalid || mediaDeleting"
+      >
+        <template v-if="!loading">{{ submitButtonText }}</template>
+        <ion-spinner v-else name="lines" />
+      </ion-button>
+    </div>
+  </div>
+
+  <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
+  <date-picker-modal ref="datePickerModal" @select="dateSelected" />
+  <equipment-and-amenities
+    ref="equipmentAndAmenitiessModal"
+    @cancel="equipmentAndAmenitiessSelected"
+  />
+</template>
+
+<script lang="ts" setup>
+import PhotosLoader from "@/general/components/PhotosLoader.vue";
+import BaseInput from "@/general/components/base/BaseInput.vue";
+import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
+import ChooseBlock from "@/general/components/blocks/Choose.vue";
+import {
+  IonButton,
+  IonLabel,
+  PickerColumnOption,
+  IonSpinner,
+  toastController,
+} from "@ionic/vue";
+import {
+  inject,
+  ref,
+  computed,
+  defineEmits,
+  defineProps,
+  defineExpose,
+  watch,
+  withDefaults,
+} from "vue";
+import { minutesDuration } from "@/const/minutes-durations";
+import { hoursDuration } from "@/const/hours-durations";
+import { Emitter, EventType } from "mitt";
+import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
+import { dataURItoFile } from "@/utils/fileUtils";
+import { v4 as uuidv4 } from "uuid";
+import {
+  CreateEventInput,
+  FilePreloadDocument,
+  DeleteMediaDocument,
+} from "@/generated/graphql";
+import { useMutation } from "@vue/apollo-composable";
+import { useNewEventStore } from "@/general/stores/new-event";
+import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
+import DatePickerModal from "@/general/components/DatePickerModal.vue";
+import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
+import {
+  DatePickerModalResult,
+  DatePickerOptions,
+} from "@/interfaces/DatePickerModal";
+import { EntitiesEnum } from "@/const/entities";
+import dayjs from "dayjs";
+import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
+
+enum DateFieldsEnum {
+  StartDate = "START_DATE",
+  EndDate = "END_DATE",
+}
+
+const emits = defineEmits<{
+  (e: "submit", data?: any): void;
+}>();
+
+const props = withDefaults(
+  defineProps<{
+    edit?: boolean;
+    loading?: boolean;
+    data?: CreateEventInput | any;
+    submitButtonText?: string;
+  }>(),
+  {
+    submitButtonText: "Create",
+  }
+);
+
+watch(
+  () => props.data,
+  (newVal) => {
+    if (!newVal) return;
+    store.setTitle(newVal.title ?? "");
+    store.setDescription(newVal.description ?? "");
+    store.setPhotos(newVal.photos ?? []);
+    store.setEquipments(newVal.equipments ?? []);
+    store.setAmenities(newVal.amenities ?? []);
+  }
+);
+
+const store = useNewEventStore();
+
+const eventPhotos = computed(() => store.photos);
+
+const eventTitle = computed(() => store.title);
+const eventTitleChange = (value: string) => {
+  store.setTitle(value);
+};
+
+const eventDescription = computed(() => store.description);
+const eventDescriptionChange = (value: string) => {
+  store.setDescription(value);
+};
+
+const selectedState = computed(() => store.address.state);
+const selectedCity = computed(() => store.address.city);
+const selectedAddress = computed(() => store.address.address);
+
+const eventStartDate = computed(() => store.start_date);
+const eventEndDate = computed(() => store.end_date);
+const eventStartTime = computed(() => store.start_time);
+const eventEndTime = computed(() => store.end_time);
+
+const eventEquipments = computed(() => store.equipments);
+const eventAmenities = computed(() => store.amenities);
+
+const eventMaxParticipants = computed(() =>
+  store.max_participants !== null ? String(store.max_participants) : ""
+);
+const eventMaxParticipantsChange = (value: string) => {
+  store.setMaxParticipants(value?.length ? Number(value) : null);
+};
+
+const eventPrice = computed(() =>
+  store.price !== null ? String(store.price / 100) : ""
+);
+const eventPriceChange = (value: string) => {
+  store.setPrice(value?.length ? Number(value) * 100 : null);
+};
+
+const photoOnLoad = ref<boolean>(false);
+const percentPhotoLoaded = ref<number | undefined>();
+let abort: any;
+
+const { mutate: filePreload } = useMutation(FilePreloadDocument, {
+  context: {
+    fetchOptions: {
+      useUpload: true,
+      onProgress: (ev: ProgressEvent) => {
+        percentPhotoLoaded.value = (ev.loaded / ev.total) * 100;
+      },
+      onAbortPossible: (abortHandler: any) => {
+        abort = abortHandler;
+      },
+    },
+  },
+});
+
+const uploadPhoto = async (photo: string, index?: number, id?: string) => {
+  const file = dataURItoFile(photo, uuidv4());
+  photoOnLoad.value = true;
+  percentPhotoLoaded.value = 0;
+
+  if (id) {
+    deleteMedia({ id });
+  }
+
+  await filePreload({ file })
+    .then((res) => {
+      store.addPhoto(
+        {
+          path: res?.data.filePreload.path,
+          url: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
+        },
+        index
+      );
+      photoOnLoad.value = false;
+      percentPhotoLoaded.value = undefined;
+    })
+    .catch((error) => {
+      console.error(error);
+      abort();
+      photoOnLoad.value = false;
+      percentPhotoLoaded.value = undefined;
+    });
+};
+
+const { mutate: deleteMedia, loading: mediaDeleting } =
+  useMutation(DeleteMediaDocument);
+
+const deletePhoto = (index: number, id?: string) => {
+  if (!props.edit) {
+    store.deletePhoto(index);
+  } else {
+    deleteMedia({ id }).then(() => {
+      store.deletePhoto(index);
+    });
+  }
+};
+
+const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
+
+const chooseState = () => {
+  chooseAddressModal.value?.present({
+    type: EntitiesEnum.State,
+    title: "Select state",
+    selected: selectedState.value?.id,
+  });
+};
+
+const chooseCity = () => {
+  chooseAddressModal.value?.present({
+    type: EntitiesEnum.City,
+    title: "Select city",
+    selected: selectedCity.value?.id,
+    state: selectedState.value,
+  });
+};
+
+const chooseAddress = () => {
+  chooseAddressModal.value?.present({
+    type: EntitiesEnum.Address,
+    title: "Choose your address",
+    selected: selectedAddress.value?.latitude
+      ? {
+          lat: Number(selectedAddress.value?.latitude),
+          lng: Number(selectedAddress.value?.longitude),
+        }
+      : null,
+    state: selectedState.value,
+    city: selectedCity.value,
+  });
+};
+
+const addressSelected = (selected: ChooseAddresModalResult) => {
+  store.setAddress(selected.state, selected.city, selected.address);
+};
+
+const datePickerModal = ref<typeof DatePickerModal | null>(null);
+
+const showDatePikerModal = (
+  field: string,
+  value?: number | null,
+  options?: DatePickerOptions
+) => {
+  datePickerModal.value?.present({ field, value, options });
+};
+
+const dateSelected = (result: DatePickerModalResult) => {
+  switch (result.field) {
+    case DateFieldsEnum.StartDate:
+      store.setStartDate(result.date);
+      if (
+        eventEndDate.value &&
+        (!result.date || result.date > eventEndDate.value)
+      ) {
+        store.setEndDate(null);
+      }
+      break;
+
+    case DateFieldsEnum.EndDate:
+      store.setEndDate(result.date);
+      break;
+
+    default:
+      break;
+  }
+};
+
+const openPicker = (name: string): void => {
+  emitter?.emit("open-picker", name);
+};
+
+const hours = hoursDuration();
+const minutes = minutesDuration(5, 60, 0);
+
+const emitter: Emitter<Record<EventType, unknown>> | undefined =
+  inject("emitter");
+
+const timePickerColums = [
+  {
+    name: "hours",
+    options: hours,
+  },
+  {
+    name: "minutes",
+    options: minutes,
+  },
+  {
+    name: "time",
+    options: [
+      {
+        text: "AM",
+        value: "AM",
+      },
+      {
+        text: "PM",
+        value: "PM",
+      },
+    ],
+  },
+];
+
+const startTimeOptions = {
+  columns: timePickerColums,
+  buttons: [
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+    {
+      text: "Choose time",
+      handler: (value: PickerColumnOption) => {
+        const minutes =
+          value.minutes?.value && Number(value.minutes.value) < 10
+            ? `0` + value.minutes?.value
+            : value.minutes?.value;
+        store.setStartTime(
+          `${value.hours?.value}:${minutes} ${value.time?.value}`
+        );
+      },
+    },
+  ],
+};
+
+const endTimeOptions = {
+  columns: timePickerColums,
+  buttons: [
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+    {
+      text: "Choose time",
+      handler: (value: PickerColumnOption) => {
+        const minutes =
+          value.minutes?.value && Number(value.minutes.value) < 10
+            ? `0` + value.minutes?.value
+            : value.minutes?.value;
+        store.setEndTime(
+          `${value.hours?.value}:${minutes} ${value.time?.value}`
+        );
+      },
+    },
+  ],
+};
+
+const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
+  null
+);
+const equipmentAndAmenitiessSelected = (
+  result: EquipmentAndAmenitiesModalResult
+) => {
+  store.setEquipments(result.equipments || []);
+  store.setAmenities(result.amenities || []);
+};
+
+const onChooseAmenities = () => {
+  equipmentAndAmenitiessModal.value?.present({
+    title: "Amenities",
+    equipments: eventEquipments.value.map((equipment) => equipment.id),
+    amenities: eventAmenities.value.map((amenity) => amenity.id),
+  });
+};
+
+const invalid = computed<boolean>(
+  () =>
+    !eventTitle.value?.length ||
+    (!props.edit &&
+      (!eventStartDate.value ||
+        !selectedState.value ||
+        !selectedCity.value ||
+        !selectedAddress.value ||
+        !eventEndDate.value ||
+        !eventStartTime.value ||
+        !eventEndTime.value ||
+        !eventMaxParticipants.value))
+);
+
+const submitEvent = async () => {
+  if (
+    !props.edit &&
+    formatTime(eventStartDate.value as number, eventStartTime.value) >=
+      formatTime(eventEndDate.value as number, eventEndTime.value)
+  ) {
+    const toast = await toastController.create({
+      message: "Check start/end dates",
+      duration: 2000,
+      icon: "assets/icon/info.svg",
+      cssClass: "danger-toast",
+    });
+    toast.present();
+    return;
+  }
+
+  const data = !props.edit
+    ? {
+        title: eventTitle.value,
+        description: eventDescription.value,
+        start_date: formatTime(
+          eventStartDate.value as number,
+          eventStartTime.value
+        ),
+        end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
+        price: Number(store.price),
+        address: {
+          lat: selectedAddress.value?.latitude
+            ? Number(selectedAddress.value.latitude)
+            : 34.034744,
+          lng: selectedAddress.value?.longitude
+            ? Number(selectedAddress.value.longitude)
+            : -118.2381,
+          street: `${
+            selectedAddress.value?.thoroughfare
+              ? selectedAddress.value?.thoroughfare + ", "
+              : ""
+          }${selectedAddress.value?.subThoroughfare || ""}`,
+          city_id: selectedCity.value?.id,
+        },
+        max_participants: store.max_participants,
+        equipments: eventEquipments.value.map((equipment) => equipment.id),
+        amenities: eventAmenities.value.map((amenity) => amenity.id),
+        media: eventPhotos.value?.map((photo, index) => {
+          return {
+            title: `${eventTitle.value
+              .replace(/\s/g, "")
+              .toLowerCase()}-${index}`,
+            file: photo.path,
+          };
+        }),
+      }
+    : {
+        title: eventTitle.value,
+        description: eventDescription.value,
+        equipments: eventEquipments.value.map((equipment) => equipment.id),
+        amenities: eventAmenities.value.map((amenity) => amenity.id),
+        media: eventPhotos.value
+          ?.map((photo, index) => {
+            return {
+              title: `${eventTitle.value
+                .replace(/\s/g, "")
+                .toLowerCase()}-${index}`,
+              file: photo.path,
+            };
+          })
+          .filter((photo) => photo.file),
+      };
+
+  emits("submit", data);
+};
+
+const formatTime = (date: number, time: string): string => {
+  const isPm = time.split(" ")[1] === "PM",
+    hour = Number(time.split(":")[0]) + (isPm ? 12 : 0),
+    minute = Number(time.split(":")[1].split(" ")[0]);
+
+  return dayjs(date)
+    .hour(hour)
+    .minute(minute)
+    .second(0)
+    .millisecond(0)
+    .format("YYYY-MM-DD HH:mm:ss");
+};
+
+const clearStore = () => {
+  store.clear();
+};
+
+defineExpose({
+  clearStore,
+});
+</script>
+
+<style lang="scss">
+.form-row {
+  &__control {
+    &:not(:first-child) {
+      margin-top: 16px;
+    }
+  }
+}
+
+.holder-button {
+  .button {
+    margin: 0;
+  }
+}
+</style>

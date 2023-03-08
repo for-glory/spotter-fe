@@ -1,0 +1,9 @@
+query general_document (
+  $code: GeneralDocumentsEnum!
+) {
+  general_document (
+    code: $code
+  ) {
+    value
+  }
+}

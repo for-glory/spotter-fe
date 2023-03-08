@@ -1,0 +1,35 @@
+query myFacilityItemPasses (
+  $start_date: DateTimeRange
+  $end_date: DateTimeRange
+  $orderBy: [QueryMyFacilityItemPassesOrderByOrderByClause!]
+  $first: Int
+  $page: Int
+) {
+  myFacilityItemPasses (
+    start_date: $start_date
+    end_date: $end_date
+    orderBy: $orderBy
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      start_date
+      end_date
+      is_active_pass
+      facilityItem {
+        title
+        qr_code_lifetime_value
+        facility {
+          id
+          name
+          media { pathUrl }
+          address { street }
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

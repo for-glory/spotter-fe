@@ -1,0 +1,15 @@
+mutation createFacility(
+  $input: CreateFacilityInput!
+) {
+  createFacility(
+    input: $input
+  ) {
+    id
+    name
+    description
+    score
+    equipments { name, iconUrl }
+    amenities { name, iconUrl }
+    organization { id, name, email }
+  }
+}

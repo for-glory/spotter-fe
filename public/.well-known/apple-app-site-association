@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "D4HASL74S5.XC.io.spotter.app",
+        "paths": ["*"]
+      }
+    ]
+  }
+}

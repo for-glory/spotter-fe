@@ -1,0 +1,5 @@
+mutation createChat($participant_id: ID!) {
+    createChat(participant_id: $participant_id) {
+      id
+    }
+}

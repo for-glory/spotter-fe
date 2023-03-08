@@ -1,0 +1,26 @@
+query myEvents (
+  $start_date: DateTimeRange
+  $end_date: DateTimeRange
+  $orderBy: [QueryMyEventsOrderByOrderByClause!]
+  $first: Int
+  $page: Int
+) {
+  myEvents (
+    start_date: $start_date
+    end_date: $end_date
+    orderBy: $orderBy
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      title
+      address { street }
+      start_date
+      media { pathUrl }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

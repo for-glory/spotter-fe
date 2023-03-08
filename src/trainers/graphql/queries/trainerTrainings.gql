@@ -1,0 +1,39 @@
+query trainerTrainings (
+  $filters: TrainingsFilterInput
+  $orderBy: [QueryTrainerTrainingsOrderByOrderByClause!]
+  $first: Int!
+  $page: Int
+) {
+  trainerTrainings (
+    filters: $filters
+    orderBy: $orderBy
+    first: $first
+    page: $page
+  ) {
+    data {
+      address_string
+      id
+      start_date
+      state
+      user {
+        avatar
+        avatarUrl
+        media { pathUrl }
+        first_name
+        last_name
+        address { street }
+      }
+      order {
+        total
+      }
+      trainer {
+        facilities {
+            address {
+                street
+            }
+        }
+      }
+    }
+    paginatorInfo { total }
+  }
+}

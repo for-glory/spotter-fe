@@ -1,0 +1,9 @@
+mutation changeTrainingState($input: ChangeTrainingState!) {
+    changeTrainingState(input: $input) {
+        success
+        message
+        training {
+            id
+        }
+    }
+}

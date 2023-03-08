@@ -1,0 +1,38 @@
+mutation SocialLogin($token: String!, $provider: SocialProvidersEnum!) {
+    socialLogin(input: { token: $token, provider: $provider }) {
+        access_token
+        refresh_token
+        expires_in
+        user {
+            firebase_auth_token
+            id
+            email
+            role
+            first_name
+            last_name
+            created_at
+            email_verified_at
+            front_settings
+            trainer_type
+            currentSubscription
+            facilities {
+                id
+                address {
+                    lat
+                    lng
+                    street
+                    extra
+                }
+            }
+            owned_facilities {
+                id
+                address {
+                    lat
+                    lng
+                    street
+                    extra
+                }
+            }
+        }
+    }
+}

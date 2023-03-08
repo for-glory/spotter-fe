@@ -1,0 +1,60 @@
+query event($id: ID!) {
+    event(id: $id) {
+      id
+    	title
+    	description
+    	start_date
+    	end_date
+    	price
+			front_price
+    	trainer{
+				id
+				avatarUrl
+				first_name
+				last_name
+				score
+				address {
+					street
+				}
+				facilities {
+					address {
+						street
+					}
+				}
+				settings {
+					setting {
+						code
+					}
+					value
+				}
+			}
+			facility{
+        id
+        name
+				score
+        media { pathUrl }
+        address { street }
+			}
+      address{street}
+    	media{id, pathUrl}  
+    	max_participants
+			booked_count
+			was_ordered_by_me
+    	equipments{
+				id
+        name
+        icon
+        iconUrl
+      }
+    	amenities{
+				id
+        name
+        icon
+        iconUrl
+      }
+    	products {
+				product_id
+				price
+    	}
+    }
+}

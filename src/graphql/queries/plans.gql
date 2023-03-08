@@ -1,0 +1,36 @@
+query plans(
+  $type: SubscriptionsTypeEnum
+  $first: Int = 10
+  $page: Int
+) { 
+  plans (
+    type: $type
+    first: $first
+    page: $page
+  ) {
+    paginatorInfo {
+      total
+    }
+    data {
+      id
+      title
+      description
+      type
+      is_active
+      benefits {
+        id
+        benefit_key
+        description
+      }
+      subscriptionPlans {
+        id
+        billing_period
+        renewal_type
+        grace_period
+        is_active
+        provider
+        product_id
+      }
+    }
+  }
+}

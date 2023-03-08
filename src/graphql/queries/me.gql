@@ -1,0 +1,95 @@
+query me {
+    me {
+        id
+        first_name
+        last_name
+        avatar
+        avatarUrl
+        trainer_type
+        opening_hours
+        has_password
+        currentSubscription
+        settings {
+            setting {
+                code
+            }
+            value
+        }
+        facilities {
+            id
+            name
+            media {
+                pathUrl
+            }
+            address {
+                street
+            }
+        }
+        owned_facilities {
+            description
+            id
+            name
+            media {
+                pathUrl
+                id
+            }
+            amenities {
+                id
+                name
+                icon
+                iconUrl
+            }
+            equipments {
+                id
+                name
+                icon
+                iconUrl
+            }
+            address {
+                id
+                lat
+                lng
+                extra
+                street
+                city {
+                    id
+                    name
+                    state {
+                        name
+                    }
+                }
+            }
+        }
+        media {
+            pathUrl
+            id
+        }
+        address {
+            id
+            lat
+            lng
+            extra
+            street
+            city {
+                id
+                name
+                state { name, id, code }
+                country { name, id }
+            }
+        }
+        weiver_and_labilities {
+            id
+            title
+            path
+            pathUrl
+            type
+        }
+        certificates {
+            id
+            title
+            path
+            pathUrl
+            type
+        }
+    }
+}

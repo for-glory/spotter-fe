@@ -1,0 +1,9 @@
+query setupIntent(
+    $product_id: ID
+) {
+    setupIntent(
+        product_id: $product_id
+    ) {
+        session,
+    }
+}

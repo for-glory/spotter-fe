@@ -1,0 +1,5 @@
+mutation deleteProfile {
+  deleteProfile {
+    status
+  }
+}

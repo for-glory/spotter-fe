@@ -1,0 +1,139 @@
+<template>
+  <div class="navigation-menu">
+    <ion-button
+      fill="clear"
+      :id="item.id"
+      :key="item.name"
+      v-for="item in items"
+      class="navigation-btn"
+      @click="navigate(item.name)"
+      :class="{
+        'navigation-btn--main': item.isMainButton,
+        'navigation-btn--active': Boolean(
+          route.path.match(item.category ?? '')
+        ),
+      }"
+      :disabled="
+        (item.name === EntitiesEnum.TrainerWorkouts &&
+          subscriptionType === SubscriptionsTierEnum.Basic) ||
+        (item.name === EntitiesEnum.TrainerEvents &&
+          subscriptionType === SubscriptionsTierEnum.Basic) ||
+        (item.name === EntitiesEnum.TrainerSchedule &&
+          subscriptionType === SubscriptionsTierEnum.Basic) ||
+        (item.name === EntitiesEnum.TrainerWorkouts &&
+          subscriptionType === SubscriptionsTierEnum.Bronze) ||
+        (item.name === EntitiesEnum.TrainerEvents &&
+          subscriptionType === SubscriptionsTierEnum.Bronze) ||
+        (item.name === EntitiesEnum.FacilitiesEvents &&
+          subscriptionType !== SubscriptionsTierEnum.Gold)
+      "
+    >
+      <div class="navigation-btn__inner">
+        <div class="navigation-btn__icon">
+          <ion-icon :src="item.icon"></ion-icon>
+        </div>
+        {{ item.label }}
+      </div>
+    </ion-button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { defineProps } from "vue";
+import { IonButton, IonIcon } from "@ionic/vue";
+import { NavigationItem } from "@/interfaces/NavigationItem";
+import { useRoute, useRouter } from "vue-router";
+import useSubscription from "@/hooks/useSubscription";
+import { SubscriptionsTierEnum } from "@/generated/graphql";
+import { EntitiesEnum } from "@/const/entities";
+
+defineProps<{
+  items?: NavigationItem[];
+}>();
+
+const route = useRoute();
+const router = useRouter();
+
+const { type: subscriptionType } = useSubscription();
+
+const navigate = (name: string) => {
+  router.push({ name });
+};
+</script>
+
+<style lang="scss" scoped>
+.navigation-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: var(--ion-safe-area-bottom);
+  background: rgba(var(--ion-color-gray-900-rgb), 0.88);
+  backdrop-filter: blur(var(--backdrop-blur));
+
+  > a {
+    flex: 1 1 20%;
+
+    &.router-link-exact-active {
+      color: var(--ion-color-white);
+    }
+  }
+}
+
+.navigation-btn {
+  margin: 0;
+  width: 100%;
+  height: 68px;
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 400;
+  text-transform: none;
+  --color: var(--gray-500);
+  --padding-top: 6px;
+  --padding-bottom: 8px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+
+  &--active {
+    --color: var(--ion-color-white);
+  }
+
+  &.onboarding-active {
+    --color: var(--ion-color-white);
+  }
+
+  &::part(native) {
+    display: flex;
+    line-height: inherit;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__icon {
+    width: 1em;
+    height: 1em;
+    display: flex;
+    font-size: 24px;
+    margin: 0 auto 4px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    .navigation-btn--main & {
+      width: 1.5em;
+      height: 1.5em;
+      margin-bottom: 3px;
+      border-radius: 50%;
+      color: var(--gray-600);
+      background: var(--ion-color-primary);
+    }
+  }
+}
+</style>

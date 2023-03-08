@@ -1,0 +1,5 @@
+mutation readMessage($id: ID!) {
+  readMessage( id: $id) {
+    id
+  }
+}

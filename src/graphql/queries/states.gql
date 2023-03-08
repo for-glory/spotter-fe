@@ -1,0 +1,22 @@
+query states (
+  $name: String
+  $country_id: ID
+  $first: Int!
+  $page: Int
+) {
+  states (
+    name: $name
+    country_id: $country_id
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+      code
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

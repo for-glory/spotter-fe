@@ -1,0 +1,81 @@
+query facilities (
+  $near: NearFilter
+  $search: String
+  $first: Int
+  $name: String
+  $page: Int
+  $city_id: ID
+  $state_id: ID
+  $organization_id: ID
+  $is_followed: Boolean
+) {
+  facilities (
+    near: $near
+    search: $search
+    first: $first
+    name: $name
+    page: $page
+    city_id: $city_id
+    state_id: $state_id
+    organization_id: $organization_id
+    is_followed: $is_followed
+  ) {
+    data {
+      id
+      name
+      score
+      is_followed
+      media {
+        path
+        pathUrl
+      }
+      address {
+        lat
+        lng
+        street
+      }
+      productItems {
+        id
+        qr_code_lifetime_value
+        qr_code_lifetime_enum
+        checkin_counter
+        is_unlimited_checkin
+        title
+        product_id
+        price
+        products {
+          provider
+          price
+          product_id
+          duration
+          currency
+          start_date
+          end_date
+          checkin_number
+          state
+          gatewayProductable {
+            ... on StripeProduct {
+              id
+              name
+              product_id
+              price_id
+              unit_amount
+              currency
+              active
+            }
+            ... on PaypalProduct {
+              id
+              name
+              product_id
+              price_id
+              unit_amount
+              currency
+              active
+            }
+          }
+        }
+      }
+    }
+    paginatorInfo { total, firstItem }
+  }
+}

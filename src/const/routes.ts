@@ -1,0 +1,15 @@
+export enum EntitiesEnum {
+  Profile = "PROFILE",
+  Login = "LOGIN",
+  Register = "REGISTER",
+  VerifyEmail = "VERIFY_EMAIL",
+  ForgotPassword = "FORGOT_PASSWORD",
+  CheckEmail = "CHECK_EMAIL",
+  Quizz = "QUIZZ",
+  Facilities = "FACILITIES",
+  Facility = "FACILITY",
+  FacilityReviews = "FACILITY_REVIEWS",
+  Trainers = "TRAINERS",
+  Trainer = "TRAINER",
+  BookTrainer = "BOOK-TRAINER",
+}

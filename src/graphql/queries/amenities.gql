@@ -1,0 +1,16 @@
+query amenities (
+  $first: Int
+  $page: Int
+) {
+  amenities (
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+      icon
+      iconUrl
+    }
+  }
+}

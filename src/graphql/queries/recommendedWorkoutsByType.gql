@@ -1,0 +1,52 @@
+query recommendedWorkoutsByType(
+  $first: Int = 10
+  $page: Int
+) {
+  recommendedWorkoutsByType (
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      preview
+      type {
+        id
+        name
+        icon
+      }
+      previewUrl
+      title
+      description
+      price
+      duration
+      exercises {
+        id
+        title
+        description
+        path
+        previewUrl
+        pathUrl
+      }
+      was_ordered_by_me
+      trainer {
+        first_name
+        last_name
+                facilities {
+            media {
+                pathUrl
+            }
+            address {
+                lat
+                lng
+            }
+        }
+      }
+    }
+    paginatorInfo {
+      count
+      currentPage
+      total
+      perPage
+    }
+  }
+}

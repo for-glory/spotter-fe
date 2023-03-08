@@ -1,0 +1,55 @@
+query events (
+    $title: String
+    $near: NearFilter
+    $start_date: DateTimeRange
+    $end_date: DateTimeRange
+    $created_by_trainer: ID
+    $created_by_facility: ID
+    $orderBy: [QueryEventsOrderByOrderByClause!]
+    $first: Int
+    $page: Int
+    $ownedByUser: ID
+) {
+    events (
+        title: $title
+        near: $near
+        start_date: $start_date
+        end_date: $end_date
+        created_by_trainer: $created_by_trainer
+        created_by_facility: $created_by_facility
+        orderBy: $orderBy
+        first: $first
+        page: $page
+        ownedByUser: $ownedByUser
+    ) {
+        data {
+            address {
+                lat
+                lng
+                street
+            }
+            amenities {
+                icon
+                iconUrl
+                name
+            }
+            description
+            end_date
+            equipments {
+                icon
+                iconUrl
+                name
+            }
+            id
+            max_participants
+            was_ordered_by_me
+            media {
+                pathUrl
+            }
+            price
+            start_date
+            title
+        }
+        paginatorInfo { total }
+    }
+}

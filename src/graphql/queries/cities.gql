@@ -1,0 +1,27 @@
+query cities (
+  $name: String
+  $country_id: ID
+  $state_id: ID
+  $state_code: String
+  $first: Int!
+  $page: Int
+) {
+  cities (
+    name: $name
+    country_id: $country_id
+    state_id: $state_id
+    state_code: $state_code
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      name
+      state { id, name }
+      country { id, name }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}

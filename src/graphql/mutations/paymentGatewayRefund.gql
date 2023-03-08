@@ -1,0 +1,6 @@
+mutation paymentGatewayRefund($input: RefundInput!) {
+  paymentGatewayRefund( input: $input) {
+    success
+    message
+  }
+}

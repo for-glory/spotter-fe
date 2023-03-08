@@ -1,0 +1,10 @@
+mutation follow($id: ID!, $type: FollowTypeEnum!) {
+    follow(input: { id: $id, type: $type }) {
+      ...on User {
+        id
+      }
+      ...on Facility {
+        id
+      }
+    }
+}

@@ -1,0 +1,23 @@
+query userAvailability($id: ID!, $from: DateTime!, $to: DateTime!) {
+  userAvailability(id: $id, from: $from, to: $to) {
+    hours {
+      from
+      to
+    }
+    trainings {
+      id
+      order {
+        total
+        fee
+        order_subtotal
+      }
+      state
+      start_date
+      end_date
+    }
+    events {
+      start_date
+      end_date
+    }
+  }
+}

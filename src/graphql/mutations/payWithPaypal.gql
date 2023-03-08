@@ -1,0 +1,12 @@
+
+mutation PayWithPaypal(
+    $nonce: String!
+    $cart_id: ID!
+) {
+    payWithPaypal(input: { 
+        nonce: $nonce
+        cart_id: $cart_id
+    }) {
+        result
+    }
+}

@@ -1,0 +1,11 @@
+mutation updateEvent(
+  $id: ID!
+  $input: UpdateEventInput!
+) {
+  updateEvent(
+    id: $id
+    input: $input
+  ) {
+    id
+  }
+}

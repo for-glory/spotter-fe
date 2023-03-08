@@ -1,0 +1,56 @@
+mutation createTrainerWorkout(
+  $body_parts: [ID!]!
+  $type_id: ID
+  $title: String!
+  $description: String
+  $price: Float!
+  $duration: Int!
+  $preview: StringOrUpload
+  $exercises: [WorkoutVideosInput!]
+) {
+  createTrainerWorkout(input: { 
+    body_parts: $body_parts
+    type_id: $type_id
+    title: $title
+    description: $description
+    price: $price
+    duration: $duration
+    exercises: $exercises
+    preview: $preview
+   }) {
+    id
+    type {
+      id
+      name
+      icon
+    }
+    trainer {
+      id
+      first_name
+      last_name
+    }
+    title
+    description
+    price
+    duration
+    preview
+    previewUrl
+    exercises {
+      id
+      title
+      description
+      path
+      pathUrl
+    }
+    bodyParts {
+      id
+      name
+      icon
+    }
+  }
+}
+
+
+
+
+

@@ -1,0 +1,39 @@
+ion-toast {
+  --background: transparent;
+  --box-shadow: none;
+  --border-radius: 8px;
+  --width: calc(100% - (var(--container-offset) * 2));
+
+  &::part(container) {
+    background: var(--toast-background);
+    backdrop-filter: blur(var(--backdrop-blur));
+    margin-bottom: 96px;
+  }
+
+  &::part(message) {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.success-toast {
+  &::part(icon) {
+    color: var(--ion-color-success-tint);
+  }
+}
+
+.danger-toast {
+  &::part(icon) {
+    color: var(--ion-color-danger-tint);
+  }
+}
+
+.warning-toast {
+  &::part(icon) {
+    color: var(--ion-color-warning-tint);
+  }
+}
+
+:deep(.toast-content) {
+  padding: 0;
+}

@@ -1,0 +1,13 @@
+mutation updateUserRole(
+    $id: ID!,
+    $role: RoleEnum,
+) {
+    updateUser(
+        id: $id,
+        input: {
+            role: $role
+        }) {
+        id
+        role
+    }
+}
