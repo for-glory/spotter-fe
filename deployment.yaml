@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spotter-web-front
+  namespace: ___BRANCH_NAME___
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spotter-web-front
+  template:
+    metadata:
+      labels:
+        app: spotter-web-front
+    spec:
+      containers:
+        - name: spotter-web-front
+          image: ___REGISTRY_HOST___/___REGISTRY_SPACE___/spotter-web-front-___BRANCH_NAME___:latest
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 1
+      imagePullSecrets:
+        - name: do-registry
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spotter-web-front-svc
+  namespace: ___BRANCH_NAME___
+spec:
+  type: ClusterIP
+  selector:
+    app: spotter-web-front
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
