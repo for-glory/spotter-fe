@@ -22,7 +22,7 @@ import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
 import useVerified from "@/hooks/useVerified";
 
-const {
+let {
   mutate: login,
   onDone,
   onError,
@@ -35,8 +35,13 @@ const form = ref<LoginMutationVariables>({
   password: "",
 });
 
-onDone(({ data }) => {
+onDone(({ data, errors }) => {
+  if(!data && errors){
+    throw new Error(String(errors[0].extensions.reason))
+  }
+  
   setAuthItems(data.login);
+
   const { verified } = useVerified();
   if (!verified) {
     localStorage.setItem(
@@ -44,7 +49,7 @@ onDone(({ data }) => {
       JSON.stringify(data.login.user.email)
     );
   }
-  navigationAfterAuth(data.login.user);
+  navigationAfterAuth(data.login.user)
 });
 
 onError(() => {

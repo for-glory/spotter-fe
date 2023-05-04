@@ -14,6 +14,8 @@ export const RefreshTokenDocument = gql`
 export const RegisterDocument = gql`
   mutation Register(
     $email: String!
+    $first_name: String!
+    $last_name: String!
     $password: String!
     $password_confirmation: String!
     $role: RoleEnum!
@@ -24,8 +26,8 @@ export const RegisterDocument = gql`
         password: $password
         password_confirmation: $password_confirmation
         role: $role
-        first_name: "Default"
-        last_name: "Default"
+        first_name: $first_name
+        last_name: $last_name
       }
     ) {
       status

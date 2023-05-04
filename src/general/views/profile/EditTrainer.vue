@@ -114,10 +114,8 @@
                   {{ certificate.path.split("/")[1] }}
                   <ion-text color="medium"></ion-text>
                 </ion-label>
-                <ion-icon
-                  src="assets/icon/pencil.svg"
-                  class="edit__edit-icon"
-                />
+                <ion-icon src="assets/icon/pencil.svg" class="edit__edit-icon" />
+                <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/>
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
@@ -155,6 +153,7 @@
                   class="edit__edit-icon"
                   v-if="subscriptionType !== SubscriptionsTierEnum.Basic"
                 />
+                <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/>
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
@@ -222,6 +221,7 @@ import {
   DeleteMediaDocument,
   SubscriptionsTierEnum,
 } from "@/generated/graphql";
+import { Browser } from "@capacitor/browser";
 import useId from "@/hooks/useId";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
@@ -584,6 +584,29 @@ const onBack = () => {
   router.go(-1);
 };
 
+const viewFile = (key: DocumentsTypeEnum, id: string) => {
+  if (key === DocumentsTypeEnum.Certificate) {
+    certificates.value.filter((doc) => doc.id !== id);
+    const savedCertificate = savedCertificates.value.find(
+      (doc: Document) => doc.id === id
+    );
+
+    if (savedCertificate) {
+      Browser.open({ url: savedCertificate.pathUrl })
+    }
+  } else {
+    weiverAndLabilities.value.filter((doc) => doc.id !== id);
+
+    const savedWeiverAndLability = savedWeiverAndLabilities.value.find(
+      (doc: Document) => doc.id === id
+    );
+
+    if (savedWeiverAndLability) {
+      Browser.open({ url: savedWeiverAndLability.pathUrl })
+    }
+  }
+};
+
 const deleteFile = (key: DocumentsTypeEnum, id: string) => {
   if (key === DocumentsTypeEnum.Certificate) {
     certificates.value.filter((doc) => doc.id !== id);
@@ -613,6 +636,7 @@ const deleteFile = (key: DocumentsTypeEnum, id: string) => {
 
 enum actionTypesEnum {
   UploadFile = "UPLOAD_FILE",
+  ViewFile = "VIEW_FILE",
   DeleteEvent = "DELETE_EVENT",
 }
 
@@ -643,6 +667,12 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
         },
       },
       {
+        text: "View file",
+        data: {
+          type: actionTypesEnum.ViewFile,
+        },
+      },
+      {
         text: "Delete file",
         role: "destructive",
         data: {
@@ -663,6 +693,7 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
 
   const actions = {
     [actionTypesEnum.UploadFile]: () => uploadFile(key, id),
+    [actionTypesEnum.ViewFile]: () => viewFile(key, id),
     [actionTypesEnum.DeleteEvent]: () => deleteFile(key, id),
   };
 

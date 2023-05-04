@@ -9,7 +9,7 @@
     <div class="message__container">
       <img
         v-if="contentType === ChatMessageTypeEnum.Attachment"
-        :src="`${uri}${content}`"
+        :src="`${uri}/${content}`"
         :class="{ 'message__img--current-user': currentUser }"
         class="message__img"
       />

@@ -13,6 +13,9 @@
     :is-trusted="isTrusted"
     @handle-edit="onEdit"
     @handle-follow="handleFollow"
+    :certificatesTitle="
+      user?.certificates?.length ? 'Certificates' : undefined
+    "
     :labilitiesTitle="
       user?.weiver_and_labilities?.length ? 'Waiver and Labilities' : undefined
     "
@@ -43,7 +46,7 @@
         There are no reviews yet...
       </ion-text>
     </template>
-    <template #advantages v-if="user?.certificates?.length">
+    <template #certificates>
       <div
         v-for="certificate in user?.certificates"
         :key="certificate.id"

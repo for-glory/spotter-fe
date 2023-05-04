@@ -17,9 +17,9 @@
     <div class="form-info">
       <ion-text>
         No account?
-        <router-link :to="{ name: EntitiesEnum.Register }">
+        <a :href="'#'" @click.prevent="openModal">
           Sign up
-        </router-link>
+        </a>
       </ion-text>
       <router-link :to="{ name: EntitiesEnum.ForgotPassword }">
         <ion-button class="forgot-password-btn" fill="clear" color="medium">
@@ -41,13 +41,34 @@
       </ion-text>
     </transition>
   </base-form>
+  <ion-modal :is-open="isModalOpen" @didDismiss="closeModal">
+    <ion-content class="block">
+        <div style="padding: 5% ">
+          <p>
+            To ensure the safety of our trainers and users, we need to verify your identity.
+            <br>
+            Enter Your full name as it appears on your government-issued ID.
+          </p>
+          <router-link :to="{ name: EntitiesEnum.Register }">
+            <ion-button
+              class="button--submit"
+              expand="block"
+              @click="closeModal"
+              tag="router-link"
+            >
+              Register
+            </ion-button>
+          </router-link>
+        </div>
+    </ion-content>
+  </ion-modal>
 </template>
 
 <script setup lang="ts">
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseForm from "@/general/components/base/BaseForm.vue";
-import { IonButton, IonText } from "@ionic/vue";
-import { defineProps, defineEmits, toRef, computed } from "vue";
+import { IonButton, IonText, IonModal, IonContent } from "@ionic/vue";
+import { defineProps, defineEmits, toRef, computed, ref } from "vue";
 import { LoginMutationVariables } from "@/generated/graphql";
 import { useField } from "vee-validate";
 import { passwordSchema, userNameSchema } from "@/validations/authValidations";
@@ -98,6 +119,15 @@ const onSubmit = () => {
     });
   }
 };
+
+let isModalOpen = ref(false),
+  openModal = () => {
+    console.log("Entra en modal")
+    isModalOpen.value = true
+  },
+  closeModal = () => {
+    isModalOpen.value = false
+  }
 </script>
 
 <style scoped>
@@ -150,5 +180,16 @@ a {
   --padding-bottom: 0;
   --padding-start: 8px;
   --padding-end: 8px;
+}
+.block {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-modal {
+  --height: auto;
 }
 </style>

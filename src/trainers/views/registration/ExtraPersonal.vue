@@ -49,6 +49,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { useMutation } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
+import useUser from "@/hooks/useUser";
 import {
   UpdateUserNameDocument,
   UpdateUserSettingsDocument,
@@ -60,17 +61,22 @@ const router = useRouter();
 const store = useStore();
 
 const { id } = useId();
+const { first_name,last_name, } = useUser();
 const { mutate: updateUser } = useMutation(UpdateUserNameDocument);
 
-const { value: firstName, errorMessage: firstNameError } = useField<string>(
+let { value: firstName, errorMessage: firstNameError } = useField<string>(
   "firstName",
   requiredFieldSchema
 );
 
-const { value: lastName, errorMessage: lastNameError } = useField<string>(
+firstName.value = first_name
+
+let { value: lastName, errorMessage: lastNameError } = useField<string>(
   "lastName",
   requiredFieldSchema
 );
+
+lastName.value = last_name
 
 const isValidForm = computed(
   () =>

@@ -110,6 +110,16 @@
             <slot name="equipments"></slot>
           </div>
         </div>
+        <div class="advantages__container" v-if="certificatesTitle">
+          <div class="advantages__header">
+            <ion-text class="advantages__title">
+              {{ certificatesTitle }}
+            </ion-text>
+          </div>
+          <div class="advantages__content">
+            <slot name="certificates"></slot>
+          </div>
+        </div>
         <div class="advantages__container" v-if="labilitiesTitle">
           <div class="advantages__header">
             <ion-text class="advantages__title">
@@ -198,6 +208,7 @@ const props = withDefaults(
     editButton?: boolean;
     distance?: string;
     photoUrl?: string;
+    certificatesTitle?: string;
     labilitiesTitle?: string;
     draggableBackground?: string;
     viewAllLink?: string;

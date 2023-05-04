@@ -24,7 +24,7 @@ const {
 } = useMutation(RegisterDocument);
 
 const handleSubmit = (
-  form: Pick<RegisterInput, "email" | "password" | "password_confirmation">
+  form: Pick<RegisterInput, "email" | "first_name" | "last_name" | "password" | "password_confirmation">
 ) => {
   register({ ...form, role: RoleEnum.User });
   localStorage.setItem("temporary_email", JSON.stringify(form.email));
@@ -32,10 +32,19 @@ const handleSubmit = (
 
 const router = useRouter();
 
-onDone(() => {
-  router.push({
-    name: EntitiesEnum.CheckEmail,
-  });
+onDone(({ data, errors }) => {
+
+  if(data){
+    router.push({
+      name: EntitiesEnum.CheckEmail,
+    });
+  } else if(errors){
+    let error :any = errors
+    
+    if(error[0].extensions.validation == 'unique'){
+      throw new Error(error[0].message)
+    }
+  }
 });
 </script>
 

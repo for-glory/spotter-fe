@@ -8,6 +8,20 @@
       placeholder="Enter your email"
     />
     <base-input
+      v-model:value="firstNameInput"
+      :error-message="firstNameInputError"
+      :disabled="isLoading"
+      type="text"
+      placeholder="Enter your first name"
+    />
+    <base-input
+      v-model:value="lastNameInput"
+      :error-message="lastNameInputError"
+      :disabled="isLoading"
+      type="text"
+      placeholder="Enter your last name"
+    />
+    <base-input
       v-model:value="passwordInput"
       :error-message="passwordInputError"
       :disabled="isLoading"
@@ -51,7 +65,7 @@ import { EntitiesEnum } from "@/const/routes";
 import { useField } from "vee-validate";
 import { computed, defineEmits, defineProps } from "vue";
 import { RegisterInput } from "@/generated/graphql";
-import { passwordSchema, userNameSchema } from "@/validations/authValidations";
+import { passwordSchema, userNameSchema, requiredFieldSchema } from "@/validations/authValidations";
 import { ApolloError } from "@apollo/client";
 import { humanizeString } from "@/utils/textUtils";
 
@@ -65,7 +79,7 @@ const emits = defineEmits<{
     e: "handle-submit",
     formData: Pick<
       RegisterInput,
-      "email" | "password" | "password_confirmation"
+      "email" | "first_name" | "last_name" | "password" | "password_confirmation"
     >
   ): void;
 }>();
@@ -73,6 +87,14 @@ const emits = defineEmits<{
 const { value: emailInput, errorMessage: emailInputError } = useField<string>(
   "email",
   userNameSchema
+);
+
+const { value: firstNameInput, errorMessage: firstNameInputError } = useField<string>(
+  "first name", requiredFieldSchema
+);
+
+const { value: lastNameInput, errorMessage: lastNameInputError } = useField<string>(
+  "last name", requiredFieldSchema
 );
 
 const { value: passwordInput, errorMessage: passwordInputError } =
@@ -93,17 +115,23 @@ const errorMessage = computed(() => {
 const isValidForm = computed(
   () =>
     !emailInputError.value &&
+    !firstNameInputError.value &&
+    !lastNameInputError.value &&
     !passwordInputError.value &&
     !passwordConfirmationError.value &&
     passwordInput.value &&
     passwordConfirmationInput.value &&
-    emailInput.value
+    emailInput.value &&
+    firstNameInput.value &&
+    lastNameInput.value
 );
 
 const onSubmit = () => {
   if (isValidForm.value) {
     emits("handle-submit", {
       email: emailInput.value,
+      first_name: firstNameInput.value,
+      last_name: lastNameInput.value,
       password: passwordInput.value,
       password_confirmation: passwordConfirmationInput.value,
     });

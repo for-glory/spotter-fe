@@ -2008,9 +2008,9 @@ export enum RefundableProductsEnum {
 
 export type RegisterInput = {
   email: Scalars['String'];
-  first_name?: InputMaybe<Scalars['String']>;
+  first_name: Scalars['String'];
   gender?: InputMaybe<GenderEnum>;
-  last_name?: InputMaybe<Scalars['String']>;
+  last_name: Scalars['String'];
   password: Scalars['String'];
   password_confirmation: Scalars['String'];
   quizzAnswers?: InputMaybe<Array<InputMaybe<CreateQuizzAnswerInput>>>;
@@ -5740,6 +5740,8 @@ export const UpdateTrainerTypeDocument = gql`
         }
       }
     }
+    first_name
+    last_name
   }
 }
     `;
