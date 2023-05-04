@@ -12,7 +12,7 @@ build_dev:
     - echo "$BASE64_DEV_ENV" | base64 -d > ./.env
     - echo $REGISTRY_PASSWORD | docker login $REGISTRY_HOST -u $REGISTRY_USERNAME --password-stdin
     - export IMAGE_VERSION=$(date +%Y%m%d%H%M%S)
-    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} -f .
+    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} .
     - docker tag ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
     - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION}
     - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
@@ -29,7 +29,7 @@ build_prod:
     - echo "$BASE64_PROD_ENV" | base64 -d > ./.env
     - echo $REGISTRY_PASSWORD | docker login $REGISTRY_HOST -u $REGISTRY_USERNAME --password-stdin
     - export IMAGE_VERSION=$(date +%Y%m%d%H%M%S)
-    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} -f .
+    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} .
     - docker tag ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
     - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION}
     - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
