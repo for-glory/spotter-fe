@@ -1,0 +1,62 @@
+stages:
+  - build
+  - deploy
+
+
+build_dev:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "$BASE64_DEV_ENV" | base64 -d > ./.env
+    - echo $REGISTRY_PASSWORD | docker login $REGISTRY_HOST -u $REGISTRY_USERNAME --password-stdin
+    - export IMAGE_VERSION=$(date +%Y%m%d%H%M%S)
+    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} -f ./docker/php/Dockerfile .
+    - docker tag ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
+    - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION}
+    - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
+
+  only:
+    - dev
+
+build_prod:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "$BASE64_PROD_ENV" | base64 -d > ./.env
+    - echo $REGISTRY_PASSWORD | docker login $REGISTRY_HOST -u $REGISTRY_USERNAME --password-stdin
+    - export IMAGE_VERSION=$(date +%Y%m%d%H%M%S)
+    - docker build -t ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} -f ./docker/php/Dockerfile .
+    - docker tag ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION} ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
+    - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:${IMAGE_VERSION}
+    - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
+
+  only:
+    - dev
+
+deploy_dev:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - mkdir -p ~/.kube
+    - echo "$DEV_KUBECONFIG" | base64 -d > ~/.kube/config
+    - sed -e "s~\___BRANCH_NAME___~${CI_COMMIT_BRANCH}~g" -e "s~\___REGISTRY_SPACE___~${REGISTRY_SPACE}~g" -e "s~\___REGISTRY_HOST___~${REGISTRY_HOST}~g" deployment.yaml > new_deployment.yaml
+    - kubectl apply -f new_deployment.yaml
+    - kubectl rollout restart deployment spotter-web-front -n ${CI_COMMIT_BRANCH}
+  only:
+    - dev
+
+deploy_prod:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - mkdir -p ~/.kube
+    - echo "$PROD_KUBECONFIG" | base64 -d > ~/.kube/config
+    - sed -e "s~\___BRANCH_NAME___~${CI_COMMIT_BRANCH}~g" -e "s~\___REGISTRY_SPACE___~${REGISTRY_SPACE}~g" -e "s~\___REGISTRY_HOST___~${REGISTRY_HOST}~g" deployment.yaml > new_deployment.yaml
+    - kubectl apply -f new_deployment.yaml
+    - kubectl rollout restart deployment spotter-web-front -n ${CI_COMMIT_BRANCH}
+  only:
+    - prod
