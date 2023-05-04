@@ -6,3 +6,5 @@
 !nginx.conf
 !.gitlab-ci.yml
 !docker-compose.yml
+!Dockerfile
+!deployment.yaml
