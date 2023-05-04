@@ -35,7 +35,7 @@ build_prod:
     - docker push ${REGISTRY_HOST}/${REGISTRY_SPACE}/spotter-web-front-${CI_COMMIT_BRANCH}:latest
 
   only:
-    - dev
+    - prod
 
 deploy_dev:
   stage: deploy
