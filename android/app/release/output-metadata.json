@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.spotterfitness.app",
+  "applicationId": "com.spotterfitnessapp.app",
   "variantName": "release",
   "elements": [
     {

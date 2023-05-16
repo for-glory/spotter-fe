@@ -1,4 +1,4 @@
-package com.spotterfitness.app;
+package com.spotterfitnessapp.app;
 import android.os.Bundle;
 
 import com.getcapacitor.BridgeActivity;
