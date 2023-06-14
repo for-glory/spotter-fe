@@ -70,8 +70,10 @@ const customFetch = (uri: any, options: any) => {
   return fetch(uri, options);
 };
 
+// process.env.VUE_APP_API_URL
+
 const httpLink = createUploadLink({
-  uri: process.env.VUE_APP_API_URL,
+  uri: 'https://api.spotterfitness.com/graphql',
   credentials: "same-origin",
   fetch: customFetch as any,
 });
