@@ -1,7 +1,7 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.spotterfitness.app',
+  appId: 'com.spotterfitness.gabbyproducts',
   appName: 'Spotter',
   webDir: 'dist',
   bundledWebRuntime: false,
