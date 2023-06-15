@@ -18,7 +18,7 @@
 	<array/>
 	<key>com.apple.developer.in-app-payments</key>
 	<array>
-		<string>merchant.com.spotterfitness.dev</string>
+		<string>merchant.com.spotterfitness.applepay</string>
 	</array>
 </dict>
 </plist>
