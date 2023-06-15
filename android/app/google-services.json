@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:869230176984:android:0720b4ebc9bd5c4aac05ad",
         "android_client_info": {
-          "package_name": "com.spotterfitnessapp.app"
+          "package_name": "com.spotterfitness.gabbysoftware"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "869230176984-4hmi2p62tlaavihrkr5hb689d4aeha7p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.spotterfitnessapp.app",
+            "package_name": "com.spotterfitness.gabbysoftware",
             "certificate_hash": "7BDF5A54634502AB28BF27412E1CAE31D368EF62"
           }
         },

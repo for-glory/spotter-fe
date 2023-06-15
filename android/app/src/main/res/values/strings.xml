@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">Spotter</string>
     <string name="title_activity_main">Spotter</string>
-    <string name="package_name">io.spotter.app</string>
-    <string name="custom_url_scheme">io.spotter.app</string>
+    <string name="package_name">com.spotterfitness.gabbysoftware</string>
+    <string name="custom_url_scheme">com.spotterfitness.gabbysoftware</string>
     <string name="facebook_app_id">547569913550944</string>
     <string name="fb_login_protocol_scheme">fb547569913550944</string>
     <string name="facebook_client_token">b7d0dfeffdf64a52e70b2c54fb771228</string>
