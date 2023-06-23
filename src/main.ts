@@ -14,6 +14,11 @@ import mitt from "mitt";
 import { Calendar, DatePicker } from "v-calendar";
 import SetupCalendar from "v-calendar";
 
+import ToastPlugin from 'vue-toast-notification';
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
+
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css";
 
@@ -71,6 +76,9 @@ app.provide("emitter", emitter);
 app.use(SetupCalendar, {});
 app.component("Calendar", Calendar);
 app.component("DatePicker", DatePicker);
+app.use(ToastPlugin, {
+  position: 'top'
+});
 
 components.forEach((component) => {
   app.component(component.name, component);

@@ -71,6 +71,9 @@ import {
   SubscriptionsTierEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
+import {useToast} from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
@@ -124,12 +127,28 @@ const photoSelected = async (value: string): Promise<void> => {
           avatar: res?.data.filePreload.path,
         },
       })
-        .then(() => refetch())
-        .catch((error) => console.error(error));
+        .then(() => {
+          let instance = $toast.success('Image uploaded!', {
+            duration: 5000,
+            position: 'top'
+          });
+          refetch()
+        })
+        .catch((error) => {
+          let instance = $toast.error('Image upload failed!', {
+            duration: 5000,
+            position: 'top'
+          });
+          console.error(error)
+        });
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
     })
     .catch((error) => {
+      let instance = $toast.error('Image upload failed!', {
+        duration: 5000,
+        position: 'top'
+      });
       console.error(error);
       abort();
       previewOnLoading.value = false;
@@ -145,10 +164,20 @@ const deletePhoto = () => {
     },
   })
     .then(() => {
+      let instance = $toast.success('Profile Image was deleted!', {
+        duration: 5000,
+        position: 'top'
+      });
       removePhoto();
       refetch();
     })
-    .catch((error) => console.error(error));
+    .catch((error) => {
+      let instance = $toast.error('Action failed!', {
+        duration: 5000,
+        position: 'top'
+      });
+      console.error(error)
+    });
 };
 
 const { onResult, refetch, result, loading } = useQuery(
