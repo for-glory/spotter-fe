@@ -67,7 +67,8 @@ const app = createApp({
   .use(VueVideoPlayer)
   .use(VueGoogleMaps, {
     load: {
-      key: process.env.VUE_APP_GOOGLE_MAP_API_KEY,
+      // key: process.env.VUE_APP_GOOGLE_MAP_API_KEY,
+      key: 'AIzaSyBhdT7RIqc7hO9IkhNSmnQt9nX-17WIwKE',
     },
   });
 
