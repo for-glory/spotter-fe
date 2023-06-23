@@ -128,14 +128,27 @@ const photoSelected = async (value: string): Promise<void> => {
         },
       })
         .then(() => {
-          let instance = $toast.success('Image uploaded!');
+          let instance = $toast.success('Image uploaded!', {
+            duration: 5000,
+            position: 'top'
+          });
           refetch()
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          let instance = $toast.error('Image upload failed!', {
+            duration: 5000,
+            position: 'top'
+          });
+          console.error(error)
+        });
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
     })
     .catch((error) => {
+      let instance = $toast.error('Image upload failed!', {
+        duration: 5000,
+        position: 'top'
+      });
       console.error(error);
       abort();
       previewOnLoading.value = false;
@@ -151,10 +164,20 @@ const deletePhoto = () => {
     },
   })
     .then(() => {
+      let instance = $toast.success('Profile Image was deleted!', {
+        duration: 5000,
+        position: 'top'
+      });
       removePhoto();
       refetch();
     })
-    .catch((error) => console.error(error));
+    .catch((error) => {
+      let instance = $toast.error('Action failed!', {
+        duration: 5000,
+        position: 'top'
+      });
+      console.error(error)
+    });
 };
 
 const { onResult, refetch, result, loading } = useQuery(
