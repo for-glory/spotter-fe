@@ -71,6 +71,9 @@ import {
   SubscriptionsTierEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
+import {useToast} from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
@@ -124,7 +127,10 @@ const photoSelected = async (value: string): Promise<void> => {
           avatar: res?.data.filePreload.path,
         },
       })
-        .then(() => refetch())
+        .then(() => {
+          let instance = $toast.success('Image uploaded!');
+          refetch()
+        })
         .catch((error) => console.error(error));
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
