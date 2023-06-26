@@ -425,11 +425,14 @@ const mapOptions = {
 };
 
 const mapChanged = (event: typeof VueGoogleMaps) => {
+  console.log("event--", event);
+  console.log("lat--", event.lat(), "lng--", event.lng());
   mapPosition.value = { lat: event.lat(), lng: event.lng() };
 };
 
 const addressSelected = () => {
   onMapDrag.value = false;
+  console.log("addressSelected--", mapPosition);
   if (mapPosition.value?.lat && mapPosition.value?.lng) {
     const lat =
         mapPosition.value?.lat > 0
@@ -449,6 +452,8 @@ const addressSelected = () => {
       maxResults: 5,
     })
       .then((addresses) => {
+        console.log("addresses--", addresses);
+        console.log("chosenAddress--", chosenAddress);
         const address = addresses[0];
         if (!address?.thoroughfare?.length) {
           chosenAddress.value = undefined;
@@ -457,6 +462,7 @@ const addressSelected = () => {
         }
       })
       .catch(() => {
+        console.log("undefined-chosenAddress--", chosenAddress);
         chosenAddress.value = undefined;
       });
   }
