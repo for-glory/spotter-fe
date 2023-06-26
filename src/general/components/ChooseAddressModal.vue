@@ -117,6 +117,7 @@ import {
   IonSpinner,
 } from "@ionic/vue";
 import { defineExpose, defineEmits, ref } from "vue";
+import { Capacitor } from '@capacitor/core';
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import {
   ChooseAddresModalOptions,
@@ -430,10 +431,34 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
   mapPosition.value = { lat: event.lat(), lng: event.lng() };
 };
 
+const getGeoLocation = async (lat: number, lng: number, type?: any) => {
+    if (navigator.geolocation) {
+      let geocoder = await new google.maps.Geocoder();
+      let latlng = await new google.maps.LatLng(lat, lng);
+      let request = { latLng: latlng };
+
+      await geocoder.geocode(request, (results, status) => {
+        console.log("results, status", results, status);
+        if (status == google.maps.GeocoderStatus.OK) {
+          let result = results[0];
+          // this.zone.run(() => {
+          //   if (result != null) {
+          //     this.userCity = result.formatted_address;
+          //     if (type === 'reverseGeocode') {
+          //       this.latLngResult = result.formatted_address;
+          //     }
+          //   }
+          // })
+        }
+      });
+    }
+  }
+
 const addressSelected = () => {
   onMapDrag.value = false;
   console.log("addressSelected--", mapPosition);
   if (mapPosition.value?.lat && mapPosition.value?.lng) {
+    console.log("mapPosition--", mapPosition.value?.lat, mapPosition.value?.lng);
     const lat =
         mapPosition.value?.lat > 0
           ? mapPosition.value?.lat -
@@ -447,24 +472,30 @@ const addressSelected = () => {
           : mapPosition.value?.lng +
             180 * Math.floor(Math.abs(mapPosition.value?.lng) / 180);
 
-    NativeGeocoder.reverseGeocode(lat, lng, {
-      useLocale: false,
-      maxResults: 5,
-    })
-      .then((addresses) => {
-        console.log("addresses--", addresses);
-        console.log("chosenAddress--", chosenAddress);
-        const address = addresses[0];
-        if (!address?.thoroughfare?.length) {
-          chosenAddress.value = undefined;
-        } else {
-          chosenAddress.value = address;
-        }
+    if (Capacitor.isNativePlatform()) {
+      console.log('Native platform');
+      NativeGeocoder.reverseGeocode(lat, lng, {
+        useLocale: false,
+        maxResults: 5,
       })
-      .catch(() => {
-        console.log("undefined-chosenAddress--", chosenAddress);
-        chosenAddress.value = undefined;
-      });
+        .then((addresses) => {
+          console.log("addresses--", addresses);
+          console.log("chosenAddress--", chosenAddress);
+          const address = addresses[0];
+          if (!address?.thoroughfare?.length) {
+            chosenAddress.value = undefined;
+          } else {
+            chosenAddress.value = address;
+          }
+        })
+        .catch(() => {
+          console.log("undefined-chosenAddress--", chosenAddress);
+          chosenAddress.value = undefined;
+        });
+    } else {
+      console.log('Web platform');
+      getGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
+    }
   }
 };
 </script>
