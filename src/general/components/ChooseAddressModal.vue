@@ -433,24 +433,26 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
 
 const getGeoLocation = async (lat: number, lng: number, type?: any) => {
     if (navigator.geolocation) {
-      let geocoder = await new google.maps.Geocoder();
-      let latlng = await new google.maps.LatLng(lat, lng);
-      let request = { latLng: latlng };
+      VueGoogleMaps.loaded.then(() => {
+        let geocoder = await new google.maps.Geocoder();
+        let latlng = await new google.maps.LatLng(lat, lng);
+        let request = { latLng: latlng };
 
-      await geocoder.geocode(request, (results, status) => {
-        console.log("results, status", results, status);
-        if (status == google.maps.GeocoderStatus.OK) {
-          let result = results[0];
-          // this.zone.run(() => {
-          //   if (result != null) {
-          //     this.userCity = result.formatted_address;
-          //     if (type === 'reverseGeocode') {
-          //       this.latLngResult = result.formatted_address;
-          //     }
-          //   }
-          // })
-        }
-      });
+        await geocoder.geocode(request, (results, status) => {
+          console.log("results, status", results, status);
+          if (status == google.maps.GeocoderStatus.OK) {
+            let result = results[0];
+            // this.zone.run(() => {
+            //   if (result != null) {
+            //     this.userCity = result.formatted_address;
+            //     if (type === 'reverseGeocode') {
+            //       this.latLngResult = result.formatted_address;
+            //     }
+            //   }
+            // })
+          }
+        });
+      })
     }
   }
 
