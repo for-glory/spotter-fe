@@ -46,6 +46,10 @@ import Vue3TouchEvents from "vue3-touch-events";
 import "./theme/variables.css";
 import "./theme/core.scss";
 
+declare var google: any;
+console.log(google);
+console.log(globalThis.google);
+
 const pinia = createPinia();
 
 const emitter = mitt();
