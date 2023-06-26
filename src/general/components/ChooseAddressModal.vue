@@ -433,9 +433,9 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
 
 const getGeoLocation = async (lat: number, lng: number, type?: any) => {
     if (navigator.geolocation) {
-      VueGoogleMaps.loaded.then(() => {
-        let geocoder = google.maps.Geocoder();
-        let latlng = google.maps.LatLng(lat, lng);
+      if (map.value?.ready) {
+        let geocoder = await new google.maps.Geocoder();
+        let latlng = await new google.maps.LatLng(lat, lng);
         let request = { latLng: latlng };
 
         await geocoder.geocode(request, (results, status) => {
@@ -452,7 +452,7 @@ const getGeoLocation = async (lat: number, lng: number, type?: any) => {
             // })
           }
         });
-      })
+      }
     }
   }
 
