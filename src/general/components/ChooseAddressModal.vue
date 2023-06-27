@@ -427,16 +427,12 @@ const mapOptions = {
 };
 
 const mapChanged = (event: typeof VueGoogleMaps) => {
-  console.log("event--", event);
-  console.log("lat--", event.lat(), "lng--", event.lng());
   mapPosition.value = { lat: event.lat(), lng: event.lng() };
 };
 
-const getGeoLocation = async (lat: number, lng: number, type?: any) => {
-    console.log("map-->", map)
+const reverseGeoLocation = async (lat: number, lng: number) => {
     if (navigator.geolocation) {
-      map.value?.$mapPromise.then(async (mapObject) => {
-        console.log("map.google?-->", window.google)
+      map.value?.$mapPromise.then(async () => {
         let geocoder = await new window.google.maps.Geocoder();
         let latlng = await new window.google.maps.LatLng(lat, lng);
         let request = { latLng: latlng };
@@ -445,14 +441,11 @@ const getGeoLocation = async (lat: number, lng: number, type?: any) => {
           console.log("results, status", results, status);
           if (status == window.google.maps.GeocoderStatus.OK) {
             let result = results[0];
-            // this.zone.run(() => {
-            //   if (result != null) {
-            //     this.userCity = result.formatted_address;
-            //     if (type === 'reverseGeocode') {
-            //       this.latLngResult = result.formatted_address;
-            //     }
-            //   }
-            // })
+            const address = results[0];
+            chosenAddress.value = address;
+            console.log("OK-->", chosenAddress);
+          } else {
+              chosenAddress.value = undefined;
           }
         });
       })
@@ -499,7 +492,7 @@ const addressSelected = () => {
         });
     } else {
       console.log('Web platform');
-      getGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
+      reverseGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
     }
   }
 };
