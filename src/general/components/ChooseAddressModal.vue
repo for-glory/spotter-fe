@@ -435,26 +435,26 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
 const getGeoLocation = async (lat: number, lng: number, type?: any) => {
     console.log("map-->", map)
     if (navigator.geolocation) {
-      map.value?.$mapPromise.then((mapObject) => {
+      map.value?.$mapPromise.then(async (mapObject) => {
         console.log("map.google?-->", window.google)
-        // let geocoder = await new window.google.maps.Geocoder();
-        // let latlng = await new window.google.maps.LatLng(lat, lng);
-        // let request = { latLng: latlng };
+        let geocoder = await new window.google.maps.Geocoder();
+        let latlng = await new window.google.maps.LatLng(lat, lng);
+        let request = { latLng: latlng };
 
-        // await geocoder.geocode(request, (results, status) => {
-        //   console.log("results, status", results, status);
-        //   if (status == window.google.maps.GeocoderStatus.OK) {
-        //     let result = results[0];
-        //     // this.zone.run(() => {
-        //     //   if (result != null) {
-        //     //     this.userCity = result.formatted_address;
-        //     //     if (type === 'reverseGeocode') {
-        //     //       this.latLngResult = result.formatted_address;
-        //     //     }
-        //     //   }
-        //     // })
-        //   }
-        // });
+        await geocoder.geocode(request, (results, status) => {
+          console.log("results, status", results, status);
+          if (status == window.google.maps.GeocoderStatus.OK) {
+            let result = results[0];
+            // this.zone.run(() => {
+            //   if (result != null) {
+            //     this.userCity = result.formatted_address;
+            //     if (type === 'reverseGeocode') {
+            //       this.latLngResult = result.formatted_address;
+            //     }
+            //   }
+            // })
+          }
+        });
       })
     }
   }
