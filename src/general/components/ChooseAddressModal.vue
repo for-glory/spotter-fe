@@ -142,6 +142,7 @@ import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
 const chooseModal = ref<typeof IonModal | null>(null);
+const map = ref<any>(null);
 
 const emits = defineEmits<{
   (e: "cancel"): void;
