@@ -45,25 +45,25 @@
             >
               Location information
             </ion-label>
-            <choose-block
+            <!-- <choose-block
               title="State"
               class="form-row__control"
               @handle-click="chooseState"
               :value="selectedState?.name"
               :disabled="useMyPhoneLocation"
-            />
-            <choose-block
+            /> -->
+            <!-- <choose-block
               title="City"
               class="form-row__control"
               @handle-click="chooseCity"
               :value="selectedCity?.name"
               :disabled="!selectedState || useMyPhoneLocation"
-            />
+            /> -->
             <choose-block
               title="Address"
               class="form-row__control"
               @handle-click="chooseAddress"
-              :disabled="!selectedCity || useMyPhoneLocation"
+              :disabled="useMyPhoneLocation"
               :value="
                 selectedAddress
                   ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`

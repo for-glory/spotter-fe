@@ -169,27 +169,27 @@ const cancel = () => {
 
 const choose = async () => {
   if (type.value === EntitiesEnum.Address) {
-    if (chosenAddress.value?.countryCode !== countryCode) {
-      const toast = await toastController.create({
-        message:
-          "Selected address outside the United States. Make sure the address is correct.",
-        duration: 2000,
-        icon: "assets/icon/info.svg",
-        cssClass: "danger-toast",
-      });
-      toast.present();
-      return;
-    }
+    // if (chosenAddress.value?.countryCode !== countryCode) {
+    //   const toast = await toastController.create({
+    //     message:
+    //       "Selected address outside the United States. Make sure the address is correct.",
+    //     duration: 2000,
+    //     icon: "assets/icon/info.svg",
+    //     cssClass: "danger-toast",
+    //   });
+    //   toast.present();
+    //   return;
+    // }
 
-    if (
-      chosenAddress.value.locality?.toLowerCase() !==
-        selectedCity.value?.name?.toLowerCase() ||
-      chosenAddress.value.administrativeArea?.toLowerCase() !==
-        selectedState.value?.code?.toLowerCase()
-    ) {
+    // if (
+    //   chosenAddress.value.locality?.toLowerCase() !==
+    //     selectedCity.value?.name?.toLowerCase() ||
+    //   chosenAddress.value.administrativeArea?.toLowerCase() !==
+    //     selectedState.value?.code?.toLowerCase()
+    // ) {
       showAddressConfirmationModal();
       return;
-    }
+    // }
   }
 
   const selected = {
@@ -440,8 +440,60 @@ const reverseGeoLocation = async (lat: number, lng: number) => {
         await geocoder.geocode(request, (results, status) => {
           console.log("results, status", results, status);
           if (status == window.google.maps.GeocoderStatus.OK) {
-            let result = results[0];
-            const address = results[0];
+            let street_number =''
+            let route =''
+            const res = results[0];
+            const address:NativeGeocoderResult = {
+              latitude: lat.toString(),
+              longitude: lng.toString(),
+              countryCode: '',
+              countryName: '',
+              postalCode: '',
+              administrativeArea: '',
+              subAdministrativeArea: '',
+              locality: '',
+              subLocality: '',
+              thoroughfare: '',
+              subThoroughfare: '',
+              areasOfInterest: []
+            }
+            for (let i=0; i < res.address_components.length; i++)
+            {
+              if(res.address_components[i].types.includes("postal_code"))
+              {
+                address.postalCode = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("locality"))
+              {
+                address.locality = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("subLocality"))
+              {
+                address.subLocality = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("country"))
+              {
+                address.countryName = res.address_components[i].long_name;
+                address.countryCode = res.address_components[i].short_name;
+              }
+              if(res.address_components[i].types.includes("administrative_area_level_1"))
+              {
+                address.administrativeArea = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("administrative_area_level_2"))
+              {
+                address.subAdministrativeArea = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("street_number"))
+              {
+                street_number = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("route"))
+              {
+                route = res.address_components[i].long_name;
+              }
+            }
+            address.thoroughfare = street_number + route
             chosenAddress.value = address;
             console.log("OK-->", chosenAddress);
           } else {
