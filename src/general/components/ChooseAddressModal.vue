@@ -434,13 +434,13 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
 const getGeoLocation = async (lat: number, lng: number, type?: any) => {
     if (navigator.geolocation) {
       if (map.value?.ready) {
-        let geocoder = await new google.maps.Geocoder();
-        let latlng = await new google.maps.LatLng(lat, lng);
+        let geocoder = await new window.google.maps.Geocoder();
+        let latlng = await new window.google.maps.LatLng(lat, lng);
         let request = { latLng: latlng };
 
         await geocoder.geocode(request, (results, status) => {
           console.log("results, status", results, status);
-          if (status == google.maps.GeocoderStatus.OK) {
+          if (status == window.google.maps.GeocoderStatus.OK) {
             let result = results[0];
             // this.zone.run(() => {
             //   if (result != null) {
