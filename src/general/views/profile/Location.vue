@@ -305,6 +305,7 @@ const chooseAddress = () => {
 };
 
 const addressSelected = async (selected: ChooseAddresModalResult) => {
+  console.log("selected-->", selected)
   selectedState.value = selected.state;
   selectedCity.value = selected.city;
   selectedAddress.value = selected.address;
@@ -349,6 +350,7 @@ const saveAddress = async () => {
     ],
   };
   if (!useMyPhoneLocation.value) {
+    console.log("selectedAddress-->", selectedAddress)
     const address = {
       lat: Number(selectedAddress.value?.latitude),
       lng: Number(selectedAddress.value?.longitude),

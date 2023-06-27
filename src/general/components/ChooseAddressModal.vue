@@ -117,6 +117,7 @@ import {
   IonSpinner,
 } from "@ionic/vue";
 import { defineExpose, defineEmits, ref } from "vue";
+import { Capacitor } from '@capacitor/core';
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import {
   ChooseAddresModalOptions,
@@ -141,6 +142,7 @@ import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
 const chooseModal = ref<typeof IonModal | null>(null);
+const map = ref<any>(null);
 
 const emits = defineEmits<{
   (e: "cancel"): void;
@@ -425,12 +427,44 @@ const mapOptions = {
 };
 
 const mapChanged = (event: typeof VueGoogleMaps) => {
+  console.log("event--", event);
+  console.log("lat--", event.lat(), "lng--", event.lng());
   mapPosition.value = { lat: event.lat(), lng: event.lng() };
 };
 
+const getGeoLocation = async (lat: number, lng: number, type?: any) => {
+    console.log("map-->", map)
+    if (navigator.geolocation) {
+      console.log("map.value?-->", map.value)
+      if (map.value?.ready) {
+        console.log("map.value?.ready-->", map.value.ready)
+        let geocoder = await new window.google.maps.Geocoder();
+        let latlng = await new window.google.maps.LatLng(lat, lng);
+        let request = { latLng: latlng };
+
+        await geocoder.geocode(request, (results, status) => {
+          console.log("results, status", results, status);
+          if (status == window.google.maps.GeocoderStatus.OK) {
+            let result = results[0];
+            // this.zone.run(() => {
+            //   if (result != null) {
+            //     this.userCity = result.formatted_address;
+            //     if (type === 'reverseGeocode') {
+            //       this.latLngResult = result.formatted_address;
+            //     }
+            //   }
+            // })
+          }
+        });
+      }
+    }
+  }
+
 const addressSelected = () => {
   onMapDrag.value = false;
+  console.log("addressSelected--", mapPosition);
   if (mapPosition.value?.lat && mapPosition.value?.lng) {
+    console.log("mapPosition--", mapPosition.value?.lat, mapPosition.value?.lng);
     const lat =
         mapPosition.value?.lat > 0
           ? mapPosition.value?.lat -
@@ -444,21 +478,30 @@ const addressSelected = () => {
           : mapPosition.value?.lng +
             180 * Math.floor(Math.abs(mapPosition.value?.lng) / 180);
 
-    NativeGeocoder.reverseGeocode(lat, lng, {
-      useLocale: false,
-      maxResults: 5,
-    })
-      .then((addresses) => {
-        const address = addresses[0];
-        if (!address?.thoroughfare?.length) {
-          chosenAddress.value = undefined;
-        } else {
-          chosenAddress.value = address;
-        }
+    if (Capacitor.isNativePlatform()) {
+      console.log('Native platform');
+      NativeGeocoder.reverseGeocode(lat, lng, {
+        useLocale: false,
+        maxResults: 5,
       })
-      .catch(() => {
-        chosenAddress.value = undefined;
-      });
+        .then((addresses) => {
+          console.log("addresses--", addresses);
+          console.log("chosenAddress--", chosenAddress);
+          const address = addresses[0];
+          if (!address?.thoroughfare?.length) {
+            chosenAddress.value = undefined;
+          } else {
+            chosenAddress.value = address;
+          }
+        })
+        .catch(() => {
+          console.log("undefined-chosenAddress--", chosenAddress);
+          chosenAddress.value = undefined;
+        });
+    } else {
+      console.log('Web platform');
+      getGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
+    }
   }
 };
 </script>
