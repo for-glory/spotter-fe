@@ -435,8 +435,9 @@ const mapChanged = (event: typeof VueGoogleMaps) => {
 const getGeoLocation = async (lat: number, lng: number, type?: any) => {
     console.log("map-->", map)
     if (navigator.geolocation) {
-      console.log("map.value?-->", map.value)
-      if (map.value?.ready) {
+      console.log("map.value?-->", map.value?.ready)
+      map.$mapPromise.then(map=> {
+        console.log(window.google)
         console.log("map.value?.ready-->", map.value.ready)
         let geocoder = await new window.google.maps.Geocoder();
         let latlng = await new window.google.maps.LatLng(lat, lng);
@@ -456,7 +457,7 @@ const getGeoLocation = async (lat: number, lng: number, type?: any) => {
             // })
           }
         });
-      }
+      })
     }
   }
 
