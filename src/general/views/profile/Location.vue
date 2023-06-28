@@ -78,7 +78,7 @@
                 {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
                 {{ `${selectedAddress?.locality}` }},
                 {{ `${selectedAddress?.administrativeArea}` }},
-                {{ `${selectedAddress?.countryCode}` }},
+                {{ `${selectedAddress?.countryName}` }},
               </ion-text>
             </div>
             <GMapAutocomplete
@@ -238,6 +238,8 @@ onResult(({ data }) => {
       thoroughfare: data.me.address?.street,
       subThoroughfare: data.me.address?.extra,
       countryName: data.me.address?.city?.country?.name,
+      locality: data.me.address?.city,
+      administrativeArea: data.me.address?.city?.state,
     };
   }
 
@@ -309,63 +311,65 @@ const chooseCity = () => {
   });
 };
 
+const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
+  let street_number =''
+  let route =''
+  const address:NativeGeocoderResult = {
+    latitude: gmObj.geometry.location.lat().toString(),
+    longitude: gmObj.geometry.location.lng().toString(),
+    countryCode: '',
+    countryName: '',
+    postalCode: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    locality: '',
+    subLocality: '',
+    thoroughfare: '',
+    subThoroughfare: '',
+    areasOfInterest: []
+  }
+  for (let i=0; i < gmObj.address_components.length; i++)
+  {
+    if(gmObj.address_components[i].types.includes("postal_code"))
+    {
+      address.postalCode = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("locality"))
+    {
+      address.locality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("subLocality"))
+    {
+      address.subLocality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("country"))
+    {
+      address.countryName = gmObj.address_components[i].long_name;
+      address.countryCode = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
+    {
+      address.administrativeArea = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
+    {
+      address.subAdministrativeArea = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("street_number"))
+    {
+      street_number = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("route"))
+    {
+      route = gmObj.address_components[i].long_name;
+    }
+  }
+  address.thoroughfare = street_number + " " + route
+  return address;
+}
 const setPlace = (res: any) => {
   if (res) {
-    let street_number =''
-    let route =''
-    const address:NativeGeocoderResult = {
-      latitude: res.geometry.location.lat().toString(),
-      longitude: res.geometry.location.lng().toString(),
-      countryCode: '',
-      countryName: '',
-      postalCode: '',
-      administrativeArea: '',
-      subAdministrativeArea: '',
-      locality: '',
-      subLocality: '',
-      thoroughfare: '',
-      subThoroughfare: '',
-      areasOfInterest: []
-    }
-    for (let i=0; i < res.address_components.length; i++)
-    {
-      if(res.address_components[i].types.includes("postal_code"))
-      {
-        address.postalCode = res.address_components[i].long_name;
-      }
-      if(res.address_components[i].types.includes("locality"))
-      {
-        address.locality = res.address_components[i].long_name;
-      }
-      if(res.address_components[i].types.includes("subLocality"))
-      {
-        address.subLocality = res.address_components[i].long_name;
-      }
-      if(res.address_components[i].types.includes("country"))
-      {
-        address.countryName = res.address_components[i].long_name;
-        address.countryCode = res.address_components[i].short_name;
-      }
-      if(res.address_components[i].types.includes("administrative_area_level_1"))
-      {
-        address.administrativeArea = res.address_components[i].short_name;
-      }
-      if(res.address_components[i].types.includes("administrative_area_level_2"))
-      {
-        address.subAdministrativeArea = res.address_components[i].long_name;
-      }
-      if(res.address_components[i].types.includes("street_number"))
-      {
-        street_number = res.address_components[i].long_name;
-      }
-      if(res.address_components[i].types.includes("route"))
-      {
-        route = res.address_components[i].long_name;
-      }
-    }
-    address.thoroughfare = street_number + " " + route
-    console.log("autocomplete address", address);
-    selectedAddress.value = address;
+    selectedAddress.value = gmapObjToNativeGeocoderResultObject(res)
   }
 }
 
@@ -649,6 +653,9 @@ const chosenGym = computed(() => store.assignedFacility);
     width: 100%;
     z-index: 15;
     transition: right 0.35s ease;
+    padding: 15px 20px 12px 20px;
+    background: var(--gray-800);
+    border-radius: var(--border-radius);
     --border-radius: 8px;
     --color: var(--ion-color-white);
     --placeholder-opacity: 1;
