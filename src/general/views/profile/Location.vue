@@ -70,8 +70,23 @@
                   : ''
               "
             /> -->
+            <div class="address-container">
+              <ion-text class="address-content">
+                Address
+              </ion-text>
+              <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
+                {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
+                {{ `${selectedAddress?.locality}` }},
+                {{ `${selectedAddress?.administrativeArea}` }},
+                {{ `${selectedAddress?.countryCode}` }},
+              </ion-text>
+            </div>
             <GMapAutocomplete
                 placeholder="Enter your address"
+                class="search-form__control"
+                :class="{
+                  'search-form__control--on-focus': isFocused,
+                }"
                 @place_changed="setPlace"
               >
             </GMapAutocomplete>
@@ -617,5 +632,45 @@ const chosenGym = computed(() => store.assignedFacility);
       margin-top: 16px;
     }
   }
+}
+
+.search-form {
+  position: relative;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
+  justify-content: flex-end;
+  transition: background-color 0.35s ease;
+
+  &--on-focus {
+    background-color: var(--gray-800);
+  }
+
+  &__control {
+    padding: 0;
+    width: 100%;
+    z-index: 15;
+    transition: right 0.35s ease;
+    --border-radius: 8px;
+    --color: var(--ion-color-white);
+    --placeholder-opacity: 1;
+    --background: var(--gray-700);
+    --placeholder-font-weight: 300;
+    --placeholder-color: var(--gray-500);
+    --box-shadow: inset 0 0 0 0.8px var(--gray-600);
+  }
+}
+.address-container {
+  display: flex;
+  min-height: 48px;
+  flex-direction: row;
+  border-radius: 8px;
+  align-items: center;
+  padding: 8px 16px 8px;
+  background: var(--gray-700);
+  justify-content: space-between;
+}
+.address-content {
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--ion-color-white);
 }
 </style>
