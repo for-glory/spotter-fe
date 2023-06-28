@@ -92,7 +92,7 @@
   <confirmation
     :is-visible="showConfirmationModal"
     title="Are you sure you select the right address?"
-    description="Looks like the selected address is in another state or city."
+    description=""
     button-text="Yes, I'm sure"
     @discard="onAddressConfirmed"
     @decline="hideModal"
