@@ -493,7 +493,7 @@ const reverseGeoLocation = async (lat: number, lng: number) => {
                 route = res.address_components[i].long_name;
               }
             }
-            address.thoroughfare = street_number + route
+            address.thoroughfare = street_number + " " + route
             chosenAddress.value = address;
             console.log("OK-->", chosenAddress);
           } else {
