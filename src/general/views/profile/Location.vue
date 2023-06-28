@@ -59,7 +59,7 @@
               :value="selectedCity?.name"
               :disabled="!selectedState || useMyPhoneLocation"
             /> -->
-            <choose-block
+            <!-- <choose-block
               title="Address"
               class="form-row__control"
               @handle-click="chooseAddress"
@@ -69,7 +69,12 @@
                   ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
                   : ''
               "
-            />
+            /> -->
+            <GMapAutocomplete
+                placeholder="Enter your address"
+                @place_changed="setPlace"
+              >
+            </GMapAutocomplete>
           </div>
           <div class="form-row" v-if="role === RoleEnum.Trainer">
             <ion-label class="label">
@@ -288,6 +293,66 @@ const chooseCity = () => {
     state: selectedState.value,
   });
 };
+
+const setPlace = (res: any) => {
+  if (res) {
+    let street_number =''
+    let route =''
+    const address:NativeGeocoderResult = {
+      latitude: res.geometry.location.lat().toString(),
+      longitude: res.geometry.location.lng().toString(),
+      countryCode: '',
+      countryName: '',
+      postalCode: '',
+      administrativeArea: '',
+      subAdministrativeArea: '',
+      locality: '',
+      subLocality: '',
+      thoroughfare: '',
+      subThoroughfare: '',
+      areasOfInterest: []
+    }
+    for (let i=0; i < res.address_components.length; i++)
+    {
+      if(res.address_components[i].types.includes("postal_code"))
+      {
+        address.postalCode = res.address_components[i].long_name;
+      }
+      if(res.address_components[i].types.includes("locality"))
+      {
+        address.locality = res.address_components[i].long_name;
+      }
+      if(res.address_components[i].types.includes("subLocality"))
+      {
+        address.subLocality = res.address_components[i].long_name;
+      }
+      if(res.address_components[i].types.includes("country"))
+      {
+        address.countryName = res.address_components[i].long_name;
+        address.countryCode = res.address_components[i].short_name;
+      }
+      if(res.address_components[i].types.includes("administrative_area_level_1"))
+      {
+        address.administrativeArea = res.address_components[i].short_name;
+      }
+      if(res.address_components[i].types.includes("administrative_area_level_2"))
+      {
+        address.subAdministrativeArea = res.address_components[i].long_name;
+      }
+      if(res.address_components[i].types.includes("street_number"))
+      {
+        street_number = res.address_components[i].long_name;
+      }
+      if(res.address_components[i].types.includes("route"))
+      {
+        route = res.address_components[i].long_name;
+      }
+    }
+    address.thoroughfare = street_number + " " + route
+    console.log("autocomplete address", address);
+    selectedAddress.value = address;
+  }
+}
 
 const chooseAddress = () => {
   chooseAddressModal.value?.present({
