@@ -465,7 +465,7 @@ const reverseGeoLocation = async (lat: number, lng: number) => {
               }
               if(res.address_components[i].types.includes("locality"))
               {
-                address.locality = res.address_components[i].long_name;
+                address.locality = res.address_components[i].short_name;
               }
               if(res.address_components[i].types.includes("subLocality"))
               {
