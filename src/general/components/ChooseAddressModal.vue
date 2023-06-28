@@ -92,7 +92,7 @@
   <confirmation
     :is-visible="showConfirmationModal"
     title="Are you sure you select the right address?"
-    description="Looks like the selected address is in another state or city."
+    description=""
     button-text="Yes, I'm sure"
     @discard="onAddressConfirmed"
     @decline="hideModal"
@@ -169,27 +169,27 @@ const cancel = () => {
 
 const choose = async () => {
   if (type.value === EntitiesEnum.Address) {
-    if (chosenAddress.value?.countryCode !== countryCode) {
-      const toast = await toastController.create({
-        message:
-          "Selected address outside the United States. Make sure the address is correct.",
-        duration: 2000,
-        icon: "assets/icon/info.svg",
-        cssClass: "danger-toast",
-      });
-      toast.present();
-      return;
-    }
+    // if (chosenAddress.value?.countryCode !== countryCode) {
+    //   const toast = await toastController.create({
+    //     message:
+    //       "Selected address outside the United States. Make sure the address is correct.",
+    //     duration: 2000,
+    //     icon: "assets/icon/info.svg",
+    //     cssClass: "danger-toast",
+    //   });
+    //   toast.present();
+    //   return;
+    // }
 
-    if (
-      chosenAddress.value.locality?.toLowerCase() !==
-        selectedCity.value?.name?.toLowerCase() ||
-      chosenAddress.value.administrativeArea?.toLowerCase() !==
-        selectedState.value?.code?.toLowerCase()
-    ) {
+    // if (
+    //   chosenAddress.value.locality?.toLowerCase() !==
+    //     selectedCity.value?.name?.toLowerCase() ||
+    //   chosenAddress.value.administrativeArea?.toLowerCase() !==
+    //     selectedState.value?.code?.toLowerCase()
+    // ) {
       showAddressConfirmationModal();
       return;
-    }
+    // }
   }
 
   const selected = {
@@ -427,17 +427,12 @@ const mapOptions = {
 };
 
 const mapChanged = (event: typeof VueGoogleMaps) => {
-  console.log("event--", event);
-  console.log("lat--", event.lat(), "lng--", event.lng());
   mapPosition.value = { lat: event.lat(), lng: event.lng() };
 };
 
-const getGeoLocation = async (lat: number, lng: number, type?: any) => {
-    console.log("map-->", map)
+const reverseGeoLocation = async (lat: number, lng: number) => {
     if (navigator.geolocation) {
-      console.log("map.value?-->", map.value)
-      if (map.value?.ready) {
-        console.log("map.value?.ready-->", map.value.ready)
+      map.value?.$mapPromise.then(async () => {
         let geocoder = await new window.google.maps.Geocoder();
         let latlng = await new window.google.maps.LatLng(lat, lng);
         let request = { latLng: latlng };
@@ -445,18 +440,67 @@ const getGeoLocation = async (lat: number, lng: number, type?: any) => {
         await geocoder.geocode(request, (results, status) => {
           console.log("results, status", results, status);
           if (status == window.google.maps.GeocoderStatus.OK) {
-            let result = results[0];
-            // this.zone.run(() => {
-            //   if (result != null) {
-            //     this.userCity = result.formatted_address;
-            //     if (type === 'reverseGeocode') {
-            //       this.latLngResult = result.formatted_address;
-            //     }
-            //   }
-            // })
+            let street_number =''
+            let route =''
+            const res = results[0];
+            const address:NativeGeocoderResult = {
+              latitude: lat.toString(),
+              longitude: lng.toString(),
+              countryCode: '',
+              countryName: '',
+              postalCode: '',
+              administrativeArea: '',
+              subAdministrativeArea: '',
+              locality: '',
+              subLocality: '',
+              thoroughfare: '',
+              subThoroughfare: '',
+              areasOfInterest: []
+            }
+            for (let i=0; i < res.address_components.length; i++)
+            {
+              if(res.address_components[i].types.includes("postal_code"))
+              {
+                address.postalCode = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("locality"))
+              {
+                address.locality = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("subLocality"))
+              {
+                address.subLocality = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("country"))
+              {
+                address.countryName = res.address_components[i].long_name;
+                address.countryCode = res.address_components[i].short_name;
+              }
+              if(res.address_components[i].types.includes("administrative_area_level_1"))
+              {
+                address.administrativeArea = res.address_components[i].short_name;
+              }
+              if(res.address_components[i].types.includes("administrative_area_level_2"))
+              {
+                address.subAdministrativeArea = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("street_number"))
+              {
+                street_number = res.address_components[i].long_name;
+              }
+              if(res.address_components[i].types.includes("route"))
+              {
+                route = res.address_components[i].long_name;
+              }
+            }
+            address.thoroughfare = street_number + " " + route
+            chosenAddress.value = address;
+            console.log("OK-->", chosenAddress);
+          } else {
+              chosenAddress.value = undefined;
           }
         });
-      }
+      })
     }
   }
 
@@ -500,7 +544,7 @@ const addressSelected = () => {
         });
     } else {
       console.log('Web platform');
-      getGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
+      reverseGeoLocation(mapPosition.value?.lat, mapPosition.value?.lng)
     }
   }
 };

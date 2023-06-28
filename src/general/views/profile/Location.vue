@@ -45,25 +45,25 @@
             >
               Location information
             </ion-label>
-            <choose-block
+            <!-- <choose-block
               title="State"
               class="form-row__control"
               @handle-click="chooseState"
               :value="selectedState?.name"
               :disabled="useMyPhoneLocation"
-            />
-            <choose-block
+            /> -->
+            <!-- <choose-block
               title="City"
               class="form-row__control"
               @handle-click="chooseCity"
               :value="selectedCity?.name"
               :disabled="!selectedState || useMyPhoneLocation"
-            />
+            /> -->
             <choose-block
               title="Address"
               class="form-row__control"
               @handle-click="chooseAddress"
-              :disabled="!selectedCity || useMyPhoneLocation"
+              :disabled="useMyPhoneLocation"
               :value="
                 selectedAddress
                   ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
@@ -269,7 +269,7 @@ const onPhoneLocationChecked = async (value: boolean) => {
 const disabledSaveBtn = computed(() =>
   useMyPhoneLocation.value
     ? !useMyPhoneLocation.value || gettingUserLocation.value
-    : !(selectedState.value && selectedCity.value && selectedAddress.value)
+    : !(selectedAddress.value)
 );
 
 const chooseState = () => {
@@ -351,36 +351,57 @@ const saveAddress = async () => {
   };
   if (!useMyPhoneLocation.value) {
     console.log("selectedAddress-->", selectedAddress)
-    const address = {
-      lat: Number(selectedAddress.value?.latitude),
-      lng: Number(selectedAddress.value?.longitude),
-      street: `${selectedAddress.value?.thoroughfare} ${selectedAddress.value?.subThoroughfare}`,
-      extra: "",
-      city_id: selectedCity.value?.id,
-    };
+    if (selectedAddress.value?.locality) {
+      getCityByName({
+        first: 15,
+        name: selectedAddress.value?.locality,
+        state_code: selectedAddress.value?.administrativeArea,
+      })?.then(async (res) => {
+        const res_city = res.data.cities.data[0];
+        if (res_city) {
+          const address = {
+            lat: Number(selectedAddress.value?.latitude),
+            lng: Number(selectedAddress.value?.longitude),
+            street: `${selectedAddress.value?.thoroughfare} ${selectedAddress.value?.subThoroughfare}`,
+            extra: "",
+            city_id: res_city.id,
+          };
 
-    mutate({
-      ...options,
-      address,
-    })
-      .then(async () => {
-        const toast = await toastController.create({
-          message: "Location successfully updated",
-          duration: 2000,
-          icon: "assets/icon/success.svg",
-          cssClass: "success-toast",
-        });
-        toast.present();
-        onBack();
-      })
-      .catch(async () => {
-        const toast = await toastController.create({
-          message: "Something went wrong. Please try again.",
-          icon: "assets/icon/info.svg",
-          cssClass: "danger-toast",
-        });
-        toast.present();
+          mutate({
+            ...options,
+            address,
+          })
+            .then(async () => {
+              const toast = await toastController.create({
+                message: "Location successfully updated",
+                duration: 2000,
+                icon: "assets/icon/success.svg",
+                cssClass: "success-toast",
+              });
+              toast.present();
+              onBack();
+            })
+            .catch(async () => {
+              const toast = await toastController.create({
+                message: "Something went wrong. Please try again.",
+                icon: "assets/icon/info.svg",
+                cssClass: "danger-toast",
+              });
+              toast.present();
+            });
+        } else {
+          const toast = await toastController.create({
+            message:
+              "Your address is outside the area. Try to choose manually.",
+            duration: 2000,
+            icon: "assets/icon/info.svg",
+            cssClass: "warning-toast",
+          });
+          toast.present();
+        }
       });
+    }
+    
   } else {
     const address = {
       ...userCurrentLocation.value,

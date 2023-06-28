@@ -52,6 +52,7 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
+import { toastController } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { computed, ref } from "vue";
@@ -71,9 +72,6 @@ import {
   SubscriptionsTierEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
-import {useToast} from 'vue-toast-notification';
-
-const $toast = useToast();
 
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
@@ -127,28 +125,39 @@ const photoSelected = async (value: string): Promise<void> => {
           avatar: res?.data.filePreload.path,
         },
       })
-        .then(() => {
-          let instance = $toast.success('Image uploaded!', {
-            duration: 5000,
-            position: 'top'
+        .then(async () => {
+          const toast = await toastController.create({
+            message: "Image uploaded!",
+            duration: 2000,
+            icon: "assets/icon/success.svg",
+            cssClass: "success-toast",
           });
+          toast.present();
           refetch()
         })
-        .catch((error) => {
-          let instance = $toast.error('Image upload failed!', {
-            duration: 5000,
-            position: 'top'
+        .catch(async (error) => {
+          const toast = await toastController.create({
+            message:
+              "Image upload failed!",
+            duration: 2000,
+            icon: "assets/icon/info.svg",
+            cssClass: "warning-toast",
           });
+          toast.present();
           console.error(error)
         });
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
     })
-    .catch((error) => {
-      let instance = $toast.error('Image upload failed!', {
-        duration: 5000,
-        position: 'top'
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message:
+          "Image upload failed!",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
       });
+      toast.present();
       console.error(error);
       abort();
       previewOnLoading.value = false;
@@ -163,19 +172,26 @@ const deletePhoto = () => {
       avatar: null,
     },
   })
-    .then(() => {
-      let instance = $toast.success('Profile Image was deleted!', {
-        duration: 5000,
-        position: 'top'
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Profile Image was deleted!",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
       });
+      toast.present();
       removePhoto();
       refetch();
     })
-    .catch((error) => {
-      let instance = $toast.error('Action failed!', {
-        duration: 5000,
-        position: 'top'
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message:
+          "Action failed!",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
       });
+      toast.present();
       console.error(error)
     });
 };
