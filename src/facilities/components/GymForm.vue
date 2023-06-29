@@ -213,7 +213,7 @@ const equipmentAndAmenitiessSelected = (
 
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
-const selectedAddress = ref<NativeGeocoderResult | null>(null);
+const selectedAddress = computed(() => store.address.address);
 
 const onChooseAmenities = () => {
   equipmentAndAmenitiessModal.value?.present({
