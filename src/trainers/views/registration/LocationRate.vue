@@ -14,21 +14,21 @@
         </div>
         <div class="form-row">
           <ion-label class="label"> Location information</ion-label>
-          <choose-block
+          <!-- <choose-block
             title="State"
             class="form-row__control"
             @handle-click="chooseState"
             :value="selectedState?.name"
             :disabled="useCurrentLocation"
-          />
-          <choose-block
+          /> -->
+          <!-- <choose-block
             title="City"
             class="form-row__control"
             @handle-click="chooseCity"
             :value="selectedCity?.name"
             :disabled="!selectedState || useCurrentLocation"
-          />
-          <choose-block
+          /> -->
+          <!-- <choose-block
             title="Address"
             class="form-row__control"
             @handle-click="chooseAddress"
@@ -38,7 +38,27 @@
                 ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
                 : ''
             "
-          />
+          /> -->
+          <div class="address-container">
+            <ion-text class="address-content">
+              Address
+            </ion-text>
+            <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
+              {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
+              {{ `${selectedAddress?.locality}` }},
+              {{ `${selectedAddress?.administrativeArea}` }},
+              {{ `${selectedAddress?.countryName}` }}
+            </ion-text>
+          </div>
+          <GMapAutocomplete
+              placeholder="Enter your address"
+              class="search-form__control"
+              :class="{
+                'search-form__control--on-focus': isFocused,
+              }"
+              @place_changed="setPlace"
+            >
+          </GMapAutocomplete>
         </div>
         <div class="form-row">
           <ion-label class="label">
@@ -201,6 +221,68 @@ const chooseCity = () => {
   });
 };
 
+const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
+  let street_number =''
+  let route =''
+  const address:NativeGeocoderResult = {
+    latitude: gmObj.geometry.location.lat().toString(),
+    longitude: gmObj.geometry.location.lng().toString(),
+    countryCode: '',
+    countryName: '',
+    postalCode: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    locality: '',
+    subLocality: '',
+    thoroughfare: '',
+    subThoroughfare: '',
+    areasOfInterest: []
+  }
+  for (let i=0; i < gmObj.address_components.length; i++)
+  {
+    if(gmObj.address_components[i].types.includes("postal_code"))
+    {
+      address.postalCode = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("locality"))
+    {
+      address.locality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("subLocality"))
+    {
+      address.subLocality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("country"))
+    {
+      address.countryName = gmObj.address_components[i].long_name;
+      address.countryCode = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
+    {
+      address.administrativeArea = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
+    {
+      address.subAdministrativeArea = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("street_number"))
+    {
+      street_number = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("route"))
+    {
+      route = gmObj.address_components[i].long_name;
+    }
+  }
+  address.thoroughfare = street_number + " " + route
+  return address;
+}
+const setPlace = (res: any) => {
+  if (res) {
+    selectedAddress.value = gmapObjToNativeGeocoderResultObject(res)
+  }
+}
+
 const chooseAddress = () => {
   chooseAddressModal.value?.present({
     type: EntitiesEnum.Address,
@@ -306,18 +388,30 @@ const saveAddress = async () => {
     ],
   };
   if (!useCurrentLocation.value) {
-    const address = {
-      lat: Number(selectedAddress.value?.latitude),
-      lng: Number(selectedAddress.value?.longitude),
-      street: `${selectedAddress.value?.thoroughfare} ${selectedAddress.value?.subThoroughfare}`,
-      extra: "",
-      city_id: selectedCity.value?.id,
-    };
+    if (selectedAddress.value?.locality) {
+      getCityByName({
+        first: 15,
+        name: selectedAddress.value?.locality,
+        state_code: selectedAddress.value?.administrativeArea,
+      })?.then(async (res) => {
+        const res_city = res.data.cities.data[0];
+        if (res_city) {
+          const address = {
+            lat: Number(selectedAddress.value?.latitude),
+            lng: Number(selectedAddress.value?.longitude),
+            street: `${selectedAddress.value?.thoroughfare} ${selectedAddress.value?.subThoroughfare}`,
+            extra: "",
+            city_id: res_city.id,
+          };
 
-    updateTrainerType({
-      ...options,
-      address,
-    });
+          updateTrainerType({
+            ...options,
+            address,
+          });
+        }
+      });
+    }
+    
   } else {
     const address = {
       ...userCurrentLocation.value,
@@ -419,5 +513,49 @@ settingsUpdated(() => {
       margin-top: 16px;
     }
   }
+}
+.search-form {
+  position: relative;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
+  justify-content: flex-end;
+  transition: background-color 0.35s ease;
+
+  &--on-focus {
+    background-color: var(--gray-800);
+  }
+
+  &__control {
+    border: 1px solid;
+    margin-top: 10px;
+    padding: 0;
+    width: 100%;
+    z-index: 15;
+    transition: right 0.35s ease;
+    padding: 15px 20px 12px 20px;
+    background: var(--gray-800);
+    border-radius: var(--border-radius);
+    --border-radius: 8px;
+    --color: var(--ion-color-white);
+    --placeholder-opacity: 1;
+    --background: var(--gray-700);
+    --placeholder-font-weight: 300;
+    --placeholder-color: var(--gray-500);
+    --box-shadow: inset 0 0 0 0.8px var(--gray-600);
+  }
+}
+.address-container {
+  display: flex;
+  min-height: 48px;
+  flex-direction: row;
+  border-radius: 8px;
+  align-items: center;
+  padding: 8px 16px 8px;
+  background: var(--gray-700);
+  justify-content: space-between;
+}
+.address-content {
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--ion-color-white);
 }
 </style>
