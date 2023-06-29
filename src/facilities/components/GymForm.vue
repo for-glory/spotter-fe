@@ -155,7 +155,7 @@ import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 
-const { refetch: getCityByName } = useLazyQuery(
+const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
   {
     first: 15,
@@ -163,6 +163,7 @@ const { refetch: getCityByName } = useLazyQuery(
     state_code: "",
   }
 );
+getCities();
 
 const props = withDefaults(
   defineProps<{
@@ -389,6 +390,7 @@ const onConfirm = () => {
       state_code: selectedAddress.value?.administrativeArea,
     })?.then(async (res) => {
       const res_city = res.data.cities.data[0];
+      console.log("selected city", res_city)
       emits("submit", {
         title: facilityTitle.value,
         description: facilityDescription.value,
