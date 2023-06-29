@@ -78,7 +78,7 @@
                 {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
                 {{ `${selectedAddress?.locality}` }},
                 {{ `${selectedAddress?.administrativeArea}` }},
-                {{ `${selectedAddress?.countryName}` }},
+                {{ `${selectedAddress?.countryName}` }}
               </ion-text>
             </div>
             <GMapAutocomplete
@@ -238,8 +238,8 @@ onResult(({ data }) => {
       thoroughfare: data.me.address?.street,
       subThoroughfare: data.me.address?.extra,
       countryName: data.me.address?.city?.country?.name,
-      locality: data.me.address?.city,
-      administrativeArea: data.me.address?.city?.state,
+      locality: data.me.address?.city?.name,
+      administrativeArea: data.me.address?.city?.state?.code,
     };
   }
 
@@ -649,6 +649,8 @@ const chosenGym = computed(() => store.assignedFacility);
   }
 
   &__control {
+    border: 1px solid;
+    margin-top: 10px;
     padding: 0;
     width: 100%;
     z-index: 15;
