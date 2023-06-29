@@ -69,9 +69,9 @@
         </ion-text>
         <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
           {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
-          {{ `${selectedAddress?.locality}` }},
-          {{ `${selectedAddress?.administrativeArea}` }},
-          {{ `${selectedAddress?.countryName}` }}
+          {{ `${selectedCity?.name}` }},
+          {{ `${selectedCity?.state?.name}` }},
+          {{ `${selectedCity?.country?.name}` }}
         </ion-text>
       </div>
       <GMapAutocomplete
