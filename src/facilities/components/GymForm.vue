@@ -381,6 +381,7 @@ const onPreview = () => {
 };
 
 const onConfirm = () => {
+  console.log("selected address", selectedAddress.value, selectedAddress.value?.locality)
   if (selectedAddress.value?.locality) {
     getCityByName({
       first: 15,
