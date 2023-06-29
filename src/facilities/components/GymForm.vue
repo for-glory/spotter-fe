@@ -141,11 +141,11 @@ import {
 } from "vue";
 import { useRouter } from "vue-router";
 import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
-import { FilePreloadDocument } from "@/generated/graphql";
+import { FilePreloadDocument, CitiesDocument } from "@/generated/graphql";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { v4 as uuidv4 } from "uuid";
 import { dataURItoFile } from "@/utils/fileUtils";
-import { useMutation } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useNewFacilityStore } from "../store/new-facility";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
@@ -154,6 +154,16 @@ import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
+
+const { load: getCities, refetch: getCityByName } = useLazyQuery(
+  CitiesDocument,
+  {
+    first: 15,
+    name: "",
+    state_code: "",
+  }
+);
+getCities();
 
 const props = withDefaults(
   defineProps<{
@@ -372,18 +382,29 @@ const onPreview = () => {
 };
 
 const onConfirm = () => {
-  emits("submit", {
-    title: facilityTitle.value,
-    description: facilityDescription.value,
-    photos: facilityPhotos.value,
-    address: {
-      state: selectedState.value,
-      city: selectedCity.value,
-      address: selectedAddress.value,
-    },
-    equipments: facilityEquipments.value,
-    amenities: facilityAmenities.value,
-  });
+  console.log("selected address", selectedAddress.value, selectedAddress.value?.locality)
+  if (selectedAddress.value?.locality) {
+    getCityByName({
+      first: 15,
+      name: selectedAddress.value?.locality,
+      state_code: selectedAddress.value?.administrativeArea,
+    })?.then(async (res) => {
+      const res_city = res.data.cities.data[0];
+      console.log("selected city", res_city)
+      emits("submit", {
+        title: facilityTitle.value,
+        description: facilityDescription.value,
+        photos: facilityPhotos.value,
+        address: {
+          state: selectedState.value,
+          city: res_city,
+          address: selectedAddress.value,
+        },
+        equipments: facilityEquipments.value,
+        amenities: facilityAmenities.value,
+      });
+    })
+  }
 };
 
 const clearStore = () => {

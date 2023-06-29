@@ -110,3 +110,23 @@ ion-modal.auto-height {
 .form-row {
   margin-bottom: 24px;
 }
+
+.pac-container {
+  background-color: var(--gray-700);
+  
+  .pac-item {
+    color: var(--ion-color-white);
+
+    .pac-item-query {
+      color: var(--ion-color-white);
+    }
+
+    &:hover {
+      color: var(--gray-700);
+
+      .pac-item-query {
+        color: var(--gray-700);
+      }
+    }
+  }
+}
