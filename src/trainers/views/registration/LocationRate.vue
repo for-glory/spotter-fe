@@ -399,7 +399,7 @@ const saveAddress = async () => {
           const address = {
             lat: Number(selectedAddress.value?.latitude),
             lng: Number(selectedAddress.value?.longitude),
-            street: `${res_city.thoroughfare} ${res_city.subThoroughfare}`,
+            street: `${selectedAddress.value?.thoroughfare} ${selectedAddress.value?.subThoroughfare}`,
             extra: "",
             city_id: res_city.id,
           };
