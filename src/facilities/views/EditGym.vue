@@ -119,8 +119,8 @@ const editFacility = () => {
       name: store.$state.title,
       description: store.$state.description,
       address: {
-        lat: store.$state.address.address?.latitude,
-        lng: store.$state.address.address?.longitude,
+        lat: Number(store.$state.address.address?.latitude),
+        lng: Number(store.$state.address.address?.longitude),
         street: store.$state.address.address?.thoroughfare,
         city_id: store.$state.address.city?.id,
         extra: store.$state.address.address?.subThoroughfare,
