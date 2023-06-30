@@ -70,8 +70,7 @@
         <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
           {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
           {{ `${selectedCity?.name}` }},
-          {{ `${selectedCity?.state?.name}` }},
-          {{ `${selectedCity?.country?.name}` }}
+          {{ `${selectedCity?.state?.name}` }}
         </ion-text>
       </div>
       <GMapAutocomplete
