@@ -69,9 +69,8 @@
         </ion-text>
         <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
           {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
-          {{ `${selectedAddress?.locality}` }},
-          {{ `${selectedAddress?.administrativeArea}` }},
-          {{ `${selectedAddress?.countryName}` }}
+          {{ `${selectedCity?.name}` }},
+          {{ `${selectedCity?.state?.name}` }}
         </ion-text>
       </div>
       <GMapAutocomplete
@@ -213,7 +212,7 @@ const equipmentAndAmenitiessSelected = (
 
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
-const selectedAddress = ref<NativeGeocoderResult | null>(null);
+const selectedAddress = computed(() => store.address.address);
 
 const onChooseAmenities = () => {
   equipmentAndAmenitiessModal.value?.present({
@@ -302,9 +301,21 @@ const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
   address.thoroughfare = street_number + " " + route
   return address;
 }
-const setPlace = (res: any) => {
-  if (res) {
-    selectedAddress.value = gmapObjToNativeGeocoderResultObject(res)
+const setPlace = (place: any) => {
+  if (place) {
+    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
+    const address = gmapObjToNativeGeocoderResultObject(place)
+    if (address.locality) {
+      getCityByName({
+        first: 15,
+        name: address.locality,
+        state_code: address.administrativeArea,
+      })?.then(async (res) => {
+        const res_city = res.data.cities.data[0];
+        console.log("selected city", res_city)
+        store.setAddress(res_city.state, res_city, address);
+      })
+    }
   }
 }
 
@@ -382,29 +393,19 @@ const onPreview = () => {
 };
 
 const onConfirm = () => {
-  console.log("selected address", selectedAddress.value, selectedAddress.value?.locality)
-  if (selectedAddress.value?.locality) {
-    getCityByName({
-      first: 15,
-      name: selectedAddress.value?.locality,
-      state_code: selectedAddress.value?.administrativeArea,
-    })?.then(async (res) => {
-      const res_city = res.data.cities.data[0];
-      console.log("selected city", res_city)
-      emits("submit", {
-        title: facilityTitle.value,
-        description: facilityDescription.value,
-        photos: facilityPhotos.value,
-        address: {
-          state: selectedState.value,
-          city: res_city,
-          address: selectedAddress.value,
-        },
-        equipments: facilityEquipments.value,
-        amenities: facilityAmenities.value,
-      });
-    })
-  }
+  console.log("selected address", selectedState.value, selectedCity.value, selectedAddress.value)
+  emits("submit", {
+    title: facilityTitle.value,
+    description: facilityDescription.value,
+    photos: facilityPhotos.value,
+    address: {
+      state: selectedState.value,
+      city: selectedCity.value,
+      address: selectedAddress.value,
+    },
+    equipments: facilityEquipments.value,
+    amenities: facilityAmenities.value,
+  });
 };
 
 const clearStore = () => {
