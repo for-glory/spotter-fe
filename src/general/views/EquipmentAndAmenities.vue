@@ -1,6 +1,12 @@
 <template>
   <ion-modal ref="modal">
-    <page-header @back="cancel" back-btn :title="title" />
+    <page-header @back="cancel" back-btn :title="title">
+      <template #custom-btn>
+        <ion-button @click="select" class="header-btn">
+          <ion-icon src="assets/icon/accept.svg" />
+        </ion-button>
+      </template>
+    </page-header>
     <ion-content class="ion-padding-horizontal content">
       <ion-spinner
         name="lines"
@@ -104,6 +110,10 @@ const onAmenitiesChange = (data: string[]): void => {
 };
 
 const cancel = () => {
+  resetAndClose();
+};
+
+const select = () => {
   emits("cancel", {
     equipments:
       equipments.value?.filter(
@@ -150,5 +160,31 @@ defineExpose({
 .spinner {
   display: block;
   margin: 30vh auto;
+}
+
+.header-btn {
+  margin: 0;
+  height: 32px;
+  font-size: 24px;
+  display: block;
+  min-width: 32px;
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  --border-radius: 50% !important;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
+  --icon-padding-bottom: 0;
+  --icon-padding-end: 0;
+  --icon-padding-start: 0;
+  --icon-padding-top: 0;
+  --min-height: 32px;
+  --min-width: 32px;
+  --background: rgba(var(--ion-color-black-rgb), 0.12);
+
+  ion-icon {
+    font-size: 1em;
+  }
 }
 </style>
