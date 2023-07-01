@@ -121,7 +121,7 @@ const createNewFacility = (data: newFacilityStoreTypes) => {
   })
     .then(async () => {
       const toast = await toastController.create({
-        message: "Updated successfully",
+        message: "New Gym was created successfully",
         duration: 2000,
         icon: "assets/icon/success.svg",
         cssClass: "success-toast",
