@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage } from "@ionic/vue";
+import { IonPage, toastController } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import GymForm from "@/facilities/components/GymForm.vue";
@@ -118,7 +118,25 @@ const createNewFacility = (data: newFacilityStoreTypes) => {
       amenities: data.amenities.map((amenity) => amenity.id),
       registration_code,
     },
-  });
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "New Gym was created successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
 };
 
 const gymForm = ref<typeof GymForm | null>(null);
