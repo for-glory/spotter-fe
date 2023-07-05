@@ -40,21 +40,21 @@
     <template v-if="!edit">
       <div class="form-row">
         <ion-label class="label"> Choose more suitable location </ion-label>
-        <choose-block
+        <!-- <choose-block
           title="State"
           :disabled="loading"
           class="form-row__control"
           @handle-click="chooseState"
           :value="selectedState?.name"
-        />
-        <choose-block
+        /> -->
+        <!-- <choose-block
           title="City"
           class="form-row__control"
           @handle-click="chooseCity"
           :value="selectedCity?.name"
           :disabled="!selectedState || loading"
-        />
-        <choose-block
+        /> -->
+        <!-- <choose-block
           title="Address"
           class="form-row__control"
           @handle-click="chooseAddress"
@@ -64,7 +64,26 @@
               ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
               : ''
           "
-        />
+        /> -->
+        <div class="address-container">
+          <ion-text class="address-content">
+            Address
+          </ion-text>
+          <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
+            {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
+            {{ `${selectedCity?.name}` }},
+            {{ `${selectedCity?.state?.name}` }}
+          </ion-text>
+        </div>
+        <GMapAutocomplete
+            placeholder="Enter your address"
+            class="search-form__control"
+            :class="{
+              'search-form__control--on-focus': isFocused,
+            }"
+            @place_changed="setPlace"
+          >
+        </GMapAutocomplete>
       </div>
 
       <div class="form-row">
@@ -216,8 +235,9 @@ import {
   CreateEventInput,
   FilePreloadDocument,
   DeleteMediaDocument,
+  CitiesDocument,
 } from "@/generated/graphql";
-import { useMutation } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useNewEventStore } from "@/general/stores/new-event";
 import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
@@ -229,6 +249,9 @@ import {
 import { EntitiesEnum } from "@/const/entities";
 import dayjs from "dayjs";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
+import {
+  NativeGeocoderResult,
+} from "@awesome-cordova-plugins/native-geocoder";
 
 enum DateFieldsEnum {
   StartDate = "START_DATE",
@@ -262,6 +285,16 @@ watch(
     store.setAmenities(newVal.amenities ?? []);
   }
 );
+
+const { load: getCities, refetch: getCityByName } = useLazyQuery(
+  CitiesDocument,
+  {
+    first: 15,
+    name: "",
+    state_code: "",
+  }
+);
+getCities();
 
 const store = useNewEventStore();
 
@@ -381,6 +414,80 @@ const chooseCity = () => {
     state: selectedState.value,
   });
 };
+
+const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
+  let street_number =''
+  let route =''
+  const address:NativeGeocoderResult = {
+    latitude: gmObj.geometry.location.lat().toString(),
+    longitude: gmObj.geometry.location.lng().toString(),
+    countryCode: '',
+    countryName: '',
+    postalCode: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    locality: '',
+    subLocality: '',
+    thoroughfare: '',
+    subThoroughfare: '',
+    areasOfInterest: []
+  }
+  for (let i=0; i < gmObj.address_components.length; i++)
+  {
+    if(gmObj.address_components[i].types.includes("postal_code"))
+    {
+      address.postalCode = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("locality"))
+    {
+      address.locality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("subLocality"))
+    {
+      address.subLocality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("country"))
+    {
+      address.countryName = gmObj.address_components[i].long_name;
+      address.countryCode = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
+    {
+      address.administrativeArea = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
+    {
+      address.subAdministrativeArea = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("street_number"))
+    {
+      street_number = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("route"))
+    {
+      route = gmObj.address_components[i].long_name;
+    }
+  }
+  address.thoroughfare = street_number + " " + route
+  return address;
+}
+const setPlace = (place: any) => {
+  if (place) {
+    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
+    const address = gmapObjToNativeGeocoderResultObject(place)
+    if (address.locality) {
+      getCityByName({
+        first: 15,
+        name: address.locality,
+        state_code: address.administrativeArea,
+      })?.then(async (res) => {
+        const res_city = res.data.cities.data[0];
+        console.log("selected city", res_city)
+        store.setAddress(res_city.state, res_city, address);
+      })
+    }
+  }
+}
 
 const chooseAddress = () => {
   chooseAddressModal.value?.present({
@@ -649,5 +756,50 @@ defineExpose({
   .button {
     margin: 0;
   }
+}
+
+.search-form {
+  position: relative;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
+  justify-content: flex-end;
+  transition: background-color 0.35s ease;
+
+  &--on-focus {
+    background-color: var(--gray-800);
+  }
+
+  &__control {
+    border: 1px solid;
+    margin-top: 10px;
+    padding: 0;
+    width: 100%;
+    z-index: 15;
+    transition: right 0.35s ease;
+    padding: 15px 20px 12px 20px;
+    background: var(--gray-800);
+    border-radius: var(--border-radius);
+    --border-radius: 8px;
+    --color: var(--ion-color-white);
+    --placeholder-opacity: 1;
+    --background: var(--gray-700);
+    --placeholder-font-weight: 300;
+    --placeholder-color: var(--gray-500);
+    --box-shadow: inset 0 0 0 0.8px var(--gray-600);
+  }
+}
+.address-container {
+  display: flex;
+  min-height: 48px;
+  flex-direction: row;
+  border-radius: 8px;
+  align-items: center;
+  padding: 8px 16px 8px;
+  background: var(--gray-700);
+  justify-content: space-between;
+}
+.address-content {
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--ion-color-white);
 }
 </style>
