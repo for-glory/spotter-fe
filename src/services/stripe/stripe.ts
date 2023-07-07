@@ -75,6 +75,10 @@ export class BackendStripe {
   createPaymentIntent() {
     return useMutation<PaymentIntentMutation>(PaymentIntentDocument);
   }
+  createSubscriptionIntent() {
+    console.log("create subscription intent")
+    return ;
+  }
   changePaymentMethod() {
     return useMutation<ChangePaymentMethodMutation>(
       ChangePaymentMethodDocument

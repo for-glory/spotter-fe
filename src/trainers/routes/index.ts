@@ -201,6 +201,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.SubscriptionPaymentMethod,
+    path: "/subscription/:subscriptionId(\\d+)",
+    component: () => import("@/general/views/profile/ChoosePaymentMethod.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileWorkingSchedule,
     path: "/profile/working-schedule",
     component: () => import("@/general/views/profile/WorkingSchedule.vue"),
