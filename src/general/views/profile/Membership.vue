@@ -150,6 +150,8 @@ import dayjs from "dayjs";
 import { Browser } from "@capacitor/browser";
 import { setAuthItems } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
+import { Capacitor } from '@capacitor/core';
+import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
 const selectedItem = ref<any>({});
@@ -285,25 +287,39 @@ const setupListeners = async () => {
 };
 const purchase = () => {
   isLoading.value = true;
-  InAppPurchase2.order(selectedItem.value)
-    .then(() => {
-      isLoading.value = false;
-      console.log(
-        "entered into Apple/Google pop up with the purchase confirmation"
-      );
-    })
-    .error((error: any) => {
-      isLoading.value = false;
-      errorMessage.value = `Failed to purchase: ${error}`;
+  if (Capacitor.isNativePlatform()) {
+    InAppPurchase2.order(selectedItem.value)
+      .then(() => {
+        isLoading.value = false;
+        console.log(
+          "entered into Apple/Google pop up with the purchase confirmation"
+        );
+      })
+      .error((error: any) => {
+        isLoading.value = false;
+        errorMessage.value = `Failed to purchase: ${error}`;
+      });
+  } else {
+    console.log('Web platform', selectedItem.value);
+    router.push({
+      name: EntitiesEnum.SubscriptionPaymentMethod,
+      params: { subscriptionId: selectedItem.value.product_id },
     });
+  }
 };
 
 const selectProduct = (plan: any) => {
-  selectedItem.value = InAppPurchase2.products
-    .filter((value) => {
-      return value.id === plan.subscriptionPlan.product_id;
-    })
-    .pop();
+  if (Capacitor.isNativePlatform()) {
+    selectedItem.value = InAppPurchase2.products
+      .filter((value) => {
+        return value.id === plan.subscriptionPlan.product_id;
+      })
+      .pop();
+  } else {
+    console.log('Web platform');
+    console.log('plan.subscriptionPlan', plan.subscriptionPlan);
+    selectedItem.value = plan.subscriptionPlan
+  }
 };
 
 const {
