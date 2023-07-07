@@ -303,7 +303,7 @@ const purchase = () => {
     console.log('Web platform');
     router.push({
       name: EntitiesEnum.SubscriptionPaymentMethod,
-      params: { subscriptionId: selectedItem.product_id },
+      params: { subscriptionId: selectedItem.value.product_id },
     });
   }
 };
