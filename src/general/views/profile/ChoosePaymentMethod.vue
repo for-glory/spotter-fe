@@ -224,13 +224,6 @@ capacitorStripe.addListener(GooglePayEventsEnum.Failed, () => {
   // @TODO create correct behaviour of failed payment
 });
 
-const checkIfGpayAvailable = async () => {
-};
-
-const checkIfApplepayAvailable = async () => {
-  
-};
-
 </script>
 <style lang="scss">
 .optional {
