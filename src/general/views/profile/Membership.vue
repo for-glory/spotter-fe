@@ -300,7 +300,7 @@ const purchase = () => {
         errorMessage.value = `Failed to purchase: ${error}`;
       });
   } else {
-    console.log('Web platform');
+    console.log('Web platform', selectedItem.value);
     router.push({
       name: EntitiesEnum.SubscriptionPaymentMethod,
       params: { subscriptionId: selectedItem.value.product_id },
@@ -317,6 +317,7 @@ const selectProduct = (plan: any) => {
       .pop();
   } else {
     console.log('Web platform');
+    console.log('plan.subscriptionPlan', plan.subscriptionPlan);
     selectedItem.value = plan.subscriptionPlan
   }
 };
