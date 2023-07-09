@@ -154,6 +154,8 @@ const onSubmit = () => {
     subscription_product_id: route.params.subscriptionId,
   })
     .then((data) => {
+      console.log("data==>", data)
+      console.log("data22====>", data?.data?.paymentIntent)
       let intent = JSON.parse(data?.data?.paymentIntent?.session);
       backendStripe.redirectToCheckout(intent.id);
     })
