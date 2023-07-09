@@ -151,7 +151,7 @@ const onSubmit = () => {
   errorMessage.value = "";
 
   createSubscriptionIntent({
-    subscription_product_id: route.params.subscriptionId,
+    product_id: route.params.subscriptionId,
   })
     .then((data) => {
       console.log("data==>", data)
