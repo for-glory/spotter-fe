@@ -338,12 +338,17 @@ gotMyProfile(({ data }) => {
   }
 });
 const getPlatform = () => {
-  if (isPlatform("android")) {
-    return SubscriptionProvidersEnum.Google;
+  if (Capacitor.isNativePlatform()) {
+    if (isPlatform("android")) {
+      return SubscriptionProvidersEnum.Google;
+    }
+    if (isPlatform("ios")) {
+      return SubscriptionProvidersEnum.Apple;
+    }
+  } else {
+    return SubscriptionProvidersEnum.Web;
   }
-  if (isPlatform("ios")) {
-    return SubscriptionProvidersEnum.Apple;
-  }
+  
 };
 
 const onBack = () => {

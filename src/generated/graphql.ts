@@ -2432,7 +2432,9 @@ export enum SubscriptionProvidersEnum {
   /** APPLE */
   Apple = 'APPLE',
   /** GOOGLE */
-  Google = 'GOOGLE'
+  Google = 'GOOGLE',
+  /** WEB */
+  Web = 'WEB'
 }
 
 /** SubscriptionSilverGymFacilityBenefitsKeyEnum Variants */
