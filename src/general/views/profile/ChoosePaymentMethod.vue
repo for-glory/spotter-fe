@@ -151,10 +151,12 @@ const onSubmit = () => {
   errorMessage.value = "";
 
   createSubscriptionIntent({
-    subscription_product_id: route.params.subscriptionId,
+    product_id: route.params.subscriptionId,
+    facility_id: route.query.facilityId,
   })
     .then((data) => {
-      let intent = JSON.parse(data?.data?.paymentIntent?.session);
+      console.log("data==>", data)
+      let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
       backendStripe.redirectToCheckout(intent.id);
     })
     .catch((err) => {
@@ -188,7 +190,7 @@ const changePaymentMethod = (cardId: number) => {
 };
 
 const onCardCreation = async () => {
-  const { onResult } = backendStripe.createSetupIntent(route.params.subscriptionId);
+  const { onResult } = backendStripe.createSetupIntent();
   onResult((setupIntentResult) => {
     let intent = JSON.parse(setupIntentResult?.data?.setupIntent?.session);
     backendStripe.redirectToCardSaving(intent.id, intent.url);

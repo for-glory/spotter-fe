@@ -132,7 +132,7 @@ import {
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import {
   MeDocument,
@@ -154,6 +154,7 @@ import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
+const route = useRoute();
 const selectedItem = ref<any>({});
 const { role } = useRoles();
 const { id } = useId();
@@ -304,6 +305,9 @@ const purchase = () => {
     router.push({
       name: EntitiesEnum.SubscriptionPaymentMethod,
       params: { subscriptionId: selectedItem.value.product_id },
+      query: {
+          facilityId: route?.query?.facilityId || "",
+        },
     });
   }
 };
@@ -338,12 +342,17 @@ gotMyProfile(({ data }) => {
   }
 });
 const getPlatform = () => {
-  if (isPlatform("android")) {
-    return SubscriptionProvidersEnum.Google;
+  if (Capacitor.isNativePlatform()) {
+    if (isPlatform("android")) {
+      return SubscriptionProvidersEnum.Google;
+    }
+    if (isPlatform("ios")) {
+      return SubscriptionProvidersEnum.Apple;
+    }
+  } else {
+    return SubscriptionProvidersEnum.Web;
   }
-  if (isPlatform("ios")) {
-    return SubscriptionProvidersEnum.Apple;
-  }
+  
 };
 
 const onBack = () => {

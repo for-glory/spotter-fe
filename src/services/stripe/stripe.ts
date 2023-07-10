@@ -11,6 +11,8 @@ provideApolloClient(initializeApollo());
 import {
   PaymentIntentMutation,
   PaymentIntentDocument,
+  CreateSubscriptionIntentMutation,
+  CreateSubscriptionIntentDocument,
   SetupIntentDocument,
   SetupIntentQuery,
   StripeCardsDocument,
@@ -77,7 +79,7 @@ export class BackendStripe {
   }
   createSubscriptionIntent() {
     console.log("create subscription intent")
-    return ;
+    return useMutation<CreateSubscriptionIntentMutation>(CreateSubscriptionIntentDocument);
   }
   changePaymentMethod() {
     return useMutation<ChangePaymentMethodMutation>(

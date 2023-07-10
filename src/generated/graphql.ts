@@ -2432,7 +2432,9 @@ export enum SubscriptionProvidersEnum {
   /** APPLE */
   Apple = 'APPLE',
   /** GOOGLE */
-  Google = 'GOOGLE'
+  Google = 'GOOGLE',
+  /** WEB */
+  Web = 'WEB'
 }
 
 /** SubscriptionSilverGymFacilityBenefitsKeyEnum Variants */
@@ -3116,6 +3118,7 @@ export type PaymentIntentMutationVariables = Exact<{
 
 
 export type PaymentIntentMutation = { __typename?: 'Mutation', paymentIntent: { __typename?: 'PaymentIntent', session?: string | null, zeroPayment: boolean } };
+export type CreateSubscriptionIntentMutation = { __typename?: 'Mutation', createSubscriptionIntent: { __typename?: 'CreateSubscriptionIntent', session?: string | null } };
 
 export type TrainingCheckinMutationVariables = Exact<{
   input: TrainingCheckinInput;
@@ -4096,6 +4099,15 @@ export const PaymentIntentDocument = gql`
   ) {
     session
     zeroPayment
+  }
+}
+    `;
+export const CreateSubscriptionIntentDocument = gql`
+    mutation CreateSubscriptionIntent($product_id: ID!) {
+    createSubscriptionIntent(
+    input: {product_id: $product_id}
+  ) {
+    session
   }
 }
     `;

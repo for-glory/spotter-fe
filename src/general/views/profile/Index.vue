@@ -328,6 +328,15 @@ const goTo = (name: EntitiesEnum) => {
       });
 
       break;
+    case EntitiesEnum.ProfileMembership:
+      router.push({
+        name,
+        query: {
+          facilityId: route?.query?.facilityId || "",
+        },
+      });
+
+      break;
     default:
       router.push({
         name,
