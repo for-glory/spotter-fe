@@ -4,7 +4,11 @@
       <ion-grid class="container">
         <ion-row>
           <ion-col size="12" size-md="7" class="container__content">
-            <ion-img class="logo" src="assets/icon/new-logo.png" />
+            <router-link
+              to="/"
+            >
+              <ion-img class="logo" src="assets/icon/new-logo.png" />
+            </router-link>
             <router-view />
           </ion-col>
           <ion-col size="12" size-md="5" class="background-image-section">
@@ -21,7 +25,6 @@
 
 <script lang="ts" setup>
 import { IonPage, IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonButton } from '@ionic/vue';
-import AuthenticationBackground from "@/general/components/blocks/headers/AuthenticationBackground.vue";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { AuthenticationMode } from "@/ts/enums/authentification";

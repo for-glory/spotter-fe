@@ -3,11 +3,15 @@
       <div
         class="landing-header container"
       >
-				<ion-img
-					src="assets/icon/new-logo.png"
-					class="logo"
-					alt="logo"
-				/>
+				<router-link
+					to="/"
+				>
+					<ion-img
+						src="assets/icon/new-logo.png"
+						class="logo"
+						alt="logo"
+					/>
+				</router-link>
 				<div class="landing-menu">
 					<router-link
 						to="/about-us"
