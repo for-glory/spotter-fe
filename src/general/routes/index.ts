@@ -5,10 +5,6 @@ import guest from "@/router/middleware/guest";
 
 export const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    redirect: "/auth/login",
-  },
-  {
     path: "/auth/",
     component: () => import("@/general/views/Authentication.vue"),
     redirect: { name: EntitiesEnum.Login },

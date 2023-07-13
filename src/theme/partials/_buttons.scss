@@ -40,3 +40,10 @@
     }
   }
 }
+
+.button-dark {
+  background-color: var(--gray-600);
+  --background: var(--gray-600);
+  color: var(--ion-color-white);
+  border-radius: 12px;
+}

@@ -1,7 +1,6 @@
 <template>
   <div class="socials">
     <ion-button
-      v-if="isIos"
       expand="block"
       class="social-btn"
       @click="loginWithApple"
@@ -12,10 +11,6 @@
     <ion-button expand="block" class="social-btn" @click="loginWithGoogle">
       <ion-icon slot="icon-only" src="assets/icon/google-colors.svg"></ion-icon>
       Continue with Google
-    </ion-button>
-    <ion-button expand="block" class="social-btn" @click="loginWithFB">
-      <ion-icon slot="icon-only" src="assets/icon/facebook.svg"></ion-icon>
-      Continue with Facebook
     </ion-button>
   </div>
 </template>
@@ -119,9 +114,7 @@ onError((error) => {
 <style lang="scss" scoped>
 .socials {
   width: 100%;
-  max-width: 400px;
   margin: 24px auto 0;
-  padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
 }
 
 .social-btn {

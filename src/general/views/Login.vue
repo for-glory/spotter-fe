@@ -1,5 +1,8 @@
 <template>
   <div class="content">
+    <div class="welcome-text">
+      <ion-text>Welcome to Spotter</ion-text>
+    </div>
     <login-form
       v-model:username="form.username"
       v-model:password="form.password"
@@ -13,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { IonText, IonImg} from '@ionic/vue';
 import LoginForm from "@/general/components/forms/LoginForm.vue";
 import Socials from "@/general/components/Socials.vue";
 import { ref } from "vue";
@@ -63,12 +67,22 @@ const handleSubmit = (formData: LoginMutationVariables) => {
 
 <style scoped lang="scss">
 .content {
+  margin-top: 72px;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 337px - var(--ion-safe-area-bottom));
+  width: calc(100%);
 }
 
 .login-form {
   flex: 1 1 100%;
+}
+
+.welcome-text {
+  color: var(--gold);
+  font-family: Lato;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
 }
 </style>

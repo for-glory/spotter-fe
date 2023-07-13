@@ -4,7 +4,7 @@ http://ionicframework.com/docs/theming/ */
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
-  --ion-color-primary: #DBB582;
+  --ion-color-primary: #E1DBC5;
   --ion-color-primary-rgb: 219, 181, 130;
   --ion-color-primary-contrast: #000000;
   --ion-color-primary-contrast-rgb: 0, 0, 0;
@@ -105,7 +105,9 @@ http://ionicframework.com/docs/theming/ */
   --gray-500: #797979;
   --gray-400: #C4C4C4;
 
-  --gold: #dbb582;
+  --grey-text: #AFAFAF;
+  --main-color: #19191B;
+  --gold: #E1DBC5;
   --bronze: #a87e45;
 
   --ion-font-family: Yantramanav, Roboto, 'Helvetica Neue', sans-serif;
