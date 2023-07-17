@@ -1,5 +1,54 @@
 <template>
-	<ion-page class="landing-page">
+	<ion-menu content-id="landing-page">
+    <ion-header>
+      <ion-toolbar class="ion-padding">
+				<router-link
+					to="/"
+				>
+					<ion-img
+						src="assets/icon/logo-complete.png"
+						class="logo"
+						alt="logo"
+					/>
+				</router-link>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+			<div class="landing-menu">
+				<router-link
+					to="/about-us"
+					class="landing-menu__item"
+				>
+					About us
+				</router-link>
+				<!-- <router-link
+					to="/blog"
+					class="landing-menu__item"
+				>
+					Blog
+				</router-link> -->
+				<router-link
+					to="/contact-us"
+					class="landing-menu__item"
+				>
+					Contact us
+				</router-link>
+				<router-link
+					to="/terms-of-use"
+					class="landing-menu__item"
+				>
+					Terms of use
+				</router-link>
+				<router-link
+					to="/how-it-works"
+					class="landing-menu__item"
+				>
+					How it works
+				</router-link>
+			</div>
+		</ion-content>
+  </ion-menu>
+	<ion-page class="landing-page" id="landing-page">
 		<!-- <div class="test"></div> -->
 		<ion-grid :fixed="true">
 			<landing-header />
@@ -17,9 +66,9 @@
 				</div> -->
 				<ion-grid :fixed="true">
 					<ion-row class="embrace-section">
-						<ion-col size="12" size-lg="7" class="embrace-section__content">
+						<ion-col size="12" size-lg="7" class="embrace-section__content md-align-items-center">
 							<div class="embrace-section__content__first">
-								<h1 class="lg-title">Embrace your potential with <ion-text color="primary">Spotter</ion-text> today!</h1>
+								<h1 class="lg-title md-text-center">Embrace your potential with <ion-text color="primary">Spotter</ion-text> today!</h1>
 								<ion-text class="detail-text">
 									Your journey to a healthier, happier you starts now. Take the first step and let Spotter be your partner in reaching new heights of wellness. Together, we'll build a stronger, fitter, and more confident version of yourself.
 								</ion-text>
@@ -62,7 +111,7 @@
 					<ion-img class="my-location" src="assets/landing/my location small.png" />
 					<ion-img class="my-location-1" src="assets/landing/my location.png" />
 					<ion-grid :fixed="true">
-						<ion-row class="for-section find-section px-3">
+						<ion-row class="for-section find-section">
 							<div class="for-section__img md-order-2">
 								<ion-img
 									src="assets/landing/iPhone 14 Pro Space Black Mockup.png"
@@ -82,7 +131,7 @@
 											<ion-text class="items-title">How to get started:</ion-text>
 											<ion-grid>
 												<ion-row>
-													<ion-col size="12" size-md="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/global-search.svg"
 															size="large"
@@ -90,7 +139,7 @@
 														<p>Search</p>
 														<p class="detail-text">Find the closest gym to your apartment</p>
 													</ion-col>
-													<ion-col size="12" size-md="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/users.svg"
 															size="large"
@@ -98,7 +147,7 @@
 														<p>Become a member</p>
 														<p class="detail-text">Choose a membership option, complete the registration.</p>
 													</ion-col>
-													<ion-col size="12" size-md="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/currency.svg"
 															size="large"
@@ -116,55 +165,55 @@
 					</ion-grid>
 					<ion-grid :fixed="true">
 						<ion-row class="for-section trainer-section">
-								<div class="for-section__content trainers-content md-order-1">
-									<div>
-										<ion-text color="primary"><h5>FOR TRAINERS</h5></ion-text>
-										<div class="for-section__content__detail">
-											<h1 class="md-title"><ion-text color="primary">Collaborate</ion-text> with world class gyms in your area to <ion-text color="primary">connect</ion-text> with your clients.</h1>
-											<ion-text class="detail-text">
-												Being a registered member gives you access to any spotter gym around the world and a one on one personal time with any of our world class trainers in or outside the gym
-											</ion-text>
-											<div>
-												<ion-text>Benefits you’ll get:</ion-text>
-												<ion-grid>
-													<ion-row>
-														<ion-col size="4">
-															<ion-icon
-																src="assets/icon/bezier.svg"
-																size="large"
-															/>
-															<p>Independence</p>
-															<p class="detail-text">Find the closest gym to your apartment</p>
-														</ion-col>
-														<ion-col size="4">
-															<ion-icon
-																src="assets/icon/heart-graph.svg"
-																size="large"
-															/>
-															<p>Monthly checkups</p>
-															<p class="detail-text">Have your body system checked by professional medics</p>
-														</ion-col>
-														<ion-col size="4">
-															<ion-icon
-																src="assets/icon/bike.svg"
-																size="large"
-															/>
-															<p>Free cycle classes</p>
-															<p class="detail-text">You get 3 free cycle class for every new membership renewal</p>
-														</ion-col>
-													</ion-row>
-												</ion-grid>
-											</div>
+							<div class="for-section__content trainers-content md-order-1">
+								<div>
+									<ion-text color="primary"><h5>FOR TRAINERS</h5></ion-text>
+									<div class="for-section__content__detail">
+										<h1 class="md-title"><ion-text color="primary">Collaborate</ion-text> with world class gyms in your area to <ion-text color="primary">connect</ion-text> with your clients.</h1>
+										<ion-text class="detail-text">
+											Being a registered member gives you access to any spotter gym around the world and a one on one personal time with any of our world class trainers in or outside the gym
+										</ion-text>
+										<div>
+											<ion-text>Benefits you’ll get:</ion-text>
+											<ion-grid>
+												<ion-row>
+													<ion-col size="12" size-sm="4">
+														<ion-icon
+															src="assets/icon/bezier.svg"
+															size="large"
+														/>
+														<p>Independence</p>
+														<p class="detail-text">Find the closest gym to your apartment</p>
+													</ion-col>
+													<ion-col size="12" size-sm="4">
+														<ion-icon
+															src="assets/icon/heart-graph.svg"
+															size="large"
+														/>
+														<p>Monthly checkups</p>
+														<p class="detail-text">Have your body system checked by professional medics</p>
+													</ion-col>
+													<ion-col size="12" size-sm="4">
+														<ion-icon
+															src="assets/icon/bike.svg"
+															size="large"
+														/>
+														<p>Free cycle classes</p>
+														<p class="detail-text">You get 3 free cycle class for every new membership renewal</p>
+													</ion-col>
+												</ion-row>
+											</ion-grid>
 										</div>
 									</div>
 								</div>
-								<div class="for-section__img md-order-2">
-									<ion-img
-										src="assets/landing/iPhone 14 Pro Space Black Mockup1.png"
-										class=""
-										alt="iphone image"
-									/>
-								</div>
+							</div>
+							<div class="for-section__img md-order-2">
+								<ion-img
+									src="assets/landing/iPhone 14 Pro Space Black Mockup1.png"
+									class=""
+									alt="iphone image"
+								/>
+							</div>
 						</ion-row>
 					</ion-grid>
 					<ion-grid :fixed="true">
@@ -186,7 +235,7 @@
 											<ion-text>Benefits you’ll get:</ion-text>
 											<ion-grid>
 												<ion-row>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bezier.svg"
 															size="large"
@@ -194,7 +243,7 @@
 														<p>Flexibility</p>
 														<p class="detail-text">Find the closest gym to your apartment</p>
 													</ion-col>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/heart-graph.svg"
 															size="large"
@@ -202,7 +251,7 @@
 														<p>Monthly checkups</p>
 														<p class="detail-text">Have your body system checked by professional medics</p>
 													</ion-col>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bike.svg"
 															size="large"
@@ -232,7 +281,7 @@
 											<ion-text>Benefits you’ll get:</ion-text>
 											<ion-grid>
 												<ion-row>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bezier.svg"
 															size="large"
@@ -240,7 +289,7 @@
 														<p>Flexibility</p>
 														<p class="detail-text">Find the closest gym to your apartment</p>
 													</ion-col>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/heart-graph.svg"
 															size="large"
@@ -248,7 +297,7 @@
 														<p>Monthly checkups</p>
 														<p class="detail-text">Have your body system checked by professional medics</p>
 													</ion-col>
-													<ion-col size="4">
+													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bike.svg"
 															size="large"
@@ -518,7 +567,7 @@
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonButton, IonContent } from '@ionic/vue';
+import { IonPage, IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonButton, IonContent, IonMenu, IonTitle, IonToolbar, IonHeader } from '@ionic/vue';
 import LandingHeader from "@/landing/components/landing/LandingHeader.vue";
 import LandingFooter from "@/landing/components/landing/LandingFooter.vue";
 import NewsItem from "@/landing/components/landing/NewsItem.vue";
@@ -695,6 +744,11 @@ const selectItem = (id: string) => {
 	flex-wrap: wrap;
 	gap: 50px;
 
+	@media (max-width: 992px) {
+		gap: 30px;
+		justify-content: center;
+	}
+
 	.get-button {
 		height: 72px;
 		width: 236px;
@@ -766,6 +820,10 @@ const selectItem = (id: string) => {
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: 65px;
+
+		@media (max-width: 992px) {
+			justify-content: center;
+		}
 	
 		h5 {
 			margin: 0;
@@ -881,6 +939,49 @@ const selectItem = (id: string) => {
 		bottom: -200px;
 		z-index: -1;
 		width: 100%;
+	}
+}
+
+.landing-menu {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	&__item {
+		color: var(--ion-color-white);
+		text-align: center;
+		font-size: 16px;
+		font-style: normal;
+		line-height: normal;
+	}
+}
+
+@media (max-width: 992px) {
+	.first-part {
+		padding: 0 20px;
+
+		.find-section {
+			padding: 0;
+			margin-top: 40px;
+		}
+
+		.trainer-section {
+			padding: 0;
+		}
+		.gym-user-section {
+			padding: 0;
+		}
+		.users-section {
+			padding: 0;
+		}
+	}
+	.keep-up-section {
+		padding: 30px 20px;
+	}
+	.faq-section {
+		.faq-box {
+			padding: 20px;
+		}
 	}
 }
 </style>

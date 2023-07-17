@@ -213,6 +213,15 @@ import { IonImg, IonCol, IonGrid, IonRow, IonIcon, IonText, IonButton } from "@i
 			font-size: 24px;
 		}
 	}
+	@media (max-width: 992px) {
+		.footer-bottom {
+			padding: 20px;
+		}
+		.landing-footer__menu-container {
+			flex-direction: column;
+			gap: 40px;
+		}
+	}
 }
 
 .logo {
