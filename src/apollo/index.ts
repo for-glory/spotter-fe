@@ -97,7 +97,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
       switch (err.extensions.category) {
         case "authentication":
           clearAuthItems();
-          router.push({ name: EntitiesEnum.Login });
+          // router.push({ name: EntitiesEnum.Login });
 
           return forward(operation);
       }

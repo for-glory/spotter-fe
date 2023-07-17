@@ -12,3 +12,4 @@ node_modules
 !android_encrypted_key
 !android_keystore
 android/.idea
+.env

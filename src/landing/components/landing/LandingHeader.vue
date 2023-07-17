@@ -1,0 +1,144 @@
+<template>
+	<div class="landing-header__container" :style="fixed?{position: 'fixed', zIndex: 999}:''">
+		<div
+			class="landing-header"
+		>
+			<div class="menu-content">
+				<router-link
+					to="/"
+				>
+					<ion-img
+						src="assets/icon/logo-complete.png"
+						class="logo"
+						alt="logo"
+					/>
+				</router-link>
+				<div class="landing-menu md-hidden">
+					<router-link
+						to="/about-us"
+						class="landing-menu__item"
+					>
+						About us
+					</router-link>
+					<!-- <router-link
+						to="/blog"
+						class="landing-menu__item"
+					>
+						Blog
+					</router-link> -->
+					<router-link
+						to="/contact-us"
+						class="landing-menu__item"
+					>
+						Contact us
+					</router-link>
+					<router-link
+						to="/terms-of-use"
+						class="landing-menu__item"
+					>
+						Terms of use
+					</router-link>
+					<router-link
+						to="/how-it-works"
+						class="landing-menu__item"
+					>
+						How it works
+					</router-link>
+				</div>
+			</div>
+			<div v-if="!hideAuthBtn" class="buttons">
+				<ion-button
+					class="login-btn"
+					type="button"
+					fill="clear"
+					@click="goToLogin"
+				>
+					Log in
+				</ion-button>
+				<ion-button
+					class="get-started-btn"
+					type="button"
+				>
+					Get started
+				</ion-button>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script setup lang="ts">
+import { IonImg, IonIcon, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
+import { EntitiesEnum } from "@/const/routes";
+import { defineProps } from "vue";
+
+const props = defineProps<{
+  hideAuthBtn?: boolean;
+  fixed?: boolean;
+}>();
+
+const router = useRouter();
+
+const goToLogin = () => {
+	router.push({ name: EntitiesEnum.Login });
+};
+</script>
+
+<style scoped lang="scss">
+.landing-header__container {
+	width: 100%;
+	font-family: Lato;
+	padding-top: 24px;
+	padding-bottom: 24px;
+}
+	
+.landing-header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+  .menu-content {
+		display: flex;
+		gap: 81px;
+		.logo {
+			width: 220px;
+			min-width: 60px;
+		}
+	
+		.landing-menu {
+			display: flex;
+			align-items: center;
+			gap: 40px;
+	
+			&__item {
+				color: var(--ion-color-white);
+				text-align: center;
+				font-size: 16px;
+				font-style: normal;
+				line-height: normal;
+			}
+		}
+	}
+
+	.buttons {
+		ion-button {
+			height: 70px;
+			text-align: center;
+			font-family: Lato;
+			font-size: 20px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 150%;
+			letter-spacing: 0.24px;
+		}
+		.login-btn {
+			color: var(--ion-color-white);
+			margin-right: 26px;
+		}
+	
+		.get-started-btn {
+		}
+	}
+  </style>
+  

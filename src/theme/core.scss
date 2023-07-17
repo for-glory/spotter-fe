@@ -7,6 +7,52 @@
 @import 'partials/toast';
 @import './variables.css';
 
+/* For responsiveness across screens */
+html {
+  font-size: 100%;
+  @media (max-width: 289px) {
+      font-size: 45%;
+  }
+  @media (min-width: 290px) {
+      font-size: 50%;
+  }
+  @media (min-width: 300px) {
+      font-size: 52.5%;
+  }
+  @media (min-width: 320px) {
+      font-size: 55.5%;
+  }
+  @media (min-width: 325px) {
+      font-size: 56.5%;
+  }
+  @media (min-width: 326px) {
+      font-size: 57%;
+  }
+  @media (min-width: 330px) {
+      font-size: 59%;
+  }
+  @media (min-width: 360px) {
+      font-size: 62.5%;
+  }
+  @media (min-width: 411px) {
+      font-size: 70%;
+  }
+  @media (min-width: 500px) {
+      font-size: 85%;
+  }
+  @media (min-width: 720px) {
+      font-size: 90%;
+  }
+  @media (min-width: 1000px) {
+      font-size: 100%;
+  }
+}
+html.ios {
+  @media (max-width: 359px) and (min-width: 320px) {
+      font-size: 59%;
+  }
+}
+
 body {
   color: var(--ion-color-light);
 }
@@ -45,6 +91,32 @@ a {
   line-height: 1.5;
   margin-bottom: 8px;
   color: var(--ion-color-medium);
+}
+
+.xl-title {
+  font-size: 6rem;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lg-title {
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 5rem;
+}
+
+.md-title {
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 4rem;
+}
+
+.sm-title {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: normal;
 }
 
 ion-title {
@@ -128,5 +200,66 @@ ion-modal.auto-height {
         color: var(--gray-700);
       }
     }
+  }
+}
+
+.d-flex {
+  display: flex;
+}
+.justify-content-center {
+  justify-content: center;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+.justify-content-start {
+  justify-content: start;
+}
+.align-items-center {
+  align-items: center;
+}
+.align-items-start {
+  align-items: start;
+}
+.flex-direction-column {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+
+.mt-2 {
+	margin-top: 1rem;
+}
+.mt-3 {
+	margin-top: 2rem;
+}
+.px-1 {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+.px-2 {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+.px-3 {
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+.w-100 {
+  width: 100%;
+}
+
+
+@media (max-width: 992px) {
+  .md-hidden {
+    display: none !important;
+  }
+  .md-order-1 {
+    order: 1;
+  }
+  .md-order-2 {
+    order: 2;
   }
 }

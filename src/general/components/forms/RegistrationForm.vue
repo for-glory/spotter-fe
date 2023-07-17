@@ -1,60 +1,60 @@
 <template>
-  <base-form class="authentication-form" @submit.prevent="onSubmit">
-    <base-input
-      v-model:value="emailInput"
-      :error-message="emailInputError"
-      :disabled="isLoading"
-      type="email"
-      placeholder="Enter your email"
-    />
-    <base-input
-      v-model:value="firstNameInput"
-      :error-message="firstNameInputError"
-      :disabled="isLoading"
-      type="text"
-      placeholder="Enter your first name"
-    />
-    <base-input
-      v-model:value="lastNameInput"
-      :error-message="lastNameInputError"
-      :disabled="isLoading"
-      type="text"
-      placeholder="Enter your last name"
-    />
-    <base-input
-      v-model:value="passwordInput"
-      :error-message="passwordInputError"
-      :disabled="isLoading"
-      type="password"
-      placeholder="Enter your password"
-    />
-    <base-input
-      v-model:value="passwordConfirmationInput"
-      :error-message="passwordConfirmationError"
-      :disabled="isLoading"
-      type="password"
-      placeholder="Enter your password again"
-    />
-    <div class="form-info">
-      <ion-text>
-        Have account?
-        <router-link :to="{ name: EntitiesEnum.Login }"> Log In </router-link>
-      </ion-text>
-    </div>
-    <ion-button
-      :disabled="isLoading"
-      class="button--submit"
-      type="submit"
-      expand="block"
-    >
-      Sign Up
-    </ion-button>
-    <transition>
-      <ion-text v-if="errorMessage" class="error" color="danger">
-        {{ errorMessage }}
-      </ion-text>
-    </transition>
-  </base-form>
+  <ion-text>
+    Already A Member?
+    <router-link :to="{ name: EntitiesEnum.Login }"> Log In </router-link>
+  </ion-text>
+  <div class="mt-2">
+    <base-form class="authentication-form" @submit.prevent="onSubmit">
+      <base-input
+        v-model:value="emailInput"
+        :error-message="emailInputError"
+        :disabled="isLoading"
+        type="email"
+        placeholder="Enter your email"
+      />
+      <!-- <base-input
+        v-model:value="firstNameInput"
+        :error-message="firstNameInputError"
+        :disabled="isLoading"
+        type="text"
+        placeholder="Enter your first name"
+      />
+      <base-input
+        v-model:value="lastNameInput"
+        :error-message="lastNameInputError"
+        :disabled="isLoading"
+        type="text"
+        placeholder="Enter your last name"
+      /> -->
+      <base-input
+        v-model:value="passwordInput"
+        :error-message="passwordInputError"
+        :disabled="isLoading"
+        type="password"
+        placeholder="Enter your password"
+      />
+      <base-input
+        v-model:value="passwordConfirmationInput"
+        :error-message="passwordConfirmationError"
+        :disabled="isLoading"
+        type="password"
+        placeholder="Enter your password again"
+      />
+      <ion-button
+        :disabled="isLoading"
+        class="button--submit"
+        type="submit"
+        expand="block"
+      >
+        Sign Up
+      </ion-button>
+      <transition>
+        <ion-text v-if="errorMessage" class="error" color="danger">
+          {{ errorMessage }}
+        </ion-text>
+      </transition>
+    </base-form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -115,23 +115,23 @@ const errorMessage = computed(() => {
 const isValidForm = computed(
   () =>
     !emailInputError.value &&
-    !firstNameInputError.value &&
-    !lastNameInputError.value &&
+    // !firstNameInputError.value &&
+    // !lastNameInputError.value &&
     !passwordInputError.value &&
     !passwordConfirmationError.value &&
     passwordInput.value &&
     passwordConfirmationInput.value &&
-    emailInput.value &&
-    firstNameInput.value &&
-    lastNameInput.value
+    emailInput.value
+    // firstNameInput.value &&
+    // lastNameInput.value
 );
 
 const onSubmit = () => {
   if (isValidForm.value) {
     emits("handle-submit", {
       email: emailInput.value,
-      first_name: firstNameInput.value,
-      last_name: lastNameInput.value,
+      first_name: firstNameInput.value?lastNameInput.value:"default",
+      last_name: lastNameInput.value?lastNameInput.value:"default",
       password: passwordInput.value,
       password_confirmation: passwordConfirmationInput.value,
     });
@@ -143,6 +143,8 @@ const onSubmit = () => {
 .authentication-form {
   display: flex;
   flex-direction: column;
+  max-width: unset;
+  padding: 0;
 }
 
 .button--submit {

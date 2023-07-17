@@ -1,7 +1,7 @@
 <template>
   <div class="socials">
     <ion-button
-      v-if="isIos"
+      v-if="isSafari==='safari' || isIos"
       expand="block"
       class="social-btn"
       @click="loginWithApple"
@@ -13,17 +13,15 @@
       <ion-icon slot="icon-only" src="assets/icon/google-colors.svg"></ion-icon>
       Continue with Google
     </ion-button>
-    <ion-button expand="block" class="social-btn" @click="loginWithFB">
-      <ion-icon slot="icon-only" src="assets/icon/facebook.svg"></ion-icon>
-      Continue with Facebook
-    </ion-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { IonButton, IonIcon, isPlatform } from "@ionic/vue";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
 import { SocialProvidersEnum, SocialLoginDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
@@ -40,7 +38,43 @@ import {
   FacebookLoginResponse,
 } from "@capacitor-community/facebook-login";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyB7Q_qpCuFziaz_6VMopuqlnskb_TmtEgU",
+  authDomain: "spotter-fitness-d49be.firebaseapp.com",
+  databaseURL: "https://spotter-fitness-d49be-default-rtdb.firebaseio.com",
+  projectId: "spotter-fitness-d49be",
+  storageBucket: "spotter-fitness-d49be.appspot.com",
+  messagingSenderId: "388599372628",
+  appId: "1:388599372628:web:657e47d366f80b48bf46c1",
+  measurementId: "G-BY1L904251"
+};
+
+// Initialize Firebase
+initializeApp(firebaseConfig);
+const auth = getAuth();
+
 const isIos = isPlatform("ios");
+const isSafari = ref<string>('');
+
+const fnBrowserDetect = () => {
+  let userAgent = navigator.userAgent;
+  let browserName;
+  
+  if(userAgent.match(/chrome|chromium|crios/i)){
+      browserName = 'chrome';
+    }else if(userAgent.match(/firefox|fxios/i)){
+      browserName = 'firefox';
+    }  else if(userAgent.match(/safari/i)){
+      browserName = 'safari';
+    }else if(userAgent.match(/opr\//i)){
+      browserName = 'opera';
+    } else if(userAgent.match(/edg/i)){
+      browserName = 'edge';
+    }else{
+      browserName='';
+    }
+  return browserName;      
+}
 
 onMounted(async () => {
   if (!isPlatform("capacitor")) {
@@ -50,6 +84,7 @@ onMounted(async () => {
       grantOfflineAccess: true,
     });
   }
+  isSafari.value = fnBrowserDetect();
 });
 
 const {
@@ -60,30 +95,34 @@ const {
 
 const loginWithGoogle = async () => {
   try {
-    const user = await GoogleAuth.signIn();
-    login({
-      token: user.authentication.accessToken,
-      provider: SocialProvidersEnum.Google,
-    });
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        login({
+          token: credential.accessToken,
+          provider: SocialProvidersEnum.Google,
+        });
+      }).catch((error) => {
+        console.log("error: ", error);
+      });
   } catch (error) {
     console.log("error: ", error);
   }
 };
 
 const loginWithApple = async () => {
-  SignInWithApple.signin({
-    requestedScopes: [
-      ASAuthorizationAppleIDRequest.ASAuthorizationScopeFullName,
-      ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail,
-    ],
-  })
-    .then((response: AppleSignInResponse) => {
+  const provider = new OAuthProvider('apple.com');
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      // Apple credential
+      const credential = OAuthProvider.credentialFromResult(result);
       login({
-        token: response.identityToken,
+        token: credential.idToken,
         provider: SocialProvidersEnum.Apple,
       });
     })
-    .catch((error: AppleSignInErrorResponse) => {
+    .catch((error) => {
       console.log("error: ", error);
     });
 };
@@ -119,9 +158,7 @@ onError((error) => {
 <style lang="scss" scoped>
 .socials {
   width: 100%;
-  max-width: 400px;
   margin: 24px auto 0;
-  padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
 }
 
 .social-btn {

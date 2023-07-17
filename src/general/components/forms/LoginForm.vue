@@ -1,46 +1,48 @@
 <template>
-  <base-form class="authentication-form" @submit.prevent="onSubmit">
-    <base-input
-      v-model:value="usernameInput"
-      :error-message="usernameInputError"
-      :disabled="isLoading"
-      type="email"
-      placeholder="Enter your email"
-    />
-    <base-input
-      v-model:value="passwordInput"
-      :error-message="passwordInputError"
-      :disabled="isLoading"
-      type="password"
-      placeholder="Enter your password"
-    />
-    <div class="form-info">
-      <ion-text>
-        No account?
-        <a :href="'#'" @click.prevent="openModal">
-          Sign up
-        </a>
+  <ion-text>
+    Don't have an account?
+    <a :href="'#'" @click.prevent="openModal">
+      Sign up
+    </a>
+  </ion-text>
+  <div class="mt-2">
+    <base-form class="authentication-form" @submit.prevent="onSubmit">
+      <base-input
+        v-model:value="usernameInput"
+        :error-message="usernameInputError"
+        :disabled="isLoading"
+        type="email"
+        placeholder="Enter your email"
+      />
+      <base-input
+        v-model:value="passwordInput"
+        :error-message="passwordInputError"
+        :disabled="isLoading"
+        type="password"
+        placeholder="Enter your password"
+      />
+      <ion-text class="mt-2">
+        Forgot password?
+        <router-link :to="{ name: EntitiesEnum.ForgotPassword }">
+          Click here
+        </router-link>
       </ion-text>
-      <router-link :to="{ name: EntitiesEnum.ForgotPassword }">
-        <ion-button class="forgot-password-btn" fill="clear" color="medium">
-          Forgot password?
-        </ion-button>
-      </router-link>
-    </div>
-    <ion-button
-      :disabled="isLoading"
-      class="button--submit"
-      type="submit"
-      expand="block"
-    >
-      Log In
-    </ion-button>
-    <transition>
-      <ion-text v-if="errorMessage" class="error" color="danger">
-        {{ errorMessage }}
-      </ion-text>
-    </transition>
-  </base-form>
+      <ion-button
+        :disabled="isLoading"
+        class="button--submit"
+        type="submit"
+        expand="block"
+      >
+        Log In
+      </ion-button>
+      <transition>
+        <ion-text v-if="errorMessage" class="error" color="danger">
+          {{ errorMessage }}
+        </ion-text>
+      </transition>
+    </base-form>
+  </div>
+  
   <ion-modal :is-open="isModalOpen" @didDismiss="closeModal">
     <ion-content class="block">
         <div style="padding: 5% ">
@@ -134,10 +136,12 @@ let isModalOpen = ref(false),
 .authentication-form {
   display: flex;
   flex-direction: column;
+  max-width: unset;
+  padding: 0;
 }
 
 .button--submit {
-  margin-top: auto;
+  margin-top: 8px;
   margin-bottom: 0;
 }
 
@@ -168,19 +172,6 @@ a {
   margin-top: 8px;
 }
 
-.forgot-password-btn {
-  height: 20px;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 300;
-  vertical-align: top;
-  margin: 0 -8px 0 8px;
-  --border-radius: 4px;
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --padding-start: 8px;
-  --padding-end: 8px;
-}
 .block {
   width: 100%;
   height: 300px;
