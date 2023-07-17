@@ -41,10 +41,10 @@ html {
       font-size: 85%;
   }
   @media (min-width: 720px) {
-      font-size: 100%;
+      font-size: 90%;
   }
   @media (min-width: 1000px) {
-      font-size: 110%;
+      font-size: 100%;
   }
 }
 html.ios {
@@ -94,27 +94,29 @@ a {
 }
 
 .xl-title {
-  font-size: 5.5rem;
+  font-size: 6rem;
   font-weight: 700;
-  line-height: 6.5rem;
+  font-style: normal;
 }
 
 .lg-title {
-  font-size: 3.5rem;
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 5rem;
+}
+
+.md-title {
+  font-size: 3rem;
+  font-style: normal;
   font-weight: 700;
   line-height: 4rem;
 }
 
-.md-title {
-  font-size: 2.75rem;
-  font-weight: 700;
-  line-height: 3.25rem;
-}
-
 .sm-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 400;
-  line-height: 2.25rem;
+  line-height: normal;
 }
 
 ion-title {
@@ -222,6 +224,9 @@ ion-modal.auto-height {
 .flex-direction-column {
   flex-direction: column;
 }
+.flex-wrap {
+  flex-wrap: wrap;
+}
 
 
 .mt-2 {
@@ -230,7 +235,31 @@ ion-modal.auto-height {
 .mt-3 {
 	margin-top: 2rem;
 }
+.px-1 {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+.px-2 {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
 .px-3 {
 	padding-left: 2rem;
 	padding-right: 2rem;
+}
+.w-100 {
+  width: 100%;
+}
+
+
+@media (max-width: 992px) {
+  .md-hidden {
+    display: none !important;
+  }
+  .md-order-1 {
+    order: 1;
+  }
+  .md-order-2 {
+    order: 2;
+  }
 }

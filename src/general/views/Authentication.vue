@@ -1,30 +1,32 @@
 <template>
-  <ion-page>
-    <div class="auth-page">
-      <ion-grid class="container">
-        <ion-row>
-          <ion-col size="12" size-md="7" class="container__content">
-            <router-link
-              to="/"
-            >
-              <ion-img class="logo" src="assets/icon/new-logo.png" />
-            </router-link>
-            <router-view />
-          </ion-col>
-          <ion-col size="12" size-md="5" class="background-image-section">
-            <div
-              class="background-image-section__img"
-            >
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+  <div class="auth-page">
+    <div class="auth-page__header">
+      <landing-header
+        hideAuthBtn
+        fixed
+      />
     </div>
-  </ion-page>
+    <ion-grid class="container">
+      <ion-row>
+        <ion-col size="12" size-md="7" class="container__content">
+          <router-view />
+        </ion-col>
+        <ion-col size="12" size-md="5">
+          <div class="background-image-section">
+            <ion-img
+              class="background-image-section__img"
+              :src="`assets/backgrounds/${backgroundImage}.png`"
+            />
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { IonPage, IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonButton } from '@ionic/vue';
+import LandingHeader from "@/landing/components/landing/LandingHeader.vue";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { AuthenticationMode } from "@/ts/enums/authentification";
@@ -33,12 +35,16 @@ import { EntitiesEnum } from "@/const/routes";
 const route = useRoute();
 const router = useRouter();
 
-const backgroundImage = ref<string>('iPhone 14');
 const currentMode = computed<AuthenticationMode>(() => route.meta.mode);
-const isBackButtonVisible = computed(
-  () =>
-    currentMode.value !== AuthenticationMode.login &&
-    currentMode.value !== AuthenticationMode.registration
+const backgroundImage = computed(
+  () =>{
+    if (currentMode.value === AuthenticationMode.login) return "iPhone-14-1";
+    else if (currentMode.value === AuthenticationMode.registration) return "iPhone-14-2";
+    else if (currentMode.value === AuthenticationMode.SelectRole) return "iPhone-14-3";
+    else if (currentMode.value === AuthenticationMode.CheckEmail) return "iPad-6";
+    else if (currentMode.value === AuthenticationMode.ChooseFacilityType) return "iPhone-14-5";
+    else return "iPhone-14-1";
+  }
 );
 
 const onBack = () => {
@@ -48,13 +54,18 @@ const onBack = () => {
 <style scoped lang="scss">
 .auth-page {
   width: 100%;
+  min-height: 100vh;
+  position: relative;
+
+  &__header {
+    padding: 0 8%;
+  }
 
   .container {
     width: 100%;
-    min-height: 100vh;
 
     &__content {
-      padding: 10px 8%;
+      padding: 120px 8% 0 8%;
     }
   }
 
@@ -65,12 +76,14 @@ const onBack = () => {
     background-color: var(--main-color);
     background: var(--main-color);
     min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &__img {
-      background-image: url(/public/assets/backgrounds/iPhone-14.png);
-      height: 100%;
-      background-repeat: no-repeat;
-      background-size: contain;
+      max-width: 100%;
+      height: 90vh;
+      object-fit: contain;
     }
   }
 }

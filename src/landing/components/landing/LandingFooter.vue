@@ -5,7 +5,7 @@
 				<ion-text class="lg-title">
 					Ready to take charge of your life?
 				</ion-text>
-				<ion-button class="button-dark mt-3" type="button">
+				<ion-button class="button-dark large-btn mt-3" type="button">
 					Try Spotter for Free
 				</ion-button>
 			</div>
@@ -87,46 +87,50 @@
 				<ion-col>
 				</ion-col>
 				<ion-col size="12" size-lg="3">
-					<ion-img
-						src="assets/icon/new-logo.png"
-						class="logo"
-						alt="logo"
-					/>
-					<div class="mt-2">
-						<ion-text>
-							Be in total control of your life, one session at a time.
-						</ion-text>
-					</div>
-					<div class="mt-2">
-						<ion-text>
-							STAY IN TOUCH
-						</ion-text>
-					</div>
-					<div class="landing-footer__social-links">
-						<router-link
-							to="/"
-							class="landing-footer__social-links__link"
-						>
-							<ion-icon
-								src="assets/icon/facebook.svg"
+					<div class="w-100 d-flex justify-content-center">
+						<div>
+							<ion-img
+								src="assets/icon/logo-complete.png"
+								class="logo"
+								alt="logo"
 							/>
-						</router-link>
-						<router-link
-							to="/"
-							class="landing-footer__social-links__link"
-						>
-							<ion-icon
-								src="assets/icon/twitter.svg"
-							/>
-						</router-link>
-						<router-link
-							to="/"
-							class="landing-footer__social-links__link"
-						>
-							<ion-icon
-								src="assets/icon/instagram.svg"
-							/>
-						</router-link>
+							<div class="mt-2">
+								<ion-text>
+									Be in total control of your life, one session at a time.
+								</ion-text>
+							</div>
+							<div class="mt-2">
+								<ion-text>
+									STAY IN TOUCH
+								</ion-text>
+							</div>
+							<div class="landing-footer__social-links">
+								<router-link
+									to="/"
+									class="landing-footer__social-links__link"
+								>
+									<ion-icon
+										src="assets/icon/facebook.svg"
+									/>
+								</router-link>
+								<router-link
+									to="/"
+									class="landing-footer__social-links__link"
+								>
+									<ion-icon
+										src="assets/icon/twitter.svg"
+									/>
+								</router-link>
+								<router-link
+									to="/"
+									class="landing-footer__social-links__link"
+								>
+									<ion-icon
+										src="assets/icon/instagram.svg"
+									/>
+								</router-link>
+							</div>
+						</div>
 					</div>
 				</ion-col>
 			</ion-row>
@@ -151,6 +155,7 @@ import { IonImg, IonCol, IonGrid, IonRow, IonIcon, IonText, IonButton } from "@i
 			flex-direction: column;
 			align-items: center;
 			color: var(--gray-700);
+			text-align: center;
 		}
 	}
 

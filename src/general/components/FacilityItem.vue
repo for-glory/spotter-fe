@@ -33,7 +33,7 @@ const props = defineProps<{
 
 const photo = computed(() => {
   return props.facility.media?.length
-    ? `${process.env.VUE_APP_CDN}${props.facility.media[0]?.path}`
+    ? `${process.env.VUE_APP_MEDIA_URL}${props.facility.media[0]?.path}`
     : "";
 });
 </script>

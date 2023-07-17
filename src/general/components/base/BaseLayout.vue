@@ -316,7 +316,7 @@ onUnmounted(() => {
     left: 0;
     right: 0;
     z-index: 1500;
-    position: fixed;
+    position: absolute;
   }
 }
 
@@ -360,7 +360,7 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  position: fixed;
+  position: absolute;
   transition: height 0.35s ease;
   height: calc(var(--breakpoint) + 20px);
 

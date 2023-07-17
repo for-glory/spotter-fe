@@ -59,9 +59,20 @@ withDefaults(
 
     .title {
       padding-bottom: 26px;
+      font-family: Lato;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 150%;
     }
     .detail {
       padding-bottom: 36px;
+      text-align: center;
+      font-family: Lato;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
     }
   }
 }
