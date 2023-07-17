@@ -323,7 +323,7 @@
 							</template>
 
 							<template #draggable>
-								<facilities-page
+								<facilities-page-public
 									:filters="mapPosition"
 									@toggle-modal="showDraggable"
 									v-if="activeTab === EntitiesEnum.Facilities"
@@ -332,7 +332,7 @@
 									@deselect="selectedItem = null"
 								/>
 
-								<trainers-page
+								<trainers-page-public
 									:filters="mapPosition"
 									:availability-filters="availabilityFilters"
 									@toggle-modal="showDraggable"
@@ -525,8 +525,8 @@ import NewsItem from "@/landing/components/landing/NewsItem.vue";
 import FaqItem from "@/landing/components/landing/FaqItem.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
-import FacilitiesPage from "@/views/FacilitiesPage.vue";
-import TrainersPage from "@/views/TrainersPage.vue";
+import FacilitiesPagePublic from "@/landing/components/landing/FacilitiesPagePublic.vue";
+import TrainersPagePublic from "@/landing/components/landing/TrainersPagePublic.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
 import ItemsMap, { MapMarkerItem } from "@/general/components/ItemsMap.vue";
 import { TabItem } from "@/interfaces/TabItem";
