@@ -46,7 +46,7 @@
 					</router-link>
 				</div>
 			</div>
-			<div v-if="!hideAuthBtn" class="buttons">
+			<div v-if="!hideAuthBtn" class="buttons md-hidden">
 				<ion-button
 					class="login-btn"
 					type="button"
@@ -62,12 +62,17 @@
 					Get started
 				</ion-button>
 			</div>
+			<div class="d-none md-block">
+				<ion-menu-button>
+					<ion-icon src="assets/icon/menu-icon.svg"></ion-icon>
+				</ion-menu-button>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { IonImg, IonIcon, IonButton } from "@ionic/vue";
+import { IonImg, IonButtons, IonMenuButton, IonButton } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/routes";
 import { defineProps } from "vue";

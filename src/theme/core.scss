@@ -250,9 +250,14 @@ ion-modal.auto-height {
 .w-100 {
   width: 100%;
 }
-
+.d-none {
+  display: none !important;
+}
 
 @media (max-width: 992px) {
+  .md-block {
+    display: block !important;
+  }
   .md-hidden {
     display: none !important;
   }
@@ -262,4 +267,13 @@ ion-modal.auto-height {
   .md-order-2 {
     order: 2;
   }
+  .md-text-center {
+    text-align: center !important;
+  }
+  .md-align-items-center {
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 1200px) {
 }
