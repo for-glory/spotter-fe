@@ -1,4 +1,18 @@
+
+
+
 # Spotter app v1.01
+
+
+
+**PW for all is Teamwork2021!**
+
+
+- gym@spotterfitness.com -  Gym User
+- client@spotterfitness.com - Client User
+- trainer@spotterfitness.com - Trainer User
+- admin@spotterfitness.com - Admin User
+
 
 #### versions:
 ```
