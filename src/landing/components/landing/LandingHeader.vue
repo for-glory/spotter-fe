@@ -58,6 +58,7 @@
 				<ion-button
 					class="get-started-btn"
 					type="button"
+					@click="goToRegister"
 				>
 					Get started
 				</ion-button>
@@ -86,6 +87,9 @@ const router = useRouter();
 
 const goToLogin = () => {
 	router.push({ name: EntitiesEnum.Login });
+};
+const goToRegister = () => {
+	router.push({ name: EntitiesEnum.Register });
 };
 </script>
 

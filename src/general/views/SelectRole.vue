@@ -147,7 +147,7 @@ const forward = () => {
 
     case RoleEnum.Manager:
       router.push({
-        name: EntitiesEnum.ChooseFacilityType,
+        name: EntitiesEnum.StartMembership,
       });
       break;
   }
