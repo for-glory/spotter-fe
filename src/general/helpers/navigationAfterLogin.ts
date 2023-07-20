@@ -66,7 +66,10 @@ const navigationAfterAuth = (user: User) => {
       break;
     }
     case RoleEnum.Manager:
-    case RoleEnum.FacilityOwner:
+    case RoleEnum.FacilityOwner: {
+      router.push({ name: EntitiesEnum.SelectMembership });
+      break;
+    }
     case RoleEnum.OrganizationOwner: {
       const { isFacilitySetUp } = useSettings();
       if (!isFacilitySetUp) {
