@@ -89,6 +89,7 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-white-contrast-rgb: 0,0,0;
 	--ion-color-white-shade: #e0e0e0;
 	--ion-color-white-tint: #ffffff;
+  --fitnesswhite: #EFEFEF;
 
   /* black */
   --ion-color-black: #000000;
@@ -115,10 +116,11 @@ http://ionicframework.com/docs/theming/ */
   --grey-text: #AFAFAF;
   --main-color: #19191B;
   --gold: #E1DBC5;
+  --silver: #797979;
   --bronze: #a87e45;
 
-  --ion-font-family: Yantramanav, Roboto, 'Helvetica Neue', sans-serif;
-  --title-font-family: Oswald, Roboto, 'Helvetica Neue', sans-serif;
+  --ion-font-family: Lato, sans-serif;
+  --title-font-family: Lato, sans-serif;
   --ion-background-color: var(--gray-800);
   --ion-backdrop-color: var(--ion-background-color);
   --ion-text-color: var(--gray-400);

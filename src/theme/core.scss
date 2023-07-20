@@ -119,6 +119,33 @@ a {
   line-height: normal;
 }
 
+.font-20 {
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.font-40 {
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+}
+.white-text {
+  color: var(--ion-color-white);
+}
+.grey-text {
+  color: var(--grey-text);
+}
+.gray-400 {
+  color: var(--gray-400);
+}
+
+.scrolled-page {
+  height: 100%;
+  overflow: auto;
+}
+
 ion-title {
   font-weight: 400;
   font-family: var(--title-font-family);
@@ -215,6 +242,9 @@ ion-modal.auto-height {
 .justify-content-start {
   justify-content: start;
 }
+.justify-content-around {
+  justify-content: space-around;
+}
 .align-items-center {
   align-items: center;
 }
@@ -227,7 +257,6 @@ ion-modal.auto-height {
 .flex-wrap {
   flex-wrap: wrap;
 }
-
 
 .mt-2 {
 	margin-top: 1rem;
@@ -249,6 +278,9 @@ ion-modal.auto-height {
 }
 .w-100 {
   width: 100%;
+}
+.h-100 {
+  height: 100%;
 }
 .d-none {
   display: none !important;

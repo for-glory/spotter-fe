@@ -2,7 +2,7 @@
   <div class="page--content">
     <div class="page--title">
       <ion-title>Activation Link Sent</ion-title>
-      <ion-text>
+      <ion-text class="font-20 grey-text">
         We sent you an email, please follow the link to activate your profile.
       </ion-text>
     </div>
@@ -81,22 +81,16 @@ const onResendEmail = () => {
 <style scoped lang="scss">
 ion-title {
   margin: 20px auto;
-  font-size: 28px;
   --color: var(--gold);
-}
-
-ion-text {
-  font-weight: 300;
-  font-size: 14px;
-  --color: var(--gray-400);
+  padding: 0;
+  font-family: Lato;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
 }
 
 .page {
-  &--title {
-    margin: 20px auto;
-    text-align: center;
-    padding: 0 36px;
-  }
 
   &--content {
     display: flex;

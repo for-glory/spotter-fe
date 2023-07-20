@@ -25,6 +25,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.CheckEmail,
         path: "email-check",
         component: () => import("@/general/views/CheckEmail.vue"),
+        meta: { mode: EntitiesEnum.CheckEmail },
       },
       {
         name: EntitiesEnum.ForgotPassword,
@@ -60,6 +61,16 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/SelectRole.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.SelectRole
+    },
+  },
+  {
+    name: EntitiesEnum.SuccessMembership,
+    path: "/success",
+    component: () => import("@/general/views/SuccessPage.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.SuccessMembership
     },
   },
   {

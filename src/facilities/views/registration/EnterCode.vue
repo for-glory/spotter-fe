@@ -1,14 +1,11 @@
 <template>
-  <base-layout hide-navigation-menu>
-    <template #header>
-      <page-header back-btn @back="onBack" />
-    </template>
-    <template #content>
+  <base-auth-layout>
+    <template #left-section>
       <div class="content">
         <div class="main">
           <div class="head">
             <ion-title class="title" color="primary">Enter code</ion-title>
-            <ion-text color="secondary">
+            <ion-text class="font-20 grey-text">
               Enter the code sent to your email to login
             </ion-text>
           </div>
@@ -34,7 +31,7 @@
         </div>
       </div>
     </template>
-  </base-layout>
+  </base-auth-layout>
 </template>
 
 <script setup lang="ts">
@@ -45,8 +42,7 @@ import {
   IonSpinner,
   toastController,
 } from "@ionic/vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -109,24 +105,22 @@ const checkCodeHandle = () => {
   min-height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  padding: 57px 24px calc(32px + var(--ion-safe-area-bottom));
+  padding: 57px 0px calc(60px + var(--ion-safe-area-bottom));
 }
 
 .head {
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.5;
-  max-width: 260px;
-  text-align: center;
-  margin: 0 auto 32px;
+  margin: 0 0 32px;
 }
 
 .title {
   padding: 0;
-  font-size: 28px;
-  line-height: 1.3;
-  font-weight: 400;
   margin-bottom: 20px;
+  color: var(--gold);
+  font-family: Lato;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
 }
 
 .buttons {

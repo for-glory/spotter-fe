@@ -10,6 +10,23 @@ export const routes: Array<RouteRecordRaw> = [
       import("@/facilities/views/registration/ChooseFacilityType.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.ChooseFacilityType
+    },
+  },
+  {
+    name: EntitiesEnum.StartMembership,
+    path: "/register/start-membership",
+    component: () => import("@/facilities/views/registration/StartMembership.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.SelectMembership,
+    path: "/register/select-membership",
+    component: () => import("@/facilities/views/registration/SelectMembership.vue"),
+    meta: {
+      middleware: [auth],
     },
   },
   {
@@ -27,6 +44,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/facilities/views/registration/EnterCode.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.EnterCode
     },
   },
   {

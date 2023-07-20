@@ -1,14 +1,11 @@
 <template>
-  <ion-page ref="page">
-    <base-layout>
-      <template #header>
-        <page-header />
-      </template>
-      <template #content>
-        <div class="page--content">
-          <div class="page--title">
+  <base-auth-layout>
+    <template #left-section>
+      <div class="d-flex flex-direction-column justify-content-around h-100">
+        <div class="page-content">
+          <div>
             <ion-title>Please select your role</ion-title>
-            <ion-text> Tell us how you will be utilizing Spotter</ion-text>
+            <ion-text class="font-20 grey-text"> Tell us how you will be utilizing Spotter</ion-text>
           </div>
           <ion-radio-group v-model="selectedRole">
             <ion-item
@@ -23,16 +20,14 @@
             </ion-item>
           </ion-radio-group>
         </div>
-      </template>
-      <template #footer>
         <div class="holder-button">
           <ion-button class="button--submit" expand="block" @click="next">
-            Next
+            Continue
           </ion-button>
         </div>
-      </template>
-    </base-layout>
-  </ion-page>
+      </div>
+    </template>
+  </base-auth-layout>
 </template>
 
 <script setup lang="ts">
@@ -45,7 +40,7 @@ import {
   IonItem,
   IonRadioGroup,
 } from "@ionic/vue";
-import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
@@ -164,39 +159,30 @@ const forward = () => {
   margin-bottom: 15px;
 }
 
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
 ion-title {
   margin: 20px auto;
-  font-size: 28px;
   --color: var(--gold);
+  padding: 0;
+  font-family: Lato;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
 }
 
-ion-text {
-  font-weight: 300;
-  font-size: 14px;
-  --color: var(--gray-400);
-}
-
-.page {
-  &--title {
-    margin: 20px auto 110px;
-    text-align: center;
-    padding: 0 36px;
-  }
-
-  &--content {
-    display: flex;
-    margin: 0 24px;
-    flex-direction: column;
-    height: calc(100% - 337px - var(--ion-safe-area-top));
-  }
-}
 
 .radiobutton {
-  font-size: 14px;
+  font-size: 1.25rem;
   line-height: 1.5;
   --min-height: 24px;
   --padding-top: 12px;
-  --border-radius: 8px;
+  --border-radius: 1rem;
   --padding-bottom: 12px;
   --color: var(--gray-500);
   --inner-padding-top: 0;
@@ -239,10 +225,17 @@ ion-text {
 }
 
 .holder-button {
-  padding: 20px 24px calc(32px + var(--ion-safe-area-bottom));
+  padding: 20px 0px calc(32px + var(--ion-safe-area-bottom));
 
   .button {
     margin: 0;
+    color: var(--gray-700);
+    text-align: center;
+    font-family: Lato;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%;
   }
 }
 </style>
