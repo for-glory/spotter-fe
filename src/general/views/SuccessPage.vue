@@ -52,18 +52,21 @@ const continueBtnText = computed(
 	() =>{
 		if (currentMode.value === EntitiesEnum.SuccessMembership) return "Connect your payout method";
 		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Set up gym profile";
+		else return "";
 	}
 );
 const titleText = computed(
 	() =>{
 		if (currentMode.value === EntitiesEnum.SuccessMembership) return "You have successfully set up a subscription";
 		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Congratulations! Payout Account created successfully";
+		else return "";
 	}
 );
 const detailText = computed(
 	() =>{
 		if (currentMode.value === EntitiesEnum.SuccessMembership) return "Your 30 days trial is now active, you can cancel anytime before 30 days, they will not be charged until the 30 days expire,";
 		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Build your gym profile, create your events and gym passes";
+		else return "";
 	}
 );
 
