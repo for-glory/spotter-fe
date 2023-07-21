@@ -49,6 +49,7 @@ export enum EntitiesEnum {
   PaymentsMethods = "PAYMENTS_METHODS",
   PaymentSuccess = "PAYMENT_SUCCESS",
   SuccessMembership = "SUCCESS_MEMBERSHIP",
+  SuccessStripeConnect = "SUCCESS_STRIPE_CONNECT",
   TrainerRateSession = "TRAINER_RATE_SESSION",
   TrainerReviewLike = "TRAINER_REVIEW_LIKE",
   TrainerReviewDislike = "TRAINER_REVIEW_DISLIKE",

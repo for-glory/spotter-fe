@@ -13,12 +13,12 @@
 			<div class="message-text">
 				<div class="title">
 					<ion-text color="primary">
-						You have successfully set up a subscription
+						{{ titleText }}
 					</ion-text>
 				</div>
 				<div class="detail">
 					<ion-text>
-						Your 30 days trial is now active, you can cancel anytime before 30 days, they will not be charged until the 30 days expire,
+						{{ detailText }}
 					</ion-text>
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 					expand="block"
 					@click="handleContinue"
 				>
-					Connect your payout method
+					{{ continueBtnText }}
 				</ion-button>
 			</div>
 		</div>
@@ -36,20 +36,58 @@
 
 <script setup lang="ts">
 import { IonTitle, IonText, IonImg, IonButton, IonIcon, IonGrid } from "@ionic/vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
+import { useMutation } from "@vue/apollo-composable";
+import {
+  LinksDocument,
+} from "@/generated/graphql";
+import { computed } from "vue";
 
+const route = useRoute();
 const router = useRouter();
+
+const currentMode = computed<EntitiesEnum>(() => route.meta.mode);
+const continueBtnText = computed(
+	() =>{
+		if (currentMode.value === EntitiesEnum.SuccessMembership) return "Connect your payout method";
+		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Set up gym profile";
+	}
+);
+const titleText = computed(
+	() =>{
+		if (currentMode.value === EntitiesEnum.SuccessMembership) return "You have successfully set up a subscription";
+		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Congratulations! Payout Account created successfully";
+	}
+);
+const detailText = computed(
+	() =>{
+		if (currentMode.value === EntitiesEnum.SuccessMembership) return "Your 30 days trial is now active, you can cancel anytime before 30 days, they will not be charged until the 30 days expire,";
+		else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) return "Build your gym profile, create your events and gym passes";
+	}
+);
 
 const onBack = () => {
   router.go(-1);
 };
 
 const handleContinue = () => {
-  router.push({
-    name: EntitiesEnum.SelectMembership,
-  });
+	if (currentMode.value === EntitiesEnum.SuccessMembership) {
+		const link = createStripeConnect();
+	}
+	else if (currentMode.value === EntitiesEnum.SuccessStripeConnect) {
+		router.push({ name: EntitiesEnum.CreateFacility });
+	}
 };
+
+const { mutate: createStripeConnect, onDone: goToStripeConnect } = useMutation(
+  LinksDocument
+);
+
+goToStripeConnect((res) => {
+	if(res.data?.links.url)
+	window.location.href = res.data.links.url
+});
 </script>
 
 <style scoped lang="scss">

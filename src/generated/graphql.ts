@@ -4777,6 +4777,14 @@ export const GetCartDocument = gql`
   }
 }
     `;
+export const LinksDocument = gql`
+    query links {
+  links{
+    url
+    expires_at
+  }
+}
+    `;
 export const StripeCardsDocument = gql`
     query stripeCards {
   cards {
