@@ -66,11 +66,20 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.SuccessMembership,
-    path: "/success",
+    path: "/select-membership-success",
     component: () => import("@/general/views/SuccessPage.vue"),
     meta: {
       middleware: [auth],
       mode: EntitiesEnum.SuccessMembership
+    },
+  },
+  {
+    name: EntitiesEnum.SuccessStripeConnect,
+    path: "/stripe-connect-success",
+    component: () => import("@/general/views/SuccessPage.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.SuccessStripeConnect
     },
   },
   {

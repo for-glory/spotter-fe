@@ -1,15 +1,13 @@
 <template>
-  <base-layout hide-navigation-menu>
-    <template #content>
-      <authentication-header />
+  <base-auth-layout hide-navigation-menu>
+    <template #left-section>
       <ion-spinner name="lines" class="spinner" />
     </template>
-  </base-layout>
+  </base-auth-layout>
 </template>
 <script setup lang="ts">
 import { IonSpinner, toastController } from "@ionic/vue";
-import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import AuthenticationHeader from "@/general/components/blocks/headers/AuthenticationHeader.vue";
+import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { onMounted } from "vue";

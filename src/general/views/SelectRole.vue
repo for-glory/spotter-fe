@@ -73,7 +73,7 @@ const profileTypes = [
   },
   {
     label: ProfileType.Owner,
-    name: RoleEnum.Manager,
+    name: RoleEnum.FacilityOwner,
   },
 ];
 
@@ -86,7 +86,7 @@ const router = useRouter();
 const { mutate: updateUserRole } = useMutation(UpdateUserRoleDocument);
 
 const next = () => {
-  if (selectedRole.value !== role && selectedRole.value !== RoleEnum.Manager) {
+  if (selectedRole.value !== role) {
     const { id } = useId();
     updateUserRole({
       id,
@@ -145,7 +145,7 @@ const forward = () => {
       });
       break;
 
-    case RoleEnum.Manager:
+    case RoleEnum.FacilityOwner:
       router.push({
         name: EntitiesEnum.StartMembership,
       });
