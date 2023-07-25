@@ -160,7 +160,7 @@
 													<ion-icon src="assets/icon/accessibility.svg" />
 												</div>
 												<div>
-													<ion-text>15% flat fee for each transaction</ion-text>
+													<ion-text>20% flat fee for each transaction</ion-text>
 												</div>
 											</li>
 											<li
@@ -249,6 +249,16 @@
 													<ion-text>Create and post local events </ion-text>
 												</div>
 											</li>
+											<li
+												class="accessibility"
+											>
+												<div>
+													<ion-icon src="assets/icon/accessibility.svg" />
+												</div>
+												<div>
+													<ion-text>10% flat fee for each transaction</ion-text>
+												</div>
+											</li>
 										</ul>
 									</div>
 								</div>
@@ -303,6 +313,16 @@
 												</div>
 												<div>
 													<ion-text>Reduced flat booking fee</ion-text>
+												</div>
+											</li>
+											<li
+												class="accessibility"
+											>
+												<div>
+													<ion-icon src="assets/icon/accessibility.svg" />
+												</div>
+												<div>
+													<ion-text>15% flat fee for each transaction</ion-text>
 												</div>
 											</li>
 										</ul>
@@ -366,12 +386,15 @@ import {
 const router = useRouter();
 
 const onBack = () => {
-  router.go(-1);
+	router.push({
+    name: EntitiesEnum.StartMembership,
+  });
 };
 
 const isLoading = ref<boolean>(false);
 const { role } = useRoles();
 const plans = ref<any[]>([]);
+const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
 const errorMessage = ref("");
 const products = ref<any[]>([]);
@@ -426,7 +449,7 @@ const registerProducts = async () => {
 const handleContinue = () => {
   isLoading.value = true;
 	console.log(selectedItem.value);
-	onCardCreation();
+	// onCardCreation();
 	// router.push({
 	// 	name: EntitiesEnum.SubscriptionPaymentMethod,
 	// 	params: { subscriptionId: selectedItem.value.product_id },
@@ -434,6 +457,20 @@ const handleContinue = () => {
 	// 			// facilityId: route?.query?.facilityId || "",
 	// 		},
 	// });
+	const { mutate: createSubscriptionIntent } = backendStripe.createSubscriptionIntent();
+  createSubscriptionIntent({
+    product_id: selectedItem.value.product_id,
+    fees_percent: selectedPlan.value.fee,
+  })
+    .then((data) => {
+      console.log("data==>", data)
+      let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
+      backendStripe.redirectToCheckout(intent.id);
+    })
+    .catch((err) => {
+      errorMessage.value = err;
+      throw new Error(err);
+    });
 };
 
 const selectProduct = (plan: any) => {
@@ -443,9 +480,9 @@ const selectProduct = (plan: any) => {
 };
 const selectMembership = (id: any) => {
 	plans.value.forEach((plan: any) => {
-		console.log(plan);
 		if (plan.id == id) {
 			console.log(plan)
+			selectedPlan.value = plan
 			selectedItem.value = plan.subscriptionPlan
 			selectedProductId.value = plan.subscriptionPlan.product_id
 		}

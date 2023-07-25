@@ -1,9 +1,7 @@
 import { SubscriptionsTierEnum } from "@/generated/graphql";
 
 export default function useSubscription() {
-  const { currentSubscription } = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
+  const currentSubscription =  localStorage.getItem("currentSubscription")
 
   return {
     type: currentSubscription ?? SubscriptionsTierEnum.Basic,

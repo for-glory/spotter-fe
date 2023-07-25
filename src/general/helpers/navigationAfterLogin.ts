@@ -3,6 +3,7 @@ import { RoleEnum, SubscriptionsTierEnum, User } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
 import { useSettings } from "@/hooks/useSettings";
 import useSubscription from "@/hooks/useSubscription";
+import useStripeConnect from "@/hooks/useStripeConnect";
 import useVerified from "@/hooks/useVerified";
 import router from "../../router/index";
 
@@ -67,7 +68,21 @@ const navigationAfterAuth = (user: User) => {
     }
     case RoleEnum.Manager:
     case RoleEnum.FacilityOwner: {
-      router.push({ name: EntitiesEnum.SelectMembership });
+      const { type: subscriptionType } = useSubscription();
+      console.log(subscriptionType)
+      const { stripeAccountState } = useStripeConnect();
+
+      if (subscriptionType === SubscriptionsTierEnum.Basic) {
+        router.push({ name: EntitiesEnum.SelectMembership });
+        break;
+      }
+
+      if (stripeAccountState === "ACTIVE") {
+        router.push({ name: EntitiesEnum.SuccessStripeConnect });
+        break;
+      }
+
+      router.push({ name: EntitiesEnum.SuccessMembership });
       break;
     }
     case RoleEnum.OrganizationOwner: {
