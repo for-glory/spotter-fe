@@ -76,7 +76,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     name: EntitiesEnum.SuccessStripeConnect,
     path: "/stripe-connect-success",
-    component: () => import("@/general/views/SuccessPage.vue"),
+    component: () => import("@/general/views/SuccessConnectPage.vue"),
     meta: {
       middleware: [auth],
       mode: EntitiesEnum.SuccessStripeConnect

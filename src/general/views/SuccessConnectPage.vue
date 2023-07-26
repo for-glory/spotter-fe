@@ -1,7 +1,6 @@
 <template>
 	<div class="scrolled-page">
-		<ion-spinner name="lines" class="spinner" v-if="loading || linkLoading" />
-		<div v-else class="content">
+		<div class="content">
 			<router-link
 				to="/"
 			>
@@ -14,12 +13,12 @@
 			<div class="message-text">
 				<div class="title">
 					<ion-text color="primary">
-						You have successfully set up a subscription
+						Congratulations! Payout Account created successfully
 					</ion-text>
 				</div>
 				<div class="detail">
 					<ion-text>
-						Your 30 days trial is now active, you can cancel anytime before 30 days, you will not be charged until the 30 days expire.
+						Build your gym profile, create your events and gym passes
 					</ion-text>
 				</div>
 			</div>
@@ -28,7 +27,7 @@
 					expand="block"
 					@click="handleContinue"
 				>
-					Connect your payout method
+					Set up gym profile
 				</ion-button>
 			</div>
 		</div>
@@ -36,53 +35,17 @@
 </template>
 
 <script setup lang="ts">
-import { IonText, IonImg, IonButton, IonSpinner } from "@ionic/vue";
+import { IonTitle, IonText, IonImg, IonButton, IonIcon, IonGrid } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import {
-  MyStripeConnectDocument,
-  LinksDocument,
-} from "@/generated/graphql";
-import { onMounted } from "vue";
 
 const router = useRouter();
 
-const { onResult: gotMyStripeConnect, loading } = useQuery(
-	MyStripeConnectDocument,
-	{},
-	{
-		fetchPolicy: "no-cache",
-	}
-);
-gotMyStripeConnect(async (response) => {
-	if (response.data?.myStripeConnect?.state === "ACTIVE"){
-		const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-		localStorage.setItem(
-			"user",
-			JSON.stringify({
-				...currentUser,
-				stripeAccountId: response.data?.myStripeConnect?.account_id,
-				stripeAccountState: response.data?.myStripeConnect?.state
-			})
-		);
-		router.push({ name: EntitiesEnum.SuccessStripeConnect });
-	}
-});
-
 
 const handleContinue = () => {
-	const link = createStripeConnect();
+	router.push({ name: EntitiesEnum.CreateFacility });
 };
 
-const { mutate: createStripeConnect, onDone: goToStripeConnect, loading: linkLoading } = useMutation(
-  LinksDocument
-);
-
-goToStripeConnect((res) => {
-	if(res.data?.links.url)
-	window.location.href = res.data.links.url
-});
 </script>
 
 <style scoped lang="scss">
@@ -164,10 +127,5 @@ goToStripeConnect((res) => {
       margin-top: 16px;
     }
   }
-}
-.spinner {
-  display: block;
-  pointer-events: none;
-  margin: calc(30vh - 60px) auto 0;
 }
 </style>

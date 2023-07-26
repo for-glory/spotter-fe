@@ -4103,9 +4103,9 @@ export const PaymentIntentDocument = gql`
 }
     `;
 export const CreateSubscriptionIntentDocument = gql`
-    mutation CreateSubscriptionIntent($product_id: ID!) {
+    mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!) {
     createSubscriptionIntent(
-    input: {product_id: $product_id}
+    input: {product_id: $product_id, fees_percent: $fees_percent}
   ) {
     session
   }
@@ -4904,6 +4904,14 @@ export const MeDocument = gql`
   }
 }
     `;
+export const MyStripeConnectDocument = gql`
+    query myStripeConnect {
+  myStripeConnect {
+    account_id
+    state
+  }
+}
+    `;
 export const MyCartsDocument = gql`
     query myCarts {
   myCarts {
@@ -5105,6 +5113,7 @@ export const PlansDocument = gql`
       id
       title
       description
+      fee
       type
       is_active
       benefits {
