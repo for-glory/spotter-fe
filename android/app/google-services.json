@@ -1,50 +1,35 @@
 {
   "project_info": {
-    "project_number": "869230176984",
-    "firebase_url": "https://spotterfitness-pro-coders-default-rtdb.firebaseio.com",
-    "project_id": "spotterfitness-pro-coders",
-    "storage_bucket": "spotterfitness-pro-coders.appspot.com"
+    "project_number": "388599372628",
+    "firebase_url": "https://spotter-fitness-d49be-default-rtdb.firebaseio.com",
+    "project_id": "spotter-fitness-d49be",
+    "storage_bucket": "spotter-fitness-d49be.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:869230176984:android:0720b4ebc9bd5c4aac05ad",
+        "mobilesdk_app_id": "1:388599372628:android:fca9a63ef5be0776bf46c1",
         "android_client_info": {
-          "package_name": "com.spotterfitness.gabbysoftware"
+          "package_name": "com.spotterfitness.gabbyproducts"
         }
       },
       "oauth_client": [
         {
-          "client_id": "869230176984-4hmi2p62tlaavihrkr5hb689d4aeha7p.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.spotterfitness.gabbysoftware",
-            "certificate_hash": "7BDF5A54634502AB28BF27412E1CAE31D368EF62"
-          }
-        },
-        {
-          "client_id": "869230176984-j6e5up60phk2jolid6t8c8pjs7m0996h.apps.googleusercontent.com",
+          "client_id": "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDXRscVXAj3Pkw_Y3t1z8jeFPH-OIQi0bY"
+          "current_key": "AIzaSyDfqJ6M5tk8BsIHzQQfhxrlBPfbF4BXUg8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "869230176984-j6e5up60phk2jolid6t8c8pjs7m0996h.apps.googleusercontent.com",
+              "client_id": "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "869230176984-342cau4bkm2lkieumotmn1qpuf4oeuc9.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "D4HASL74S5.XC.io.spotter.app"
-              }
             }
           ]
         }
