@@ -89,6 +89,7 @@ export enum EntitiesEnum {
   TrainerEditExercise = "TRAINER_EDIT_EXERCISE",
   TrainerCreateExercise = "TRAINER_CREATE_EXERCISE",
   TrainerExerciseList = "TRAINER_EXERCISE_LIST",
+  CreateWorkout = "CREATE_WORKOUT",
   ActivitiesNearby = "ACTIVITIESNEARBY",
   MyTraining = "MY_TRAINING",
   Nearby = "NEARBY",

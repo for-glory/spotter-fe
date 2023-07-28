@@ -43,6 +43,9 @@ export const setAuthItems = (authItems: AuthPayload) => {
   for (const [key, value] of Object.entries(authItems)) {
     localStorage.setItem(key, JSON.stringify(value));
   }
+  if (authItems.user) {
+    localStorage.setItem('currentSubscription', authItems.user?.currentSubscription);
+  }
   const token = localStorage.getItem("FCM_TOKEN");
   const { updateDeviceToken, registerPushNotifications } =
     usePushNotifications();
