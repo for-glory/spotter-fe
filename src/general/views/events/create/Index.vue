@@ -11,6 +11,12 @@
             alt="logo"
           />
         </router-link>
+        <div class="top-buttons">
+          <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
+            Go to Dashboard
+            <ion-icon src="assets/icon/arrow-next.svg" />
+          </ion-button>
+        </div>
         <ion-title class="title" color="primary">
           Create your first event
         </ion-title>
@@ -18,6 +24,7 @@
           ref="eventForm"
           has-skip-button
           @submit="createEvent"
+          @onSkip="goToWorkout"
           :loading="eventOnCreation"
         />
       </div>
@@ -30,6 +37,11 @@
 </template>
 
 <script setup lang="ts">
+import {
+  IonButton,
+  IonIcon,
+  IonTitle,
+} from "@ionic/vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
@@ -42,8 +54,10 @@ import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
-const onBack = () => {
-  isConfirmedModalOpen.value = true;
+const goToDashboard = () => {
+  // isConfirmedModalOpen.value = true;
+  eventForm.value?.clearStore();
+  router.push({ name: EntitiesEnum.Dashboard });
 };
 
 const isConfirmedModalOpen = ref(false);
@@ -52,7 +66,7 @@ const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
     eventForm.value?.clearStore();
-    router.go(-1);
+    // router.push({ name: EntitiesEnum.Dashboard });
   }
 };
 
@@ -64,6 +78,11 @@ const {
 
 const createEvent = (input: CreateEventInput) => {
   createEventMutate({ input });
+};
+
+const goToWorkout = () => {
+  eventForm.value?.clearStore();
+  router.push({ name: EntitiesEnum.CreateWorkout });
 };
 
 const eventForm = ref<typeof EventForm | null>(null);
@@ -104,5 +123,13 @@ const showSuccessToast = async () => {
 }
 .content {
   padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: end;
+}
+.dashboard-btn {
+  margin-top: 10px;
 }
 </style>

@@ -11,6 +11,16 @@
             alt="logo"
           />
         </router-link>
+        <div class="top-buttons">
+          <ion-button class="dashboard-btn" @click="goToCreateEvent" fill="clear">
+            <ion-icon src="assets/icon/arrow-back.svg" />
+            Back to Create Event
+          </ion-button>
+          <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
+            Go to Dashboard
+            <ion-icon src="assets/icon/arrow-next.svg" />
+          </ion-button>
+        </div>
         <ion-title class="title" color="primary">
           Create your workout plan
         </ion-title>
@@ -40,7 +50,7 @@
           <choose-block
             title="Workout type"
             :value="workoutType"
-            @handle-click="onHandleSelect(EntitiesEnum.TrainerWorkoutTypes)"
+            @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
           />
         </div>
 
@@ -49,7 +59,7 @@
           <choose-block
             title="Select muscle group"
             :value="muscleTypesValue"
-            @handle-click="onHandleSelect(EntitiesEnum.TrainerMuscleTypes)"
+            @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
           />
         </div>
 
@@ -91,7 +101,7 @@
             expand="block"
             :disabled="!isValidForm"
           >
-            Upload & Finish
+						Next step
           </ion-button>
         </div>
       </div>
@@ -213,16 +223,16 @@ const isValidForm = computed(
 );
 
 const handleSubmit = () => {
-  // if (isValidForm.value) {
-  //   router.push({
-  //     name: EntitiesEnum.TrainerCreateExercise,
-  //     params: { id: uuidv4() },
-  //   });
-  // }
+  if (isValidForm.value) {
+    router.push({
+      name: EntitiesEnum.CreateExercise,
+      params: { id: uuidv4() },
+    });
+  }
 };
 
 const onHandleSelect = (pathName: string) => {
-  // router.push({ name: pathName });
+  router.push({ name: pathName });
 };
 
 const onBack = () => {
@@ -290,6 +300,16 @@ const durationOptions: PickerOptions = {
     },
   ],
 };
+
+const goToDashboard = () => {
+  resetWorkout();
+  router.push({ name: EntitiesEnum.Dashboard });
+};
+
+const goToCreateEvent = () => {
+  resetWorkout();
+  router.push({ name: EntitiesEnum.CreateEvent });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -313,5 +333,12 @@ const durationOptions: PickerOptions = {
   margin-bottom: 20px;
   margin-top: 20px;
   text-align: center;
+}
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+.dashboard-btn {
+  margin-top: 10px;
 }
 </style>

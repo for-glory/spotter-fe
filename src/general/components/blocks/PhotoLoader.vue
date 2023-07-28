@@ -48,6 +48,7 @@ import { ref, watch, withDefaults, defineProps, defineEmits } from "vue";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import PhotoCropper from "@/general/components/modals/crop/PhotoCropper.vue";
 import CircleProgress from "@/general/components/CircleProgress.vue";
+import { Capacitor } from '@capacitor/core';
 
 enum actionTypesEnum {
   Delete = "DELETE",
@@ -87,43 +88,68 @@ watch(
 );
 
 const openLoadOptions = async (): Promise<void> => {
+  
+  const mobileButtons = [
+    ...(value.value
+      ? [
+          {
+            text: "Delete photo",
+            role: "destructive",
+            data: {
+              type: actionTypesEnum.Delete,
+            },
+          },
+        ]
+      : []),
+    {
+      text: "Take photo",
+      data: {
+        type: actionTypesEnum.MakeAPhoto,
+      },
+    },
+    {
+      text: "Photo library",
+      data: {
+        type: actionTypesEnum.PhotoLibrary,
+      },
+    },
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+  ];
+  const webButtons = [
+    ...(value.value
+      ? [
+          {
+            text: "Delete photo",
+            role: "destructive",
+            data: {
+              type: actionTypesEnum.Delete,
+            },
+          },
+        ]
+      : []),
+    {
+      text: "Photo library",
+      data: {
+        type: actionTypesEnum.PhotoLibrary,
+      },
+    },
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+  ];
   const actionSheet = await actionSheetController.create({
     mode: "ios",
-    buttons: [
-      ...(value.value
-        ? [
-            {
-              text: "Delete photo",
-              role: "destructive",
-              data: {
-                type: actionTypesEnum.Delete,
-              },
-            },
-          ]
-        : []),
-      {
-        text: "Take photo",
-        data: {
-          type: actionTypesEnum.MakeAPhoto,
-        },
-      },
-      {
-        text: "Photo library",
-        data: {
-          type: actionTypesEnum.PhotoLibrary,
-        },
-      },
-      {
-        text: "Cancel",
-        role: "cancel",
-      },
-    ],
+    buttons: Capacitor.isNativePlatform()?mobileButtons:webButtons
   });
 
   await actionSheet.present();
 
   const { data } = await actionSheet.onWillDismiss();
-  const type: actionTypesEnum = data.type;
+  const type: actionTypesEnum = data?.type;
 
   const actions = {
     [actionTypesEnum.Delete]: () => setValue(),
