@@ -1,0 +1,5 @@
+"use strict";(self["webpackChunkspotter"]=self["webpackChunkspotter"]||[]).push([[2878],{72878:function(n,r,o){o.r(r),o.d(r,{a:function(){return u},b:function(){return c},p:function(){return t}});var e=o(97582),t=function(n){for(var r=[],o=1;o<arguments.length;o++)r[o-1]=arguments[o];return console.warn.apply(console,(0,e.ev)(["[Ionic Warning]: ".concat(n)],r,!1))},c=function(n){for(var r=[],o=1;o<arguments.length;o++)r[o-1]=arguments[o];return console.error.apply(console,(0,e.ev)(["[Ionic Error]: ".concat(n)],r,!1))},u=function(n){for(var r=[],o=1;o<arguments.length;o++)r[o-1]=arguments[o];return console.error("<".concat(n.tagName.toLowerCase(),"> must be used inside ").concat(r.join(" or "),"."))};
+/*!
+ * (C) Ionic http://ionicframework.com - MIT License
+ */}}]);
+//# sourceMappingURL=2878.0face20c.js.map

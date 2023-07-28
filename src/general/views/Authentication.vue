@@ -11,7 +11,7 @@
         <ion-col size="12" size-md="7" class="container__content">
           <router-view />
         </ion-col>
-        <ion-col size="12" size-md="5">
+        <ion-col v-if="!isNative" class="hide-if-native" size="12" size-md="5">
           <div class="background-image-section">
             <ion-img
               class="background-image-section__img"
@@ -31,6 +31,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { AuthenticationMode } from "@/ts/enums/authentification";
 import { EntitiesEnum } from "@/const/routes";
+import { Capacitor } from '@capacitor/core';
 
 const route = useRoute();
 const router = useRouter();
@@ -46,6 +47,8 @@ const backgroundImage = computed(
     else return "iPhone-14-1";
   }
 );
+
+const isNative = Capacitor.isNativePlatform();
 
 const onBack = () => {
   router.push({ name: EntitiesEnum.Login });

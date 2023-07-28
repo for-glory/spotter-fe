@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkspotter"]=self["webpackChunkspotter"]||[]).push([[8539],{28539:function(e,n,r){r.r(n),r.d(n,{AppLauncherWeb:function(){return s}});var t=r(29895);class s extends t.Uw{async canOpenUrl(e){return{value:!0}}async openUrl(e){return window.open(e.url,"_blank"),{completed:!0}}}}}]);
+//# sourceMappingURL=8539.2abca4f7.js.map

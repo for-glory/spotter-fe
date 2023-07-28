@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkspotter"]=self["webpackChunkspotter"]||[]).push([[3805],{93805:function(n,s,t){t.r(s),t.d(s,{Browser:function(){return r},BrowserWeb:function(){return o}});var e=t(29895);class o extends e.Uw{constructor(){super(),this._lastWindow=null}async open(n){this._lastWindow=window.open(n.url,n.windowName||"_blank")}async close(){return new Promise(((n,s)=>{null!=this._lastWindow?(this._lastWindow.close(),this._lastWindow=null,n()):s("No active window to close!")}))}}const r=new o}}]);
+//# sourceMappingURL=3805.15d0f939.js.map

@@ -17,6 +17,7 @@ import { navigationAfterPaymentCompleted } from "@/helpers/purchaseRouterNavigat
 import { setAuthItems } from "./router/middleware/auth";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { MeDocument } from "./generated/graphql";
+import { Capacitor } from '@capacitor/core';
 
 onMounted(async () => {
   getMyProfile();
@@ -103,4 +104,10 @@ const {
 gotMyProfile(({ data }) => {
   setAuthItems(data.me);
 });
+
+if(Capacitor.isNativePlatform()) {
+  router.replace({
+        name: EntitiesEnum.Login,
+  });
+}
 </script>
