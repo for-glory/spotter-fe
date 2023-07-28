@@ -1,6 +1,6 @@
 <template>
     <div class="auth-page">
-      <div class="auth-page__header">
+      <div class="auth-page__header" v-if="!hideHeader">
         <landing-header
           hideAuthBtn
           fixed
@@ -8,7 +8,7 @@
       </div>
       <ion-grid class="container">
         <ion-row>
-          <ion-col size="12" size-md="7" class="container__content">
+          <ion-col size="12" size-md="7" class="container__content" :class="hideHeader?'padding-small':''">
             <slot name="left-section"></slot>
           </ion-col>
           <ion-col size="12" size-md="5">
@@ -28,9 +28,13 @@
   import { IonPage, IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonButton } from '@ionic/vue';
   import LandingHeader from "@/landing/components/landing/LandingHeader.vue";
   import { useRoute, useRouter } from "vue-router";
-  import { computed, ref } from "vue";
+  import { computed, ref, defineProps } from "vue";
   import { AuthenticationMode } from "@/ts/enums/authentification";
   import { EntitiesEnum } from "@/const/routes";
+
+  const props = defineProps<{
+    hideHeader?: boolean;
+  }>();
   
   const route = useRoute();
   const router = useRouter();
@@ -43,6 +47,9 @@
       else if (currentMode.value === AuthenticationMode.SelectRole) return "iPhone-14-3";
       else if (currentMode.value === AuthenticationMode.CheckEmail) return "iPad-6";
       else if (currentMode.value === AuthenticationMode.ChooseFacilityType) return "iPhone-14-5";
+      else if (currentMode.value === AuthenticationMode.CreateFacility) return "iPhone-14-7";
+      else if (currentMode.value === AuthenticationMode.CreateEvent) return "iPhone-14-8";
+      else if (currentMode.value === AuthenticationMode.CreateWorkout) return "iPhone-14-4";
       else return "iPhone-14-1";
     }
   );
@@ -66,6 +73,12 @@
   
       &__content {
         padding: 120px 8% 0 8%;
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .padding-small {
+        padding: 20px !important;
       }
     }
   

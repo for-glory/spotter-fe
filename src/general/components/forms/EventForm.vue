@@ -184,6 +184,13 @@
 
     <div class="holder-button">
       <ion-button
+        expand="block"
+        class="secondary"
+        v-if="hasSkipButton"
+      >
+        Skip
+      </ion-button>
+      <ion-button
         class="button"
         expand="block"
         @click="submitEvent"
@@ -268,6 +275,7 @@ const props = withDefaults(
     loading?: boolean;
     data?: CreateEventInput | any;
     submitButtonText?: string;
+    hasSkipButton?: boolean;
   }>(),
   {
     submitButtonText: "Create",
@@ -753,6 +761,9 @@ defineExpose({
 }
 
 .holder-button {
+  display: flex;
+  gap: 16px;
+
   .button {
     margin: 0;
   }

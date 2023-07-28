@@ -284,10 +284,20 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.CreateEvent,
-    path: "/trainers/create-event",
+    path: "/event/create-event",
     component: () => import("@/general/views/events/create/Index.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.CreateEvent,
+    },
+  },
+  {
+    name: EntitiesEnum.CreateWorkout,
+    path: "/workout/create-workout",
+    component: () => import("@/general/views/workout/Workout.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
     },
   },
   {

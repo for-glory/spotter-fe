@@ -22,18 +22,16 @@
         @change="facilityTitleChange"
         v-model:value="facilityTitle"
         placeholder="Enter title for gym"
-        label="What’s the name of your gym"
+        label="Gym name"
       />
     </div>
 
     <div class="form-row">
-      <base-input
-        :rows="3"
-        :maxlength="150"
-        label="Describe your gym"
-        @change="facilityDescriptionChange"
-        v-model:value="facilityDescription"
-        placeholder="Enter description for gym"
+      <ion-label class="label"> Choose equipment and amenitites </ion-label>
+      <choose-block
+        title="Equipment and amenities"
+        @handle-click="onChooseAmenities"
+        :value="facilityEquipments?.length + facilityAmenities?.length || ''"
       />
     </div>
 
@@ -85,11 +83,13 @@
     </div>
 
     <div class="form-row">
-      <ion-label class="label"> Choose equipment and amenitites </ion-label>
-      <choose-block
-        title="Equipment and amenities"
-        @handle-click="onChooseAmenities"
-        :value="facilityEquipments?.length + facilityAmenities?.length || ''"
+      <base-input
+        :rows="3"
+        :maxlength="150"
+        label="Describe your gym"
+        @change="facilityDescriptionChange"
+        v-model:value="facilityDescription"
+        placeholder="Enter description for gym"
       />
     </div>
 
@@ -110,7 +110,18 @@
       </ion-button>
       <ion-button
         expand="block"
-        @click="onConfirm"
+        class="secondary"
+        @click="onSaveAndExit"
+        v-if="saveAndExitButton"
+        :disabled="
+          !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
+        "
+      >
+        Save & Exit
+      </ion-button>
+      <ion-button
+        expand="block"
+        @click="onNext"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
@@ -168,6 +179,7 @@ const props = withDefaults(
   defineProps<{
     buttonText?: string;
     previewButton?: boolean;
+    saveAndExitButton?: boolean;
     footerFixed?: boolean;
     edit?: boolean;
   }>(),
@@ -181,7 +193,7 @@ const router = useRouter();
 const store = useNewFacilityStore();
 
 const emits = defineEmits<{
-  (e: "submit", data?: newFacilityStoreTypes): void;
+  (e: "submit", data?: newFacilityStoreTypes, mode?: string): void;
   (e: "on-delete-media", id: string): void;
 }>();
 
@@ -392,8 +404,7 @@ const onPreview = () => {
   router.push({ name: EntitiesEnum.FacilityPreview });
 };
 
-const onConfirm = () => {
-  console.log("selected address", selectedState.value, selectedCity.value, selectedAddress.value)
+const onSaveAndExit = () => {
   emits("submit", {
     title: facilityTitle.value,
     description: facilityDescription.value,
@@ -405,7 +416,22 @@ const onConfirm = () => {
     },
     equipments: facilityEquipments.value,
     amenities: facilityAmenities.value,
-  });
+  }, "exit");
+};
+
+const onNext = () => {
+  emits("submit", {
+    title: facilityTitle.value,
+    description: facilityDescription.value,
+    photos: facilityPhotos.value,
+    address: {
+      state: selectedState.value,
+      city: selectedCity.value,
+      address: selectedAddress.value,
+    },
+    equipments: facilityEquipments.value,
+    amenities: facilityAmenities.value,
+  }, "create_event");
 };
 
 const clearStore = () => {
@@ -435,7 +461,7 @@ defineExpose({
 .actions-wrapper {
   display: flex;
   margin: 0 -8px;
-  justify-content: space-between;
+  gap: 16px;
 
   &--fixed {
     left: 0;
@@ -446,15 +472,15 @@ defineExpose({
     padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
   }
 
-  .button {
-    margin: 0 8px;
-    flex: 1 1 calc(59% - 16px);
+  // .button {
+  //   margin: 0 8px;
+  //   flex: 1 1 calc(59% - 16px);
 
-    &.secondary {
-      flex: 1 1 calc(41% - 16px);
-      --background: var(--gray-800);
-    }
-  }
+  //   &.secondary {
+  //     flex: 1 1 calc(41% - 16px);
+  //     --background: var(--gray-800);
+  //   }
+  // }
 }
 .search-form {
   position: relative;

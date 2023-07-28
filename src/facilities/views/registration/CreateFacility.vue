@@ -1,13 +1,19 @@
 <template>
-  <base-layout :header-fixed="false" hide-navigation-menu>
-    <template #header>
-      <page-header @back="onBack" back-btn transparent buttons-transparent />
-    </template>
-    <template #content>
+  <base-auth-layout hideHeader>
+    <template  #left-section>
       <div class="content">
         <div class="head">
+          <router-link
+            to="/"
+          >
+            <ion-img
+              src="assets/icon/logo-complete.png"
+              class="logo"
+              alt="logo"
+            />
+          </router-link>
           <ion-title class="title" color="primary">
-            Let’s create gym profile!
+            Let’s create your gym profile!
           </ion-title>
           <ion-text color="secondary">
             To give you a better experience we need to know more about your gym
@@ -15,13 +21,13 @@
         </div>
         <gym-form
           ref="gymForm"
-          button-text="Let's start!"
-          preview-button
+          button-text="Next"
+          save-and-exit-button
           @submit="createNewFacility"
         />
       </div>
     </template>
-  </base-layout>
+  </base-auth-layout>
 
   <discard-changes
     :is-open="isConfirmedModalOpen"
@@ -35,6 +41,7 @@
 
 <script setup lang="ts">
 import { IonText, IonTitle } from "@ionic/vue";
+import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -53,6 +60,7 @@ import DiscardChanges from "@/general/components/modals/confirmations/DiscardCha
 const router = useRouter();
 
 const isConfirmedModalOpen = ref(false);
+const actionAfterSiubmit = ref("exit");
 
 const onBack = () => {
   isConfirmedModalOpen.value = true;
@@ -72,10 +80,11 @@ const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
 );
 
-const createNewFacility = (data: newFacilityStoreTypes) => {
+const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
   const { registration_code } = JSON.parse(
     localStorage.getItem("organization") || "{}"
   );
+  actionAfterSiubmit.value = mode;
   createFacility({
     input: {
       name: data.title,
@@ -104,6 +113,16 @@ const createNewFacility = (data: newFacilityStoreTypes) => {
 facilityCreated(() => {
   gymForm.value?.clearStore();
   updateSettings();
+  if (actionAfterSiubmit.value === "exit") {
+    router.push({
+      name: EntitiesEnum.Profile,
+    });
+  }
+  else if(actionAfterSiubmit.value === "create_event") {
+    router.push({
+      name: EntitiesEnum.CreateEvent,
+    });
+  }
 });
 
 const { mutate: updateUserSettings, onDone: settingsUpdated } = useMutation(
@@ -124,9 +143,9 @@ const updateSettings = () => {
 
 settingsUpdated(() => {
   localStorage.removeItem("organization");
-  router.push({
-    name: EntitiesEnum.Profile,
-  });
+  // router.push({
+  //   name: EntitiesEnum.Profile,
+  // });
 });
 </script>
 
@@ -139,7 +158,7 @@ settingsUpdated(() => {
 }
 
 .content {
-  padding: calc(56px + var(--ion-safe-area-top)) 24px
+  padding: calc(var(--ion-safe-area-top)) 24px
     calc(16px + var(--ion-safe-area-bottom));
 }
 
@@ -147,9 +166,12 @@ settingsUpdated(() => {
   font-size: 14px;
   font-weight: 300;
   line-height: 1.5;
-  max-width: 260px;
   text-align: center;
   margin: 0 auto 32px;
+}
+.logo {
+  width: 220px;
+  min-width: 60px;
 }
 
 .title {
@@ -158,5 +180,6 @@ settingsUpdated(() => {
   line-height: 1.3;
   font-weight: 400;
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 </style>
