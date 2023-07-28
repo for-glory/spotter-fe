@@ -79,6 +79,7 @@ export const routes: Array<RouteRecordRaw> = [
       import("@/facilities/views/registration/CreateFacility.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.CreateFacility,
     },
   },
   {

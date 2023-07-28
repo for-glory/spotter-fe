@@ -284,10 +284,47 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.CreateEvent,
-    path: "/trainers/create-event",
+    path: "/event/create-event",
     component: () => import("@/general/views/events/create/Index.vue"),
     meta: {
       middleware: [auth],
+      mode: EntitiesEnum.CreateEvent,
+    },
+  },
+  {
+    name: EntitiesEnum.CreateWorkout,
+    path: "/workout/create-workout",
+    component: () => import("@/general/views/workout/Workout.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
+    name: EntitiesEnum.WorkoutTypes,
+    path: "/workout/types",
+    component: () => import("@/general/views/workout/Types.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
+    name: EntitiesEnum.MuscleTypes,
+    path: "/workout/muscle-types",
+    component: () => import("@/general/views/workout/MuscleTypes.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
+    name: EntitiesEnum.CreateExercise,
+    path: "/workout/create-exercise/:id",
+    component: () => import("@/general/views/workout/Exercise.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
     },
   },
   {
