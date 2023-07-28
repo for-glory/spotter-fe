@@ -187,6 +187,7 @@
         expand="block"
         class="secondary"
         v-if="hasSkipButton"
+        @click="onSkip"
       >
         Skip
       </ion-button>
@@ -267,6 +268,7 @@ enum DateFieldsEnum {
 
 const emits = defineEmits<{
   (e: "submit", data?: any): void;
+  (e: "onSkip", params?: any): void;
 }>();
 
 const props = withDefaults(
@@ -728,6 +730,9 @@ const submitEvent = async () => {
 
   emits("submit", data);
 };
+const onSkip = () => {
+  emits("onSkip");
+}
 
 const formatTime = (date: number, time: string): string => {
   const isPm = time.split(" ")[1] === "PM",
