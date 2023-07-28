@@ -105,9 +105,4 @@ gotMyProfile(({ data }) => {
   setAuthItems(data.me);
 });
 
-if(Capacitor.isNativePlatform()) {
-  router.replace({
-        name: EntitiesEnum.Login,
-  });
-}
 </script>
