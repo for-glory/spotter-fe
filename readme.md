@@ -20,6 +20,7 @@
 - ionic/vue: 6.0.0
 - capacitor: 4.0.1
 - typescript: 4.3.5
+- MySQL, PHP & Digital Ocean
 ```
 ---------------	
 Run ```npm run serve``` within the app directory to see your app in the ```browser```
