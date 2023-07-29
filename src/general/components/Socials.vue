@@ -1,7 +1,7 @@
 <template>
   <div class="socials">
     <ion-button
-      v-if="isSafari==='safari' || isIos"
+      v-if="isSafari === 'safari' || isIos"
       expand="block"
       class="social-btn"
       @click="loginWithApple"
@@ -21,7 +21,12 @@ import { IonButton, IonIcon, isPlatform } from "@ionic/vue";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { onMounted, ref } from "vue";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
+} from "firebase/auth";
 import { SocialProvidersEnum, SocialLoginDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
@@ -37,6 +42,7 @@ import {
   FacebookError,
   FacebookLoginResponse,
 } from "@capacitor-community/facebook-login";
+import { Capacitor } from "@capacitor/core";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB7Q_qpCuFziaz_6VMopuqlnskb_TmtEgU",
@@ -46,7 +52,7 @@ const firebaseConfig = {
   storageBucket: "spotter-fitness-d49be.appspot.com",
   messagingSenderId: "388599372628",
   appId: "1:388599372628:web:657e47d366f80b48bf46c1",
-  measurementId: "G-BY1L904251"
+  measurementId: "G-BY1L904251",
 };
 
 // Initialize Firebase
@@ -54,32 +60,34 @@ initializeApp(firebaseConfig);
 const auth = getAuth();
 
 const isIos = isPlatform("ios");
-const isSafari = ref<string>('');
+const isSafari = ref<string>("");
 
 const fnBrowserDetect = () => {
   let userAgent = navigator.userAgent;
   let browserName;
-  
-  if(userAgent.match(/chrome|chromium|crios/i)){
-      browserName = 'chrome';
-    }else if(userAgent.match(/firefox|fxios/i)){
-      browserName = 'firefox';
-    }  else if(userAgent.match(/safari/i)){
-      browserName = 'safari';
-    }else if(userAgent.match(/opr\//i)){
-      browserName = 'opera';
-    } else if(userAgent.match(/edg/i)){
-      browserName = 'edge';
-    }else{
-      browserName='';
-    }
-  return browserName;      
-}
+
+  if (userAgent.match(/chrome|chromium|crios/i)) {
+    browserName = "chrome";
+  } else if (userAgent.match(/firefox|fxios/i)) {
+    browserName = "firefox";
+  } else if (userAgent.match(/safari/i)) {
+    browserName = "safari";
+  } else if (userAgent.match(/opr\//i)) {
+    browserName = "opera";
+  } else if (userAgent.match(/edg/i)) {
+    browserName = "edge";
+  } else {
+    browserName = "";
+  }
+  return browserName;
+};
 
 onMounted(async () => {
-  if (!isPlatform("capacitor")) {
+  if (Capacitor.isNativePlatform()) {
+    console.log("Got to capacitor check");
     GoogleAuth.initialize({
-      clientId: process.env.VUE_APP_GOOGLE_AUTH_CLIENT_ID,
+      clientId:
+        "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
       scopes: ["profile", "email"],
       grantOfflineAccess: true,
     });
@@ -95,24 +103,44 @@ const {
 
 const loginWithGoogle = async () => {
   try {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        login({
-          token: credential.accessToken,
-          provider: SocialProvidersEnum.Google,
+    if (!Capacitor.isNativePlatform()) {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          debugger;
+          if (credential) {
+            login({
+              token: credential.accessToken,
+              provider: SocialProvidersEnum.Google,
+            });
+          } else {
+            console.error("Google Auth credentials is invalid: ", credential);
+          }
+        })
+        .catch((error) => {
+          console.log("error: ", error);
         });
-      }).catch((error) => {
-        console.log("error: ", error);
-      });
+    } else {
+      GoogleAuth.signIn().then(
+        (res) => {
+          debugger;
+          console.log("Google auth response: ", res);
+        },
+        (err) => {
+          debugger;
+          console.error(err);
+        }
+      );
+    }
   } catch (error) {
+    debugger;
     console.log("error: ", error);
   }
 };
 
 const loginWithApple = async () => {
-  const provider = new OAuthProvider('apple.com');
+  const provider = new OAuthProvider("apple.com");
   signInWithPopup(auth, provider)
     .then((result) => {
       // Apple credential

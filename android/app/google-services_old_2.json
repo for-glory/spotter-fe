@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:388599372628:android:28559c6d256e9ffdbf46c1",
+        "mobilesdk_app_id": "1:388599372628:android:fca9a63ef5be0776bf46c1",
         "android_client_info": {
-          "package_name": "com.spotterfitness.gabbysoftware"
+          "package_name": "com.spotterfitness.gabbyproducts"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "388599372628-6vmbhhm1p1b7d4s7235nbumvsnbt1agv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.spotterfitness.gabbysoftware",
-            "certificate_hash": "1c825f7de2221dc70dcbb820ae8bb69557c7ae89"
-          }
-        },
         {
           "client_id": "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
           "client_type": 3
