@@ -125,7 +125,12 @@ const loginWithGoogle = async () => {
       GoogleAuth.signIn().then(
         (res) => {
           debugger;
-          console.log("Google auth response: ", res);
+          if (res.authentication?.accessToken) {
+            login({
+              token: res.authentication.accessToken,
+              provider: SocialProvidersEnum.Google,
+            });
+        }
         },
         (err) => {
           debugger;
