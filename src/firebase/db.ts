@@ -11,14 +11,14 @@ import { getDatabase, ref } from "firebase/database";
 
 // TODO: We'll move below values to .env constants later
 const firebaseConfig = {
-  apiKey: "AIzaSyAZqWMHxUR4srsZkQhq0kkURDTgbLGl3mM",
-  authDomain: "spotterfitness-pro-coders.firebaseapp.com",
-  databaseURL: "https://spotterfitness-pro-coders-default-rtdb.firebaseio.com",
-  projectId: "spotterfitness-pro-coders",
-  storageBucket: "spotterfitness-pro-coders.appspot.com",
-  messagingSenderId: "869230176984",
-  appId: "1:869230176984:web:6b2cb336279dbea2ac05ad",
-  measurementId: "G-569LLW4YM4",
+  apiKey: "AIzaSyB7Q_qpCuFziaz_6VMopuqlnskb_TmtEgU",
+  authDomain: "spotter-fitness-d49be.firebaseapp.com",
+  databaseURL: "https://spotter-fitness-d49be-default-rtdb.firebaseio.com",
+  projectId: "spotter-fitness-d49be",
+  storageBucket: "spotter-fitness-d49be.appspot.com",
+  messagingSenderId: "388599372628",
+  appId: "1:388599372628:web:657e47d366f80b48bf46c1",
+  measurementId: "G-BY1L904251"
 };
 
 // Initialize Firebase

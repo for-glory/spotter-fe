@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "869230176984",
+    "firebase_url": "https://spotterfitness-pro-coders-default-rtdb.firebaseio.com",
+    "project_id": "spotterfitness-pro-coders",
+    "storage_bucket": "spotterfitness-pro-coders.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869230176984:android:0720b4ebc9bd5c4aac05ad",
+        "android_client_info": {
+          "package_name": "com.spotterfitness.gabbysoftware"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869230176984-4hmi2p62tlaavihrkr5hb689d4aeha7p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spotterfitness.gabbysoftware",
+            "certificate_hash": "7BDF5A54634502AB28BF27412E1CAE31D368EF62"
+          }
+        },
+        {
+          "client_id": "869230176984-j6e5up60phk2jolid6t8c8pjs7m0996h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXRscVXAj3Pkw_Y3t1z8jeFPH-OIQi0bY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869230176984-j6e5up60phk2jolid6t8c8pjs7m0996h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "869230176984-342cau4bkm2lkieumotmn1qpuf4oeuc9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "D4HASL74S5.XC.io.spotter.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
