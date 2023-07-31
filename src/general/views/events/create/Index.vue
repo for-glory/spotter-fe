@@ -2,15 +2,25 @@
   <base-auth-layout hide-header>
     <template  #left-section>
       <div class="content">
-        <router-link
-          to="/"
-        >
-          <ion-img
-            src="assets/icon/logo-complete.png"
-            class="logo"
-            alt="logo"
-          />
-        </router-link>
+        <div class="d-flex justify-content-between align-items-center">
+          <router-link
+            to="/"
+          >
+            <ion-img
+              src="assets/icon/logo-complete.png"
+              class="logo"
+              alt="logo"
+            />
+          </router-link>
+          <ion-button
+            class="login-btn"
+            type="button"
+            fill="clear"
+            @click="onLogout"
+          >
+            Log out
+          </ion-button>
+        </div>
         <div class="top-buttons">
           <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
             Go to Dashboard
@@ -52,6 +62,7 @@ import { toastController } from "@ionic/vue";
 import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
 const goToDashboard = () => {
@@ -104,6 +115,10 @@ const showSuccessToast = async () => {
     cssClass: "success-toast",
   });
   return toast.present();
+};
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

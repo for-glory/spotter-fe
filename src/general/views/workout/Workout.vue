@@ -2,15 +2,25 @@
   <base-auth-layout hideHeader>
     <template  #left-section>
       <div class="content ion-padding-horizontal">
-        <router-link
-          to="/"
-        >
-          <ion-img
-            src="assets/icon/logo-complete.png"
-            class="logo"
-            alt="logo"
-          />
-        </router-link>
+				<div class="d-flex justify-content-between align-items-center">
+					<router-link
+						to="/"
+					>
+						<ion-img
+							src="assets/icon/logo-complete.png"
+							class="logo"
+							alt="logo"
+						/>
+					</router-link>
+					<ion-button
+						class="login-btn"
+						type="button"
+						fill="clear"
+						@click="onLogout"
+					>
+						Log out
+					</ion-button>
+				</div>
         <div class="top-buttons">
           <ion-button class="dashboard-btn" @click="goToCreateEvent" fill="clear">
             <ion-icon src="assets/icon/arrow-back.svg" />
@@ -133,6 +143,7 @@ import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 const percentLoaded = ref(0);
 
@@ -309,6 +320,11 @@ const goToDashboard = () => {
 const goToCreateEvent = () => {
   resetWorkout();
   router.push({ name: EntitiesEnum.CreateEvent });
+};
+
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

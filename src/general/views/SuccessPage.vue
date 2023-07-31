@@ -40,6 +40,7 @@ import { IonText, IonImg, IonButton, IonSpinner } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { useMutation, useQuery } from "@vue/apollo-composable";
+import useFacilityId from "@/hooks/useFacilityId";
 import {
   MyStripeConnectDocument,
   LinksDocument,
@@ -66,7 +67,13 @@ gotMyStripeConnect(async (response) => {
 				stripeAccountState: response.data?.myStripeConnect?.state
 			})
 		);
-		router.push({ name: EntitiesEnum.SuccessStripeConnect });
+		const { id: myFacilityId } = useFacilityId();
+		console.log("---------",myFacilityId)
+		if(!myFacilityId) {
+			router.push({ name: EntitiesEnum.SuccessStripeConnect });
+			return;
+		}
+		router.push({ name: EntitiesEnum.Dashboard });
 	}
 });
 

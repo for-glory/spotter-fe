@@ -1,15 +1,25 @@
 <template>
   <base-auth-layout hideHeader>
     <template  #left-section>
-      <router-link
-        to="/"
-      >
-        <ion-img
-          src="assets/icon/logo-complete.png"
-          class="logo"
-          alt="logo"
-        />
-      </router-link>
+      <div class="d-flex justify-content-between align-items-center">
+        <router-link
+          to="/"
+        >
+          <ion-img
+            src="assets/icon/logo-complete.png"
+            class="logo"
+            alt="logo"
+          />
+        </router-link>
+        <ion-button
+          class="login-btn"
+          type="button"
+          fill="clear"
+          @click="onLogout"
+        >
+          Log out
+        </ion-button>
+      </div>
       <div class="top-buttons">
         <ion-button class="dashboard-btn" @click="onBack" fill="clear">
           <ion-icon src="assets/icon/arrow-back.svg" />
@@ -30,10 +40,12 @@
 <script setup lang="ts">
 import { BodyPartsDocument, BodyPartsQuery } from "@/generated/graphql";
 import { useWorkoutsStore } from "@/trainers/store/workouts";
-import { IonSpinner } from "@ionic/vue";
+import { IonSpinner, IonButton } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { clearAuthItems } from "@/router/middleware/auth";
+import { EntitiesEnum } from "@/const/entities";
 import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
@@ -67,6 +79,10 @@ const onChange = (value: string[], option: CheckboxValueType) => {
 
 const onBack = () => {
   router.go(-1);
+};
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

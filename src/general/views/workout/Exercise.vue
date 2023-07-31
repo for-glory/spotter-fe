@@ -2,15 +2,25 @@
   <base-auth-layout hideHeader>
     <template  #left-section>
       <div class="exercise-form-content">
-        <router-link
-          to="/"
-        >
-          <ion-img
-            src="assets/icon/logo-complete.png"
-            class="logo"
-            alt="logo"
-          />
-        </router-link>
+        <div class="d-flex justify-content-between align-items-center">
+          <router-link
+            to="/"
+          >
+            <ion-img
+              src="assets/icon/logo-complete.png"
+              class="logo"
+              alt="logo"
+            />
+          </router-link>
+          <ion-button
+            class="login-btn"
+            type="button"
+            fill="clear"
+            @click="onLogout"
+          >
+            Log out
+          </ion-button>
+        </div>
         <div class="top-buttons">
           <ion-button class="dashboard-btn" @click="onBack" fill="clear">
             <ion-icon src="assets/icon/arrow-back.svg" />
@@ -113,6 +123,7 @@ import { useMutation } from "@vue/apollo-composable";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
 const route = useRoute();
@@ -334,6 +345,11 @@ const updateExercise = () => {
     videoSize: videoInfo.value.size,
     videoName: videoInfo.value.name,
   });
+};
+
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

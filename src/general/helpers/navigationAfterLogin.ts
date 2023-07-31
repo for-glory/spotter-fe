@@ -70,7 +70,6 @@ const navigationAfterAuth = (user: User) => {
     case RoleEnum.Manager:
     case RoleEnum.FacilityOwner: {
       const { type: subscriptionType } = useSubscription();
-      console.log(subscriptionType)
       const { stripeAccountState } = useStripeConnect();
 
       if (subscriptionType === SubscriptionsTierEnum.Basic) {
@@ -84,7 +83,7 @@ const navigationAfterAuth = (user: User) => {
       }
 
       const { id: myFacilityId } = useFacilityId();
-
+      
       if(!myFacilityId) {
         router.push({ name: EntitiesEnum.SuccessStripeConnect });
         break;
