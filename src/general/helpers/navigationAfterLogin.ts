@@ -83,16 +83,14 @@ const navigationAfterAuth = (user: User) => {
         break;
       }
 
-      if (stripeAccountState === "ACTIVE") {
-        const { id: myFacilityId } = useFacilityId();
+      const { id: myFacilityId } = useFacilityId();
 
-        if(!myFacilityId) {
-          router.push({ name: EntitiesEnum.SuccessStripeConnect });
-          break;
-        }
-        router.push({ name: EntitiesEnum.Dashboard });
+      if(!myFacilityId) {
+        router.push({ name: EntitiesEnum.SuccessStripeConnect });
         break;
       }
+      router.push({ name: EntitiesEnum.Dashboard });
+      break;
     }
     case RoleEnum.OrganizationOwner: {
       const { isFacilitySetUp } = useSettings();
