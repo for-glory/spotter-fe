@@ -5,6 +5,7 @@ import { useSettings } from "@/hooks/useSettings";
 import useSubscription from "@/hooks/useSubscription";
 import useStripeConnect from "@/hooks/useStripeConnect";
 import useVerified from "@/hooks/useVerified";
+import useFacilityId from "@/hooks/useFacilityId";
 import router from "../../router/index";
 
 const navigationAfterAuth = (user: User) => {
@@ -77,12 +78,18 @@ const navigationAfterAuth = (user: User) => {
         break;
       }
 
-      if (stripeAccountState === "ACTIVE") {
-        router.push({ name: EntitiesEnum.SuccessStripeConnect });
+      if (stripeAccountState !== "ACTIVE") {
+        router.push({ name: EntitiesEnum.SuccessMembership });
         break;
       }
 
-      router.push({ name: EntitiesEnum.SuccessMembership });
+      const { id: myFacilityId } = useFacilityId();
+
+      if(!myFacilityId) {
+        router.push({ name: EntitiesEnum.SuccessStripeConnect });
+        break;
+      }
+      router.push({ name: EntitiesEnum.Dashboard });
       break;
     }
     case RoleEnum.OrganizationOwner: {
