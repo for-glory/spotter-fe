@@ -335,4 +335,29 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth],
     },
   },
+  {
+    path: "/about-us",
+    component: () => import("@/general/views/AboutUs.vue"),
+    meta: {},
+  },
+  {
+    path: "/contact-us",
+    component: () => import("@/general/views/ContactUs.vue"),
+    meta: {},
+  },
+  {
+    path: "/terms-of-use",
+    component: () => import("@/general/views/TermsOfUse.vue"),
+    meta: {},
+  },
+  {
+    path: "/how-it-works",
+    component: () => import("@/general/views/HowItWorks.vue"),
+    meta: {},
+  },
+  {
+    path: "/faqs",
+    component: () => import("@/general/views/Faqs.vue"),
+    meta: {},
+  },
 ];
