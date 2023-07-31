@@ -3,15 +3,25 @@
     <template  #left-section>
       <div class="content">
         <div class="head">
-          <router-link
-            to="/"
-          >
-            <ion-img
-              src="assets/icon/logo-complete.png"
-              class="logo"
-              alt="logo"
-            />
-          </router-link>
+          <div class="d-flex justify-content-between align-items-center">
+            <router-link
+              to="/"
+            >
+              <ion-img
+                src="assets/icon/logo-complete.png"
+                class="logo"
+                alt="logo"
+              />
+            </router-link>
+            <ion-button
+              class="login-btn"
+              type="button"
+              fill="clear"
+              @click="onLogout"
+            >
+              Log out
+            </ion-button>
+          </div>
           <ion-title class="title" color="primary">
             Let’s create your gym profile!
           </ion-title>
@@ -40,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonText, IonTitle } from "@ionic/vue";
+import { IonText, IonTitle, IonButton } from "@ionic/vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
@@ -54,6 +64,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { setSettings } from "@/hooks/useSettings";
 import useId from "@/hooks/useId";
 import { ProfileSettings } from "@/ts/enums/user";
+import { clearAuthItems } from "@/router/middleware/auth";
 import { ref } from "vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
@@ -147,6 +158,11 @@ settingsUpdated(() => {
   //   name: EntitiesEnum.Profile,
   // });
 });
+
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
+};
 </script>
 
 <style lang="scss" scoped>

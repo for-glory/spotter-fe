@@ -2,15 +2,25 @@
 	<div class="scrolled-page">
 		<div class="header">
 			<ion-grid :fixed="true">
-				<router-link
-					to="/"
-				>
-					<ion-img
-						src="assets/icon/logo-complete.png"
-						class="logo"
-						alt="logo"
-					/>
-				</router-link>
+				<div class="d-flex justify-content-between align-items-center">
+            <router-link
+              to="/"
+            >
+              <ion-img
+                src="assets/icon/logo-complete.png"
+                class="logo"
+                alt="logo"
+              />
+            </router-link>
+            <ion-button
+              class="login-btn"
+              type="button"
+              fill="clear"
+              @click="onLogout"
+            >
+              Log out
+            </ion-button>
+          </div>
 			</ion-grid>
 		</div>
 		<ion-grid :fixed="true">
@@ -375,6 +385,7 @@ import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
 import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { BackendStripe } from "@/services/stripe/stripe";
+import { clearAuthItems } from "@/router/middleware/auth";
 import {
   MeDocument,
   PlansDocument,
@@ -495,6 +506,11 @@ const onCardCreation = async () => {
     let intent = JSON.parse(setupIntentResult?.data?.setupIntent?.session);
     backendStripe.redirectToCardSaving(intent.id, intent.url);
   });
+};
+
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 
 </script>

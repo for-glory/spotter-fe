@@ -108,7 +108,7 @@ const loginWithGoogle = async () => {
       signInWithPopup(auth, provider)
         .then((result) => {
           const credential = GoogleAuthProvider.credentialFromResult(result);
-          debugger;
+          // debugger;
           if (credential) {
             login({
               token: credential.accessToken,
@@ -124,7 +124,7 @@ const loginWithGoogle = async () => {
     } else {
       GoogleAuth.signIn().then(
         (res) => {
-          debugger;
+          // debugger;
           if (res.authentication?.accessToken) {
             login({
               token: res.authentication.accessToken,
@@ -133,13 +133,13 @@ const loginWithGoogle = async () => {
         }
         },
         (err) => {
-          debugger;
+          // debugger;
           console.error(err);
         }
       );
     }
   } catch (error) {
-    debugger;
+    // debugger;
     console.log("error: ", error);
   }
 };
