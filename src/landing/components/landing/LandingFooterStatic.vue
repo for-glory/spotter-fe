@@ -419,6 +419,8 @@ import FaqItem from "@/landing/components/landing/FaqItem.vue";
       align-items: center;
       gap: 64px;
       margin-top: 48px;
+      padding: 0 32px;
+      text-align: center;
     }
 
     .get-buttons {
