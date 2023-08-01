@@ -360,4 +360,28 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/Faqs.vue"),
     meta: {},
   },
+  {
+    path: "/dashboard/",
+    component: () => import("@/general/views/dashboard/Index.vue"),
+    meta: {
+      middleware: [auth],
+    },
+    children: [
+      {
+        name: EntitiesEnum.DashboardOverview,
+        path: "overview",
+        component: () => import("@/general/views/dashboard/Overview.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardEvent,
+        path: "event",
+        component: () => import("@/general/views/dashboard/events/Index.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardCreateEvent,
+        path: "event",
+        component: () => import("@/general/views/dashboard/events/CreateEvent.vue"),
+      },
+    ]
+  },
 ];

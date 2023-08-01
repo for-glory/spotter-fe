@@ -189,7 +189,7 @@
         v-if="hasSkipButton"
         @click="onSkip"
       >
-        Skip
+        {{ skipText }}
       </ion-button>
       <ion-button
         class="button"
@@ -277,6 +277,7 @@ const props = withDefaults(
     loading?: boolean;
     data?: CreateEventInput | any;
     submitButtonText?: string;
+    skipText?: string;
     hasSkipButton?: boolean;
   }>(),
   {

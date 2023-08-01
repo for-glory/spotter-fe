@@ -30,7 +30,7 @@
   import { useRoute, useRouter } from "vue-router";
   import { computed, ref, defineProps } from "vue";
   import { AuthenticationMode } from "@/ts/enums/authentification";
-  import { EntitiesEnum } from "@/const/routes";
+  import { EntitiesEnum } from "@/const/entities";
 
   const props = defineProps<{
     hideHeader?: boolean;
