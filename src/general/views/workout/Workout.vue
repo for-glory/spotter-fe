@@ -314,7 +314,7 @@ const durationOptions: PickerOptions = {
 
 const goToDashboard = () => {
   resetWorkout();
-  router.push({ name: EntitiesEnum.Dashboard });
+  router.push({ name: EntitiesEnum.DashboardOverview });
 };
 
 const goToCreateEvent = () => {
