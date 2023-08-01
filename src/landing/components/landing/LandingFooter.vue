@@ -69,13 +69,13 @@
 									Step-by-step instruction
 								</router-link>
 								<router-link
-									to="/"
+									to="/faqs"
 									class="landing-footer__menu-item"
 								>
 									FAQs
 								</router-link>
 								<router-link
-									to="/"
+									to="/contact-us"
 									class="landing-footer__menu-item"
 								>
 									Contact us
