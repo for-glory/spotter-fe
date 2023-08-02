@@ -160,4 +160,6 @@ export enum EntitiesEnum {
   DashboardOverview = "DASHBOARD_OVERVIEW",
   DashboardEvent = "DASHBOARD_EVENT",
   DashboardCreateEvent = "DASHBOARD_CREATE_EVENT",
+  DashboardMembership = "DASHBOARD_MEMBERSHIP",
+  DashboardSelectMembership = "DASHBOARD_SELECT_MEMBERSHIP",
 }

@@ -25,7 +25,7 @@
 					<ion-icon src="assets/icon/Pass.svg" />
 					<ion-text>Gym pass</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
 					<ion-icon src="assets/icon/Rate.svg" />
 					<ion-text>Membership</ion-text>
 				</div>

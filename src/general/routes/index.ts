@@ -379,8 +379,18 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardCreateEvent,
-        path: "event",
+        path: "create-event",
         component: () => import("@/general/views/dashboard/events/CreateEvent.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardMembership,
+        path: "membership/start",
+        component: () => import("@/general/views/dashboard/membership/StartMembership.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardSelectMembership,
+        path: "membership/select",
+        component: () => import("@/general/views/dashboard/membership/SelectMembership.vue"),
       },
     ]
   },
