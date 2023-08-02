@@ -83,12 +83,12 @@ const navigationAfterAuth = (user: User) => {
       }
 
       const { id: myFacilityId } = useFacilityId();
-      
+
       if(!myFacilityId) {
         router.push({ name: EntitiesEnum.SuccessStripeConnect });
         break;
       }
-      router.push({ name: EntitiesEnum.Dashboard });
+      router.push({ name: EntitiesEnum.DashboardOverview });
       break;
     }
     case RoleEnum.OrganizationOwner: {

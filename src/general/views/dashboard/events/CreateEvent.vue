@@ -1,46 +1,14 @@
 <template>
-  <base-auth-layout hide-header>
-    <template  #left-section>
-      <div class="content">
-        <div class="d-flex justify-content-between align-items-center">
-          <router-link
-            to="/"
-          >
-            <ion-img
-              src="assets/icon/logo-complete.png"
-              class="logo"
-              alt="logo"
-            />
-          </router-link>
-          <ion-button
-            class="login-btn"
-            type="button"
-            fill="clear"
-            @click="onLogout"
-          >
-            Log out
-          </ion-button>
-        </div>
-        <div class="top-buttons">
-          <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
-            Go to Dashboard
-            <ion-icon src="assets/icon/arrow-next.svg" />
-          </ion-button>
-        </div>
-        <ion-title class="title" color="primary">
-          Create your first event
-        </ion-title>
-        <event-form
-          ref="eventForm"
-          has-skip-button
-          @submit="createEvent"
-          @onSkip="goToWorkout"
-			    skipText="Skip"
-          :loading="eventOnCreation"
-        />
-      </div>
-    </template>
-  </base-auth-layout>
+	<div class="content">
+		<event-form
+			ref="eventForm"
+			has-skip-button
+			@submit="createEvent"
+			@onSkip="handleCancel"
+			skipText="Cancel"
+			:loading="eventOnCreation"
+		/>
+	</div>
   <discard-changes
     :is-open="isConfirmedModalOpen"
     @close="discardModalClosed"
@@ -92,9 +60,9 @@ const createEvent = (input: CreateEventInput) => {
   createEventMutate({ input });
 };
 
-const goToWorkout = () => {
+const handleCancel = () => {
   eventForm.value?.clearStore();
-  router.push({ name: EntitiesEnum.CreateWorkout });
+  router.push({ name: EntitiesEnum.DashboardEvent });
 };
 
 const eventForm = ref<typeof EventForm | null>(null);
@@ -104,7 +72,7 @@ eventCreated(() => {
   eventForm.value?.clearStore();
   // router.go(-1);
   router.push({
-      name: EntitiesEnum.CreateWorkout,
+      name: EntitiesEnum.DashboardEvent,
     });
 });
 

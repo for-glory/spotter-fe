@@ -157,4 +157,9 @@ export enum EntitiesEnum {
   Session = "SESSION",
   SendReviewForm = "SEND_REVIEW_FORM",
   BookMore = "BOOK_MORE",
+  DashboardOverview = "DASHBOARD_OVERVIEW",
+  DashboardEvent = "DASHBOARD_EVENT",
+  DashboardCreateEvent = "DASHBOARD_CREATE_EVENT",
+  DashboardMembership = "DASHBOARD_MEMBERSHIP",
+  DashboardSelectMembership = "DASHBOARD_SELECT_MEMBERSHIP",
 }

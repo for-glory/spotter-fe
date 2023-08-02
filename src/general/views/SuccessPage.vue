@@ -68,12 +68,11 @@ gotMyStripeConnect(async (response) => {
 			})
 		);
 		const { id: myFacilityId } = useFacilityId();
-		console.log("---------",myFacilityId)
 		if(!myFacilityId) {
 			router.push({ name: EntitiesEnum.SuccessStripeConnect });
 			return;
 		}
-		router.push({ name: EntitiesEnum.Dashboard });
+		router.push({ name: EntitiesEnum.DashboardOverview });
 	}
 });
 
