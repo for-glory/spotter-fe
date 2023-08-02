@@ -3,13 +3,22 @@
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
 	>
+    <div class="banner">
+      <ion-title class="banner__title">Create and Edit events for clients and trainers</ion-title>
+      <ion-text class="banner__text">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod 
+      </ion-text>
+      <div class="banner__background-image">
+        <img src="assets/backgrounds/banner1.jpeg" alt="">
+      </div>
+    </div>
 		<div class="event-list">
-			<div class="d-flex justify-content-between">
+			<div class="d-flex justify-content-between event-list__top">
 				<div>
-					<ion-button>
+					<ion-button class="button-rounded" :fill="isOngoing?'solid':'outline'" @click="handleEventType('ongoing')">
 						Ongoing
 					</ion-button>
-					<ion-button>
+					<ion-button class="button-rounded" :fill="!isOngoing?'solid':'outline'" @click="handleEventType('finished')">
 						Finished
 					</ion-button>
 				</div>
@@ -19,6 +28,11 @@
 					</ion-button>
 				</div>
 			</div>
+      <div v-if="events.length">
+        <event-data-table
+          :events="events"
+        />
+      </div>
 		</div>
 		<ion-spinner
 			v-if="eventsPage === 1 && eventsLoading"
@@ -36,7 +50,7 @@
 				@button-click="router.push({ name: EntitiesEnum.CreateEvent })"
 			/>
 		</div>
-		<template v-if="events.length">
+		<!-- <template v-if="events.length">
 			<event-item
 				:item="event"
 				:key="event.id"
@@ -55,7 +69,7 @@
 				>
 				</ion-infinite-scroll-content>
 			</ion-infinite-scroll>
-		</template>
+		</template> -->
 	</div>
 </template>
 
@@ -69,7 +83,7 @@ import {
   InfiniteScrollCustomEvent,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import EventDataTable from "@/general/components/dataTables/EventDataTable.vue";
 import EventItem from "@/general/components/EventItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -91,6 +105,7 @@ import useRoles from "@/hooks/useRole";
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
+const isOngoing = ref<boolean>(true);
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
@@ -167,6 +182,15 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
     });
   }
 };
+
+const handleEventType = (evT: string) => {
+	if(evT === 'ongoing') {
+		isOngoing.value = true;
+	}
+	else if (evT === 'finished') {
+		isOngoing.value = false;
+	}
+}
 </script>
 
 <style scoped lang="scss">
@@ -174,13 +198,6 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
   padding-top: 24px;
   padding-bottom: 16px;
 
-  &--empty {
-    display: flex;
-    min-height: 100%;
-    padding-bottom: 32px;
-    flex-direction: column;
-    justify-content: center;
-  }
 }
 
 .spinner {
@@ -196,5 +213,48 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
 
 .empty-section {
 	margin-top: 100px;
+}
+.event-list {
+	background-color: var(--gray-700);
+  margin-top: 54px;
+
+  &__top {
+    margin-bottom: 16px;
+    padding: 8px 24px;
+  }
+}
+.banner {
+  padding: 32px;
+  min-height: 160px;
+  width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #F0E2AE 0%, rgba(251, 248, 234, 0.00) 100%);
+  position: relative;
+  overflow: hidden;
+
+  &__background-image {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  &__title {
+    padding: 0;
+    color: #FFF;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  &__text {
+    color: #FFF;
+    font-family: Lato;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: 0.1px;
+  }
 }
 </style>

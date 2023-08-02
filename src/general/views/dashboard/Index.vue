@@ -22,5 +22,6 @@ const router = useRouter();
 .content {
 	height: calc(100vh - 92px);
 	overflow: auto;
+	padding: 48px;
 }
 </style>

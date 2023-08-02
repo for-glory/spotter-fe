@@ -72,7 +72,7 @@ eventCreated(() => {
   eventForm.value?.clearStore();
   // router.go(-1);
   router.push({
-      name: EntitiesEnum.CreateWorkout,
+      name: EntitiesEnum.DashboardEvent,
     });
 });
 
