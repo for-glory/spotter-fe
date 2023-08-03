@@ -13,4 +13,4 @@ node_modules
 !android_keystore
 android/.idea
 .env
-dist/
+dist/*

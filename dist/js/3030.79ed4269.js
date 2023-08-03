@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkspotter"]=self["webpackChunkspotter"]||[]).push([[3030],{3030:function(e,s,n){n.r(s),n.d(s,{SplashScreenWeb:function(){return c}});var t=n(29895);class c extends t.Uw{async show(e){}async hide(e){}}}}]);
-//# sourceMappingURL=3030.79ed4269.js.map
