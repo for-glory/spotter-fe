@@ -61,7 +61,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/SelectRole.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.SelectRole
+      mode: EntitiesEnum.SelectRole,
     },
   },
   {
@@ -70,7 +70,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/SuccessPage.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.SuccessMembership
+      mode: EntitiesEnum.SuccessMembership,
     },
   },
   {
@@ -79,7 +79,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/SuccessConnectPage.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.SuccessStripeConnect
+      mode: EntitiesEnum.SuccessStripeConnect,
     },
   },
   {
@@ -338,27 +338,42 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/about-us",
     component: () => import("@/general/views/AboutUs.vue"),
-    meta: {},
+    meta: {
+      title: "About us",
+      description: "About us",
+    },
   },
   {
     path: "/contact-us",
     component: () => import("@/general/views/ContactUs.vue"),
-    meta: {},
+    meta: {
+      title: "Contact us",
+      description: "Contact us",
+    },
   },
   {
     path: "/terms-of-use",
     component: () => import("@/general/views/TermsOfUse.vue"),
-    meta: {},
+    meta: {
+      title: "Terms of use",
+      description: "Terms of use",
+    },
   },
   {
     path: "/how-it-works",
     component: () => import("@/general/views/HowItWorks.vue"),
-    meta: {},
+    meta: {
+      title: "How it works",
+      description: "How it works",
+    },
   },
   {
     path: "/faqs",
     component: () => import("@/general/views/Faqs.vue"),
-    meta: {},
+    meta: {
+      title: "FAQs",
+      description: "FAQs",
+    },
   },
   {
     path: "/dashboard/",

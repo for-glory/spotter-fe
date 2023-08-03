@@ -31,6 +31,22 @@ router.beforeEach((to, from, next) => {
     }
   }
 
+  // Set Title and Description for Static pages
+  const siteName = "SpotterFitness";
+  let pageDescription: any = siteName + " website";
+  document.title = siteName;
+
+  if (to.matched[0].meta.title) {
+    document.title = to.matched[0].meta.title + " | " + siteName;
+  }
+
+  if (to.matched[0].meta.description) {
+    const metaDescription = to.matched[0].meta.description;
+    pageDescription = metaDescription
+    const metaElement = document.querySelector("meta[name='description']");
+    metaElement?.setAttribute("content", pageDescription);
+  }
+
   return next();
 });
 
