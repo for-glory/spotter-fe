@@ -1234,6 +1234,7 @@ export type Plan = {
   is_active?: Maybe<Scalars['Boolean']>;
   subscriptionPlans?: Maybe<Array<SubscriptionPlan>>;
   title: Scalars['String'];
+  prices?: Maybe<Array<SubscriptionPrice>>;
   type: SubscriptionsTypeEnum;
 };
 
@@ -2358,6 +2359,12 @@ export type SubscriptionBenefit = {
   id: Scalars['ID'];
 };
 
+export type SubscriptionPrice = {
+  __typename?: 'SubscriptionPrice';
+  price: number;
+  id: Scalars['ID'];
+};
+
 /** SubscriptionBronzeGymFacilityBenefitsKeyEnum Variants */
 export enum SubscriptionBronzeGymFacilityBenefitsKeyEnum {
   /** ACCESS_TO_DASHBOARD */
@@ -3396,7 +3403,7 @@ export type PlansQueryVariables = Exact<{
 }>;
 
 
-export type PlansQuery = { __typename?: 'Query', plans?: { __typename?: 'PlanPaginator', paginatorInfo: { __typename?: 'PaginatorInfo', total: number }, data: Array<{ __typename?: 'Plan', id: string, title: string, description?: string | null, type: SubscriptionsTypeEnum, is_active?: boolean | null, benefits?: Array<{ __typename?: 'SubscriptionBenefit', id: string, benefit_key: string, description?: string | null }> | null, subscriptionPlans?: Array<{ __typename?: 'SubscriptionPlan', id: string, billing_period: string, renewal_type: string, grace_period?: string | null, is_active?: boolean | null, provider: SubscriptionProvidersEnum, product_id: string }> | null }> } | null };
+export type PlansQuery = { __typename?: 'Query', plans?: { __typename?: 'PlanPaginator', paginatorInfo: { __typename?: 'PaginatorInfo', total: number }, data: Array<{ __typename?: 'Plan', id: string, title: string, description?: string | null, type: SubscriptionsTypeEnum, is_active?: boolean | null, prices?: Array<{ __typename?: 'SubscriptionPrice', id: string, price: number }> | null, benefits?: Array<{ __typename?: 'SubscriptionBenefit', id: string, benefit_key: string, description?: string | null }> | null, subscriptionPlans?: Array<{ __typename?: 'SubscriptionPlan', id: string, billing_period: string, renewal_type: string, grace_period?: string | null, is_active?: boolean | null, provider: SubscriptionProvidersEnum, product_id: string }> | null }> } | null };
 
 export type QuizzesQueryVariables = Exact<{
   role: RoleEnum;
@@ -5114,6 +5121,11 @@ export const PlansDocument = gql`
       title
       description
       fee
+      prices {
+        id
+        price
+      }
+      tier
       type
       is_active
       benefits {

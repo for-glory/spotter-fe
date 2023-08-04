@@ -16,6 +16,7 @@ query plans(
       title
       description
       type
+      prices
       is_active
       benefits {
         id

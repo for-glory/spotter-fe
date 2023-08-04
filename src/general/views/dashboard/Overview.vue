@@ -129,9 +129,9 @@
                 Monthly
               </div>
               <div class="dropdown-content">
-                <a href="#">Daily</a>
-                <a href="#">Weekly</a>
-                <a href="#" style="display: none">Monthly</a>
+                <div @click="handleDay">Daily</div>
+                <div @click="handleWee">Weekly</div>
+                <div @click="handleMon">Monthly</div>
               </div>
             </div>
           </div>
@@ -147,9 +147,9 @@
                 Monthly
               </div>
               <div class="dropdown-content">
-                <a href="#">Daily</a>
-                <a href="#">Weekly</a>
-                <a href="#" style="display: none">Monthly</a>
+                <div @click="handleDay">Daily</div>
+                <div @click="handleWee">Weekly</div>
+                <div @click="handleMon">Monthly</div>
               </div>
             </div>
           </div>
@@ -168,11 +168,15 @@
               <div class="view">View All</div>
             </div>
             <event-item
+              title="Swimming & Cycling1111"
+              dateTime="Saturday, April 14 | 08:00 AM"
+              status="Closed"
+            />
+            <event-item
               title="Swimming & Cycling"
               dateTime="Saturday, April 14 | 08:00 AM"
               status="Closed"
             />
-            <event-item />
           </div>
         </div>
       </ion-col>
@@ -183,6 +187,16 @@
 <script setup lang="ts">
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
+
+const handleDay = () => {
+  console.log("Day");
+};
+const handleMon = () => {
+  console.log("Mon");
+};
+const handleWee = () => {
+  console.log("Wee");
+};
 </script>
 
 <style scoped lang="scss">
@@ -230,7 +244,7 @@ import EventItem from "@/general/components/dashboard/EventItem.vue";
 }
 .percent {
   font-size: 1.625rem;
-  color: #2ED47A;
+  color: #2ed47a;
   padding-bottom: 5px;
 }
 .chain {
@@ -314,7 +328,7 @@ import EventItem from "@/general/components/dashboard/EventItem.vue";
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
-.dropdown-content a {
+.dropdown-content div {
   color: black;
   padding: 12px 16px;
   text-decoration: none;

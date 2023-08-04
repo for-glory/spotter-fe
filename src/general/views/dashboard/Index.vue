@@ -1,5 +1,5 @@
 <template>
-  <base-dashboard-layout hide-header>
+  <base-dashboard-layout>
     <template  #right-section>
 			<dashboard-searchbar />
       <div class="content">

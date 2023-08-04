@@ -384,6 +384,11 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardMembership,
+        path: "membership",
+        component: () => import("@/general/views/dashboard/membership/Index.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardStartMembership,
         path: "membership/start",
         component: () => import("@/general/views/dashboard/membership/StartMembership.vue"),
       },
@@ -391,6 +396,11 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardSelectMembership,
         path: "membership/select",
         component: () => import("@/general/views/dashboard/membership/SelectMembership.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardWorkout,
+        path: "workout",
+        component: () => import("@/general/views/dashboard/workout/Index.vue"),
       },
     ]
   },

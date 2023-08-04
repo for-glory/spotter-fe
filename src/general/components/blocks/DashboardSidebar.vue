@@ -12,6 +12,18 @@
 					/>
 				</router-link>
 			</div>
+			<div class="facility">
+				<ion-avatar class="photo">
+					<ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
+					<template v-else>
+						{{ facilityName?.charAt(0) }}
+					</template>
+				</ion-avatar>
+				<div>
+					<ion-title class="name">{{ facilityName }}</ion-title>
+					<ion-text class="address">{{ facilityAddress }}</ion-text>
+				</div>
+			</div>
 			<div class="main-menu">
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
@@ -29,7 +41,7 @@
 					<ion-icon src="assets/icon/Rate.svg" />
 					<ion-text>Membership</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
 					<ion-text>Workout plans</ion-text>
 				</div>
@@ -64,15 +76,60 @@
 			</div>
 		</div>
 	</div>
+	<confirmation
+    :is-visible="showConfirmationModal"
+    title="Do you want to log out?"
+    description="You will be logged out"
+    button-text="Log out"
+    @discard="onLogoutConfirmed"
+    @decline="hideModal"
+  />
 </template>
 
 <script lang="ts" setup>
-import { IonText, IonImg, IonIcon, IonButton } from '@ionic/vue';
+import { IonText, IonImg, IonIcon, IonAvatar, IonTitle } from '@ionic/vue';
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
+import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+
+const props = withDefaults(
+  defineProps<{
+    facilities: any;
+  }>(),
+  {
+		facilities:[]
+  }
+);
 
 const router = useRouter();
+const activeFacilityId = ref<string | null>(props.facilities[0].id);
+const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
+
+const facilities = computed(() => {
+  return props.facilities;
+});
+
+const avatarUrl = computed(() => {
+	const facility = facilities.value?.find(
+		(facility) => facility?.id === activeFacilityId.value
+	);
+	return facility?.media[0]?.pathUrl??""
+});
+const facilityName = computed<string>(
+  () =>
+    facilities.value?.find(
+      (facility: any) => facility.id === activeFacilityId.value
+    )?.name ?? ""
+);
+const facilityAddress = computed<string>(
+  () =>
+    facilities.value?.find(
+      (facility: any) => facility.id === activeFacilityId.value
+    )?.address?.street ?? ""
+);
 
 const onHandleClickMenu = (pathName: string) => {
 	console.log(pathName)
@@ -80,8 +137,13 @@ const onHandleClickMenu = (pathName: string) => {
 };
 
 const onLogout = () => {
+  showModal();
+};
+
+const onLogoutConfirmed = () => {
   clearAuthItems();
   router.push({ name: EntitiesEnum.Login });
+  hideModal();
 };
 </script>
 <style scoped lang="scss">
@@ -126,6 +188,29 @@ const onLogout = () => {
 
 	.logo {
 		padding: 24px;
+	}
+
+	.facility {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 0 24px;
+
+		.photo {
+			width: 46px;
+			height: 46px;
+		}
+		.name {
+			padding: 0;
+		}
+		.address {
+			color: var(--gray-400);
+			font-family: Yantramanav;
+			font-size: 14px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 150%; /* 21px */
+		}
 	}
 
 	.logout {
