@@ -417,6 +417,26 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout",
         component: () => import("@/general/views/dashboard/workout/Index.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardCreateWorkout,
+        path: "workout/create",
+        component: () => import("@/general/views/dashboard/workout/CreateWorkout.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardWorkoutTypes,
+        path: "workout/create/type",
+        component: () => import("@/general/views/dashboard/workout/Types.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardMuscleTypes,
+        path: "workout/create/muscle-type",
+        component: () => import("@/general/views/dashboard/workout/MuscleTypes.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardCreateExercise,
+        path: "workout/create/exercise",
+        component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
+      },
     ]
   },
 ];

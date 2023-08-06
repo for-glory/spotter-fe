@@ -26,7 +26,7 @@
 					</ion-button>
 				</div>
 				<div>
-					<ion-button @click="router.push({ name: EntitiesEnum.DashboardCreateEvent })">
+					<ion-button @click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })">
 						Create Workout plan
 					</ion-button>
 				</div>
@@ -47,7 +47,7 @@
 				title="Library Empty"
 				hideButton
 				text="You have not uploaded any videos yet..."
-				@button-click="router.push({ name: EntitiesEnum.CreateEvent })"
+				@button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
 			/>
 		</div>
 	</div>
