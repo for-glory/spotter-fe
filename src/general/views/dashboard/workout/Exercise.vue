@@ -159,7 +159,7 @@ const handleAddNextExercise = () => {
   previewUrl.value = "";
   exerciseIndex.value++;
   router.push({
-    name: EntitiesEnum.CreateExercise,
+    name: EntitiesEnum.DashboardCreateExercise,
     params: { id: uuidv4() },
   });
 };

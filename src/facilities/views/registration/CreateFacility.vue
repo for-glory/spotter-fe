@@ -58,6 +58,7 @@ import { newFacilityStoreTypes } from "@/ts/types/store";
 import { useMutation } from "@vue/apollo-composable";
 import {
   CreateFacilityDocument,
+  UpdateFirstSubscriptionDocument,
   UpdateUserSettingsDocument,
 } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
@@ -86,6 +87,10 @@ const discardModalClosed = (approved: boolean) => {
 };
 
 const gymForm = ref<typeof GymForm | null>(null);
+
+const { mutate: updateFirstSubscription, onDone: updatedSubscription } = useMutation(
+  UpdateFirstSubscriptionDocument
+);
 
 const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
@@ -121,12 +126,22 @@ const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
   });
 };
 
-facilityCreated(() => {
+facilityCreated((res) => {
+  if (res?.data?.createFacility) {
+    updateFirstSubscription({
+      input: {
+        facility_id: res?.data?.createFacility.id
+      },
+    });
+  }
+});
+
+updatedSubscription(() => {
   gymForm.value?.clearStore();
   updateSettings();
   if (actionAfterSiubmit.value === "exit") {
     router.push({
-      name: EntitiesEnum.Profile,
+      name: EntitiesEnum.DashboardOverview,
     });
   }
   else if(actionAfterSiubmit.value === "create_event") {
