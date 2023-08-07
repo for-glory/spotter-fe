@@ -1,12 +1,7 @@
 <template>
-	<ion-spinner
-	  v-if="isLoading"
-	  name="lines"
-	  class="spinner"
-	/>
-	<div class="dashboard-container" v-else>
+	<div class="dashboard-container">
 		<div class="dashboard-container__sidebar">
-			<dashboard-sidebar :facilities="facilities"/>
+			<dashboard-sidebar />
 		</div>
 		<div class="dashboard-container__right-section">
 			<slot name="right-section"></slot>
@@ -16,35 +11,7 @@
 
 <script lang="ts" setup>
 import DashboardSidebar from '@/general/components/blocks/DashboardSidebar.vue';
-import { IonSpinner } from "@ionic/vue";
-import { useQuery } from "@vue/apollo-composable";
-import useId from "@/hooks/useId";
-import {
-  ref,
-} from "vue";
-import {
-  Query,
-  UserDocument,
-} from "@/generated/graphql";
 
-const isLoading = ref(true);
-const facilities = ref();
-
-const setIsLoading = () => {
-	isLoading.value = false;
-}
-
-const { id } = useId();
-const {
-  result,
-  refetch,
-  onResult: gotUser,
-} = useQuery<Pick<Query, "user">>(UserDocument, { id });
-
-gotUser(({ data }) => {
-	facilities.value = result.value?.user?.owned_facilities;
-  setIsLoading();
-});
 </script>
 <style scoped lang="scss">
 .dashboard-container {
@@ -61,11 +28,5 @@ gotUser(({ data }) => {
 	&__right-section {
 		width: calc(100% - 256px);
 	}
-}
-
-.spinner {
-  display: block;
-  pointer-events: none;
-  margin: calc(30vh - 60px) auto 0;
 }
 </style>

@@ -40,7 +40,7 @@ const form = ref<LoginMutationVariables>({
 });
 
 onDone(({ data, errors }) => {
-  if(!data && errors){
+  if (!data && errors) {
     throw new Error(String(errors[0].extensions.reason))
   }
   
