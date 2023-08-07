@@ -161,5 +161,11 @@ export enum EntitiesEnum {
   DashboardEvent = "DASHBOARD_EVENT",
   DashboardCreateEvent = "DASHBOARD_CREATE_EVENT",
   DashboardMembership = "DASHBOARD_MEMBERSHIP",
+  DashboardStartMembership = "DASHBOARD_START_MEMBERSHIP",
   DashboardSelectMembership = "DASHBOARD_SELECT_MEMBERSHIP",
+  DashboardWorkout = "DASHBOARD_WORKOUT",
+  DashboardCreateWorkout = "DASHBOARD_CREATE_WORKOUT",
+  DashboardWorkoutTypes = "DASHBOARD_WORKOUT_TYPES",
+  DashboardMuscleTypes = "DASHBOARD_MUSCLE_TYPES",
+  DashboardCreateExercise = "DASHBOARD_CREATE_EXERCISE",
 }

@@ -17,5 +17,6 @@ export default function useFacilityId() {
 
   return {
     id: facility?.id,
+    facility: facility
   };
 }
