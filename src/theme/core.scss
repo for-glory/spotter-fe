@@ -309,3 +309,23 @@ ion-modal.auto-height {
 
 @media (max-width: 1200px) {
 }
+
+.plt-capacitor .hide-if-native {
+  display: none !important;
+}
+
+.plt-capacitor .show-if-native {
+  display: initial !important;
+}
+
+html:not(.plt-capacitor) .hide-if-web {
+  display: none !important;
+}
+
+html:not(.plt-capacitor) .show-if-web {
+  display: initial !important;
+}
+
+.native-app {
+  font-family: Yantramanav !important;
+}
