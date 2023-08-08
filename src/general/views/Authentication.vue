@@ -6,7 +6,7 @@
         fixed
       />
     </div>
-    <ion-grid class="container">
+    <ion-grid class="container" v-if="!isNative">
       <ion-row>
         <ion-col size="12" size-md="7" class="container__content">
           <router-view />
@@ -21,6 +21,9 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+    <div v-if="isNative">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -48,7 +51,8 @@ const backgroundImage = computed(
   }
 );
 
-const isNative = Capacitor.isNativePlatform();
+let isNative = Capacitor.isNativePlatform();
+isNative = true;
 
 const onBack = () => {
   router.push({ name: EntitiesEnum.Login });

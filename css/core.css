@@ -151,12 +151,4 @@ ion-title {
   --padding-end: var(--container-offset);
 }
 
-.plt-android .hide-if-native, .plt-ios .hide-if-native {
-  display: none !important;
-}
-
-.plt-android .show-if-native, .plt-ios .hide-if-native{
-  display: initial !important;
-}
-
 /*# sourceMappingURL=core.css.map */

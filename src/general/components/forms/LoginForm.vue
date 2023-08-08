@@ -1,11 +1,11 @@
 <template>
-  <ion-text>
+  <ion-text v-if="!isNative">
     Don't have an account?
     <a :href="'#'" @click.prevent="openModal">
       Sign up
     </a>
   </ion-text>
-  <div class="mt-2">
+  <div class="mt-2" :class="isNative && 'native login-form-container ion-padding'">
     <base-form class="authentication-form" @submit.prevent="onSubmit">
       <base-input
         v-model:value="usernameInput"
@@ -21,12 +21,28 @@
         type="password"
         placeholder="Enter your password"
       />
-      <ion-text class="mt-2">
+      <ion-text v-if="!isNative" class="ion-margin-bottom">
         Forgot password?
         <router-link :to="{ name: EntitiesEnum.ForgotPassword }">
           Click here
         </router-link>
       </ion-text>
+
+      <div class="alternate-auth-container" v-if="isNative">
+        <ion-text class="ion-margin-bottom">
+        No account?
+        <router-link class="signup-link-native" :to="{ name: EntitiesEnum.Register }">
+          Sign up
+        </router-link>
+      </ion-text>
+
+      <ion-text class="ion-margin-bottom">
+        
+        <router-link class="forgot-link-native" :to="{ name: EntitiesEnum.ForgotPassword }">
+          Forgot password?
+        </router-link>
+      </ion-text>
+      </div>
       <ion-button
         :disabled="isLoading"
         class="button--submit"
@@ -77,6 +93,10 @@ import { passwordSchema, userNameSchema } from "@/validations/authValidations";
 import { ApolloError } from "@apollo/client";
 import { EntitiesEnum } from "@/const/routes";
 import { humanizeString } from "@/utils/textUtils";
+import { Capacitor } from '@capacitor/core';
+
+let isNative = Capacitor.isNativePlatform();
+isNative = true;
 
 const props = defineProps<{
   username: string;
@@ -182,5 +202,30 @@ a {
 
 ion-modal {
   --height: auto;
+}
+
+.native.login-form-container {
+  margin-top: 40px;
+}
+
+.alternate-auth-container {
+  display: flex;
+}
+
+.alternate-auth-container ion-text {
+  font-weight: 100;
+  font-size: 14px;
+}
+
+.alternate-auth-container .signup-link-native {
+  font-weight: 300;
+}
+
+.alternate-auth-container ion-text:last-of-type {
+  margin-left: auto;
+}
+
+.forgot-link-native {
+  color: var(--ion-color-white) !important;
 }
 </style>

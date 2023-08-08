@@ -1,5 +1,5 @@
 <template>
-	<div class="landing-header__container" :style="fixed?{position: 'fixed', zIndex: 999}:''">
+	<div class="landing-header__container hide-if-native" :style="fixed?{position: 'fixed', zIndex: 999}:''">
 		<div
 			class="landing-header"
 		>

@@ -1,5 +1,5 @@
 <template>
-  <div class="socials">
+  <div class="socials" :class="isNative && 'ion-padding'">
     <ion-button
       v-if="isSafari === 'safari' || isIos"
       expand="block"
@@ -61,6 +61,9 @@ const auth = getAuth();
 
 const isIos = isPlatform("ios");
 const isSafari = ref<string>("");
+
+let isNative = Capacitor.isNativePlatform();
+isNative = true;
 
 const fnBrowserDetect = () => {
   let userAgent = navigator.userAgent;

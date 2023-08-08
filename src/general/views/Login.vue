@@ -1,7 +1,8 @@
 <template>
-  <div class="content">
-    <div class="welcome-text">
-      <ion-text>Welcome to Spotter</ion-text>
+  <div :class="!isNative && 'content'">
+    <div class="welcome-text" :class="isNative && 'ion-padding'">
+      <ion-text class="hide-if-native show-if-web">Welcome to Spotter</ion-text>
+      <ion-text class="show-if-native hide-if-web">Log In or Sign Up <br />to Get Started</ion-text>
     </div>
     <login-form
       v-model:username="form.username"
@@ -25,6 +26,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
 import useVerified from "@/hooks/useVerified";
+import { Capacitor } from '@capacitor/core';
 
 let {
   mutate: login,
@@ -34,6 +36,8 @@ let {
   error,
 } = useMutation(LoginDocument);
 
+let isNative = Capacitor.isNativePlatform();
+isNative = true;
 const form = ref<LoginMutationVariables>({
   username: "",
   password: "",
@@ -84,5 +88,23 @@ const handleSubmit = (formData: LoginMutationVariables) => {
   font-style: normal;
   font-weight: 500;
   line-height: 130%;
+}
+
+.native-app .welcome-text {
+  min-height: 250px;
+  height: 36%;
+  max-height: 298px;
+  background-image: url(/public/assets/mobile/auth-bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  font-family: Yantramanav;
+  display: flex;
+  width: 100%;
+
+  & ion-text {
+    margin-top: auto;
+    font-size: 28px;
+  }
 }
 </style>

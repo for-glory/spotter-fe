@@ -119,6 +119,8 @@ http://ionicframework.com/docs/theming/ */
   --silver: #797979;
   --bronze: #a87e45;
 
+  --beige: beige;
+
   --ion-font-family: Lato, sans-serif;
   --title-font-family: Lato, sans-serif;
   --ion-background-color: var(--gray-800);
