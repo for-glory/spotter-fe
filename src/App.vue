@@ -32,7 +32,7 @@ onMounted(async () => {
 });
 
 let isNative = Capacitor.isNativePlatform();
-isNative = true;
+// isNative = true;
 const router = useRouter();
 
 App.addListener("appUrlOpen", function (data: any) {

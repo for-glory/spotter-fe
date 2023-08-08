@@ -37,7 +37,7 @@ let {
 } = useMutation(LoginDocument);
 
 let isNative = Capacitor.isNativePlatform();
-isNative = true;
+// isNative = true;
 const form = ref<LoginMutationVariables>({
   username: "",
   password: "",

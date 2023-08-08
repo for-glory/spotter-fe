@@ -52,7 +52,7 @@ const backgroundImage = computed(
 );
 
 let isNative = Capacitor.isNativePlatform();
-isNative = true;
+// isNative = true;
 
 const onBack = () => {
   router.push({ name: EntitiesEnum.Login });

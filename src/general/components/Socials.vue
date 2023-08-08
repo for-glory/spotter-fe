@@ -63,7 +63,7 @@ const isIos = isPlatform("ios");
 const isSafari = ref<string>("");
 
 let isNative = Capacitor.isNativePlatform();
-isNative = true;
+// isNative = true;
 
 const fnBrowserDetect = () => {
   let userAgent = navigator.userAgent;

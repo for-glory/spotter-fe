@@ -96,7 +96,7 @@ import { humanizeString } from "@/utils/textUtils";
 import { Capacitor } from '@capacitor/core';
 
 let isNative = Capacitor.isNativePlatform();
-isNative = true;
+// isNative = true;
 
 const props = defineProps<{
   username: string;
