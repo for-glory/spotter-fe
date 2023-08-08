@@ -474,7 +474,6 @@ const handleContinue = () => {
     fees_percent: selectedPlan.value.fee,
   })
     .then((data) => {
-      console.log("data==>", data)
       let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
       backendStripe.redirectToCheckout(intent.id);
     })

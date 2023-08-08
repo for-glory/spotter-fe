@@ -63,7 +63,7 @@
 								</ul>
 							</div>
 							<div v-if="plan.owned">
-								<ion-button @click="handleCancel">Cancel Membership</ion-button>
+								<ion-button @click="handleCancel" class="btn-cancel">Cancel Membership</ion-button>
 							</div>
 						</div>
 					</ion-item>
@@ -71,6 +71,12 @@
 			</div>
 		</div>
 	</div>
+	<cancel-membership
+    :is-visible="showCancelConfirmModal"
+		:plan="currentPlan"
+    @confirm="cancelMembership"
+    @cancel="hideCancelModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -83,7 +89,6 @@ import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
 import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { BackendStripe } from "@/services/stripe/stripe";
-import { clearAuthItems } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import {
   MeDocument,
@@ -93,14 +98,15 @@ import {
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
 } from "@/generated/graphql";
+import CancelMembership from "@/general/components/modals/confirmations/CancelMembership.vue";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 
 const router = useRouter();
-
-const onBack = () => {
-	router.push({
-    name: EntitiesEnum.StartMembership,
-  });
-};
+const {
+	showConfirmationModal: showCancelConfirmModal,
+	hideModal: hideCancelModal,
+	showModal: showCancelModal
+} = useConfirmationModal();
 
 const isLoading = ref<boolean>(false);
 const { role } = useRoles();
@@ -149,6 +155,16 @@ onMounted(async () => {
               ? subscriptionPlan[0]
               : {},
         });
+				if (currentSubscription === cur.tier) {
+					currentPlan.value = {
+						...cur,
+						owned: currentSubscription === cur.tier,
+						subscriptionPlan:
+							subscriptionPlan.length && subscriptionPlan[0]?.is_active
+								? subscriptionPlan[0]
+								: {},
+					}
+				}
       }
       return acc;
     }, []);
@@ -178,6 +194,7 @@ const handleChange = () => {
 const handleCancel = () => {
   // isLoading.value = true;
 	console.log(selectedItem.value);
+	showCancelModal();
 };
 
 const selectProduct = (plan: any) => {
@@ -280,16 +297,16 @@ const selectMembership = (id: any) => {
 					height: 4.5rem;
 					padding: 1.125rem;
 					background: var(--gray-800);
+					margin-bottom: 20px;
 				}
 				ion-button {
-					color: #FFF;
-					font-family: Manrope;
-					font-size: 9px;
-					font-style: normal;
-					font-weight: 600;
-					line-height: 1.4;
 					height: 24px;
 					--background: #202020;
+					color: #FFF;
+					font-family: Lato;
+					font-size: 14px;
+					font-style: normal;
+					line-height: 12px;
 				}
 			}
 			
@@ -330,6 +347,16 @@ const selectMembership = (id: any) => {
 						width: 16px;
 					}
 				}
+		}
+		.btn-cancel {
+			margin-top: 20px;
+			--background: #A3A3A4;
+			height: 30px;
+			color: #FFF;
+			font-family: Lato;
+			font-size: 14px;
+			font-style: normal;
+			line-height: 12px;
 		}
 	
 		ion-radio {
