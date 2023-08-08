@@ -1,5 +1,5 @@
 <template>
-  <ion-app>
+  <ion-app :class="isNative && 'native-app'">
     <router-view />
   </ion-app>
 </template>
@@ -31,6 +31,8 @@ onMounted(async () => {
   await SplashScreen.hide();
 });
 
+let isNative = Capacitor.isNativePlatform();
+// isNative = true;
 const router = useRouter();
 
 App.addListener("appUrlOpen", function (data: any) {
