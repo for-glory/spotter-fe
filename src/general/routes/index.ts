@@ -437,6 +437,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create/exercise",
         component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardGettingPaid,
+        path: "getting-paid",
+        component: () => import("@/general/views/dashboard/GettingPaid.vue"),
+      },
     ]
   },
 ];

@@ -3127,6 +3127,10 @@ export type PaymentIntentMutationVariables = Exact<{
 export type PaymentIntentMutation = { __typename?: 'Mutation', paymentIntent: { __typename?: 'PaymentIntent', session?: string | null, zeroPayment: boolean } };
 export type CreateSubscriptionIntentMutation = { __typename?: 'Mutation', createSubscriptionIntent: { __typename?: 'CreateSubscriptionIntent', session?: string | null } };
 
+export type UpdateFirstSubscriptionInput = {
+  facility_id?: InputMaybe<Scalars['ID']>;
+};
+
 export type TrainingCheckinMutationVariables = Exact<{
   input: TrainingCheckinInput;
 }>;
@@ -4115,6 +4119,13 @@ export const CreateSubscriptionIntentDocument = gql`
     input: {product_id: $product_id, fees_percent: $fees_percent}
   ) {
     session
+  }
+}
+    `;
+export const UpdateFirstSubscriptionDocument = gql`
+    mutation UpdateFirstSubscription($input: UpdateFirstSubscriptionInput!) {
+    updateFirstSubscription(input: $input) {
+    id
   }
 }
     `;
