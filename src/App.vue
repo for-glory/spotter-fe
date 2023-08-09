@@ -14,7 +14,7 @@ import { EntitiesEnum } from "./const/entities";
 import { SplashScreen } from "@capacitor/splash-screen";
 import usePushNotifications from "@/hooks/usePushNotifications";
 import { navigationAfterPaymentCompleted } from "@/helpers/purchaseRouterNavigation";
-import { setAuthItems } from "./router/middleware/auth";
+import { setAuthItemsFromMe } from "./router/middleware/auth";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { MeDocument } from "./generated/graphql";
 import { Capacitor } from '@capacitor/core';
@@ -104,7 +104,7 @@ const {
 } = useLazyQuery(MeDocument);
 
 gotMyProfile(({ data }) => {
-  setAuthItems(data.me);
+  setAuthItemsFromMe(data.me);
 });
 
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<ion-spinner
-			v-if="plansLoading"
+			v-if="plansLoading || subscriptionUserLoading"
 			name="lines"
 			class="spinner"
 		/>
@@ -74,7 +74,7 @@
 	<cancel-membership
     :is-visible="showCancelConfirmModal"
 		:plan="currentPlan"
-    @confirm="cancelMembership"
+    @confirm="handleCancelMembership"
     @cancel="hideCancelModal"
   />
 </template>
@@ -87,11 +87,12 @@ import { ref, onMounted } from "vue";
 import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
-import { useLazyQuery, useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { BackendStripe } from "@/services/stripe/stripe";
 import useSubscription from "@/hooks/useSubscription";
 import {
-  MeDocument,
+  CancelSubscriptionDocument,
+	SubscriptionUserDocument,
   PlansDocument,
   RoleEnum,
 	SubscriptionsTierEnum,
@@ -100,6 +101,7 @@ import {
 } from "@/generated/graphql";
 import CancelMembership from "@/general/components/modals/confirmations/CancelMembership.vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import useFacilityId from "@/hooks/useFacilityId";
 
 const router = useRouter();
 const {
@@ -113,6 +115,7 @@ const { role } = useRoles();
 const plans = ref<any[]>([]);
 const otherPlans = ref<any[]>([]);
 const currentPlan = ref<any>();
+const currentStripeSubscription = ref<any>();
 const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
 const errorMessage = ref("");
@@ -137,6 +140,22 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
   PlansDocument,
   { type: typeValue.value as SubscriptionsTypeEnum, first: 100, page: 1 }
 );
+
+const { currentFacilityId } = useFacilityId();
+const { loading: subscriptionUserLoading, onResult } = useQuery(
+  SubscriptionUserDocument,
+  { facility_id: currentFacilityId }
+);
+
+onResult(({ data }) => {
+	currentStripeSubscription.value = data?.subscriptionUser;
+	if (!data?.subscriptionUser) {
+		router.push({
+			name: EntitiesEnum.DashboardStartMembership,
+		});
+	}
+});
+
 const { currentSubscription } = useSubscription();
 onMounted(async () => {
 
@@ -168,7 +187,7 @@ onMounted(async () => {
       }
       return acc;
     }, []);
-
+		console.log("currentSubscriptionUser", currentStripeSubscription.value)
   });
 });
 
@@ -196,6 +215,24 @@ const handleCancel = () => {
 	console.log(selectedItem.value);
 	showCancelModal();
 };
+
+const { mutate: cancelSubscription, onDone: cancelledSubscription } = useMutation(
+  CancelSubscriptionDocument
+);
+
+const handleCancelMembership = () => {
+  // isLoading.value = true;
+	console.log("-----------------------------");
+	cancelSubscription({
+		unique_identifier: currentStripeSubscription.value.unique_identifier,
+  });
+};
+
+cancelledSubscription(() => {
+	router.push({
+		name: EntitiesEnum.DashboardStartMembership,
+	});
+})
 
 const selectProduct = (plan: any) => {
 	console.log('plan.subscriptionPlan', plan);

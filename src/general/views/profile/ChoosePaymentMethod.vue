@@ -86,7 +86,7 @@ import { PaymentProvidersEnum, MeDocument } from "@/generated/graphql";
 import { useQuery, useLazyQuery } from "@vue/apollo-composable";
 import { navigationAfterPaymentCompleted } from "@/helpers/purchaseRouterNavigation";
 import debounce from "lodash/debounce";
-import { setAuthItems } from "@/router/middleware/auth";
+import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 
 const VUE_APP_STRIPE_PUBLIC_KEY = process.env.VUE_APP_STRIPE_PUBLIC_KEY;
@@ -116,7 +116,7 @@ getMyProfile();
 const { type: currentSubscriptionType } = useSubscription();
 gotMyProfile(({ data }) => {
   if (data.me.currentSubscription !== currentSubscriptionType) {
-    setAuthItems(data.me);
+    setAuthItemsFromMe(data.me);
     onBack();
   }
 });

@@ -108,13 +108,13 @@ const totalEvents = ref<number>(0);
 const isOngoing = ref<boolean>(true);
 
 const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
+const { currentFacilityId } = useFacilityId();
 const { role: myRole } = useRoles();
 
 const idFilter =
   myRole === RoleEnum.Trainer
     ? { created_by_trainer: myId }
-    : { created_by_facility: myFacilityId };
+    : { created_by_facility: currentFacilityId };
 
 const eventsParams: EventsQueryVariables = {
   first: 8,
