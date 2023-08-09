@@ -442,6 +442,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "getting-paid",
         component: () => import("@/general/views/dashboard/GettingPaid.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardSettings,
+        path: "settings",
+        component: () => import("@/general/views/dashboard/settings/Index.vue"),
+      },
     ]
   },
 ];
