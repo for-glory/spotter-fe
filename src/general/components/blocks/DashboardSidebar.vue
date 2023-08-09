@@ -63,7 +63,7 @@
 					<ion-icon src="assets/icon/Card.svg" />
 					<ion-text>Getting Paid</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
 					<ion-icon src="assets/icon/Setting.svg" />
 					<ion-text>Settings</ion-text>
 				</div>
