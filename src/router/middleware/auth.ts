@@ -56,6 +56,23 @@ export const setAuthItems = (authItems: AuthPayload) => {
   }
 };
 
+export const setAuthItemsFromMe = (user: any) => {
+  for (const [key, value] of Object.entries(user)) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+  if (user) {
+    localStorage.setItem('currentSubscription', user?.currentSubscription);
+  }
+  const token = localStorage.getItem("FCM_TOKEN");
+  const { updateDeviceToken, registerPushNotifications } =
+    usePushNotifications();
+  token ? updateDeviceToken(token) : registerPushNotifications();
+
+  if (user?.front_settings) {
+    getSettings(JSON.parse(user.front_settings));
+  }
+};
+
 export const clearAuthItems = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");

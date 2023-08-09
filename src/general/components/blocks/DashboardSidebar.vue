@@ -108,6 +108,10 @@ const router = useRouter();
 const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
+onMounted(() => {
+	localStorage.setItem('currentFacility', JSON.stringify(props.facilities[0]));
+});
+
 const facilities = computed(() => {
   return props.facilities;
 });
