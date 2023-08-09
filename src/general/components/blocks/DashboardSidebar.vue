@@ -105,7 +105,7 @@ const props = withDefaults(
 );
 
 const router = useRouter();
-const activeFacilityId = ref<string | null>(props.facilities[0].id);
+const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
 const facilities = computed(() => {
