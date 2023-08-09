@@ -55,7 +55,7 @@
 					<ion-icon src="assets/icon/gym-icon.svg" />
 					<ion-text>Manage Gyms</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
 					<ion-text>Gym Manager</ion-text>
 				</div>
