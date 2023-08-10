@@ -94,6 +94,7 @@ import { clearAuthItems } from "@/router/middleware/auth";
 import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const props = withDefaults(
   defineProps<{
@@ -104,9 +105,17 @@ const props = withDefaults(
   }
 );
 
+const facilityStore = useFacilityStore();
+
 const router = useRouter();
 const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
+
+facilityStore.setFacility(props.facilities[0]);
+
+// onMounted(() => {
+// 	localStorage.setItem('currentFacility', JSON.stringify(props.facilities[0]));
+// });
 
 const facilities = computed(() => {
   return props.facilities;

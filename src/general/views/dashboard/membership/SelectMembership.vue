@@ -30,12 +30,12 @@
 			</div>
 			<div class="membership w-100">
 				<ion-radio-group class="plans">
-					<!-- <ion-item
+					<ion-item
 						lines="none"
 						class="radiobutton"
 						v-for="plan in plans"
 						:key="plan.id"
-						@click="selectProduct(plan)"
+						@click="selectMembership(plan.id)"
 						:class="{
 							'item-radio-checked':
 								plan.owned && dayjs(plan.expiryDate).isAfter(dayjs()),
@@ -52,15 +52,9 @@
 								</ion-label>
 
 								<ion-text class="radiobutton__cost"
-									>{{ plan?.price }}
-									<span
-										v-if="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
-									>
-										/ Expire: {{ dayjs(plan.expiryDate).format("MM/DD/YY") }}
-									</span>
-									<span v-else-if="plan.billingPeriodUnit">
-										/
-										{{ plan.billingPeriodUnit }}
+									>${{ plan?.prices.length?plan?.prices[0].price/100:"" }}
+									<span>
+										/per location
 									</span>
 								</ion-text>
 								<ul>
@@ -80,8 +74,8 @@
 							</div>
 						</div>
 						<ion-radio :value="plan.id" slot="end"></ion-radio>
-					</ion-item> -->
-					<ion-item
+					</ion-item>
+					<!-- <ion-item
 						lines="none"
 						class="radiobutton"
 						@click="selectMembership(4)"
@@ -308,7 +302,7 @@
 							</div>
 						</div>
 						<ion-radio :value="5" slot="end"></ion-radio>
-					</ion-item>
+					</ion-item> -->
 				</ion-radio-group>
 			</div>
 			<div class="checkbox">
@@ -352,7 +346,6 @@ import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
 import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { BackendStripe } from "@/services/stripe/stripe";
-import { clearAuthItems } from "@/router/middleware/auth";
 import {
   MeDocument,
   PlansDocument,
@@ -360,6 +353,7 @@ import {
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
 } from "@/generated/graphql";
+import useFacilityId from "@/hooks/useFacilityId";
 
 const router = useRouter();
 
@@ -383,6 +377,8 @@ const selectedProductId = ref<string | number | boolean | undefined>(undefined);
 const backendStripe = new BackendStripe(
   process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
 );
+
+const { currentFacilityId } = useFacilityId();
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -431,6 +427,7 @@ const handleContinue = () => {
   createSubscriptionIntent({
     product_id: selectedItem.value.product_id,
     fees_percent: selectedPlan.value.fee,
+		facility_id: currentFacilityId
   })
     .then((data) => {
       console.log("data==>", data)
@@ -442,12 +439,6 @@ const handleContinue = () => {
       throw new Error(err);
     });
 };
-
-const selectProduct = (plan: any) => {
-	console.log('plan.subscriptionPlan', plan);
-	selectedItem.value = plan.subscriptionPlan
-	selectedProductId.value = plan.subscriptionPlan.product_id
-};
 const selectMembership = (id: any) => {
 	plans.value.forEach((plan: any) => {
 		if (plan.id == id) {
@@ -458,20 +449,6 @@ const selectMembership = (id: any) => {
 		}
 	})
 }
-
-const onCardCreation = async () => {
-  const { onResult } = backendStripe.createSetupIntent();
-  onResult((setupIntentResult) => {
-    let intent = JSON.parse(setupIntentResult?.data?.setupIntent?.session);
-    backendStripe.redirectToCardSaving(intent.id, intent.url);
-  });
-};
-
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
-};
-
 </script>
 
 <style scoped lang="scss">

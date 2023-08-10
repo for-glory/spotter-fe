@@ -314,6 +314,7 @@ export type CreateEventInput = {
   price?: InputMaybe<Scalars['Float']>;
   start_date: Scalars['DateTime'];
   title: Scalars['String'];
+  facility_id?: Scalars['ID'];
 };
 
 export type CreateFacilityInput = {
@@ -4114,11 +4115,43 @@ export const PaymentIntentDocument = gql`
 }
     `;
 export const CreateSubscriptionIntentDocument = gql`
-    mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!) {
+    mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!, $facility_id: ID) {
     createSubscriptionIntent(
-    input: {product_id: $product_id, fees_percent: $fees_percent}
+    input: {product_id: $product_id, fees_percent: $fees_percent, facility_id: $facility_id}
   ) {
     session
+  }
+}
+    `;
+export const CancelSubscriptionDocument = gql`
+    mutation CancelSubscription($unique_identifier: String!) {
+    cancelSubscription(
+    input: {unique_identifier: $unique_identifier}
+  ) {
+    plan_id,
+    start_date,
+    end_date,
+    grace_period_end_date,
+    canceled_at,
+    unique_identifier,
+    verified,
+    facility_id
+  }
+}
+    `;
+export const SubscriptionUserDocument = gql`
+    mutation subscriptionUser($facility_id: ID!) {
+  subscriptionUser(
+    input: {facility_id: $facility_id}
+  ) {
+    plan_id,
+    start_date,
+    end_date,
+    grace_period_end_date,
+    canceled_at,
+    unique_identifier,
+    verified,
+    facility_id
   }
 }
     `;
