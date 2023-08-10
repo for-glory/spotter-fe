@@ -11,12 +11,20 @@
 		<div class="dashboard-container__right-section">
 			<slot name="right-section"></slot>
 		</div>
+		<ion-menu side="end" content-id="main-content">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Add new manager</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">This is the menu content.</ion-content>
+    </ion-menu>
 	</div>
 </template>
 
 <script lang="ts" setup>
 import DashboardSidebar from '@/general/components/blocks/DashboardSidebar.vue';
-import { IonSpinner } from "@ionic/vue";
+import { IonSpinner, IonMenu } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
 import {

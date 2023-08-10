@@ -2,17 +2,20 @@
 	<div
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
+    id="main-content"
 	>
     <div class="banner">
       <ion-title class="banner__title">Gym Managers</ion-title>
     </div>
     <div class="content-container">
       <div class="content-box d-flex justify-content-end">
-        <ion-button expand="block">Add new manager</ion-button>
+        <ion-menu-toggle :auto-hide="false">
+          <ion-button expand="block">Add new manager</ion-button>
+        </ion-menu-toggle>
       </div>
-      <div class="d-flex justify-between">
-        <div class="content-box content-box__membership">
-          <ion-title>Membership Summary</ion-title>
+      <div class="d-flex justify-content-between">
+        <div class="content-box content-box__membership flex-auto">
+          <ion-title class="top">Membership Summary</ion-title>
           <ion-grid>
             <ion-row>
               <ion-col size="4">
@@ -35,9 +38,12 @@
             </ion-row>
           </ion-grid>
         </div>
+        <div class="content-box chart">
+
+        </div>
       </div>
-      <div class="d-flex justify-between">
-        <div>
+      <div class="d-flex justify-content-between">
+        <div class="flex-auto">
           <ion-grid class="manager-table">
             <ion-row class="table-header">
               <ion-col size="2" class="table-th">
@@ -77,6 +83,9 @@
             </ion-row>
           </ion-grid>
         </div>
+        <div class="content-box chart">
+
+        </div>
       </div>
     </div>
 	</div>
@@ -89,7 +98,8 @@ import {
   IonGrid,
   IonText,
   IonTitle,
-  IonIcon
+  IonIcon,
+  IonMenuToggle,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -173,6 +183,12 @@ const handleEdit = () => {
 }
 .content-box {
   background-color: var(--gray-700);
+  border-radius: 8px;
+  
+  .top {
+    margin-bottom: 40px;
+    padding: 5px;
+  }
 
   &__membership {
     padding-top: 34px;
@@ -180,6 +196,7 @@ const handleEdit = () => {
     padding-right: 90px;
     padding-bottom: 20px;
     border-radius: 8px;
+    max-width: 641px;
   }
 }
 .manager-table {
@@ -193,20 +210,28 @@ const handleEdit = () => {
   .table-th {
 		padding: 10px 24px;
 	}
-
 	.table-td {
 		padding: 16px 24px;
 	}
 }
-
 .table-header {
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
 	background-color: var(--main-color);
 	color: var(--gold);
 }
-
 .table-row {
 	border-top: 1px solid var(--fitnesswhite);
 }
+
+.chart {
+  width: 326px;
+  height: 237px;
+  margin-left: 37px;
+}
+
+.flex-auto {
+  flex: auto;
+}
+
 </style>
