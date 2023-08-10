@@ -38,8 +38,16 @@
             </ion-row>
           </ion-grid>
         </div>
-        <div class="content-box chart">
-
+        <div class="content-box chart d-flex-col justify-content-end">
+          <div class="d-flex justify-content-between align-items-center">
+            <ion-text class="availability">Availability stats</ion-text>
+            <ion-button fill="outline">
+              <ion-icon src="assets/icon/calendar.svg"></ion-icon>
+              Monthly
+            </ion-button>
+          </div>
+          <ion-text class="detail">Manager's attendance</ion-text>
+          <custom-chart :chartData="chartData" :selected="selected"/>
         </div>
       </div>
       <div class="d-flex justify-content-between">
@@ -87,8 +95,16 @@
             </tbody>
           </table>
         </div>
-        <div class="content-box chart">
-
+        <div class="content-box chart d-flex-col justify-content-end">
+          <div class="d-flex justify-content-between align-items-center">
+            <ion-text class="availability">Availability stats</ion-text>
+            <ion-button fill="outline">
+              <ion-icon src="assets/icon/calendar.svg"></ion-icon>
+              Monthly
+            </ion-button>
+          </div>
+          <ion-text class="detail">Worker's attendance</ion-text>
+          <custom-chart :chartData="chartData" :selected="selected"/>
         </div>
       </div>
     </div>
@@ -120,6 +136,7 @@ import useFacilityId from "@/hooks/useFacilityId";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
+import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 
 
 const filter = ref<string>('profile');
@@ -145,6 +162,26 @@ const managers = [{
   email: "Ajebohustler@gmil.co",
   availability: "available"
 }];
+const chartData = {
+  labels: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+  ],
+  datasets: [
+    {
+      label: 'Data One',
+      backgroundColor: '#2ED47A',
+      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
+      barThickness: 8,
+      borderRadius: 10
+    }
+  ]
+};
+const selected = "February";
 
 const handleClick = (value: string) => {
 	filter.value = value;
@@ -263,6 +300,26 @@ const handleEdit = () => {
   width: 326px;
   height: 237px;
   margin-left: 37px;
+  position: relative;
+  padding: 20px;
+
+  .availability {
+    font: 600 18px/1 var(--ion-font-family);
+  }
+  .detail {
+    font: 12px/1 var(--ion-font-family);
+    color: #ffffff6a;
+  }
+
+  ion-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+  ion-button {
+    color: #858D9D;
+    border-color: #858D9D;
+  }
 }
 
 .flex-auto {
