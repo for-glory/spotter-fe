@@ -53,11 +53,11 @@
 			<div class="setting-menu">
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
-					<ion-text>Manage Gyms</ion-text>
+					<ion-text>Gyms</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
-					<ion-text>Gym Manager</ion-text>
+					<ion-text>Managers</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
 					<ion-icon src="assets/icon/Card.svg" />
