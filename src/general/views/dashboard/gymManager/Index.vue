@@ -8,7 +8,7 @@
       <ion-title class="banner__title">Gym Managers</ion-title>
     </div>
     <div class="content-container">
-      <div class="content-box d-flex justify-content-end">
+      <div class="content-box d-flex justify-content-end tool-bar">
         <ion-menu-toggle :auto-hide="false">
           <ion-button expand="block">Add new manager</ion-button>
         </ion-menu-toggle>
@@ -18,21 +18,21 @@
           <ion-title class="top">Membership Summary</ion-title>
           <ion-grid>
             <ion-row>
-              <ion-col size="4">
+              <ion-col size="3">
                 <summary-item title="Total" keyText="New Signs-up" value="14"/>
               </ion-col>
-              <ion-col size="4">
+              <ion-col size="3">
                 <summary-item title="Total" keyText="Active" value="60"/>
               </ion-col>
-              <ion-col size="4">
+              <ion-col size="5">
                 <summary-item title="Total" keyText="Experiment membership" value="24"/>
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col size="4">
+              <ion-col size="3">
                 <summary-item title="Today's" keyText="Event counts" value="23"/>
               </ion-col>
-              <ion-col size="4">
+              <ion-col size="3">
                 <summary-item title="Today's" keyText="Event counts" value="13"/>
               </ion-col>
             </ion-row>
@@ -44,44 +44,48 @@
       </div>
       <div class="d-flex justify-content-between">
         <div class="flex-auto">
-          <ion-grid class="manager-table">
-            <ion-row class="table-header">
-              <ion-col size="2" class="table-th">
-                <ion-text>Name</ion-text>
-              </ion-col>
-              <ion-col size="3" class="table-th">
-                <ion-text>Employment type</ion-text>
-              </ion-col>
-              <ion-col size="3" class="table-th">
-                <ion-text>E-mail</ion-text>
-              </ion-col>
-              <ion-col size="2" class="table-th">
-                <ion-text>Availability</ion-text>
-              </ion-col>
-              <ion-col size="1" class="table-th">
-                <ion-text>Edit</ion-text>
-              </ion-col>
-            </ion-row>
-            <ion-row class="table-row" v-for="manager in managers" :key="manager.id">
-              <ion-col size="2" class="table-td">
-                <ion-text>{{ manager.name }}</ion-text>
-              </ion-col>
-              <ion-col size="3" class="table-td">
-                <ion-text>{{ manager.type }}</ion-text>
-              </ion-col>
-              <ion-col size="3" class="table-td">
-                <ion-text>${{ manager.email }}</ion-text>
-              </ion-col>
-              <ion-col size="2" class="table-td">
-                <ion-text>{{ manager.availability }}</ion-text>
-              </ion-col>
-              <ion-col size="1" class="table-td">
-                <ion-button expand="block" fill="outline" @click="handleEdit">
-                  <ion-icon slot="icon-only" src="assets/icon/Setting.svg"></ion-icon>
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+          <table class="manager-table">
+            <thead>
+              <tr class="table-header">
+                <th class="table-th top-left">
+                  <ion-text>Name</ion-text>
+                </th>
+                <th class="table-th">
+                  <ion-text>Employment type</ion-text>
+                </th>
+                <th class="table-th">
+                  <ion-text>E-mail</ion-text>
+                </th>
+                <th class="table-th">
+                  <ion-text>Availability</ion-text>
+                </th>
+                <th class="table-th top-right">
+                  <ion-text>Edit</ion-text>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-row" v-for="manager in managers" :key="manager.id">
+                <td class="table-td">
+                  <ion-text>{{ manager.name }}</ion-text>
+                </td>
+                <td class="table-td">
+                  <ion-text>{{ manager.type }}</ion-text>
+                </td>
+                <td class="table-td">
+                  <ion-text>${{ manager.email }}</ion-text>
+                </td>
+                <td class="table-td">
+                  <ion-text :class="manager.availability === 'available' ? 'available' : 'unavailable'">{{ manager.availability }}</ion-text>
+                </td>
+                <td class="table-td edit-btn">
+                  <ion-button expand="block" fill="outline" @click="handleEdit">
+                    <ion-icon slot="icon-only" src="assets/icon/three-dot.svg"></ion-icon>
+                  </ion-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="content-box chart">
 
@@ -198,30 +202,61 @@ const handleEdit = () => {
     border-radius: 8px;
     max-width: 641px;
   }
+
+  ion-row {
+    margin-bottom: 33px;
+  }
+}
+.tool-bar {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-right: 8px;
 }
 .manager-table {
   border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
-	border: 1px solid var(--fitnesswhite);
-	background: var(--gray-700);
-	max-width: 700px;
-	padding: 0;
+  border-top-right-radius: 8px;
+  outline: 1px solid var(--fitnesswhite);
+  background: var(--gray-700);
+  padding: 0;
+  width: 100%;
+}
 
-  .table-th {
-		padding: 10px 24px;
-	}
-	.table-td {
-		padding: 16px 24px;
-	}
+.table-th {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  outline: 1px solid var(--fitnesswhite);
 }
+
+.table-td {
+  text-align: center;
+  font: 14px/1 var(--ion-font-family);
+  color: #ffffff6a;
+}
+
+.top-left {
+  border-top-left-radius: 8px;
+}
+
+.top-right {
+  border-top-right-radius: 8px;
+}
+
 .table-header {
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
-	background-color: var(--main-color);
-	color: var(--gold);
+  background-color: var(--main-color);
+  color: var(--gold);
 }
+
 .table-row {
-	border-top: 1px solid var(--fitnesswhite);
+  border-top: 1px solid var(--fitnesswhite);
+}
+
+.edit-btn {
+  padding: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .chart {
@@ -234,4 +269,27 @@ const handleEdit = () => {
   flex: auto;
 }
 
+.available {
+  border: 1px solid #2ed47a;
+  border-radius: 16px;
+  font: 12px/1 var(--ion-font-family);
+  color: #2ed47a;
+  text-transform: capitalize;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.unavailable {
+  border: 1px solid #f7685B;
+  border-radius: 16px;
+  font: 12px/1 var(--ion-font-family);
+  color: #f7685B;
+  text-transform: capitalize;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
 </style>
