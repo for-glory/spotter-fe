@@ -83,7 +83,7 @@
 									<ion-button class="get-button">
 										<ion-icon class="button-icon" src="assets/icon/apple.svg"/>
 										<div class="d-flex flex-direction-column align-items-start">
-											<ion-text class="get-button__small-text"> IT ON THE</ion-text>
+											<ion-text class="get-button__small-text"> GET IT ON THE</ion-text>
 											<ion-text class="get-button__text">App Store</ion-text>
 										</div>
 									</ion-button>
