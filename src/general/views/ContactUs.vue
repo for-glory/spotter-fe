@@ -74,7 +74,7 @@
                   Your email will be responded to as soon as we can
                 </div>
                 <button class="form-input-button">
-                  <div class="form-input-button-text">Submit message</div>
+                  <div class="form-input-button-text">Send Message</div>
                 </button>
               </ion-col>
             </ion-row>
