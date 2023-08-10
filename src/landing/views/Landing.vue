@@ -68,25 +68,28 @@
 					<ion-row class="embrace-section">
 						<ion-col size="12" size-lg="7" class="embrace-section__content md-align-items-center">
 							<div class="embrace-section__content__first">
-								<h1 class="lg-title md-text-center">Embrace your potential with <ion-text color="primary">Spotter</ion-text> today!</h1>
+								<h1 class="lg-title md-text-center">Find your spot, find your fit with <ion-text color="primary">Spotter</ion-text></h1>
 								<ion-text class="detail-text">
-									Your journey to a healthier, happier you starts now. Take the first step and let Spotter be your partner in reaching new heights of wellness. Together, we'll build a stronger, fitter, and more confident version of yourself.
+									Your journey to a healthier, happier you starts now. Take the first step and let Spotter be your partner in reaching new heights of wellness. Together we'll build a stronger fitter, and more confident YOU!
 								</ion-text>
 								<div class="get-buttons">
 									<ion-button class="get-button">
 										<ion-icon class="button-icon" src="assets/icon/google-play.svg"/>
 										<div class="d-flex flex-direction-column align-items-start">
-											<ion-text class="get-button__small-text">GET IT ON</ion-text>
+											<ion-text class="get-button__small-text">DOWNLOAD IT ON THE</ion-text>
 											<ion-text class="get-button__text">Google Play</ion-text>
 										</div>
 									</ion-button>
 									<ion-button class="get-button">
 										<ion-icon class="button-icon" src="assets/icon/apple.svg"/>
 										<div class="d-flex flex-direction-column align-items-start">
-											<ion-text class="get-button__small-text">Download on the</ion-text>
+											<ion-text class="get-button__small-text"> IT ON THE</ion-text>
 											<ion-text class="get-button__text">App Store</ion-text>
 										</div>
 									</ion-button>
+								</div>
+								<div class="d-flex flex-direction-column align-items-center ion-padding-end ion-padding-vertical">
+									<ion-text class="sm-title"><ion-text color="primary">Connect</ion-text> with hundreds of top Trainers and world-class Gyms near you.</ion-text>
 								</div>
 							</div>
 							<div class="trainers">
@@ -95,7 +98,7 @@
 									<ion-text class="detail-text">Trainers</ion-text>
 								</div>
 								<div class="trainers__right">
-									<ion-text class="detail-text">Get connected with top personal trainers and world class gyms in your world. Set the time, work at your pace and achieve results.</ion-text>
+									<ion-text class="detail-text">Set your time. Set your pace. Maximize your results.</ion-text>
 								</div>
 							</div>
 						</ion-col>
@@ -121,31 +124,31 @@
 							</div>
 							<div class="for-section__content find-content md-order-1">
 								<div>
-									<ion-text color="primary"><h5>FIND A TRAINER OR GYM</h5></ion-text>
+									<ion-text color="primary"><h5>FIND YOUR FIT</h5></ion-text>
 									<div class="for-section__content__detail">
-										<h1 class="md-title">Find the <ion-text color="primary">nearest gym</ion-text> close to you wherever in the world you are.</h1>
+										<h1 class="md-title">Find the nearest <ion-text color="primary">Gym</ion-text> or <ion-text color="primary">Trainer</ion-text> wherever you are and wherever you go.</h1>
 										<ion-text class="detail-text">
 											Never worry about backsliding; when you have a gym near your home that feels like home, you'll always find yourself in a space free from uncertainty and filled with consistent success.
 										</ion-text>
 										<div>
-											<ion-text class="items-title">How to get started:</ion-text>
+											<ion-text class="items-title"><a href="/how-it-works" title="How it works">How to get started</a>:</ion-text>
 											<ion-grid>
 												<ion-row>
-													<ion-col size="12" size-sm="4">
-														<ion-icon
-															src="assets/icon/global-search.svg"
-															size="large"
-														/>
-														<p>Search</p>
-														<p class="detail-text">Find the closest gym to your apartment</p>
-													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/users.svg"
 															size="large"
 														/>
 														<p>Become a member</p>
-														<p class="detail-text">Choose a membership option, complete the registration.</p>
+														<p class="detail-text">Tell us about yourself! Register and create your profile in seconds.</p>
+													</ion-col>
+													<ion-col size="12" size-sm="4">
+														<ion-icon
+															src="assets/icon/global-search.svg"
+															size="large"
+														/>
+														<p>Search</p>
+														<p class="detail-text">Search & match with Gyms and Trainers wherever you are.</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
@@ -153,7 +156,7 @@
 															size="large"
 														/>
 														<p>Pay</p>
-														<p class="detail-text"> make the payment, attend an orientation session, and start your fitness journey.</p>
+														<p class="detail-text">Securely book, pay, and communicate all in-app. Get your sweat on and do it again!</p>
 													</ion-col>
 												</ion-row>
 											</ion-grid>
@@ -169,12 +172,12 @@
 								<div>
 									<ion-text color="primary"><h5>FOR TRAINERS</h5></ion-text>
 									<div class="for-section__content__detail">
-										<h1 class="md-title"><ion-text color="primary">Collaborate</ion-text> with world class gyms in your area to <ion-text color="primary">connect</ion-text> with your clients.</h1>
+										<h1 class="md-title"><ion-text color="primary">Increase visibility</ion-text> gain exposure and <ion-text color="primary">maximize </ion-text> your earning potential.</h1>
 										<ion-text class="detail-text">
-											Being a registered member gives you access to any spotter gym around the world and a one on one personal time with any of our world class trainers in or outside the gym
+											Being a Spotter Trainer gives you access to  our vast network of clients looking for a trainer like you!
 										</ion-text>
 										<div>
-											<ion-text>Benefits you’ll get:</ion-text>
+											<ion-text>Benefits Include:</ion-text>
 											<ion-grid>
 												<ion-row>
 													<ion-col size="12" size-sm="4">
@@ -182,24 +185,24 @@
 															src="assets/icon/bezier.svg"
 															size="large"
 														/>
-														<p>Independence</p>
-														<p class="detail-text">Find the closest gym to your apartment</p>
+														<p>Flexibility</p>
+														<p class="detail-text">Spotter gives you the freedom to create a schedule that works for you!</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/heart-graph.svg"
 															size="large"
 														/>
-														<p>Monthly checkups</p>
-														<p class="detail-text">Have your body system checked by professional medics</p>
+														<p>Get Connected</p>
+														<p class="detail-text">Safely and securely get matched and communicate with ideal clients.</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bike.svg"
 															size="large"
 														/>
-														<p>Free cycle classes</p>
-														<p class="detail-text">You get 3 free cycle class for every new membership renewal</p>
+														<p>Boost Earnings</p>
+														<p class="detail-text">Offer your services in-person and/or digitally anytime, anywhere with DAILYS and maximize your earning potential.</p>
 													</ion-col>
 												</ion-row>
 											</ion-grid>
@@ -225,14 +228,14 @@
 							</div>
 							<div class="for-section__content gym-user-content md-order-1">
 								<div>
-									<ion-text color="primary"><h5>FOR GYM OWNERS</h5></ion-text>
+									<ion-text color="primary"><h5>GYM OWNERS</h5></ion-text>
 									<div class="for-section__content__detail">
-										<h1 class="md-title">Let people <ion-text color="primary">find</ion-text> your gym easily with spotter</h1>
+										<h1 class="md-title">Increase your visibility with <ion-text color="primary">Spotter</ion-text></h1>
 										<ion-text class="detail-text">
-											As a gym owner you get to put your world-class gym on the map for easy access to reaching skilled trainers and clients in need of a gym for their workout.
+											As a gym owner, showcase your facility, amenities, events, and even trainers all in one convenient place. Spotter makes it easy for anyone to find, visit, and make purchases at your facility.
 										</ion-text>
 										<div>
-											<ion-text>Benefits you’ll get:</ion-text>
+											<ion-text>Benefits include:</ion-text>
 											<ion-grid>
 												<ion-row>
 													<ion-col size="12" size-sm="4">
@@ -240,24 +243,34 @@
 															src="assets/icon/bezier.svg"
 															size="large"
 														/>
-														<p>Flexibility</p>
-														<p class="detail-text">Find the closest gym to your apartment</p>
+														<p>Visibility</p>
+														<p class="detail-text">Exposure is key! Stand out from the rest, and let Spotter help bring more eyes and traffic to your facility</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/heart-graph.svg"
 															size="large"
 														/>
-														<p>Monthly checkups</p>
-														<p class="detail-text">Have your body system checked by professional medics</p>
+														<p>Connection</p>
+														<p class="detail-text">"Attract, target, and retain more clients with Spotter."</p>
 													</ion-col>
+													<ion-col size="12" size-sm="4">
+														<ion-icon
+															src="assets/icon/users.svg"
+															size="large"
+														/>
+														<p>Amenities</p>
+														<p class="detail-text">"Highlight your staff, amenities, offerings, and create events easily and efficiently with Spotter."</p>
+													</ion-col>
+												</ion-row>
+												<ion-row>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bike.svg"
 															size="large"
 														/>
-														<p>Free cycle classes</p>
-														<p class="detail-text">You get 3 free cycle class for every new membership renewal</p>
+														<p>Tools & Features</p>
+														<p class="detail-text">Dashboarding, analytics, and facility management. So you can focus on what you do best!</p>
 													</ion-col>
 												</ion-row>
 											</ion-grid>
@@ -271,14 +284,14 @@
 						<ion-row class="for-section users-section">
 							<div class="for-section__content users-content md-order-1">
 								<div>
-									<ion-text color="primary"><h5>FOR USERS</h5></ion-text>
+									<ion-text color="primary"><h5>USERS</h5></ion-text>
 									<div class="for-section__content__detail">
-										<h1 class="md-title">Get <ion-text color="primary">unlimited access</ion-text> to a personal trainer of your choice.</h1>
+										<h1 class="md-title">Gain <ion-text color="primary"> access</ion-text> to hundreds of participating Gyms and Trainers wherever you go.</h1>
 										<ion-text class="detail-text">
-											Being a registered member gives you access to any spotter gym around the world and a one on one personal time with any of our world class trainers in or outside the gym
+											As a registered Spotter User, you'll have access to any Spotter Gym or Trainer in our network anywhere in the world. Whether you're vacationing, on the go, new in town, or traveling for work, fitness is always within reach. Spotter takes care of the heavy lifting so you don't have to.
 										</ion-text>
 										<div>
-											<ion-text>Benefits you’ll get:</ion-text>
+											<ion-text>Benefits include:</ion-text>
 											<ion-grid>
 												<ion-row>
 													<ion-col size="12" size-sm="4">
@@ -287,23 +300,23 @@
 															size="large"
 														/>
 														<p>Flexibility</p>
-														<p class="detail-text">Find the closest gym to your apartment</p>
+														<p class="detail-text">Find the closest Gym, Trainer, or Facility in our network. We bring fitness right to your fingertips.</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/heart-graph.svg"
 															size="large"
 														/>
-														<p>Monthly checkups</p>
-														<p class="detail-text">Have your body system checked by professional medics</p>
+														<p>Connect</p>
+														<p class="detail-text">Book, pay, and safely communicate all in-app. Spend less time researching and calling. We’ve got you covered.</p>
 													</ion-col>
 													<ion-col size="12" size-sm="4">
 														<ion-icon
 															src="assets/icon/bike.svg"
 															size="large"
 														/>
-														<p>Free cycle classes</p>
-														<p class="detail-text">You get 3 free cycle class for every new membership renewal</p>
+														<p>On the GO!</p>
+														<p class="detail-text">Take your favorite Trainer or Gym with you wherever you go. With Dailys, you can enjoy your favorite Trainer or workout for the price of a cup of coffee!</p>
 													</ion-col>
 												</ion-row>
 											</ion-grid>
@@ -323,8 +336,8 @@
 			<!-- find a gym section -->
 			<div>
 				<div class="d-flex flex-direction-column align-items-center">
-					<h1 class="lg-title">Find a gym</h1>
-					<ion-text class="sm-title">Let’s help you find one close to you</ion-text>
+					<h1 class="lg-title">Find a Gym or Trainer</h1>
+					<ion-text class="sm-title">YOUR FIT, YOUR WAY!</ion-text>
 				</div>
 				<div class="mt-3 find-map">
 						<base-layout
@@ -411,14 +424,14 @@
 				<ion-grid :fixed="true">
 					<ion-row>
 						<ion-col size="12">
-							<h1 class="xl-title">Keep up with dedicated trainers willing to see you succeed.</h1>
+							<h1 class="xl-title">Keep a steady pulse on your fit with Spotter.</h1>
 						</ion-col>
 					</ion-row>
 					<ion-row>
 						<ion-col size="0" size-md="5">
 						</ion-col>
-						<ion-col size="12" size-md="7">
-							<ion-text class="sm-title">Embrace your potential with Embrace your potential w today Embrace your potential with Embrace your potential w today!</ion-text>
+						<ion-col size="12" size-md="7" class="ion-padding-bottom">
+							<ion-text class="sm-title ion-padding-bottom">GYMS AND FACILITIES - The revolution of fitness is here! With Spotter, take control of your business your way! Attract new clientele, increase foot traffic, highlight your amenities, and keep them coming back for more. The Spotter app was designed with your business in mind. Whether big or small, single or with multiple locations, Spotter can highlight your facility, offerings, events, trainers, and more.</ion-text>
 						</ion-col>
 					</ion-row>
 					<ion-row>
@@ -430,7 +443,7 @@
 					</ion-row>
 					<div class="mt-3 first-content">
 						<div class="detail">
-							<ion-text class="sm-title">Embrace your potential with Embrace your potential w today Embrace your potential with Embrace your potential w today!</ion-text>
+							<!-- <ion-text class="sm-title">TRAINERS - Get matched with clientele specifically looking for someone like you! Whether this is a side hustle or your full-time job, whether you are just starting out or a seasoned trainer, Spotter can do the heavy lifting. With Spotter, you can progressively overload your schedule while having the freedom and flexibility to be you!</ion-text> -->
 						</div>
 						<div>
 							<ion-button
@@ -449,8 +462,8 @@
 							/>
 						</div>
 						<div class="detail">
-							<ion-text class="sm-title">Embrace your potential with Embrace your potential w today Embrace your potential with Embrace your potential w today!</ion-text>
-							<div>
+							<ion-text class="sm-title">TRAINERS - Get matched with clientele specifically looking for someone like you! Whether this is a side hustle or your full-time job, whether you are just starting out or a seasoned trainer, Spotter can do the heavy lifting. With Spotter, you can progressively overload your schedule while having the freedom and flexibility to be you!</ion-text>
+							<div class="ion-padding-top">
 								<ion-button
 									class="button-dark large-btn"
 									type="button"
@@ -506,11 +519,14 @@
 			<!-- get your life back section -->
 			<div class="life-back-section">
 				<div>
-					<div>
-						<ion-text class="lg-title">Get your life back</ion-text>
+					<div class="ion-text-center">
+						<div class="lg-title">With Spotter, you can Spot, <br>Sweat, <ion-text color="primary"> Repeat</ion-text></div>
 					</div>
-					<div class="mt-2">
-						<ion-text class="sm-title">App available on both ios and Android</ion-text>
+					<div class="mt-2 ion-text-center">
+						<ion-text class="sm-title">App available on both iOS and Android</ion-text>
+					</div>
+					<div class="mt-2 ion-text-center ion-padding-top">
+						<ion-text class="sm-title">DOWNLOAD NOW!</ion-text>
 					</div>
 				</div>
 				<div class="get-buttons">
@@ -542,20 +558,20 @@
 					</div>
 					<div class="faq-container">
 						<faq-item
-							question="What is the guarantee that my message would be replied?"
-							answer="It would definitely be replied because there is an incentive for the recipient of your message to make money when he or she does that."
+							question="What is Spotter?"
+							answer="Spotter is the app that filters nearby gyms and/or trainers according to user preferences. It is free* to create a profile for users and offers bundled discount drop-in rates to in-network gyms for travelers or gym-goers who just want to try something new. Payment is all in-app. Users can also connect, chat, and book with trainers all in-app. Both gyms and trainers have reviews and rankings by confirmed users/clients. (* There is a one time $1.99 identity verification fee to help keep our network safe!)"
 						/>
 						<faq-item
-							question="Are my personal details secured?"
-							answer="It would definitely be replied because there is an incentive for the recipient of your message to make money when he or she does that."
+							question="What makes Spotter unique?"
+							answer="By harnessing our SpotFit technology we provide the best matches based on preferences and proximity. We offer in-app booking, communication, and payment tools so you can manage gym access and/or trainer scheduling easily and from anywhere."
 						/>
 						<faq-item
-							question="What is your refund policy?"
-							answer="It would definitely be replied because there is an incentive for the recipient of your message to make money when he or she does that."
+							question="I am new to fitness. How can Spotter help me? "
+							answer="We take the guesswork out of fitness! Our onboarding makes it simple to build your free, unique profile. Spotter filters the best gyms and trainers near you according to your custom preferences and needs. Read through posted reviews from others about each provider before you decide what is best for you. Use discounted drop-in bundles to try out a new gym. Chat and communicate with matched trainers, and book and pay right in the app."
 						/>
 						<faq-item
-							question="Can i delete my account?"
-							answer="It would definitely be replied because there is an incentive for the recipient of your message to make money when he or she does that."
+							question="I am a trainer. How can I join?"
+							answer="We would love for you to join our network! Joining is free. Download the app, create your Trainer account, and let the fitness roll! You have full control over your booked sessions and rates. We secure a flat fee for any service booked within the app."
 						/>
 					</div>
 				</div>
