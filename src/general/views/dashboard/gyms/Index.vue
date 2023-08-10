@@ -3,60 +3,106 @@
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
 	>
-    <div class="banner">
-      <ion-icon src="assets/icon/arrow-back.svg" />
-      <ion-title class="banner__title">Gabby's gym</ion-title>
-    </div>
     <div>
-      <div class="carousel">
-        <ion-img src="assets/gym-image.png"></ion-img>
+      <div class="banner">
+        <ion-icon src="assets/icon/arrow-back.svg" />
+        <ion-title class="banner__title">Gabby's gym</ion-title>
       </div>
-      <div class="data-box d-flex justify-content-between">
-        <div class="d-flex-col">
-          <ion-text>{{"Gabby"}} Gym</ion-text>
-          <ion-label class="field-label">
-            <ion-icon src="assets/icon/location.svg"></ion-icon>
-            Dallas, Wall Street, 24
-          </ion-label>
+      <div>
+        <div class="carousel">
+          <ion-img src="assets/gym-image.png"></ion-img>
         </div>
-        <div class="d-flex-col align-items-center">
-          <ion-text>Ratings {{5.0}}</ion-text>
-        </div>
-        <div class="d-flex-col align-items-center">
-          <ion-text>Reviews</ion-text>
-        </div>
-      </div>
-      <div class="description-field">
-        <ion-title>Description:</ion-title>
-        <ion-text>{{"Want your body to be healthy? Join our program with directions according to body’s goals. Increasing physical strength is the goal of strenght training."}}</ion-text>
-      </div>
-      <div class="feature-field d-flex justify-content-between">
-        <div>
-          <ion-title>Equipment</ion-title>
-          <div class="features">
-            <ion-button 
-              v-for="(item, id) in equipments" 
-              :key="id" 
-              fill="outline"
-            >
-              <ion-icon :src="item.iconPath"></ion-icon>
-              {{item.name}}
-            </ion-button>
+        <div class="data-box d-flex justify-content-between">
+          <div class="d-flex-col">
+            <ion-text>{{"Gabby"}} Gym</ion-text>
+            <ion-label class="field-label">
+              <ion-icon src="assets/icon/location.svg"></ion-icon>
+              Dallas, Wall Street, 24
+            </ion-label>
+          </div>
+          <div class="d-flex-col">
+            <ion-text>Ratings {{rating.toFixed(1)}}</ion-text>
+            <star-rating :rating="5"/>
+          </div>
+          <div class="d-flex-col align-items-center">
+            <ion-text>Reviews</ion-text>
+            <ion-text>based on {{2480}} reviews</ion-text>
           </div>
         </div>
-        <div>
-          <ion-title>Amenities</ion-title>
-          <div class="features">
-            <ion-button 
-              v-for="(item, id) in amenities" 
-              :key="id" 
-              fill="outline"
-            >
-              <ion-icon :src="item.iconPath"></ion-icon>
-              {{item.name}}
-            </ion-button>
+        <div class="description-field">
+          <ion-title>Description:</ion-title>
+          <ion-text>{{"Want your body to be healthy? Join our program with directions according to body’s goals. Increasing physical strength is the goal of strenght training."}}</ion-text>
+        </div>
+        <div class="feature-field">
+          <div>
+            <ion-title>Equipment</ion-title>
+            <div class="features">
+              <ion-button 
+                v-for="(item, id) in equipments" 
+                :key="id" 
+                fill="outline"
+              >
+                <ion-icon :src="item.iconPath"></ion-icon>
+                {{item.name}}
+              </ion-button>
+            </div>
+          </div>
+          <div>
+            <ion-title>Amenities</ion-title>
+            <div class="features">
+              <ion-button 
+                v-for="(item, id) in amenities" 
+                :key="id" 
+                fill="outline"
+              >
+                <ion-icon :src="item.iconPath"></ion-icon>
+                {{item.name}}
+              </ion-button>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div>
+        <ion-button class="share-btn">Share Gym</ion-button>
+        <div class="d-flex align-items-center black-box">
+          <div :class="filter === 'recent' ? 'button active' : 'button'">Recent</div>
+          <div :class="filter === 'Positive' ? 'button active' : 'button'">Positive</div>
+          <div :class="filter === 'Negative' ? 'button active' : 'button'">Negative</div> 
+        </div>
+        <div class="black-box review">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex reviewer align-items-center">
+              <ion-img src="assets/profile_photo.png"></ion-img>
+              <ion-text class="reviewer-name">{{"Sharon Jem"}}</ion-text>
+              <ion-text class="review-point">{{4.9}}</ion-text>
+            </div>
+            <ion-text class="review-date">{{"6 June, 2022"}}</ion-text>
+          </div>
+          <ion-text class="review-message">{{"Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me."}}</ion-text>
+        </div>
+        <div class="black-box review">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex reviewer align-items-center">
+              <ion-img src="assets/profile_photo.png"></ion-img>
+              <ion-text class="reviewer-name">{{"Sharon Jem"}}</ion-text>
+              <ion-text class="review-point">{{4.9}}</ion-text>
+            </div>
+            <ion-text class="review-date">{{"6 June, 2022"}}</ion-text>
+          </div>
+          <ion-text class="review-message">{{"Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me."}}</ion-text>
+        </div>
+      </div>
+      <div class="contact-field">
+        <ion-img src="assets/manager-avatar.png"></ion-img>
+        <ion-label class="name">
+          {{"Ray Espinal"}}
+          <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon>
+        </ion-label>
+        <ion-text class="contact">{{"Gym Manager"}}</ion-text>
+        <ion-text class="contact">{{"gymmanager@spotterfitness.com"}}</ion-text>
+        <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text>
       </div>
     </div>
 	</div> 
@@ -68,7 +114,7 @@ import {
   IonSpinner,
   IonLabel,
   IonText,
-  IonIcon
+  IonIcon,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -85,14 +131,18 @@ import useFacilityId from "@/hooks/useFacilityId";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
+import StarRating from "@/general/components/dashboard/StarRating.vue";
 
-const filter = ref<string>('profile');
+const filter = ref<string>('recent');
+console.log(filter.value);
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
 const { role: myRole } = useRoles();
 
 const { id } = JSON.parse(localStorage.getItem("user") || "{}");
+
+const rating = 5.0;
 
 const equipments = ref<Array<object>>([
   {
@@ -158,7 +208,7 @@ const router = useRouter();
 <style scoped lang="scss">
 .holder-content {
   padding-left: 50px;
-  padding-right: 37px;
+  padding-right: 420px;
   padding-top: -40px;
 }
 .banner {
@@ -185,6 +235,7 @@ const router = useRouter();
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 8px;
   ion-img {
     max-width: 650px;
     max-height: 310px;
@@ -215,6 +266,9 @@ const router = useRouter();
   }
 }
 .feature-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
 
   .features {
     display: flex;
@@ -226,9 +280,109 @@ const router = useRouter();
       margin-right: 8px;
     }
   }
-
   ion-title {
     padding: 0;
   }
+}
+.panel {
+  width: 383px;
+  position: fixed;
+  right: 0;
+  top: 90px;
+  height: 100%;
+  background-color: var(--gray-700);
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 9px;
+  padding-bottom: 37px;
+  overflow-y: scroll;
+
+  .share-btn {
+    width: 100%;
+    max-height: 56px;
+    margin-bottom: 14px;
+  }
+  .black-box {
+    background-color: var(--main-color);
+    border-radius: 8px;
+    padding: 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+
+    .button {
+      padding-top: 7.5px;
+      padding-bottom: 7.5px;
+      padding-right: 31.5px;
+      padding-left: 31.5px;
+      max-height: 36px;
+      font: 14px/1 var(--ion-font-family);
+      color: var(--gray-400);
+      cursor: pointer;
+
+      .active {
+        background-color: var(--gold);
+        color: var(--main-color);
+      }
+    }
+  }
+  .review {
+    padding: 16px;
+
+    .reviewer {
+      display: flex;
+      gap: 12px;
+
+      .reviewer-name {
+        font: 14px/1 var(--ion-font-family);
+        color: white;
+      }
+      .review-point {
+        border: 1px solid;
+        border-radius: 20px;
+        border-color: var(--gray-400);
+        color: var(--gray-400);
+        font: 500 12px/1 var(--ion-font-family);
+        padding: 2px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      ion-img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+    .review-message{
+      font: 300 14px/1 var(--ion-font-family);
+      color: var(--gray-400);
+      margin-top: 12px;
+    }
+    .review-date{
+      font: 500 12px/1 var(--ion-font-family);
+      color: var(--gray-500);
+    }
+  }
+}
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 200px;
+
+  .name {
+    font: 500 24px/1 var(--ion-font-family);
+    color: var(--fitnesswhite);
+  }
+  .contact{
+    font: 16px/1 var(--ion-font-family);
+    color: var(--gray-400);
+  }
+
+  ion-img {
+    width: 86px;
+  }
+}
+.flex-auto {
+  flex: auto;
 }
 </style>
