@@ -51,7 +51,7 @@
 				</div>
 			</div>
 			<div class="setting-menu">
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
 					<ion-text>Manage Gyms</ion-text>
 				</div>

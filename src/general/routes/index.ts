@@ -457,6 +457,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "manager-profile",
         component: () => import("@/general/views/dashboard/gymManager/ManagerProfile.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardManageGyms,
+        path: "gyms",
+        component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+      },
     ]
   },
 ];
