@@ -4,7 +4,7 @@
     <div class="life-back-section">
       <div>
         <div>
-          <ion-text class="lg-title">Get your life back</ion-text>
+          <ion-text class="lg-title">Spot, Sweat, Repeat</ion-text>
         </div>
         <div class="mt-2">
           <ion-text class="sm-title"
