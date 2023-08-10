@@ -24,7 +24,7 @@
                   type="email"
                   name="name"
                   id="name"
-                  placeholder="Gabby Artem Rodney"
+                  placeholder="First name and Last name"
                   required
                 />
               </ion-col>
