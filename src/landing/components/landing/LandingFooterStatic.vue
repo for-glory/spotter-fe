@@ -8,8 +8,6 @@
         </div>
         <div class="mt-2">
           <ion-text class="sm-title"
-            >App available on both ios and Android</ion-text
-          >
         </div>
       </div>
       <div class="get-buttons">
