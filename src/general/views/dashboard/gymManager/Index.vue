@@ -70,7 +70,9 @@
                 <ion-text>{{ manager.availability }}</ion-text>
               </ion-col>
               <ion-col size="1" class="table-td">
-                <ion-text>Edit</ion-text>
+                <ion-button expand="block" fill="outline" @click="handleEdit">
+                  <ion-icon slot="icon-only" src="assets/icon/Setting.svg"></ion-icon>
+                </ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -86,7 +88,8 @@ import {
   IonSpinner,
   IonGrid,
   IonText,
-  IonTitle
+  IonTitle,
+  IonIcon
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -131,6 +134,12 @@ const managers = [{
 
 const handleClick = (value: string) => {
 	filter.value = value;
+}
+
+const handleEdit = () => {
+  router.push({
+    name: EntitiesEnum.DashboardGymManagerProfile,
+  })
 }
 
 </script>
