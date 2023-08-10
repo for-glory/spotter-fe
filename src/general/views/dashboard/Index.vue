@@ -23,5 +23,6 @@ const router = useRouter();
 	height: calc(100vh - 92px);
 	overflow: auto;
 	padding: 48px;
+  background: var(--main-color);
 }
 </style>

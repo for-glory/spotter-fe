@@ -5,7 +5,7 @@
     </ion-title>
     <div class="content-box content-box__top justify-content-between">
       <div class="d-flex align-items-center">
-        <ion-img src="assets/profile_photo.png"></ion-img>
+        <ion-img :src="store.avatarUrl"></ion-img>
         <div class="main-info-box">
           <ion-title class="content-box__title">Nick Fox</ion-title>
           <ion-label class="main-info-box__label" color="medium">Gym Manager</ion-label>
@@ -25,11 +25,11 @@
         <ion-row>
           <ion-col>
             <ion-label class="text-label" color="medium">First Name</ion-label>
-            <ion-text class="text-value">Nick</ion-text>
+            <ion-text class="text-value">{{ store.first_name }}</ion-text>
           </ion-col>
           <ion-col>
             <ion-label class="text-label" color="medium">Last Name</ion-label>
-            <ion-text class="text-value">Fox</ion-text>
+            <ion-text class="text-value">{{ store.last_name }}</ion-text>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -98,7 +98,7 @@ import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
 import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
-import { useWorkoutsStore } from "../../../../trainers/store/workouts";
+import { useProfileStore } from "../../../stores/profile";
 import { requiredFieldSchema } from "@/validations/authValidations";
 import { v4 as uuidv4 } from "uuid";
 import { FilePreloadDocument } from "@/generated/graphql";
@@ -107,11 +107,11 @@ import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { Emitter, EventType } from "mitt";
 
+const store = useProfileStore();
+
 const percentLoaded = ref(0);
 
 const router = useRouter();
-
-const store = useWorkoutsStore();
 
 </script>
 

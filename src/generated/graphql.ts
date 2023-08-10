@@ -314,6 +314,7 @@ export type CreateEventInput = {
   price?: InputMaybe<Scalars['Float']>;
   start_date: Scalars['DateTime'];
   title: Scalars['String'];
+  facility_id?: Scalars['ID'];
 };
 
 export type CreateFacilityInput = {

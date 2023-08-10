@@ -170,4 +170,5 @@ export enum EntitiesEnum {
   DashboardCreateExercise = "DASHBOARD_CREATE_EXERCISE",
   DashboardGettingPaid = "DASHBOARD_GETTING_PAID",
   DashboardSettings = "DASHBOARD_SETTINGS",
+  DashboardMessage = "DASHBOARD_MESSAGE",
 }
