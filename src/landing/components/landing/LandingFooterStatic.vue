@@ -7,9 +7,7 @@
          <ion-text class="lg-title">Spot, Sweat, Repeat</ion-text>
         </div>
         <div class="mt-2">
-          <ion-text class="sm-title"
-            >Spotter is available on both iOs and Android</ion-text
-          >
+          <ion-text class="sm-title">Spotter is available on both iOs and Android</ion-text>
         </div>
       </div>
       <div class="get-buttons">
