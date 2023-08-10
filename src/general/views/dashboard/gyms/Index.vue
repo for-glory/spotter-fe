@@ -15,10 +15,10 @@
         <div class="data-box d-flex justify-content-between">
           <div class="d-flex-col">
             <ion-text>{{"Gabby"}} Gym</ion-text>
-            <ion-label class="field-label">
+            <div class="field-label d-flex align-items-center">
               <ion-icon src="assets/icon/location.svg"></ion-icon>
-              Dallas, Wall Street, 24
-            </ion-label>
+              <ion-text>{{"Dallas, Wall Street, 24"}}</ion-text>
+            </div>
           </div>
           <div class="d-flex-col">
             <ion-text>Ratings {{rating.toFixed(1)}}</ion-text>
@@ -26,7 +26,8 @@
           </div>
           <div class="d-flex-col align-items-center">
             <ion-text>Reviews</ion-text>
-            <ion-text>based on {{2480}} reviews</ion-text>
+            <review-status-bar :positiveCount="64" :negativeCount="48"/>
+            <ion-text class="total-review">based on {{2480}} reviews</ion-text>
           </div>
         </div>
         <div class="description-field">
@@ -66,10 +67,10 @@
     <div class="panel">
       <div>
         <ion-button class="share-btn">Share Gym</ion-button>
-        <div class="d-flex align-items-center black-box">
-          <div :class="filter === 'recent' ? 'button active' : 'button'">Recent</div>
-          <div :class="filter === 'Positive' ? 'button active' : 'button'">Positive</div>
-          <div :class="filter === 'Negative' ? 'button active' : 'button'">Negative</div> 
+        <div class="d-flex align-items-center justify-content-between black-box">
+          <div :class="filter === 'recent' ? 'active-button' : 'normal-button'" @click="handleClick('recent')">Recent</div>
+          <div :class="filter === 'positive' ? 'active-button' : 'normal-button'" @click="handleClick('positive')">Positive</div>
+          <div :class="filter === 'negative' ? 'active-button' : 'normal-button'" @click="handleClick('negative')">Negative</div> 
         </div>
         <div class="black-box review">
           <div class="d-flex justify-content-between align-items-center">
@@ -132,6 +133,7 @@ import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
 import StarRating from "@/general/components/dashboard/StarRating.vue";
+import ReviewStatusBar from "@/general/components/dashboard/ReviewStatusBar.vue";
 
 const filter = ref<string>('recent');
 console.log(filter.value);
@@ -200,8 +202,11 @@ const amenities = ref<Array<object>>([
   },
 ]);
 
-
 const router = useRouter();
+
+const handleClick = (value: string) => {
+	filter.value = value;
+}
 
 </script>
 
@@ -243,6 +248,16 @@ const router = useRouter();
 }
 .data-box {
   padding-bottom: 40px;
+  
+  .field-label {
+    color: var(--gray-400);
+    font: 16px/1 var(--ion-font-family);
+    
+    ion-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
   ion-text {
     font: 500 20px/1 var(--ion-font-family);
   }
@@ -251,6 +266,10 @@ const router = useRouter();
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.total-review {
+  color: var(--grey-text);
+  font: 14px/1 var(--ion-font-family);
 }
 .description-field {
   margin-bottom: 24px;
@@ -309,20 +328,26 @@ const router = useRouter();
     margin-top: 2px;
     margin-bottom: 2px;
 
-    .button {
+    .normal-button {
       padding-top: 7.5px;
       padding-bottom: 7.5px;
-      padding-right: 31.5px;
-      padding-left: 31.5px;
-      max-height: 36px;
+      padding-right: 25px;
+      padding-left: 25px;
       font: 14px/1 var(--ion-font-family);
       color: var(--gray-400);
+      border-radius: 8px;
       cursor: pointer;
-
-      .active {
-        background-color: var(--gold);
-        color: var(--main-color);
-      }
+    }
+    .active-button {
+      padding-top: 7.5px;
+      padding-bottom: 7.5px;
+      padding-right: 25px;
+      padding-left: 25px;
+      font: 14px/1 var(--ion-font-family);
+      background-color: var(--gold);
+      color: var(--main-color);
+      border-radius: 8px;
+      cursor: pointer;
     }
   }
   .review {
