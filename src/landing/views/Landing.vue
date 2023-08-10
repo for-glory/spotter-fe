@@ -76,14 +76,14 @@
 									<ion-button class="get-button">
 										<ion-icon class="button-icon" src="assets/icon/google-play.svg"/>
 										<div class="d-flex flex-direction-column align-items-start">
-											<ion-text class="get-button__small-text">DOWNLOAD IT ON THE</ion-text>
+											<ion-text class="get-button__small-text">DOWNLOAD IT ON </ion-text>
 											<ion-text class="get-button__text">Google Play</ion-text>
 										</div>
 									</ion-button>
 									<ion-button class="get-button">
 										<ion-icon class="button-icon" src="assets/icon/apple.svg"/>
 										<div class="d-flex flex-direction-column align-items-start">
-											<ion-text class="get-button__small-text"> GET IT ON THE</ion-text>
+											<ion-text class="get-button__small-text"> GET IT ON </ion-text>
 											<ion-text class="get-button__text">App Store</ion-text>
 										</div>
 									</ion-button>
