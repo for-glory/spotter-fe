@@ -99,7 +99,7 @@ import { ref } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 
@@ -108,13 +108,13 @@ const totalEvents = ref<number>(0);
 const isOngoing = ref<boolean>(true);
 
 const { id: myId } = useId();
-const { currentFacilityId } = useFacilityId();
+const currentFacility = useFacilityStore();
 const { role: myRole } = useRoles();
 
 const idFilter =
   myRole === RoleEnum.Trainer
     ? { created_by_trainer: myId }
-    : { created_by_facility: currentFacilityId };
+    : { created_by_facility: currentFacility.facility?.id };
 
 const eventsParams: EventsQueryVariables = {
   first: 8,
