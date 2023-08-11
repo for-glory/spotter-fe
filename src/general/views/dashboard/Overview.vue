@@ -1,7 +1,7 @@
 <template>
   <div class="overview">
     <div class="block">
-      <div class="title white-text">Membership Summary</div>
+      <div class="title white-text">Fitness Center Overview</div>
       <div class="flex-container">
         <div>
           <div class="time">Today's</div>
@@ -25,7 +25,7 @@
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Expiring membership</ion-text>
+          <ion-text class="content">Expiring memberships</ion-text>
           <span class="count">24</span>
         </div>
       </div>

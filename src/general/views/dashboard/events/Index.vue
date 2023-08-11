@@ -4,9 +4,9 @@
 		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
 	>
     <div class="banner">
-      <ion-title class="banner__title">Create and Edit events for clients and trainers</ion-title>
+      <ion-title class="banner__title">Manage events for your Gym facility here</ion-title>
       <ion-text class="banner__text">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod 
+        Create, Edit, Manage Status, Reservations and Entry fees
       </ion-text>
       <div class="banner__background-image">
         <img src="assets/backgrounds/banner1.jpeg" alt="">

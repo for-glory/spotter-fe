@@ -3,6 +3,7 @@
 	  v-if="isLoading"
 	  name="lines"
 	  class="spinner"
+		id="main-content"
 	/>
 	<div class="dashboard-container" v-else>
 		<div class="dashboard-container__sidebar">
@@ -12,11 +13,13 @@
 			<slot name="right-section"></slot>
 		</div>
 	</div>
+	<add-manager-menu />
 </template>
 
 <script lang="ts" setup>
 import DashboardSidebar from '@/general/components/blocks/DashboardSidebar.vue';
-import { IonSpinner } from "@ionic/vue";
+import AddManagerMenu from '@/general/components/dashboard/AddManagerMenu.vue';
+import { IonSpinner, IonMenu } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
 import { useProfileStore } from "../../stores/profile";

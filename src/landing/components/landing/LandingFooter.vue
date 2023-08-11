@@ -3,10 +3,10 @@
 		<div class="landing-footer__banner">
 			<div class="landing-footer__banner__content">
 				<ion-text class="lg-title">
-					Ready to take charge of your life?
+					Ready to get your sweat on?
 				</ion-text>
 				<ion-button class="button-dark large-btn mt-3" type="button">
-					Try Spotter for Free
+					Try Spotter for FREE
 				</ion-button>
 			</div>
 		</div>
@@ -95,13 +95,13 @@
 								alt="logo"
 							/>
 							<div class="mt-2">
-								<ion-text>
-									Be in total control of your life, one session at a time.
-								</ion-text>
+								<div>
+									FIND YOUR <ion-text color="primary">SPOT</ion-text>, FIND YOUR <ion-text color="primary">FIT</ion-text>.
+								</div>
 							</div>
 							<div class="mt-2">
 								<ion-text>
-									STAY IN TOUCH
+									Stay in touch with us!
 								</ion-text>
 							</div>
 							<div class="landing-footer__social-links">
