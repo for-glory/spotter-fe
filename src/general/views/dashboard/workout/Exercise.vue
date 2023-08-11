@@ -249,7 +249,7 @@ const handleFinishWorkout = () => {
   if (isValidForm.value) {
     if (!isEditing.value) {
       router.push({
-        name: EntitiesEnum.DashboardOverview,
+        name: EntitiesEnum.DashboardExerciseList,
       });
     } else {
       router.go(-1);

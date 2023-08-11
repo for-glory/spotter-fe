@@ -438,6 +438,11 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
       },
       {
+        name: EntitiesEnum.DashboardExerciseList,
+        path: "/workout/exercise-list/:id?",
+        component: () => import("@/general/views/dashboard/workout/ExercisesList.vue"),
+      },
+      {
         name: EntitiesEnum.DashboardGettingPaid,
         path: "getting-paid",
         component: () => import("@/general/views/dashboard/GettingPaid.vue"),
