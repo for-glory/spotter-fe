@@ -343,6 +343,19 @@ export type CreateTrainerWorkoutInput = {
   type_id?: InputMaybe<Scalars['ID']>;
 };
 
+
+export type CreateGymWorkoutInput = {
+  body_parts: Array<Scalars['ID']>;
+  description?: InputMaybe<Scalars['String']>;
+  duration: Scalars['Int'];
+  exercises?: InputMaybe<Array<WorkoutVideosInput>>;
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  price: Scalars['Float'];
+  title: Scalars['String'];
+  type_id?: InputMaybe<Scalars['ID']>;
+  facility_id?: InputMaybe<Scalars['ID']>;
+};
+
 export type DateTimeRange = {
   from: Scalars['DateTime'];
   to: Scalars['DateTime'];
@@ -690,6 +703,7 @@ export type Mutation = {
   createFacility: Facility;
   createQuizzAnswer: QuizzAnswer;
   createTrainerWorkout: Workout;
+  createGymWorkout: Workout;
   deleteChat: Chat;
   deleteDocument: Document;
   deleteEvent: Event;
@@ -808,6 +822,11 @@ export type MutationCreateQuizzAnswerArgs = {
 
 export type MutationCreateTrainerWorkoutArgs = {
   input?: InputMaybe<CreateTrainerWorkoutInput>;
+};
+
+
+export type MutationCreateGymWorkoutArgs = {
+  input?: InputMaybe<CreateGymWorkoutInput>;
 };
 
 
@@ -3539,6 +3558,21 @@ export type CreateTrainerWorkoutMutationVariables = Exact<{
 
 export type CreateTrainerWorkoutMutation = { __typename?: 'Mutation', createTrainerWorkout: { __typename?: 'Workout', id: string, title: string, description?: string | null, price: number, duration?: number | null, preview?: string | null, previewUrl?: string | null, type?: { __typename?: 'WorkoutType', id: string, name: string, icon?: string | null } | null, trainer: { __typename?: 'User', id: string, first_name?: string | null, last_name?: string | null }, exercises?: Array<{ __typename?: 'WorkoutExercise', id: string, title: string, description?: string | null, path: string, pathUrl: string }> | null, bodyParts?: Array<{ __typename?: 'BodyPart', id: string, name: string, icon?: string | null } | null> | null } };
 
+export type CreateGymWorkoutMutationVariables = Exact<{
+  body_parts: Array<Scalars['ID']> | Scalars['ID'];
+  facility_id?: InputMaybe<Scalars['ID']>;
+  type_id?: InputMaybe<Scalars['ID']>;
+  title: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  price: Scalars['Float'];
+  duration: Scalars['Int'];
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  exercises?: InputMaybe<Array<WorkoutVideosInput> | WorkoutVideosInput>;
+}>;
+
+
+export type CreateGymWorkoutMutation = { __typename?: 'Mutation', createGymWorkout: { __typename?: 'Workout', id: string, title: string, description?: string | null, price: number, duration?: number | null, preview?: string | null, previewUrl?: string | null, type?: { __typename?: 'WorkoutType', id: string, name: string, icon?: string | null } | null, facility?: { __typename?: 'Facility', id: string, name: string } | null, trainer: { __typename?: 'User', id: string, first_name?: string | null, last_name?: string | null }, exercises?: Array<{ __typename?: 'WorkoutExercise', id: string, title: string, description?: string | null, path: string, pathUrl: string }> | null, bodyParts?: Array<{ __typename?: 'BodyPart', id: string, name: string, icon?: string | null } | null> | null } };
+
 export type FilePreloadMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
@@ -5731,6 +5765,43 @@ export const CreateTrainerWorkoutDocument = gql`
     mutation createTrainerWorkout($body_parts: [ID!]!, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int!, $preview: StringOrUpload, $exercises: [WorkoutVideosInput!]) {
   createTrainerWorkout(
     input: {body_parts: $body_parts, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, exercises: $exercises, preview: $preview}
+  ) {
+    id
+    type {
+      id
+      name
+      icon
+    }
+    trainer {
+      id
+      first_name
+      last_name
+    }
+    title
+    description
+    price
+    duration
+    preview
+    previewUrl
+    exercises {
+      id
+      title
+      description
+      path
+      pathUrl
+    }
+    bodyParts {
+      id
+      name
+      icon
+    }
+  }
+}
+    `;
+export const CreateGymWorkoutDocument = gql`
+    mutation createGymWorkout($body_parts: [ID!]!, $facility_id: ID, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int!, $preview: StringOrUpload, $exercises: [WorkoutVideosInput!]) {
+  createGymWorkout(
+    input: {body_parts: $body_parts, facility_id: $facility_id, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, exercises: $exercises, preview: $preview}
   ) {
     id
     type {
