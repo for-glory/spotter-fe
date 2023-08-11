@@ -36,20 +36,6 @@
                     :status="true"
                   />
                   <chat-list
-                    name="natalia James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="Weafafeffecises"
-                    time="20 min"
-                    count="2"
-                    :status="true"
-                  />
-                  <chat-list
-                    name="jane James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="What about other exercises"
-                    time="25 min"
-                  />
-                  <chat-list
                     name="Alika"
                     avatar="assets/backgrounds/avatar1.png"
                     content="What about other exercises"
@@ -62,12 +48,6 @@
                     content="What about other exercises"
                     time="30 min"
                     :status="true"
-                  />
-                  <chat-list
-                    name="Alice James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="What about other exercises"
-                    time="1hour"
                   />
                 </div>
               </template>
@@ -137,44 +117,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import components from "@/general/components";
+<script setup lang="ts">
+import { IonGrid, IonCol, IonRow, IonSearchbar } from "@ionic/vue";
 import ChatList from "@/general/components/dashboard/chat/list.vue";
 import ChatMessage from "@/general/components/dashboard/chat/message.vue";
-import {
-  IonCol,
-  IonGrid,
-  IonRow,
-  IonText,
-  IonImg,
-  IonIcon,
-  IonSearchbar,
-} from "@ionic/vue";
+import { ref, computed } from "vue";
 
-export default {
-  components: {
-    ChatList,
-    ChatMessage,
-    IonCol,
-    IonGrid,
-    IonRow,
-    IonSearchbar,
-  },
-  data() {
-    return {
-      allStatus: true,
-    };
-  },
-  methods: {
-    handleAll() {
-      this.allStatus = true;
-      console.log("unread", this.allStatus);
-    },
-    handleUnRead() {
-      this.allStatus = false;
-      console.log("unread", this.allStatus);
-    },
-  },
+const allStatus = ref<boolean>(false);
+
+const handleAll = () => {
+  allStatus.value = true;
+};
+const handleUnRead = () => {
+  allStatus.value = false;
 };
 </script>
 
@@ -274,3 +229,4 @@ export default {
   overflow: auto;
 }
 </style>
+ 
