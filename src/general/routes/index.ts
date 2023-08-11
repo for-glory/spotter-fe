@@ -452,6 +452,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardMessage,
+        path: "message",
+        component: () => import("@/general/views/dashboard/message/Index.vue"),
+      },
     ]
   },
 ];

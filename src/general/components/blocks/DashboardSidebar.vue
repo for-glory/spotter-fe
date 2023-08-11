@@ -45,7 +45,7 @@
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
 					<ion-text>Workout plans</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
 					<ion-text>Message</ion-text>
 				</div>
