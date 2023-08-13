@@ -447,6 +447,26 @@ export const routes: Array<RouteRecordRaw> = [
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
       },
-    ]
+      {
+        name: EntitiesEnum.DashboardPassList,
+        path: "pass/list",
+        component: () => import("@/general/views/dashboard/pass/List.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassCreatePass,
+        path: "pass/create-pass",
+        component: () => import("@/general/views/dashboard/pass/CreatePass.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassCreateDropin,
+        path: "pass/create-drop-in",
+        component: () => import("@/general/views/dashboard/pass/CreateDropin.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassProfile,
+        path: "pass/profile",
+        component: () => import("@/general/views/dashboard/pass/Profile.vue"),
+      },
+    ],
   },
 ];
