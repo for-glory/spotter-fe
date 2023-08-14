@@ -33,7 +33,7 @@
 					<ion-icon src="assets/icon/events.svg" />
 					<ion-text>Events</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardPassList)">
 					<ion-icon src="assets/icon/Pass.svg" />
 					<ion-text>Gym pass</ion-text>
 				</div>
