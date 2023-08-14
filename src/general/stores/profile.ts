@@ -4,6 +4,9 @@ import { profileStore } from "@/ts/types/store";
 export const useProfileStore = defineStore("profile", {
   state: (): profileStore => {
     return {
+      first_name: "",
+      last_name: "",
+      avatarUrl: "",
       email: "",
       state: "",
       city: "",
@@ -15,6 +18,10 @@ export const useProfileStore = defineStore("profile", {
     },
     clearState() {
       this.email = "";
+      this.first_name = "";
+      this.last_name = "";
+      this.avatarUrl = "";
+      this.address = "";
     },
   },
 });

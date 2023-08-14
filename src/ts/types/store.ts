@@ -133,5 +133,8 @@ export interface profileStore {
   email: string;
   state: string;
   city: string;
+  first_name: string;
+  last_name: string;
+  avatarUrl: string;
   [index: string]: string;
 }

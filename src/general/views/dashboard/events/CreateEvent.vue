@@ -31,9 +31,10 @@ import { toastController } from "@ionic/vue";
 import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
-import { clearAuthItems } from "@/router/middleware/auth";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
+const currentFacility = useFacilityStore();
 const goToDashboard = () => {
   // isConfirmedModalOpen.value = true;
   eventForm.value?.clearStore();
@@ -57,7 +58,7 @@ const {
 } = useMutation(CreateEventDocument);
 
 const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input });
+  createEventMutate({ input: { ...input, facility_id: currentFacility.facility.id } });
 };
 
 const handleCancel = () => {
@@ -84,10 +85,6 @@ const showSuccessToast = async () => {
     cssClass: "success-toast",
   });
   return toast.present();
-};
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

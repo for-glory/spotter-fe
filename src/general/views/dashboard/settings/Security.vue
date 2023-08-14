@@ -13,20 +13,45 @@
         <div class="input-box">
           <div>
             <ion-label class="text-label">Old Password</ion-label>
-            <ion-input placeholder="Enter old password" class="custom-input"/>
+            <base-input
+              type="password"
+              placeholder="Enter old password"
+              class="password__input"
+              v-model:value="passwordInput"
+              :error-message="passwordInputError"
+              :disabled="loading"
+            />
           </div>
           <div>
             <ion-label class="text-label">New Password</ion-label>
-            <ion-input placeholder="Enter new password" class="custom-input"/>
+            <base-input
+              v-model:value="newPasswordInput"
+              :error-message="newPasswordError"
+              :disabled="loading"
+              type="password"
+              placeholder="Enter new password"
+              class="password__input"
+            />
           </div>
           <div>
             <ion-label class="text-label">Confirm Password</ion-label>
-            <ion-input placeholder="Confirm password" class="custom-input"/>
+            <base-input
+              v-model:value="passwordConfirmationInput"
+              :error-message="passwordConfirmationError"
+              type="password"
+              placeholder="Confirm password"
+              class="password__input"
+            />
           </div>
         </div>
       </div>
       <div class="d-flex align-items-center justify-content-end save-box">
-        <ion-button>Save</ion-button>
+        <ion-button
+          @click="onSubmit"
+          :disabled="loading || !isValidForm"
+        >
+          Save
+        </ion-button>
       </div>
     </div>
     <div class="content-box column-box">
@@ -59,40 +84,91 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, ref, inject } from "vue";
 import {
 	IonTitle,
   IonButton,
   IonLabel,
-  IonInput,
   IonToggle,
-  PickerColumnOption,
-  PickerOptions,
-	IonGrid,
-	IonRow,
-	IonCol
 } from "@ionic/vue";
-import { useRouter } from "vue-router";
-import { minutesDuration } from "@/const/minutes-durations";
+import BaseInput from "@/general/components/base/BaseInput.vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { MeDocument, UpdatePasswordDocument } from "@/generated/graphql";
 import { useField } from "vee-validate";
-import { EntitiesEnum } from "@/const/entities";
-import { useWorkoutsStore } from "../../../../trainers/store/workouts";
-import { requiredFieldSchema } from "@/validations/authValidations";
-import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
-import { v4 as uuidv4 } from "uuid";
-import { FilePreloadDocument } from "@/generated/graphql";
-import { useMutation } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
-import { Emitter, EventType } from "mitt";
+import { passwordSchema } from "@/validations/authValidations";
+import { computed } from "vue";
+import { humanizeString } from "@/utils/textUtils";
+import { toastController } from "@ionic/vue";
 
-const percentLoaded = ref(0);
+const { mutate, onDone, loading, error } = useMutation(UpdatePasswordDocument);
 
-const router = useRouter();
+const { value: passwordInput, errorMessage: passwordInputError } =
+  useField<string>("password", passwordSchema);
 
-const store = useWorkoutsStore();
+const { value: newPasswordInput, errorMessage: newPasswordError } =
+  useField<string>("new password", passwordSchema);
 
+const {
+  value: passwordConfirmationInput,
+  errorMessage: passwordConfirmationError,
+} = useField<string>(
+  "password confirmation",
+  (inputValue) => inputValue === newPasswordInput.value
+);
+
+const errorMessage = computed(() => {
+  return humanizeString(
+    error.value?.message || "Something went wrong. Please try again."
+  );
+});
+
+const showToast = async (message: string, style = "success") => {
+  const toast = await toastController.create({
+    message: message,
+    duration: 2000,
+    icon: "assets/icon/success.svg",
+    cssClass: `${style}-toast`,
+  });
+  return toast.present();
+};
+
+onDone(({ data }) => {
+  showToast(data.updatePassword.message);
+  passwordInput.value = "";
+  newPasswordInput.value = "";
+  passwordConfirmationInput.value = "";
+});
+
+const isValidForm = computed(() =>
+  hasPassword.value
+    ? !passwordInputError.value &&
+      !passwordConfirmationError.value &&
+      !newPasswordError.value &&
+      passwordInput.value &&
+      passwordConfirmationInput.value &&
+      newPasswordInput.value
+    : !passwordConfirmationError.value &&
+      !newPasswordError.value &&
+      passwordConfirmationInput.value &&
+      newPasswordInput.value
+);
+
+const onSubmit = () => {
+  if (isValidForm.value) {
+    mutate({
+      input: {
+        old_password: hasPassword.value ? passwordInput.value : "",
+        password: newPasswordInput.value,
+        password_confirmation: passwordConfirmationInput.value,
+      },
+    }).catch(() => {
+      showToast(errorMessage.value, "danger");
+    });
+  }
+};
+
+const { result: userResult } = useQuery(MeDocument);
+
+const hasPassword = computed<boolean>(() => userResult.value?.me.has_password);
 </script>
 
 <style lang="scss" scoped>

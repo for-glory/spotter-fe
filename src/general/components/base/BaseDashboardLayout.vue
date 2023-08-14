@@ -3,6 +3,7 @@
 	  v-if="isLoading"
 	  name="lines"
 	  class="spinner"
+		id="main-content"
 	/>
 	<div class="dashboard-container" v-else>
 		<div class="dashboard-container__sidebar">
@@ -12,13 +13,16 @@
 			<slot name="right-section"></slot>
 		</div>
 	</div>
+	<add-manager-menu />
 </template>
 
 <script lang="ts" setup>
 import DashboardSidebar from '@/general/components/blocks/DashboardSidebar.vue';
-import { IonSpinner } from "@ionic/vue";
+import AddManagerMenu from '@/general/components/dashboard/AddManagerMenu.vue';
+import { IonSpinner, IonMenu } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
+import { useProfileStore } from "../../stores/profile";
 import {
   ref,
 } from "vue";
@@ -29,6 +33,7 @@ import {
 
 const isLoading = ref(true);
 const facilities = ref();
+const store = useProfileStore();
 
 const setIsLoading = () => {
 	isLoading.value = false;
@@ -42,6 +47,12 @@ const {
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 
 gotUser(({ data }) => {
+	if(data.user) {
+		store.setValue("first_name", data.user?.first_name??"Default");
+		store.setValue("last_name", data.user?.last_name??"Default");
+		store.setValue("email", data.user?.email??"");
+		store.setValue("avatarUrl", data.user?.avatarUrl??"");
+	}
 	facilities.value = result.value?.user?.owned_facilities;
   setIsLoading();
 });
