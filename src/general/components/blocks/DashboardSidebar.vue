@@ -25,7 +25,7 @@
 				</div>
 			</div>
 			<div class="main-menu">
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
+				<div v-if="!isNative" :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
 				</div>
@@ -104,6 +104,8 @@ const props = withDefaults(
 		facilities:[]
   }
 );
+
+let isNative = Capacitor.isNativePlatform();
 
 const facilityStore = useFacilityStore();
 
