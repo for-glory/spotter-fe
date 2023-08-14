@@ -95,7 +95,6 @@ import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { Capacitor } from '@capacitor/core';
 
 const props = withDefaults(
   defineProps<{
