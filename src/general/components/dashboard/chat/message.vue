@@ -1,5 +1,5 @@
 <template>
-  <div  :class="{'chatBox': opp === true, 'chatBox2': opp === false}">
+  <div :class="opp ? 'chatBox' : 'chatBox2'">
     <div class="info">
       <img class="avatar" :src="avatar" />
       <span class="user">{{ name }}</span>
@@ -48,15 +48,22 @@ const props = withDefaults(
   }
   .border {
     border: 1px solid var(--gold);
-    padding: 25px;
+    padding: 20px;
     margin-top: 10px;
-    border-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
     background: var(--gold);
   }
   .text {
     font-family: Lato;
     font-size: 13px;
     color: #262626;
+  }
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: start;
   }
 }
 .chatBox2 {
@@ -75,10 +82,12 @@ const props = withDefaults(
   }
   .border {
     border: 1px solid var(--gold);
-    padding: 25px;
+    padding: 20px;
     margin-top: 10px;
-    border-radius: 10px;
     background: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
   }
   .text {
     text-align: left;
@@ -86,11 +95,22 @@ const props = withDefaults(
     font-size: 13px;
     color: #797979;
   }
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
 }
 .user {
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 20px;
+  font-family: Lato;
+  color: var(--fitnesswhite);
+  font-size: 15px;
 }
 .time {
   color: var(--grey-text);
+  font-family: Poppins;
+  font-size: 10px;
 }
 </style>
