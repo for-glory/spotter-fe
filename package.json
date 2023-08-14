@@ -92,12 +92,14 @@
     "vue-chartjs": "^5.2.0",
     "vue-cropperjs": "^5.0.0",
     "vue-router": "^4.0.12",
+    "vue-toast-notification": "^3.1.1",
     "vue3-circle-progress": "^1.0.7",
     "vue3-touch-events": "^4.1.0",
     "vuex": "^4.1.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@capacitor/assets": "^2.0.4",
     "@capacitor/cli": "^4.6.1",
     "@graphql-codegen/typescript-vue-apollo": "^3.3.3",
     "@types/apollo-upload-client": "^17.0.1",
