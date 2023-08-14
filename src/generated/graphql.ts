@@ -314,6 +314,7 @@ export type CreateEventInput = {
   price?: InputMaybe<Scalars['Float']>;
   start_date: Scalars['DateTime'];
   title: Scalars['String'];
+  facility_id?: Scalars['ID'];
 };
 
 export type CreateFacilityInput = {
@@ -340,6 +341,19 @@ export type CreateTrainerWorkoutInput = {
   price: Scalars['Float'];
   title: Scalars['String'];
   type_id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type CreateGymWorkoutInput = {
+  body_parts: Array<Scalars['ID']>;
+  description?: InputMaybe<Scalars['String']>;
+  duration: Scalars['Int'];
+  exercises?: InputMaybe<Array<WorkoutVideosInput>>;
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  price: Scalars['Float'];
+  title: Scalars['String'];
+  type_id?: InputMaybe<Scalars['ID']>;
+  facility_id?: InputMaybe<Scalars['ID']>;
 };
 
 export type DateTimeRange = {
@@ -689,6 +703,7 @@ export type Mutation = {
   createFacility: Facility;
   createQuizzAnswer: QuizzAnswer;
   createTrainerWorkout: Workout;
+  createGymWorkout: Workout;
   deleteChat: Chat;
   deleteDocument: Document;
   deleteEvent: Event;
@@ -807,6 +822,11 @@ export type MutationCreateQuizzAnswerArgs = {
 
 export type MutationCreateTrainerWorkoutArgs = {
   input?: InputMaybe<CreateTrainerWorkoutInput>;
+};
+
+
+export type MutationCreateGymWorkoutArgs = {
+  input?: InputMaybe<CreateGymWorkoutInput>;
 };
 
 
@@ -1880,6 +1900,24 @@ export enum QueryWorkoutsOrderByColumn {
 export type QueryWorkoutsOrderByOrderByClause = {
   /** The column that is used for ordering. */
   column: QueryWorkoutsOrderByColumn;
+  /** The direction that is used for ordering. */
+  order: SortOrder;
+};
+
+/** Allowed column names for Query.facilityWorkouts.orderBy. */
+export enum QueryFacilityWorkoutsOrderByColumn {
+  CreatedAt = 'CREATED_AT',
+  Description = 'DESCRIPTION',
+  Duration = 'DURATION',
+  Id = 'ID',
+  Price = 'PRICE',
+  Title = 'TITLE'
+}
+
+/** Order by clause for Query.facilityWorkouts.orderBy. */
+export type QueryFacilityWorkoutsOrderByOrderByClause = {
+  /** The column that is used for ordering. */
+  column: QueryFacilityWorkoutsOrderByColumn;
   /** The direction that is used for ordering. */
   order: SortOrder;
 };
@@ -3127,6 +3165,10 @@ export type PaymentIntentMutationVariables = Exact<{
 export type PaymentIntentMutation = { __typename?: 'Mutation', paymentIntent: { __typename?: 'PaymentIntent', session?: string | null, zeroPayment: boolean } };
 export type CreateSubscriptionIntentMutation = { __typename?: 'Mutation', createSubscriptionIntent: { __typename?: 'CreateSubscriptionIntent', session?: string | null } };
 
+export type UpdateFirstSubscriptionInput = {
+  facility_id?: InputMaybe<Scalars['ID']>;
+};
+
 export type TrainingCheckinMutationVariables = Exact<{
   input: TrainingCheckinInput;
 }>;
@@ -3533,6 +3575,21 @@ export type CreateTrainerWorkoutMutationVariables = Exact<{
 
 
 export type CreateTrainerWorkoutMutation = { __typename?: 'Mutation', createTrainerWorkout: { __typename?: 'Workout', id: string, title: string, description?: string | null, price: number, duration?: number | null, preview?: string | null, previewUrl?: string | null, type?: { __typename?: 'WorkoutType', id: string, name: string, icon?: string | null } | null, trainer: { __typename?: 'User', id: string, first_name?: string | null, last_name?: string | null }, exercises?: Array<{ __typename?: 'WorkoutExercise', id: string, title: string, description?: string | null, path: string, pathUrl: string }> | null, bodyParts?: Array<{ __typename?: 'BodyPart', id: string, name: string, icon?: string | null } | null> | null } };
+
+export type CreateGymWorkoutMutationVariables = Exact<{
+  body_parts: Array<Scalars['ID']> | Scalars['ID'];
+  facility_id?: InputMaybe<Scalars['ID']>;
+  type_id?: InputMaybe<Scalars['ID']>;
+  title: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  price: Scalars['Float'];
+  duration: Scalars['Int'];
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  exercises?: InputMaybe<Array<WorkoutVideosInput> | WorkoutVideosInput>;
+}>;
+
+
+export type CreateGymWorkoutMutation = { __typename?: 'Mutation', createGymWorkout: { __typename?: 'Workout', id: string, title: string, description?: string | null, price: number, duration?: number | null, preview?: string | null, previewUrl?: string | null, type?: { __typename?: 'WorkoutType', id: string, name: string, icon?: string | null } | null, facility?: { __typename?: 'Facility', id: string, name: string } | null, trainer: { __typename?: 'User', id: string, first_name?: string | null, last_name?: string | null }, exercises?: Array<{ __typename?: 'WorkoutExercise', id: string, title: string, description?: string | null, path: string, pathUrl: string }> | null, bodyParts?: Array<{ __typename?: 'BodyPart', id: string, name: string, icon?: string | null } | null> | null } };
 
 export type FilePreloadMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -4110,11 +4167,50 @@ export const PaymentIntentDocument = gql`
 }
     `;
 export const CreateSubscriptionIntentDocument = gql`
-    mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!) {
+    mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!, $facility_id: ID) {
     createSubscriptionIntent(
-    input: {product_id: $product_id, fees_percent: $fees_percent}
+    input: {product_id: $product_id, fees_percent: $fees_percent, facility_id: $facility_id}
   ) {
     session
+  }
+}
+    `;
+export const CancelSubscriptionDocument = gql`
+    mutation CancelSubscription($unique_identifier: String!) {
+    cancelSubscription(
+    input: {unique_identifier: $unique_identifier}
+  ) {
+    plan_id,
+    start_date,
+    end_date,
+    grace_period_end_date,
+    canceled_at,
+    unique_identifier,
+    verified,
+    facility_id
+  }
+}
+    `;
+export const SubscriptionUserDocument = gql`
+    mutation subscriptionUser($facility_id: ID!) {
+  subscriptionUser(
+    input: {facility_id: $facility_id}
+  ) {
+    plan_id,
+    start_date,
+    end_date,
+    grace_period_end_date,
+    canceled_at,
+    unique_identifier,
+    verified,
+    facility_id
+  }
+}
+    `;
+export const UpdateFirstSubscriptionDocument = gql`
+    mutation UpdateFirstSubscription($input: UpdateFirstSubscriptionInput!) {
+    updateFirstSubscription(input: $input) {
+    id
   }
 }
     `;
@@ -4482,6 +4578,7 @@ export const EventsDocument = gql`
       }
       id
       max_participants
+      booked_count
       was_ordered_by_me
       media {
         pathUrl
@@ -5406,6 +5503,7 @@ export const UserDocument = gql`
     query user($id: ID!) {
   user(id: $id) {
     id
+    email
     first_name
     last_name
     avatar
@@ -5683,10 +5781,110 @@ export const WorkoutsDocument = gql`
   }
 }
     `;
+export const WorkoutsByFacilityDocument = gql`
+    query facilityWorkouts($dynamic_search: String!, $facility_id: ID, $first: Int, $page: Int, $type_id: ID, $has_body_parts: [ID!], $order: SortOrder!, $orderByColumn: QueryFacilityWorkoutsOrderByColumn!) {
+  facilityWorkouts(
+    dynamic_search: $dynamic_search
+    facility_id: $facility_id
+    first: $first
+    page: $page
+    type_id: $type_id
+    has_body_parts: $has_body_parts
+    orderBy: {column: $orderByColumn, order: $order}
+  ) {
+    data {
+      id
+      preview
+      type {
+        id
+        name
+        icon
+      }
+      previewUrl
+      title
+      description
+      price
+      duration
+      was_ordered_by_me
+      exercises {
+        id
+        title
+        description
+        path
+        previewUrl
+        pathUrl
+      }
+      trainer {
+        first_name
+        last_name
+        score
+        address {
+          lat
+          lng
+        }
+        facilities {
+          media {
+            pathUrl
+          }
+          address {
+            lat
+            lng
+          }
+        }
+      }
+      state
+    }
+    paginatorInfo {
+      count
+      firstItem
+      currentPage
+      total
+      perPage
+    }
+  }
+}
+    `;
 export const CreateTrainerWorkoutDocument = gql`
     mutation createTrainerWorkout($body_parts: [ID!]!, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int!, $preview: StringOrUpload, $exercises: [WorkoutVideosInput!]) {
   createTrainerWorkout(
     input: {body_parts: $body_parts, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, exercises: $exercises, preview: $preview}
+  ) {
+    id
+    type {
+      id
+      name
+      icon
+    }
+    trainer {
+      id
+      first_name
+      last_name
+    }
+    title
+    description
+    price
+    duration
+    preview
+    previewUrl
+    exercises {
+      id
+      title
+      description
+      path
+      pathUrl
+    }
+    bodyParts {
+      id
+      name
+      icon
+    }
+  }
+}
+    `;
+export const CreateGymWorkoutDocument = gql`
+    mutation createGymWorkout($body_parts: [ID!]!, $facility_id: ID, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int!, $preview: StringOrUpload, $exercises: [WorkoutVideosInput!]) {
+  createGymWorkout(
+    input: {body_parts: $body_parts, facility_id: $facility_id, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, exercises: $exercises, preview: $preview}
   ) {
     id
     type {

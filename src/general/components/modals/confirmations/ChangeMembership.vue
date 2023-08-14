@@ -1,140 +1,137 @@
 <template>
-  <ion-content>
-    <ion-button expand="block" @click="setOpen(true)">Change</ion-button>
-    <ion-modal id="modal" :is-open="isOpen" :backdrop-dismiss="false">
-      <ion-header class="title">
-        <ion-toolbar>
-          <ion-title>Change Membership Plan</ion-title>
-          <ion-buttons slot="end">
-            <ion-button @click="setOpen(false)"
-              ><ion-icon src="assets/icon/red-close.svg" class="close"
-            /></ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <div class="ion-padding">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="12" size-sm="6" class="silver">
-              <ion-text>Current Plan</ion-text>
-              <div class="paragraph">
-                <ion-text>Bronze</ion-text>&nbsp&nbsp<ion-text
-                  >$149.99</ion-text
-                >
-                <span>/per location</span>
+	<ion-modal id="modal" :is-open="isVisible" :backdrop-dismiss="false">
+		<ion-header class="title">
+			<ion-toolbar>
+				<ion-title>Change Membership Plan</ion-title>
+				<ion-buttons slot="end">
+					<ion-button @click="handleCancel">
+						<ion-icon src="assets/icon/red-close.svg" class="close" />
+					</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
+		</ion-header>
+    <div class="ion-padding">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-sm="6" class="silver">
+            <ion-text>Current Plan</ion-text>
+            <div class="paragraph">
+              <ion-text>Bronze</ion-text>&nbsp&nbsp<ion-text
+                >$149.99</ion-text
+              >
+              <span>/per location</span>
+            </div>
+            <div class="flex-container">
+              <div>
+                <ion-icon
+                  src="assets/icon/medal.svg"
+                  class="silver grade-image"
+                />
               </div>
-              <div class="flex-container">
-                <div>
-                  <ion-icon
-                    src="assets/icon/medal.svg"
-                    class="silver grade-image"
-                  />
-                </div>
-                <div>
-                  <ul>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>All Bronze features +</ion-text>
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text
-                          >List unlimited offerings on the Network
-                          profile</ion-text
-                        >
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>Reduced flat booking fee</ion-text>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+              <div>
+                <ul>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>All Bronze features +</ion-text>
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text
+                        >List unlimited offerings on the Network
+                        profile</ion-text
+                      >
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>Reduced flat booking fee</ion-text>
+                    </div>
+                  </li>
+                </ul>
               </div>
-            </ion-col>
-            <ion-col size="12" size-sm="6" class="gold">
-              <ion-text>New Plan</ion-text>
-              <div class="paragraph">
-                <ion-text>Gold</ion-text>&nbsp&nbsp<ion-text>$199.99</ion-text>
-                <span class="gold-location">/for first location</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" size-sm="6" class="gold">
+            <ion-text>New Plan</ion-text>
+            <div class="paragraph">
+              <ion-text>Gold</ion-text>&nbsp&nbsp<ion-text>$199.99</ion-text>
+              <span class="gold-location">/for first location</span>
+            </div>
+            <div class="flex-container">
+              <div>
+                <ion-icon
+                  class="gold grade-image"
+                  src="assets/icon/medal.svg"
+                />
               </div>
-              <div class="flex-container">
-                <div>
-                  <ion-icon
-                    class="gold grade-image"
-                    src="assets/icon/medal.svg"
-                  />
-                </div>
-                <div>
-                  <ul>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>All Bronze & Silver features +</ion-text>
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text
-                          >Reporting features on Spotter Dashboard</ion-text
-                        >
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>Marketing/branding consultation</ion-text>
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>Reduced flat booking fee</ion-text>
-                      </div>
-                    </li>
-                    <li class="accessibility">
-                      <div>
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                      </div>
-                      <div>
-                        <ion-text>Create and post local events</ion-text>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+              <div>
+                <ul>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>All Bronze & Silver features +</ion-text>
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text
+                        >Reporting features on Spotter Dashboard</ion-text
+                      >
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>Marketing/branding consultation</ion-text>
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>Reduced flat booking fee</ion-text>
+                    </div>
+                  </li>
+                  <li class="accessibility">
+                    <div>
+                      <ion-icon src="assets/icon/accessibility.svg" />
+                    </div>
+                    <div>
+                      <ion-text>Create and post local events</ion-text>
+                    </div>
+                  </li>
+                </ul>
               </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <div class="buttons">
-          <ion-button class="confirm" @click="handleConfirm"
-            >Confirm change</ion-button
-          >
-          <ion-button class="cancel" @click="setOpen(false)">Cancel</ion-button>
-        </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <div class="buttons">
+        <ion-button class="confirm" @click="handleConfirm"
+          >Confirm change</ion-button
+        >
+        <ion-button class="cancel" @click="setOpen(false)">Cancel</ion-button>
       </div>
-    </ion-modal>
-  </ion-content>
+    </div>
+  </ion-modal>
 </template>
 
 <script lang="ts">

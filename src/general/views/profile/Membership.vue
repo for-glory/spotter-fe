@@ -148,7 +148,7 @@ import { computed } from "@vue/reactivity";
 import { InAppPurchase2, IAPProduct } from "@ionic-native/in-app-purchase-2";
 import dayjs from "dayjs";
 import { Browser } from "@capacitor/browser";
-import { setAuthItems } from "@/router/middleware/auth";
+import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
@@ -337,7 +337,7 @@ const {
 const { type: currentSubscriptionType } = useSubscription();
 gotMyProfile(({ data }) => {
   if (data.me.currentSubscription !== currentSubscriptionType) {
-    setAuthItems(data.me);
+    setAuthItemsFromMe(data.me);
     onBack();
   }
 });

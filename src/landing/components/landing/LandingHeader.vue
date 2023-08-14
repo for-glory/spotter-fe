@@ -51,6 +51,7 @@
 					class="login-btn"
 					type="button"
 					fill="clear"
+					v-if="!isLoggedIn"
 					@click="goToLogin"
 				>
 					Log in
@@ -58,9 +59,27 @@
 				<ion-button
 					class="get-started-btn"
 					type="button"
+					v-if="!isLoggedIn"
 					@click="goToRegister"
 				>
 					Get started
+				</ion-button>
+				<ion-button
+					class="login-btn"
+					type="button"
+					fill="clear"
+					v-if="isLoggedIn"
+					@click="onLogout"
+				>
+					Log out
+				</ion-button>
+				<ion-button
+					class="get-started-btn"
+					type="button"
+					v-if="isLoggedIn"
+					@click="goToDashboard"
+				>
+					Dashboard
 				</ion-button>
 			</div>
 			<div class="d-none md-block">
@@ -75,13 +94,18 @@
 <script setup lang="ts">
 import { IonImg, IonButtons, IonMenuButton, IonButton } from "@ionic/vue";
 import { useRouter } from "vue-router";
-import { EntitiesEnum } from "@/const/routes";
-import { defineProps } from "vue";
+import { EntitiesEnum } from "@/const/entities";
+import { defineProps, ref } from "vue";
+import useUser from "@/hooks/useUser";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 const props = defineProps<{
   hideAuthBtn?: boolean;
   fixed?: boolean;
 }>();
+
+const { isLoggedIn } = useUser();
+
 
 const router = useRouter();
 
@@ -90,6 +114,14 @@ const goToLogin = () => {
 };
 const goToRegister = () => {
 	router.push({ name: EntitiesEnum.Register });
+};
+
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
+};
+const goToDashboard = () => {
+	router.push({ name: EntitiesEnum.DashboardOverview });
 };
 </script>
 

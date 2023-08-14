@@ -25,45 +25,45 @@
 				</div>
 			</div>
 			<div class="main-menu">
-				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
+				<div v-if="!isNative" :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
 				</div>
-				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardEvent)" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent)">
 					<ion-icon src="assets/icon/events.svg" />
 					<ion-text>Events</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardPassList)">
 					<ion-icon src="assets/icon/Pass.svg" />
 					<ion-text>Gym pass</ion-text>
 				</div>
-				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
 					<ion-icon src="assets/icon/Rate.svg" />
 					<ion-text>Membership</ion-text>
 				</div>
-				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
 					<ion-text>Workout plans</ion-text>
 				</div>
-				<div class="menu-item">
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
 					<ion-text>Message</ion-text>
 				</div>
 			</div>
 			<div class="setting-menu">
-				<div class="menu-item">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
-					<ion-text>Manage Gyms</ion-text>
+					<ion-text>Gyms</ion-text>
 				</div>
-				<div class="menu-item">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardGymManager)" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
-					<ion-text>Gym Manager</ion-text>
+					<ion-text>Managers</ion-text>
 				</div>
-				<div class="menu-item">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
 					<ion-icon src="assets/icon/Card.svg" />
 					<ion-text>Getting Paid</ion-text>
 				</div>
-				<div class="menu-item">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardSettings)" @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
 					<ion-icon src="assets/icon/Setting.svg" />
 					<ion-text>Settings</ion-text>
 				</div>
@@ -94,6 +94,8 @@ import { clearAuthItems } from "@/router/middleware/auth";
 import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { Capacitor } from '@capacitor/core';
 
 const props = withDefaults(
   defineProps<{
@@ -104,9 +106,19 @@ const props = withDefaults(
   }
 );
 
+let isNative = Capacitor.isNativePlatform();
+
+const facilityStore = useFacilityStore();
+
 const router = useRouter();
-const activeFacilityId = ref<string | null>(props.facilities[0].id);
+const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
+
+facilityStore.setFacility(props.facilities[0]);
+
+// onMounted(() => {
+// 	localStorage.setItem('currentFacility', JSON.stringify(props.facilities[0]));
+// });
 
 const facilities = computed(() => {
   return props.facilities;
@@ -145,6 +157,14 @@ const onLogoutConfirmed = () => {
   router.push({ name: EntitiesEnum.Login });
   hideModal();
 };
+
+const getMenuItemClass = (name: string) => {
+	return {
+		'menu-item': true,
+		'current': router.currentRoute.value.name === name,
+	};
+};
+
 </script>
 <style scoped lang="scss">
 .sidebar {
@@ -181,7 +201,8 @@ const onLogoutConfirmed = () => {
 		line-height: 150%;
 		cursor: pointer;
 
-		&:hover {
+		&:hover,
+		&.current {
 			color: var(--gold);
 		}
 	}

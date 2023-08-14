@@ -4,9 +4,9 @@
 		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
 	>
     <div class="banner">
-      <ion-title class="banner__title">Create and Edit events for clients and trainers</ion-title>
+      <ion-title class="banner__title">Manage events for your Gym facility here</ion-title>
       <ion-text class="banner__text">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod 
+        Create, Edit, Manage Status, Reservations and Entry fees
       </ion-text>
       <div class="banner__background-image">
         <img src="assets/backgrounds/banner1.jpeg" alt="">
@@ -99,7 +99,7 @@ import { ref } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 
@@ -108,13 +108,13 @@ const totalEvents = ref<number>(0);
 const isOngoing = ref<boolean>(true);
 
 const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
+const currentFacility = useFacilityStore();
 const { role: myRole } = useRoles();
 
 const idFilter =
   myRole === RoleEnum.Trainer
     ? { created_by_trainer: myId }
-    : { created_by_facility: myFacilityId };
+    : { created_by_facility: currentFacility.facility?.id };
 
 const eventsParams: EventsQueryVariables = {
   first: 8,

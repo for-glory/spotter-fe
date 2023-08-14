@@ -159,7 +159,7 @@ const handleAddNextExercise = () => {
   previewUrl.value = "";
   exerciseIndex.value++;
   router.push({
-    name: EntitiesEnum.CreateExercise,
+    name: EntitiesEnum.DashboardCreateExercise,
     params: { id: uuidv4() },
   });
 };
@@ -249,7 +249,7 @@ const handleFinishWorkout = () => {
   if (isValidForm.value) {
     if (!isEditing.value) {
       router.push({
-        name: EntitiesEnum.DashboardOverview,
+        name: EntitiesEnum.DashboardExerciseList,
       });
     } else {
       router.go(-1);

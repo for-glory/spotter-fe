@@ -437,6 +437,61 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create/exercise",
         component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
       },
+      {
+        name: EntitiesEnum.DashboardExerciseList,
+        path: "/workout/exercise-list/:id?",
+        component: () => import("@/general/views/dashboard/workout/ExercisesList.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardGettingPaid,
+        path: "getting-paid",
+        component: () => import("@/general/views/dashboard/GettingPaid.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardSettings,
+        path: "settings",
+        component: () => import("@/general/views/dashboard/settings/Index.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassList,
+        path: "pass/list",
+        component: () => import("@/general/views/dashboard/pass/List.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassCreatePass,
+        path: "pass/create-pass",
+        component: () => import("@/general/views/dashboard/pass/CreatePass.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassCreateDropin,
+        path: "pass/create-drop-in",
+        component: () => import("@/general/views/dashboard/pass/CreateDropin.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardPassProfile,
+        path: "pass/profile",
+        component: () => import("@/general/views/dashboard/pass/Profile.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardMessage,
+        path: "message",
+        component: () => import("@/general/views/dashboard/message/Index.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardGymManager,
+        path: "gym-manager",
+        component: () => import("@/general/views/dashboard/gymManager/Index.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardGymManagerProfile,
+        path: "manager-profile",
+        component: () => import("@/general/views/dashboard/gymManager/ManagerProfile.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardManageGyms,
+        path: "gyms",
+        component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+      },
     ]
   },
 ];

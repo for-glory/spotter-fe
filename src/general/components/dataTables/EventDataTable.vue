@@ -1,25 +1,5 @@
 <template>
 	<div>
-		<!-- <table class="event-table">
-			<thead class="table-header">
-				<th>Event name</th>
-				<th>Reservations left</th>
-				<th>Entry Fee</th>
-				<th>Start date</th>
-				<th>End date</th>
-				<th>Status</th>
-			</thead>
-			<tbody>
-				<tr>
-					<td>swimming</td>
-					<td>200</td>
-					<td>$900</td>
-					<td>11/07/2023</td>
-					<td>11/07/2023</td>
-					<td>ongoing</td>
-				</tr>
-			</tbody>
-		</table> -->
 		<ion-grid class="event-table">
 			<ion-row class="table-header">
 				<ion-col size="2" class="table-th">
@@ -46,7 +26,7 @@
 					<ion-text>{{ event.title }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
-					<ion-text>{{ event.reservation }}</ion-text>
+					<ion-text>{{ event.max_participants - event.booked_count }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
 					<ion-text>${{ event.price?event.price/100:0 }}</ion-text>

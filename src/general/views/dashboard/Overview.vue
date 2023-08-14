@@ -1,7 +1,7 @@
 <template>
   <div class="overview">
     <div class="block">
-      <div class="title white-text">Membership Summary</div>
+      <div class="title white-text">Fitness Center Overview</div>
       <div class="flex-container">
         <div>
           <div class="time">Today's</div>
@@ -25,7 +25,7 @@
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Expiring membership</ion-text>
+          <ion-text class="content">Expiring memberships</ion-text>
           <span class="count">24</span>
         </div>
       </div>
@@ -135,6 +135,7 @@
               </div>
             </div>
           </div>
+          <custom-chart :chartData="chartData" :selected="selected" />
         </div>
       </ion-col>
       <ion-col size="12" size-sm="12" size-md="12" size-lg="12" size-xl="5">
@@ -187,6 +188,21 @@
 <script setup lang="ts">
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
+import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+
+const chartData = {
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  datasets: [
+    {
+      label: 'Data One',
+      backgroundColor: '#2ED47A',
+      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
+      barThickness: 8,
+      borderRadius: 10
+    }
+  ]
+};
+const selected = "February";
 
 const handleDay = () => {
   console.log("Day");
@@ -374,5 +390,8 @@ const handleWee = () => {
     margin-top: 1rem;
     justify-content: left;
   }
+}
+.chart-container {
+  position: relative !important;
 }
 </style>
