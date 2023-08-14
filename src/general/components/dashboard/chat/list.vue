@@ -1,35 +1,24 @@
 <template>
   <div class="list">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="3" class="pos">
-          <img v-if="avatar" :src="avatar" class="avatar" />
-          <div :class="{'enable': status === true, 'disable': status === false}"></div>
-        </ion-col>
-        <ion-col size="7" class="chat">
-          <div class="name">{{ name }}</div>
-          <div class="content">{{ content }}</div>
-        </ion-col>
-        <ion-col size="2" class="info">
-          <div class="time">{{ time }}</div>
-          <div>
-            <div class="count">{{ count }}</div>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <div class="image">
+      <img v-if="avatar" :src="avatar" class="avatar" />
+      <div :class="status ? 'enable' : 'disable'"></div>
+    </div>
+    <div class="listItem">
+      <div class="user">
+        <div class="name">{{ name }}</div>
+        <div class="time">{{ time }}</div>
+      </div>
+      <div class="msg">
+        <div class="content">{{ content }}</div>
+        <div class="count">{{ count }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  IonCol,
-  IonGrid,
-  IonRow,
-  IonImg,
-  IonIcon,
-  IonSearchbar,
-} from "@ionic/vue";
+import { IonCol, IonGrid, IonRow } from "@ionic/vue";
 import { defineProps, withDefaults } from "vue";
 
 const props = withDefaults(
@@ -62,26 +51,55 @@ const props = withDefaults(
   height: 10px;
   border-radius: 50%;
   position: absolute;
-  background: green;
-  top: 55px;
-  left: 55px;
+  background: #00ff50;
+  bottom: 10px;
+  left: calc(100% - 10px);
 }
 .list {
   border-radius: 10px;
-  background: #222222;
+  background: #262626;
   margin: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .avatar {
   width: 64px;
   border-radius: 50%;
 }
-
+.listItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 15px;
+  width: 100%;
+}
+.image {
+  width: 64px;
+  position: relative;
+}
+.user {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.msg {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
 .count {
-  color: #797979;
-  background: var(--gold);
+  color: #262626;
+  font-family: Yantramanav;
+  background: #e1dbc5;
   text-align: center;
   border-radius: 50%;
-  width: 15px;
+  min-width: 15px;
   font-size: 12px;
   float: right;
 }
@@ -98,15 +116,19 @@ const props = withDefaults(
 }
 .name {
   font-size: 16px;
+  font-family: Yantramanav;
+  color: #efefef;
 }
 .time {
   text-align: right;
-  font-size: 12px;
+  font-size: 14px;
   color: #797979;
 }
 .content {
-  color: #797979;
-  font-size: 12px;
+  color: #efefef;
+  font-size: 14px;
   text-align: left;
+  font-family: Yantramanav;
+  font-weight: 100;
 }
 </style>

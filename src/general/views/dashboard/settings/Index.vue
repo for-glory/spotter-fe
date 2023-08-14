@@ -18,7 +18,11 @@
         <div :class="filter === 'services' ? 'menu-item__active' : 'menu-item'"  @click="handleClick('services')">
           Connected Services
         </div>
-        <div class="menu-item__delete" @click="onDeleteAccount">
+        <div
+          class="menu-item__delete"
+          @click="onDeleteAccount"
+          :disabled="profileOnDeleting"
+        >
           Delete Account
         </div>
 			</div>
@@ -46,12 +50,9 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  WorkoutsDocument,
-  QueryWorkoutsOrderByColumn,
-  RoleEnum,
-  SortOrder,
+  DeleteProfileDocument,
 } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
@@ -63,6 +64,7 @@ import useRoles from "@/hooks/useRole";
 import Profile from "@/general/views/dashboard/settings/Profile.vue";
 import Security from "@/general/views/dashboard/settings/Security.vue";
 import Services from "@/general/views/dashboard/settings/Services.vue";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 
 const filter = ref<string>('profile');
@@ -76,6 +78,12 @@ const { id } = JSON.parse(localStorage.getItem("user") || "{}");
 
 const router = useRouter();
 
+const {
+  mutate: deleteProfile,
+  loading: profileOnDeleting,
+  onDone: profileDeleted,
+} = useMutation(DeleteProfileDocument);
+
 const handleClick = (value: string) => {
 	filter.value = value;
 }
@@ -83,8 +91,14 @@ const onDeleteAccount = () => {
   showModal();
 }
 const onDeleteConfirmed = () => {
+  deleteProfile();
   hideModal();
 }
+
+profileDeleted(() => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
+});
 
 </script>
 

@@ -10,12 +10,14 @@
                 <div :class="allStatus ? 'all' : 'unread'" @click="handleAll">
                   All
                 </div>
-                <div :class="!allStatus ? 'all' : 'unread'" @click="handleUnRead">
+                <div
+                  :class="!allStatus ? 'all' : 'unread'"
+                  @click="handleUnRead"
+                >
                   Unread
                 </div>
               </div>
-              <template v-if="allStatus">
-              </template>
+              <template v-if="allStatus"> </template>
               <template v-else>
                 <div class="listRoom">
                   <chat-list
@@ -57,7 +59,8 @@
             <div class="box">
               <div class="header">
                 <img class="chatImage" src="assets/backgrounds/avatar1.png" />
-                <span>Alice James</span>
+                <span class="username">Alice James</span>
+                <img class="ellipse" src="assets/Ellipse.svg" />
               </div>
               <div class="chat">
                 <chat-message
@@ -95,12 +98,20 @@
                   time="11:16"
                   :opp="false"
                 />
+                <div class="chatBox">
+                  <div class="info">
+                    <img class="avatar" src="assets/backgrounds/avatar1.png" />
+                    <span class="user">Alice James</span>
+                    <time class="time">Typing a message...</time>
+                  </div>
+                </div>
               </div>
               <div class="typing">
                 <div class="inputbox">
                   <input
                     class="chatinput"
-                    :value="text"
+                    placeholder="Type a message..."
+                    :value="message"
                     @onkeydown="(event) => (text = event.target.value)"
                   />
                 </div>
@@ -146,7 +157,7 @@ const handleUnRead = () => {
   width: 100%;
   border: none;
   padding: 15px 0 30px 20px;
-  color: white;
+  color: #efefef;
 }
 .chatinput:visited {
   border: none;
@@ -159,7 +170,7 @@ const handleUnRead = () => {
 }
 .box {
   border-radius: 5px;
-  background: #222222;
+  background: #262626;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -167,10 +178,16 @@ const handleUnRead = () => {
 }
 .chatImage {
   width: 42px;
+  height: 42px;
   border-radius: 50%;
 }
+.username {
+  font-family: Lato;
+  color: var(--fitnesswhite);
+  font-size: 15px;
+}
 .header {
-  padding: 15px;
+  padding: 20px;
   border-bottom: 1px solid var(--gold);
   display: flex;
   flex-direction: row;
@@ -185,15 +202,16 @@ const handleUnRead = () => {
 }
 .border {
   border-right: 1px solid var(--gold);
+  padding-left: 15px;
 }
 .chatRoom {
-  padding: 35px 24px;
+  padding: 25px 10px 36px 36px;
+  border-radius: 5px;
 }
 .tabs {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  font-size: 16px;
   color: var(--gold);
   margin-top: 20px;
   line-height: 2;
@@ -207,26 +225,61 @@ const handleUnRead = () => {
 .all {
   width: 30%;
   text-align: center;
-  color: 2px solid var(--gold);
-  border-bottom: 2px solid var(--gold);
+  color: 2px solid #e1dbc5;
+  border-bottom: 2px solid #e1dbc5;
+  font-size: 16px;
   cursor: pointer;
 }
 .unread {
+  font-size: 16px;
   text-align: center;
   width: 30%;
-  border-bottom: 2px solid #797979;
-  color: #797979;
+  border-bottom: 1px solid #efefef;
+  color: #efefef;
+  opacity: 0.4;
   cursor: pointer;
 }
 .search {
-  color: var(--fitnesswhite);
+  color: #efefef;
   font-family: Lato;
   font-size: 14px;
-  margin-top: 27px;
+  margin-top: 15px;
 }
 .chat {
   max-height: calc(100vh - 314px);
   overflow: auto;
 }
+.chatBox {
+  display: flex;
+  padding-left: 20px;
+  margin-top: 50px;
+  text-align: left;
+  justify-content: start;
+  width: 70%;
+  padding-bottom: 15px;
+
+  .avatar {
+    width: 16px;
+    border-radius: 50%;
+  }
+  .user {
+    padding-left: 10px;
+    padding-right: 20px;
+    font-family: Lato;
+    color: var(--fitnesswhite);
+    font-size: 15px;
+  }
+  .time {
+    color: var(--grey-text);
+    font-family: Poppins;
+    font-size: 10px;
+    font-style: italic;
+  }
+}
+.ellipse {
+  // color: #2ED47A;
+  width: 6px;
+  height: 6px;
+  margin-left: 30px;
+}
 </style>
- 

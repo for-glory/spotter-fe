@@ -1,49 +1,51 @@
 <template>
+  <ion-spinner v-if="loading" name="lines" class="spinner" />
 	<div
+    v-else
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
 	>
     <div>
-      <div class="banner">
+      <!-- <div class="banner">
         <ion-icon src="assets/icon/arrow-back.svg" />
-        <ion-title class="banner__title">Gabby's gym</ion-title>
-      </div>
+        <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title>
+      </div> -->
       <div>
         <div class="carousel">
-          <ion-img src="assets/gym-image.png"></ion-img>
+          <ion-img :src="result?.facility?.media[0]?.pathUrl"></ion-img>
         </div>
         <div class="data-box d-flex justify-content-between">
           <div class="d-flex-col">
-            <ion-text>{{"Gabby"}} Gym</ion-text>
+            <ion-text>{{ result?.facility?.name }}</ion-text>
             <div class="field-label d-flex align-items-center">
               <ion-icon src="assets/icon/location.svg"></ion-icon>
-              <ion-text>{{"Dallas, Wall Street, 24"}}</ion-text>
+              <ion-text>{{ result?.facility?.address?.street }}</ion-text>
             </div>
           </div>
           <div class="d-flex-col">
-            <ion-text>Ratings {{rating.toFixed(1)}}</ion-text>
-            <star-rating :rating="5"/>
+            <ion-text>Ratings {{ result?.facility?.score }}</ion-text>
+            <star-rating :rating="result?.facility?.score??0"/>
           </div>
           <div class="d-flex-col align-items-center">
             <ion-text>Reviews</ion-text>
-            <review-status-bar :positiveCount="64" :negativeCount="48"/>
-            <ion-text class="total-review">based on {{2480}} reviews</ion-text>
+            <review-status-bar :positiveCount="result?.facility?.positive_reviews_count??0" :negativeCount="result?.facility?.negative_reviews_count??0"/>
+            <ion-text class="total-review">based on {{ result?.facility?.reviews_count??0 }} reviews</ion-text>
           </div>
         </div>
         <div class="description-field">
           <ion-title>Description:</ion-title>
-          <ion-text>{{"Want your body to be healthy? Join our program with directions according to body’s goals. Increasing physical strength is the goal of strenght training."}}</ion-text>
+          <ion-text>{{ result?.facility?.description }}</ion-text>
         </div>
         <div class="feature-field">
           <div>
             <ion-title>Equipment</ion-title>
             <div class="features">
               <ion-button 
-                v-for="(item, id) in equipments" 
+                v-for="(item, id) in result?.facility?.equipments" 
                 :key="id" 
                 fill="outline"
               >
-                <ion-icon :src="item.iconPath"></ion-icon>
+                <ion-icon :src="item.iconUrl"></ion-icon>
                 {{item.name}}
               </ion-button>
             </div>
@@ -52,11 +54,11 @@
             <ion-title>Amenities</ion-title>
             <div class="features">
               <ion-button 
-                v-for="(item, id) in amenities" 
+                v-for="(item, id) in result?.facility?.amenities" 
                 :key="id" 
                 fill="outline"
               >
-                <ion-icon :src="item.iconPath"></ion-icon>
+                <ion-icon :src="item.iconUrl"></ion-icon>
                 {{item.name}}
               </ion-button>
             </div>
@@ -119,10 +121,16 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  WorkoutsDocument,
-  QueryWorkoutsOrderByColumn,
+  Facility,
+  FollowDocument,
+  FollowTypeEnum,
+  MeDocument,
+  Query,
+  Review,
+  ReviewsDocument,
   RoleEnum,
-  SortOrder,
+  SettingsCodeEnum,
+  UnfollowDocument,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, onMounted, computed } from "vue";
@@ -134,9 +142,19 @@ import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
 import StarRating from "@/general/components/dashboard/StarRating.vue";
 import ReviewStatusBar from "@/general/components/dashboard/ReviewStatusBar.vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+
+const currentFacility = useFacilityStore();
 
 const filter = ref<string>('recent');
-console.log(filter.value);
+
+const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: currentFacility.facility.id,
+  }
+);
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
@@ -242,6 +260,7 @@ const handleClick = (value: string) => {
   justify-content: center;
   margin-bottom: 8px;
   ion-img {
+    width: 100%;
     max-width: 650px;
     max-height: 310px;
   }
@@ -409,5 +428,11 @@ const handleClick = (value: string) => {
 }
 .flex-auto {
   flex: auto;
+}
+.spinner {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  --color: var(--ion-color-white);
 }
 </style>

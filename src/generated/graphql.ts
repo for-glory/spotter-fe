@@ -1904,6 +1904,24 @@ export type QueryWorkoutsOrderByOrderByClause = {
   order: SortOrder;
 };
 
+/** Allowed column names for Query.facilityWorkouts.orderBy. */
+export enum QueryFacilityWorkoutsOrderByColumn {
+  CreatedAt = 'CREATED_AT',
+  Description = 'DESCRIPTION',
+  Duration = 'DURATION',
+  Id = 'ID',
+  Price = 'PRICE',
+  Title = 'TITLE'
+}
+
+/** Order by clause for Query.facilityWorkouts.orderBy. */
+export type QueryFacilityWorkoutsOrderByOrderByClause = {
+  /** The column that is used for ordering. */
+  column: QueryFacilityWorkoutsOrderByColumn;
+  /** The direction that is used for ordering. */
+  order: SortOrder;
+};
+
 export type Quizz = {
   __typename?: 'Quizz';
   answers?: Maybe<Array<Maybe<QuizzAnswer>>>;
@@ -4560,6 +4578,7 @@ export const EventsDocument = gql`
       }
       id
       max_participants
+      booked_count
       was_ordered_by_me
       media {
         pathUrl
@@ -5484,6 +5503,7 @@ export const UserDocument = gql`
     query user($id: ID!) {
   user(id: $id) {
     id
+    email
     first_name
     last_name
     avatar
@@ -5703,6 +5723,69 @@ export const WorkoutsDocument = gql`
   workouts(
     dynamic_search: $dynamic_search
     trainer_id: $trainer_id
+    first: $first
+    page: $page
+    type_id: $type_id
+    has_body_parts: $has_body_parts
+    orderBy: {column: $orderByColumn, order: $order}
+  ) {
+    data {
+      id
+      preview
+      type {
+        id
+        name
+        icon
+      }
+      previewUrl
+      title
+      description
+      price
+      duration
+      was_ordered_by_me
+      exercises {
+        id
+        title
+        description
+        path
+        previewUrl
+        pathUrl
+      }
+      trainer {
+        first_name
+        last_name
+        score
+        address {
+          lat
+          lng
+        }
+        facilities {
+          media {
+            pathUrl
+          }
+          address {
+            lat
+            lng
+          }
+        }
+      }
+      state
+    }
+    paginatorInfo {
+      count
+      firstItem
+      currentPage
+      total
+      perPage
+    }
+  }
+}
+    `;
+export const WorkoutsByFacilityDocument = gql`
+    query facilityWorkouts($dynamic_search: String!, $facility_id: ID, $first: Int, $page: Int, $type_id: ID, $has_body_parts: [ID!], $order: SortOrder!, $orderByColumn: QueryFacilityWorkoutsOrderByColumn!) {
+  facilityWorkouts(
+    dynamic_search: $dynamic_search
+    facility_id: $facility_id
     first: $first
     page: $page
     type_id: $type_id

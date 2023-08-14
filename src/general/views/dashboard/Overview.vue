@@ -135,6 +135,7 @@
               </div>
             </div>
           </div>
+          <custom-chart :chartData="chartData" :selected="selected" />
         </div>
       </ion-col>
       <ion-col size="12" size-sm="12" size-md="12" size-lg="12" size-xl="5">
@@ -187,6 +188,21 @@
 <script setup lang="ts">
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
+import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+
+const chartData = {
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  datasets: [
+    {
+      label: 'Data One',
+      backgroundColor: '#2ED47A',
+      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
+      barThickness: 8,
+      borderRadius: 10
+    }
+  ]
+};
+const selected = "February";
 
 const handleDay = () => {
   console.log("Day");
@@ -374,5 +390,8 @@ const handleWee = () => {
     margin-top: 1rem;
     justify-content: left;
   }
+}
+.chart-container {
+  position: relative !important;
 }
 </style>
