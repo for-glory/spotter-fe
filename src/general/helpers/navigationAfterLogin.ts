@@ -7,6 +7,7 @@ import useStripeConnect from "@/hooks/useStripeConnect";
 import useVerified from "@/hooks/useVerified";
 import useFacilityId from "@/hooks/useFacilityId";
 import router from "../../router/index";
+import { Capacitor } from '@capacitor/core';
 
 const navigationAfterAuth = (user: User) => {
   if (!user.email?.length) {
@@ -86,6 +87,11 @@ const navigationAfterAuth = (user: User) => {
 
       if(!myFacilityId) {
         router.push({ name: EntitiesEnum.SuccessStripeConnect });
+        break;
+      }
+      
+      if(Capacitor.isNativePlatform()) {
+        router.push({ name: EntitiesEnum.FacilitiesEvents });
         break;
       }
       router.push({ name: EntitiesEnum.DashboardOverview });

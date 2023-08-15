@@ -46,6 +46,7 @@ import {
   LinksDocument,
 } from "@/generated/graphql";
 import { onMounted } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 
@@ -70,6 +71,10 @@ gotMyStripeConnect(async (response) => {
 		const { id: myFacilityId } = useFacilityId();
 		if(!myFacilityId) {
 			router.push({ name: EntitiesEnum.SuccessStripeConnect });
+			return;
+		}
+		if(Capacitor.isNativePlatform()) {
+			router.push({ name: EntitiesEnum.FacilitiesEvents });
 			return;
 		}
 		router.push({ name: EntitiesEnum.DashboardOverview });
