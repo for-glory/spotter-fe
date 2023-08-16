@@ -91,7 +91,7 @@ const navigationAfterAuth = (user: User) => {
       }
       
       if(Capacitor.isNativePlatform()) {
-        router.push({ name: EntitiesEnum.FacilitiesEvents });
+        router.push({ name: EntitiesEnum.Profile });
         break;
       }
       router.push({ name: EntitiesEnum.DashboardOverview });
