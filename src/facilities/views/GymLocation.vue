@@ -308,6 +308,7 @@ const addressSelected = async (
 
 .holder-button {
   padding: 20px 24px calc(32px + var(--ion-safe-area-bottom));
+  display: block;
 
   .button {
     margin: 0;
