@@ -57,7 +57,6 @@
     </base-layout>
   </ion-page>
   <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
-  <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
 </template>
 
 <script setup lang="ts">
@@ -76,7 +75,6 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
-import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
 import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
 
@@ -87,9 +85,8 @@ const states = ref<IState[]>(State.getStatesOfCountry(countryCode));
 const cities = ref<ICity[]>();
 
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
-const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
-const selectedState = ref<IState>();
-const selectedCity = ref<ICity>();
+const selectedState = ref<any>();
+const selectedCity = ref<any>();
 const selectedAddress = ref<NativeGeocoderResult>();
 const description = ref("");
 
@@ -127,7 +124,7 @@ const chooseCity = () => {
 };
 
 const chooseAddress = () => {
-  chooseAddressModal.value?.present({
+  chooseLocationModal.value?.present({
     type: EntitiesEnum.Address,
     title: "Choose your address",
     selected: selectedAddress.value?.latitude
@@ -148,9 +145,9 @@ const addressSelected = async (
   if (!selected) return;
   switch (type) {
     case EntitiesEnum.State:
-      selectedState.value = states.value?.find(
+      selectedState.value = { ...states.value?.find(
         (state) => state.isoCode === selected.state.code
-      );
+      ), id: selected.state.id };
       cities.value = City.getCitiesOfState(countryCode, selected.state.code);
       if (selectedCity.value?.stateCode !== selectedState.value?.isoCode) {
         selectedCity.value = undefined;
