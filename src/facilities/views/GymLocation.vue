@@ -27,7 +27,7 @@
             :disabled="!selectedState || !selectedCity || useMyPhoneLocation"
             :value="
               selectedAddress
-                ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
+                ? `${selectedAddress.address.thoroughfare} ${selectedAddress.address.subThoroughfare}`
                 : ''
             "
           />

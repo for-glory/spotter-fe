@@ -220,7 +220,7 @@ const {
 } = useConfirmationModal();
 
 const onAddressConfirmed = () => {
-  const selected: ChooseAddresModalResult = {
+  const selected: any = {
     state:
       type.value === EntitiesEnum.State
         ? options.value.find((option: State) => option.id === value.value)
@@ -230,6 +230,7 @@ const onAddressConfirmed = () => {
         ? options.value.find((option: City) => option.id === value.value)
         : selectedCity.value,
     address: chosenAddress.value || null,
+    countryCode
   };
 
   emits("select", selected, type.value);
