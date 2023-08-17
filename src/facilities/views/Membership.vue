@@ -52,6 +52,9 @@
                       </li>
                     </ul>
                   </div>
+                  <div class="tax-text">
+                    * Taxes and fees may apply.
+                  </div>
                 </div>
                 <ion-radio :value="4" slot="end"></ion-radio>
               </ion-item>
@@ -60,7 +63,7 @@
           <ion-icon class="prev" src="assets/icon/arrow-back.svg" @click="prev"></ion-icon>
           <ion-icon class="next" src="assets/icon/arrow-next.svg" @click="next"></ion-icon>
         </ion-radio-group>
-        <div class="membership-buttons">
+        <div class="membership-buttons d-flex align-items-center justify-content-between">
           <ion-button id="change" @click="onChangeMembership">Change Membership</ion-button>
           <ion-button id="cancel" >Cancel Membership</ion-button> 
         </div>
@@ -340,7 +343,10 @@ const onChangeMembership = () => {
     console.log({index});
     changeMembershipModal.value?.present({ currentPlan, newPlan: plans.value[index] });
   });
-  
+}
+
+const selectMembership = () => {
+  console.log("**********");
 }
 </script>
 
@@ -412,8 +418,8 @@ const onChangeMembership = () => {
 		}
 	
 		&__icon {
-			width: 7.5rem;
-			height: 7.5rem;
+			width: 120px;
+			height: 120px;
 			padding: 1.875rem;
 			display: flex;
 			flex-shrink: 0;
@@ -438,6 +444,11 @@ const onChangeMembership = () => {
 			// }
 		}
 
+    .tax-text {
+      color: #ffffff6a;
+      font: 12px/1 var(--ion-font-family);
+      margin-top: 92px;
+    }
 		.gold {
 			color: var(--gold);
 		}
