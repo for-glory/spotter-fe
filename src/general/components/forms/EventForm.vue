@@ -350,6 +350,7 @@ import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 import { Capacitor } from '@capacitor/core';
+import { useRouter } from "vue-router";
 
 enum DateFieldsEnum {
   StartDate = "START_DATE",
@@ -398,6 +399,8 @@ const { load: getCities, refetch: getCityByName } = useLazyQuery(
 getCities();
 
 const store = useNewEventStore();
+
+const router = useRouter();
 
 const eventPhotos = computed(() => store.photos);
 
@@ -500,7 +503,9 @@ const deletePhoto = (index: number, id?: string) => {
 const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 
 const onChooseLocation = () => {
-  console.log("choose location");
+  router.push({
+    name: EntitiesEnum.ProfileGymLocation, 
+  });
 }
 
 const chooseState = () => {
