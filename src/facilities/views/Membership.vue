@@ -335,7 +335,12 @@ const showAgreement = async (url: string) => {
 };
 
 const onChangeMembership = () => {
-  changeMembershipModal.value?.present();
+  slide.value?.$el.getActiveIndex().then((index: number) => {
+    console.log("*********", slide.value?.$el.getActiveIndex());
+    console.log({index});
+    changeMembershipModal.value?.present({ currentPlan, newPlan: plans.value[index] });
+  });
+  
 }
 </script>
 

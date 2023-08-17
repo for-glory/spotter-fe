@@ -14,45 +14,27 @@
       <div class="current-plan">
         <ion-text>Current Plan</ion-text>
         <div class="paragraph">
-          <ion-text>Bronze</ion-text>&nbsp; &nbsp;<ion-text
-            >$149.99</ion-text
+          <ion-text>{{currentPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text
+            >${{currentPlan?.prices[0].price / 100}}</ion-text
           >
-          <span class="location">/per location</span>
+          <span class="location">/{{currentPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
         </div>
         <div class="flex-container">
           <div>
             <ion-icon
               src="assets/icon/medal.svg"
-              class="silver grade-image"
+              class="grade-image"
+              :class="currentPlan?.tier === 'GOLD' ? 'gold' : currentPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
             />
           </div>
           <div>
             <ul>
-              <li class="accessibility">
+              <li v-for="(benefit, id) in currentPlan?.benefits" :key="id" class="accessibility">
                 <div>
                   <ion-icon src="assets/icon/accessibility.svg" />
                 </div>
                 <div>
-                  <ion-text>All Bronze features +</ion-text>
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text
-                    >List unlimited offerings on the Network
-                    profile</ion-text
-                  >
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text>Reduced flat booking fee</ion-text>
+                  <ion-text>{{benefit.description}}</ion-text>
                 </div>
               </li>
             </ul>
@@ -65,58 +47,27 @@
       <div class="new-plan">
         <ion-text class="text-golden">New Plan</ion-text>
         <div class="paragraph">
-          <ion-text class="text-golden">Gold</ion-text>&nbsp; &nbsp;<ion-text class="text-golden">$199.99</ion-text>
-          <span class="location">/for first location</span>
+          <ion-text class="text-golden">{{newPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="text-golden"
+            >${{newPlan?.prices[0].price / 100}}</ion-text
+          >
+          <span class="location">/{{newPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
         </div>
         <div class="flex-container">
           <div>
             <ion-icon
-              class="gold grade-image"
               src="assets/icon/medal.svg"
+              class="grade-image"
+              :class="newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
             />
           </div>
           <div>
             <ul>
-              <li class="accessibility">
+              <li v-for="(benefit, id) in newPlan?.benefits" :key="id" class="accessibility">
                 <div>
                   <ion-icon src="assets/icon/accessibility.svg" />
                 </div>
                 <div>
-                  <ion-text>All Bronze & Silver features +</ion-text>
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text
-                    >Reporting features on Spotter Dashboard</ion-text
-                  >
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text>Marketing/branding consultation</ion-text>
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text>Reduced flat booking fee</ion-text>
-                </div>
-              </li>
-              <li class="accessibility">
-                <div>
-                  <ion-icon src="assets/icon/accessibility.svg" />
-                </div>
-                <div>
-                  <ion-text>Create and post local events</ion-text>
+                  <ion-text>{{benefit.description}}</ion-text>
                 </div>
               </li>
             </ul>
@@ -143,13 +94,19 @@ import {
   IonContent,
   IonTitle,
 } from "@ionic/vue";
-import { defineComponent, ref, defineProps, defineEmits, withDefaults, defineExpose } from "vue";
+import { defineComponent, ref, defineProps, defineEmits, withDefaults, defineExpose, computed } from "vue";
 
 const modal = ref<typeof IonModal | null>(null);
+const currentPlan = ref<any>(null);
+const newPlan = ref<any>(null);
 
-const present = () => {
+const present = (props: any) => {
+  console.log(props.currentPlan.value[0], props.newPlan);
+  currentPlan.value = props.currentPlan.value[0];
+  newPlan.value = props.newPlan;
   modal?.value?.$el.present();
 };
+
 
 const onCancel = () => {
   modal?.value?.$el.dismiss();
@@ -195,6 +152,9 @@ defineExpose({
 }
 .gold {
   color: var(--gold);
+}
+.bronze {
+  color: var(--bronze);
 }
 .ion-padding {
   padding: 0.5rem 1rem;
