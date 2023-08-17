@@ -6,40 +6,31 @@
       </template>
       <template #content>
         <div class="page">
-          <ion-item class="page__control" @click="chooseState">
-            <ion-label>State</ion-label>
-            {{ selectedState?.name }}
-            <ion-icon
-              src="assets/icon/arrow-next.svg"
-              class="page__control-icon"
-            />
-          </ion-item>
-          <ion-item
+          <choose-block
+            title="State"
             class="page__control"
-            :disabled="!selectedState"
-            @click="chooseCity"
-          >
-            <ion-label>City</ion-label>
-            {{ selectedCity?.name }}
-            <ion-icon
-              src="assets/icon/arrow-next.svg"
-              class="page__control-icon"
-            />
-          </ion-item>
-          <ion-item
+            @handle-click="chooseState"
+            :value="selectedState?.name"
+            :disabled="useMyPhoneLocation"
+          />
+          <choose-block
+            title="City"
             class="page__control"
-            @click="chooseAddress"
-            :disabled="!selectedCity"
-          >
-            <ion-label>Address</ion-label>
-            {{ selectedAddress?.thoroughfare }}
-            {{ selectedAddress?.subThoroughfare }}
-            <ion-icon
-              src="assets/icon/arrow-next.svg"
-              class="page__control-icon"
-            />
-          </ion-item>
-          {{ description }}
+            @handle-click="chooseCity"
+            :value="selectedCity?.name"
+            :disabled="!selectedState || useMyPhoneLocation"
+          />
+          <choose-block
+            title="Address"
+            class="page__control"
+            @handle-click="chooseAddress"
+            :disabled="!selectedState || !selectedCity || useMyPhoneLocation"
+            :value="
+              selectedAddress
+                ? `${selectedAddress.thoroughfare} ${selectedAddress.subThoroughfare}`
+                : ''
+            "
+          />
           <ion-item class="page__holder-textarea" :disabled="!selectedCity">
             <ion-textarea
               v-model="description"
@@ -65,6 +56,7 @@
       </template>
     </base-layout>
   </ion-page>
+  <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
   <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
 </template>
 
@@ -83,6 +75,7 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
 import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
@@ -93,6 +86,7 @@ const countryCode = "US";
 const states = ref<IState[]>(State.getStatesOfCountry(countryCode));
 const cities = ref<ICity[]>();
 
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 const selectedState = ref<IState>();
 const selectedCity = ref<ICity>();
@@ -104,7 +98,7 @@ const onBack = () => {
 };
 
 const chooseState = () => {
-  chooseAddressModal.value?.present({
+  chooseLocationModal.value?.present({
     type: EntitiesEnum.State,
     title: "Select state",
     selected: selectedState.value?.isoCode,
@@ -118,7 +112,7 @@ const chooseState = () => {
 };
 
 const chooseCity = () => {
-  chooseAddressModal.value?.present({
+  chooseLocationModal.value?.present({
     type: EntitiesEnum.City,
     title: "Select city",
     selected: selectedCity.value?.name,
@@ -128,6 +122,7 @@ const chooseCity = () => {
         label: state.name,
       };
     }),
+    state: selectedState.value
   });
 };
 
@@ -135,28 +130,28 @@ const chooseAddress = () => {
   chooseAddressModal.value?.present({
     type: EntitiesEnum.Address,
     title: "Choose your address",
-    selected: {
-      lat: Number(
-        selectedAddress.value?.latitude || selectedCity.value?.latitude
-      ),
-      lng: Number(
-        selectedAddress.value?.longitude || selectedCity.value?.longitude
-      ),
-    },
+    selected: selectedAddress.value?.latitude
+      ? {
+          lat: Number(selectedAddress.value?.latitude),
+          lng: Number(selectedAddress.value?.longitude),
+        }
+      : null,
+    state: selectedState.value,
+    city: selectedCity.value,
   });
 };
 
 const addressSelected = async (
-  selected?: string | NativeGeocoderResult,
+  selected?: any | NativeGeocoderResult,
   type?: EntitiesEnum
 ) => {
   if (!selected) return;
   switch (type) {
     case EntitiesEnum.State:
       selectedState.value = states.value?.find(
-        (state) => state.isoCode === (selected as string)
+        (state) => state.isoCode === selected.state.code
       );
-      cities.value = City.getCitiesOfState(countryCode, selected as string);
+      cities.value = City.getCitiesOfState(countryCode, selected.state.code);
       if (selectedCity.value?.stateCode !== selectedState.value?.isoCode) {
         selectedCity.value = undefined;
       }
@@ -170,7 +165,7 @@ const addressSelected = async (
 
     case EntitiesEnum.City:
       selectedCity.value = cities.value?.find(
-        (city) => city.name === (selected as string)
+        (city) => city.name === selected.city.name
       );
       if (selectedCity.value?.name !== selectedAddress.value?.locality) {
         selectedAddress.value = undefined;
