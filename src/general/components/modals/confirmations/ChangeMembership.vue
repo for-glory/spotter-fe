@@ -1,5 +1,5 @@
 <template>
-	<ion-modal id="modal" :is-open="isVisible" :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
 				<ion-title>Change Membership Plan</ion-title>
@@ -16,7 +16,7 @@
           <ion-col size="12" size-sm="6" class="silver">
             <ion-text>Current Plan</ion-text>
             <div class="paragraph">
-              <ion-text>Bronze</ion-text>&nbsp&nbsp<ion-text
+              <ion-text>Bronze</ion-text>&nbsp; &nbsp;<ion-text
                 >$149.99</ion-text
               >
               <span>/per location</span>
@@ -64,7 +64,7 @@
           <ion-col size="12" size-sm="6" class="gold">
             <ion-text>New Plan</ion-text>
             <div class="paragraph">
-              <ion-text>Gold</ion-text>&nbsp&nbsp<ion-text>$199.99</ion-text>
+              <ion-text>Gold</ion-text>&nbsp; &nbsp;<ion-text>$199.99</ion-text>
               <span class="gold-location">/for first location</span>
             </div>
             <div class="flex-container">
@@ -128,13 +128,13 @@
         <ion-button class="confirm" @click="handleConfirm"
           >Confirm change</ion-button
         >
-        <ion-button class="cancel" @click="setOpen(false)">Cancel</ion-button>
+        <ion-button class="cancel" @click="onCancel">Cancel</ion-button>
       </div>
     </div>
   </ion-modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   IonButtons,
   IonButton,
@@ -144,28 +144,20 @@ import {
   IonContent,
   IonTitle,
 } from "@ionic/vue";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, defineProps, defineEmits, withDefaults, defineExpose } from "vue";
 
-export default defineComponent({
-  components: {
-    IonButtons,
-    IonButton,
-    IonModal,
-    IonHeader,
-    IonContent,
-    IonToolbar,
-    IonTitle,
-  },
-  data() {
-    return {
-      isOpen: false,
-    };
-  },
-  methods: {
-    setOpen(isOpen: boolean) {
-      this.isOpen = isOpen;
-    },
-  },
+const modal = ref<typeof IonModal | null>(null);
+
+const present = () => {
+  modal?.value?.$el.present();
+};
+
+const onCancel = () => {
+  modal?.value?.$el.dismiss();
+}
+
+defineExpose({
+  present,
 });
 </script>
 <style scoped lang="scss">

@@ -1,8 +1,5 @@
 <template>
   <base-layout>
-    <template #header>
-      <page-header back-btn title="Membership" @back="onBack" />
-    </template>
     <template #content>
       <ion-spinner
         v-if="loading || plansLoading"
@@ -10,60 +7,7 @@
         class="spinner"
       />
       <div class="membership" v-else>
-        <ion-radio-group v-if="Capacitor.isNativePlatform()" class="plans plan-tablet" v-model="selectedPlanId">
-          <ion-item
-            lines="none"
-            class="radiobutton"
-            v-for="plan in plans"
-            :key="plan.id"
-            @click="selectProduct(plan)"
-            :class="{
-              'item-radio-checked':
-                plan.owned && dayjs(plan.expiryDate).isAfter(dayjs()),
-            }"
-            :disabled="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
-          >
-            <div class="radiobutton__block">
-              <div class="radiobutton__icon">
-                <ion-icon src="assets/icon/medal.svg" />
-              </div>
-              <div class="radiobutton__description">
-                <ion-label class="radiobutton__label">
-                  {{ plan.title }}
-                </ion-label>
-
-                <ion-text class="radiobutton__cost"
-                  >{{ plan?.price }}
-                  <span
-                    v-if="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
-                  >
-                    / Expire: {{ dayjs(plan.expiryDate).format("MM/DD/YY") }}
-                  </span>
-                  <span v-else-if="plan.billingPeriodUnit">
-                    /
-                    {{ plan.billingPeriodUnit }}
-                  </span>
-                </ion-text>
-                <ul>
-                  <li
-                    class="accessibility"
-                    v-for="(benefit, idx) in plan?.benefits"
-                    :key="idx"
-                  >
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>{{ benefit?.description }}</ion-text>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <ion-radio :value="plan.id" slot="end"></ion-radio>
-          </ion-item>
-        </ion-radio-group>
-        <ion-radio-group v-else class="plans" v-model="selectedPlanId">
+        <ion-radio-group class="plans" v-model="selectedPlanId">
           <ion-slides 
             ref="slide"
           >
@@ -116,56 +60,14 @@
           <ion-icon class="prev" src="assets/icon/arrow-back.svg" @click="prev"></ion-icon>
           <ion-icon class="next" src="assets/icon/arrow-next.svg" @click="next"></ion-icon>
         </ion-radio-group>
-      </div>
-    </template>
-    <template #footer>
-      <div class="holder-button">
-        <div class="checkbox">
-          <ion-checkbox
-            mode="ios"
-            :modelValue="isAgreed"
-            @update:modelValue="isAgreed = $event"
-          >
-          </ion-checkbox>
-          <ion-label>
-            I confirm that I read and accept
-            <ion-text
-              @click.stop="
-                showAgreement(
-                  'https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc'
-                )
-              "
-              color="primary"
-            >
-              Privacy Policy
-            </ion-text>
-            and
-            <ion-text
-              @click.stop="
-                showAgreement(
-                  'https://app.termly.io/document/terms-of-use-for-saas/60ed2ae3-4eee-4617-b3d7-957ac10623b7'
-                )
-              "
-              color="primary"
-            >
-              Terms of Use
-            </ion-text>
-          </ion-label>
+        <div class="membership-buttons">
+          <ion-button @click="onChangeMembership">Change Membership</ion-button>
+          <ion-button >Cancel Membership</ion-button> 
         </div>
-        <ion-button
-          expand="block"
-          @click="purchase"
-          :disabled="!isAgreed || isLoading"
-        >
-          <ion-spinner name="lines" v-if="isLoading"></ion-spinner>
-          <template v-else>Subscribe now</template>
-        </ion-button>
-      </div>
-      <div>
-        {{ errorMessage }}
       </div>
     </template>
   </base-layout>
+  <change-membership ref="changeMembershipModal"/>
 </template>
 
 <script setup lang="ts">
@@ -206,6 +108,7 @@ import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
+import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue"
 
 const router = useRouter();
 const route = useRoute();
@@ -219,6 +122,9 @@ const selectedPlanId = ref<string | number | boolean | undefined>(undefined);
 const isAgreed = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const slide = ref<typeof IonSlides | null>();
+const currentPlan = ref<any>();
+const { type: currentSubscriptionType } = useSubscription();
+const changeMembershipModal = ref<typeof ChangeMembership | null>(null);
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -254,6 +160,9 @@ onMounted(async () => {
       }
       return acc;
     }, []);
+    // currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase());
+    currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === "silver" && plan);
+    console.log({currentPlan});
     InAppPurchase2.ready(() => {
       products.value = InAppPurchase2.products;
       console.log("set up listeners after ready");
@@ -389,7 +298,6 @@ const {
   fetchPolicy: "no-cache",
 });
 
-const { type: currentSubscriptionType } = useSubscription();
 gotMyProfile(({ data }) => {
   if (data.me.currentSubscription !== currentSubscriptionType) {
     setAuthItemsFromMe(data.me);
@@ -425,6 +333,10 @@ const next = () => {
 const showAgreement = async (url: string) => {
   await Browser.open({ url });
 };
+
+const onChangeMembership = () => {
+  changeMembershipModal.value?.present();
+}
 </script>
 
 <style scoped lang="scss">
@@ -639,6 +551,13 @@ const showAgreement = async (url: string) => {
 }
 .membership {
   padding: 24px;
+  margin-top: 64px;
+
+  .membership-buttons {
+    padding-top: 48px;
+    font: 700 16px/1 var(--ion-font-family);
+
+  }
 }
 
 .radiobutton {

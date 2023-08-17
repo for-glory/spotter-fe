@@ -153,6 +153,7 @@ import {
   SettingsCodeEnum,
   UserDocument,
   DeleteProfileDocument,
+  SubscriptionsTypeEnum,
 } from "@/generated/graphql";
 import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
@@ -168,6 +169,7 @@ import { profileMenu } from "@/const/profile-menu";
 import useId from "@/hooks/useId";
 import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
 import { Capacitor } from "@capacitor/core";
+import useSubscription from "@/hooks/useSubscription";
 
 const router = useRouter();
 const route = useRoute();
@@ -180,6 +182,7 @@ const {
 
 const { id } = useId();
 const { role } = useRoles();
+const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
 
@@ -330,7 +333,8 @@ const goTo = (name: EntitiesEnum) => {
 
       break;
     case EntitiesEnum.ProfileMembership:
-      if(Capacitor.isNativePlatform()) {
+      console.log({currentSubscriptionType});
+      if(!Capacitor.isNativePlatform()) {
         router.push({
           name: EntitiesEnum.ChangeMembership,
           query: {
