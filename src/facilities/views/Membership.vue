@@ -61,13 +61,13 @@
           <ion-icon class="next" src="assets/icon/arrow-next.svg" @click="next"></ion-icon>
         </ion-radio-group>
         <div class="membership-buttons">
-          <ion-button @click="onChangeMembership">Change Membership</ion-button>
-          <ion-button >Cancel Membership</ion-button> 
+          <ion-button id="change" @click="onChangeMembership">Change Membership</ion-button>
+          <ion-button id="cancel" >Cancel Membership</ion-button> 
         </div>
       </div>
     </template>
   </base-layout>
-  <change-membership ref="changeMembershipModal"/>
+  <change-membership ref="changeMembershipModal" @cancel="cancelChangeMembership"/>
 </template>
 
 <script setup lang="ts">
@@ -555,8 +555,19 @@ const onChangeMembership = () => {
 
   .membership-buttons {
     padding-top: 48px;
-    font: 700 16px/1 var(--ion-font-family);
 
+    ion-button#change {
+      --background: var(--beige);
+      --border-radius: 12px;
+      --color: #000000;
+      font: 700 16px/1 var(--ion-font-family);
+    }
+    ion-button#cancel {
+      --background: #DBB582;
+      --border-radius: 12px;
+      --color: var(--gray-700);
+      font: 700 16px/1 var(--ion-font-family);
+    }
   }
 }
 

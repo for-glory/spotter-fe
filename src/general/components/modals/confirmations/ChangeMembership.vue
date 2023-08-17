@@ -11,124 +11,123 @@
 			</ion-toolbar>
 		</ion-header>
     <div class="ion-padding">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-sm="6" class="silver">
-            <ion-text>Current Plan</ion-text>
-            <div class="paragraph">
-              <ion-text>Bronze</ion-text>&nbsp; &nbsp;<ion-text
-                >$149.99</ion-text
-              >
-              <span>/per location</span>
-            </div>
-            <div class="flex-container">
-              <div>
-                <ion-icon
-                  src="assets/icon/medal.svg"
-                  class="silver grade-image"
-                />
-              </div>
-              <div>
-                <ul>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>All Bronze features +</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text
-                        >List unlimited offerings on the Network
-                        profile</ion-text
-                      >
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Reduced flat booking fee</ion-text>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </ion-col>
-          <ion-col size="12" size-sm="6" class="gold">
-            <ion-text>New Plan</ion-text>
-            <div class="paragraph">
-              <ion-text>Gold</ion-text>&nbsp; &nbsp;<ion-text>$199.99</ion-text>
-              <span class="gold-location">/for first location</span>
-            </div>
-            <div class="flex-container">
-              <div>
-                <ion-icon
-                  class="gold grade-image"
-                  src="assets/icon/medal.svg"
-                />
-              </div>
-              <div>
-                <ul>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>All Bronze & Silver features +</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text
-                        >Reporting features on Spotter Dashboard</ion-text
-                      >
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Marketing/branding consultation</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Reduced flat booking fee</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Create and post local events</ion-text>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <div class="current-plan">
+        <ion-text>Current Plan</ion-text>
+        <div class="paragraph">
+          <ion-text>Bronze</ion-text>&nbsp; &nbsp;<ion-text
+            >$149.99</ion-text
+          >
+          <span class="location">/per location</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              src="assets/icon/medal.svg"
+              class="silver grade-image"
+            />
+          </div>
+          <div>
+            <ul>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>All Bronze features +</ion-text>
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text
+                    >List unlimited offerings on the Network
+                    profile</ion-text
+                  >
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>Reduced flat booking fee</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <div class="split" />
+      </div>
+      <div class="new-plan">
+        <ion-text class="text-golden">New Plan</ion-text>
+        <div class="paragraph">
+          <ion-text class="text-golden">Gold</ion-text>&nbsp; &nbsp;<ion-text class="text-golden">$199.99</ion-text>
+          <span class="location">/for first location</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              class="gold grade-image"
+              src="assets/icon/medal.svg"
+            />
+          </div>
+          <div>
+            <ul>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>All Bronze & Silver features +</ion-text>
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text
+                    >Reporting features on Spotter Dashboard</ion-text
+                  >
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>Marketing/branding consultation</ion-text>
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>Reduced flat booking fee</ion-text>
+                </div>
+              </li>
+              <li class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>Create and post local events</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <div class="buttons">
-        <ion-button class="confirm" @click="handleConfirm"
+        <ion-button id="confirm" @click="handleConfirm"
           >Confirm change</ion-button
         >
-        <ion-button class="cancel" @click="onCancel">Cancel</ion-button>
+        <ion-button id="cancel" @click="onCancel">Cancel</ion-button>
       </div>
     </div>
   </ion-modal>
@@ -163,7 +162,9 @@ defineExpose({
 <style scoped lang="scss">
 .flex-container {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  gap: 17px;
+  width: 100%;
   ion-text {
     font-size: 0.8rem;
   }
@@ -171,9 +172,17 @@ defineExpose({
     color: rgb(141, 112, 15);
   }
 }
+.current-plan {
+  color: var(--grey-text);
+}
+.new-plan {
+  .text-golden {
+    color: var(--gold);
+  }
+}
 .grade-image {
-  width: 2rem;
-  height: 2rem;
+  width: 70px;
+  height: 70px;
   padding: 1.2rem;
   border-radius: 10px;
   align-items: center;
@@ -191,12 +200,16 @@ defineExpose({
   padding: 0.5rem 1rem;
   border: 2px solid grey;
 }
+.split {
+  background-color: #DBB582;
+  width: 77px;
+  height: 1px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
 .paragraph {
   padding-top: 1.2rem;
   padding-bottom: 0.8rem;
-  span {
-    font-size: 0.7rem;
-  }
 }
 .color {
   color: grey;
@@ -215,35 +228,45 @@ ul {
         font-size: 6px;
       }
       ion-text {
-        font-size: 0.7rem;
+        font-size: 12px;
       }
     }
   }
 }
-.gold-location {
-  color: var(--silver);
+.location {
+  color: var(--grey-text);
+  font: 12px/1 var(--ion-font-family);
 }
 .buttons {
   text-align: center;
-  margin-top: 0.5rem;
-}
-.confirm {
-  width: 10rem;
-  color: var(--gold);
-  margin-right: 1.5rem;
-  --background: rgb(43, 42, 42);
-  height: 45px;
-}
-.cancel {
-  width: 10rem;
-  color: rgb(31, 30, 30);
-  --background: grey;
-  height: 45px;
+  margin-top: 30px;
+  margin-bottom: 25px;
+
+  ion-button#confirm {
+    --background: #DBB582;
+    font: bold 16px/1 var(--ion-font-family);
+    width: 144px;
+    height: 41px;
+  }
+  ion-button#cancel {
+    --background: grey;
+    font: bold 16px/1 var(--ion-font-family);
+    width: 144px;
+    height: 41px;
+  }
 }
 ion-modal#modal {
   --height: rem;
-  --width: 41rem;
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.6);
+  --width: 330px;
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.8);
+  padding: 24px;
+}
+ion-header {
+  background-color: var(--gray-700);
+  
+  ion-toolbar {
+    --background: var(--gray-700);
+  }
 }
 .title {
   border-top: 2px solid grey;
@@ -251,6 +274,10 @@ ion-modal#modal {
   border-right: 2px solid grey;
   padding-right: 1rem;
   padding-left: 0.4rem;
+
+  ion-title {
+    --color: white;
+  }
 }
 .close {
   width: 1rem;
