@@ -74,7 +74,7 @@
           </div>
         </div>
       </div>
-      <div class="buttons">
+      <div class="buttons d-flex align-items-center justify-content-between">
         <ion-button id="confirm" @click="handleConfirm"
           >Confirm change</ion-button
         >
@@ -157,7 +157,7 @@ defineExpose({
   color: var(--bronze);
 }
 .ion-padding {
-  padding: 0.5rem 1rem;
+  padding: 29px 23px 25px;
   border: 2px solid grey;
 }
 .split {
@@ -198,9 +198,7 @@ ul {
   font: 12px/1 var(--ion-font-family);
 }
 .buttons {
-  text-align: center;
   margin-top: 30px;
-  margin-bottom: 25px;
 
   ion-button#confirm {
     --background: #DBB582;
@@ -217,7 +215,7 @@ ul {
 }
 ion-modal#modal {
   --height: rem;
-  --width: 330px;
+  --width: 378px;
   --backdrop-opacity: var(--ion-backdrop-opacity, 0.8);
   padding: 24px;
 }
