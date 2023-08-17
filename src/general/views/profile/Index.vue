@@ -167,6 +167,7 @@ import useRoles from "@/hooks/useRole";
 import { profileMenu } from "@/const/profile-menu";
 import useId from "@/hooks/useId";
 import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
+import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
 const route = useRoute();
@@ -329,6 +330,15 @@ const goTo = (name: EntitiesEnum) => {
 
       break;
     case EntitiesEnum.ProfileMembership:
+      if(Capacitor.isNativePlatform()) {
+        router.push({
+          name: EntitiesEnum.ChangeMembership,
+          query: {
+            facilityId: route?.query?.facilityId || "",
+          },
+        });
+        break;
+      }
       router.push({
         name,
         query: {
