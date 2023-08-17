@@ -5,7 +5,7 @@
 				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="handleCancel">
-						<ion-icon src="assets/icon/red-close.svg" class="close" />
+						<ion-icon src="assets/icon/close.svg" class="close" />
 					</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
@@ -107,9 +107,16 @@ const present = (props: any) => {
   modal?.value?.$el.present();
 };
 
+const emit = defineEmits<{
+  (e: "confirm", newPlan: any): void;
+}>();
 
 const onCancel = () => {
   modal?.value?.$el.dismiss();
+}
+
+const handleConfirm = () => {
+  emit('confirm',newPlan);
 }
 
 defineExpose({
@@ -124,9 +131,6 @@ defineExpose({
   width: 100%;
   ion-text {
     font-size: 0.8rem;
-  }
-  ion-icon.gold {
-    color: rgb(141, 112, 15);
   }
 }
 .current-plan {
@@ -151,7 +155,7 @@ defineExpose({
   color: var(--silver);
 }
 .gold {
-  color: var(--gold);
+  color: #DBB582;
 }
 .bronze {
   color: var(--bronze);

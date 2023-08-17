@@ -18,7 +18,7 @@
               <ion-item
                 lines="none"
                 class="radiobutton"
-                @click="selectMembership(plan.id)"
+                @click="selectMembership(plan)"
               >
                 <div class="radiobutton__block">
                   <div class="radiobutton__icon">
@@ -56,7 +56,7 @@
                     * Taxes and fees may apply.
                   </div>
                 </div>
-                <ion-radio :value="4" slot="end"></ion-radio>
+                <ion-radio :value="plan.id" slot="end"></ion-radio>
               </ion-item>
             </ion-slide>
           </ion-slides>
@@ -70,7 +70,7 @@
       </div>
     </template>
   </base-layout>
-  <change-membership ref="changeMembershipModal" @cancel="cancelChangeMembership"/>
+  <change-membership ref="changeMembershipModal" @confirm="confirmChange"/>
 </template>
 
 <script setup lang="ts">
@@ -146,6 +146,7 @@ onMounted(async () => {
     process.env.VUE_APP_IAP_RECEIPT_VALIDATION_URL + `/${id}`;
   // InAppPurchase2.validator = validationUrl;
   InAppPurchase2.applicationUsername = () => id;
+  console.log({InAppPurchase2});
 
   onPlansResult(async ({ data }) => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
@@ -163,9 +164,7 @@ onMounted(async () => {
       }
       return acc;
     }, []);
-    // currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase());
-    currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === "silver" && plan);
-    console.log({currentPlan});
+    currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase() && plan);
     InAppPurchase2.ready(() => {
       products.value = InAppPurchase2.products;
       console.log("set up listeners after ready");
@@ -181,6 +180,7 @@ const registerProducts = async () => {
       type: InAppPurchase2.PAID_SUBSCRIPTION,
     });
   });
+  console.log({InAppPurchase2});
   setupListeners();
   InAppPurchase2.refresh();
 };
@@ -253,45 +253,6 @@ const setupListeners = async () => {
 
   InAppPurchase2.error(errorEvent);
 };
-const purchase = () => {
-  isLoading.value = true;
-  if (Capacitor.isNativePlatform()) {
-    InAppPurchase2.order(selectedItem.value)
-      .then(() => {
-        isLoading.value = false;
-        console.log(
-          "entered into Apple/Google pop up with the purchase confirmation"
-        );
-      })
-      .error((error: any) => {
-        isLoading.value = false;
-        errorMessage.value = `Failed to purchase: ${error}`;
-      });
-  } else {
-    console.log('Web platform', selectedItem.value);
-    router.push({
-      name: EntitiesEnum.SubscriptionPaymentMethod,
-      params: { subscriptionId: selectedItem.value.product_id },
-      query: {
-          facilityId: route?.query?.facilityId || "",
-        },
-    });
-  }
-};
-
-const selectProduct = (plan: any) => {
-  if (Capacitor.isNativePlatform()) {
-    selectedItem.value = InAppPurchase2.products
-      .filter((value) => {
-        return value.id === plan.subscriptionPlan.product_id;
-      })
-      .pop();
-  } else {
-    console.log('Web platform');
-    console.log('plan.subscriptionPlan', plan.subscriptionPlan);
-    selectedItem.value = plan.subscriptionPlan
-  }
-};
 
 const {
   loading,
@@ -339,14 +300,30 @@ const showAgreement = async (url: string) => {
 
 const onChangeMembership = () => {
   slide.value?.$el.getActiveIndex().then((index: number) => {
-    console.log("*********", slide.value?.$el.getActiveIndex());
     console.log({index});
     changeMembershipModal.value?.present({ currentPlan, newPlan: plans.value[index] });
   });
 }
 
-const selectMembership = () => {
-  console.log("**********");
+const selectMembership = (plan: any) => {
+  console.log("********");
+}
+const confirmChange = (newPlan: any) => {
+  isLoading.value = true;
+  console.log(newPlan.value);
+  console.log({InAppPurchase2});
+  console.log("[IAP] verbosity: " + InAppPurchase2.verbosity);
+  InAppPurchase2.order(newPlan.value)
+    .then(() => {
+      isLoading.value = false;
+      console.log(
+        "entered into Apple/Google pop up with the purchase confirmation"
+      );
+    })
+    .error((error: any) => {
+      isLoading.value = false;
+      errorMessage.value = `Failed to purchase: ${error}`;
+    });
 }
 </script>
 
