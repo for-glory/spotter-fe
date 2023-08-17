@@ -45,7 +45,7 @@
       <template #footer>
         <div class="holder-button">
           <ion-button
-            @back="onBack"
+            @click="onBack"
             :disabled="!selectedCity"
             class="button--submit"
             expand="block"
@@ -77,6 +77,7 @@ import { EntitiesEnum } from "@/const/entities";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
 import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
+import { useNewFacilityStore } from "../store/new-facility";
 
 const router = useRouter();
 
@@ -89,8 +90,10 @@ const selectedState = ref<any>();
 const selectedCity = ref<any>();
 const selectedAddress = ref<NativeGeocoderResult>();
 const description = ref("");
+const store = useNewFacilityStore();
 
 const onBack = () => {
+  store.setAddress(selectedState, selectedCity, selectedAddress);
   router.go(-1);
 };
 

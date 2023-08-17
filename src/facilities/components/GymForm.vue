@@ -41,7 +41,7 @@
         title="Location"
         class="form-row__control"
         @handle-click="onChooseLocation"
-        :value="selectedState?.name"
+        :value="selectedState?.name + ', ' + selectedCity?.name"
       />
       <!-- <choose-block
         title="State"
@@ -67,7 +67,7 @@
             : ''
         "
       /> -->
-      <div class="address-container">
+      <!-- <div class="address-container">
         <ion-text class="address-content">
           Address
         </ion-text>
@@ -85,7 +85,7 @@
           }"
           @place_changed="setPlace"
         >
-      </GMapAutocomplete>
+      </GMapAutocomplete> -->
     </div>
 
     <div class="form-row">
