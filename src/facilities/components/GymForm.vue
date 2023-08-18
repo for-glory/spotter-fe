@@ -246,7 +246,8 @@ const onChooseAmenities = () => {
 
 const onChooseLocation = () => {
   router.push({
-    name: EntitiesEnum.ProfileGymLocation, 
+    name: EntitiesEnum.ChooseLocation, 
+    params: { type: 'facility' }
   });
 }
 
