@@ -1,8 +1,8 @@
 <template>
   <base-auth-layout hide-header>
     <template  #left-section>
-      <div class="content">
-        <div class="d-flex justify-content-between align-items-center">
+      <div :class="!Capacitor.isNativePlatform() ? 'content' : ''">
+        <div v-if="!Capacitor.isNativePlatform()" class="d-flex justify-content-between align-items-center">
           <router-link
             to="/"
           >
@@ -21,7 +21,8 @@
             Log out
           </ion-button>
         </div>
-        <div class="top-buttons">
+        <ion-icon v-if="Capacitor.isNativePlatform()" src="assets/icon/arrow-back.svg" class="back-button" />
+        <div v-else class="top-buttons">
           <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
             Go to Dashboard
             <ion-icon src="assets/icon/arrow-next.svg" />
@@ -64,6 +65,7 @@ import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 const goToDashboard = () => {
@@ -128,13 +130,17 @@ const onLogout = () => {
   width: 220px;
   min-width: 60px;
 }
+.back-button {
+  width: 24px;
+  height: 24px;
+}
 .title {
   padding: 0;
   font-size: 28px;
   line-height: 1.3;
   font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin-bottom: 64px;
+  margin-top: 44px;
   text-align: center;
 }
 .content {
