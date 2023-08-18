@@ -281,10 +281,17 @@ const isValidForm = computed(
 
 const handleSubmit = () => {
   if (isValidForm.value) {
-    router.push({
-      name: EntitiesEnum.CreateExercise,
-      params: { id: uuidv4() },
-    });
+    if(Capacitor.isNativePlatform()) {
+      router.push({
+        name: EntitiesEnum.Profile
+      });
+    }
+    else {
+      router.push({
+        name: EntitiesEnum.CreateExercise,
+        params: { id: uuidv4() },
+      });
+    }
   }
 };
 
