@@ -327,6 +327,26 @@ export type CreateFacilityInput = {
   registration_code?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateFacilityItemInput = {
+  facility_id: Scalars['ID'];
+  title: Scalars['String'];
+  front_price?: Scalars['String'];
+  price: Scalars['Int'];
+  product_id: Scalars['String'];
+  qr_code_lifetime_enum?: Scalars['String'];
+  qr_code_lifetime_value?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
+};
+
+export type FacilityDashboardWidget = {
+  event_count?: Scalars['Int'],
+  message_count?: Scalars['Int'],
+  expiring_membership_count?: Scalars['Int'],
+  today_earn?: Scalars['Int'],
+  earn_last_thirty_days?: Scalars['Int'],
+  year_earn?: Scalars['Int']
+};
+
 export type CreateQuizzAnswerInput = {
   quizz_id: Scalars['ID'];
   value: Scalars['StringOrUpload'];
@@ -701,6 +721,7 @@ export type Mutation = {
   createDeviceToken: DeviceToken;
   createEvent?: Maybe<Event>;
   createFacility: Facility;
+  createFacilityItem: FacilityItem;
   createQuizzAnswer: QuizzAnswer;
   createTrainerWorkout: Workout;
   createGymWorkout: Workout;
@@ -814,6 +835,9 @@ export type MutationCreateFacilityArgs = {
   input: CreateFacilityInput;
 };
 
+export type MutationCreateFacilityItemArgs = {
+  input: CreateFacilityItemInput;
+};
 
 export type MutationCreateQuizzAnswerArgs = {
   input: CreateQuizzAnswerInput;
@@ -1351,6 +1375,7 @@ export type Query = {
   workoutTypes?: Maybe<WorkoutTypePaginator>;
   /** Get list of workouts for the auth trainer. */
   workouts?: Maybe<WorkoutPaginator>;
+  facilityDashboardWidget?: Maybe<FacilityDashboardWidget>;
 };
 
 
@@ -2939,6 +2964,10 @@ export type CreateFacilityMutationVariables = Exact<{
   input: CreateFacilityInput;
 }>;
 
+export type CreateFacilityItemMutationVariables = Exact<{
+  input: CreateFacilityItemInput;
+}>;
+
 
 export type CreateFacilityMutation = { __typename?: 'Mutation', createFacility: { __typename?: 'Facility', id: string, name: string, description: string, score?: number | null, equipments?: Array<{ __typename?: 'Equipment', name?: string | null, iconUrl?: string | null } | null> | null, amenities?: Array<{ __typename?: 'Amenity', name?: string | null, iconUrl?: string | null } | null> | null, organization: { __typename?: 'Organization', id: string, name: string, email: string } } };
 
@@ -3314,6 +3343,9 @@ export type DashboardWidgetQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DashboardWidgetQuery = { __typename?: 'Query', me: { __typename?: 'User', completed_trainings_count?: number | null, checkins_count: number, reviews_count?: number | null, positive_reviews_count?: number | null, negative_reviews_count?: number | null, recommended_count?: number | null, left_reviews_count?: number | null, trainings_count: number, trainer_dashboard_stats?: { __typename?: 'TrainerDashboardStats', total_earn?: number | null, earn_last_thirty_days?: number | null, total_bookings?: number | null } | null } };
+
+export type FacilityDashboardWidgetQueryVariables = Exact<{ [key: string]: never; }>;
+export type FacilityDashboardWidgetQuery = { __typename?: 'Query', facilityDashboardWidget: { __typename?: 'dashboard', event_count?: number | null, message_count?: number | null, expiring_membership_count?: number | null, today_earn?: number | null, earn_last_thirty_days?: number | null, year_earn?: number | null} };
 
 export type EquipmentsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -6104,6 +6136,30 @@ export const MyFacilityItemPassesDocument = gql`
     paginatorInfo {
       total
     }
+  }
+}
+    `;
+export const FacilityDashboardWidgetDocument = gql`
+query facilityDashboardWidget($id:ID!) {
+  facilityDashboardWidget(id: $id) {
+    event_count
+    message_count
+    expiring_membership_count
+    today_earn
+    earn_last_thirty_days
+    year_earn
+    checkin_data
+  }
+}
+    `;
+export const CreateFacilityItemDocument = gql`
+    query createFacilityItem($input: CreateFacilityItemInput!) {
+  createFacilityItem(input: $input) {
+    id
+    title
+    price
+    facility_id
+    product_id
   }
 }
     `;

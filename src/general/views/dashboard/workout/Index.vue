@@ -175,13 +175,10 @@ const { result: recommendedResult, loading: recommendedLoading } = useQuery(
 );
 
 const recommendedWorkouts = computed(
-  () => {
-    const res = recommendedResult.value?.recommendedWorkouts?.data?.filter(
+  () => 
+    recommendedResult.value?.recommendedWorkouts?.data?.filter(
       (workout: Workout) => !workout?.was_ordered_by_me
     ) || []
-
-    return [...res, ...res, ...res]
-  }
 );
 
 const {
