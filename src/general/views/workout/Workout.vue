@@ -37,10 +37,10 @@
         <workout-form 
           ref="workoutForm"
           has-skip-button
-          @submit="createWorkout"
-          @onSkip="goToWorkout"
-			    skipText="Exit"
-          :loading="eventOnCreation"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
         />
       </div>
     </template>
