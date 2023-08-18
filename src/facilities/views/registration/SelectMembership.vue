@@ -159,7 +159,7 @@
 												</ul>
 											</div>
 										</div>
-										<ion-radio :value="4" slot="end"></ion-radio>
+										<ion-radio :value="plan.id" slot="end"></ion-radio>
 									</ion-item>
 								</ion-slide>
 							</ion-slides>
