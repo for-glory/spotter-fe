@@ -22,20 +22,23 @@
     </div>
 
     <div class="form-row">
-      <ion-label class="label"> Choose intensity level </ion-label>
-      <choose-block
-        title="Workout type"
-        :value="workoutType"
-        @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
-      />
-    </div>
-
-    <div class="form-row">
       <ion-label class="label"> Choose muscle group </ion-label>
       <choose-block
         title="Select muscle group"
         :value="muscleTypesValue"
         @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
+      />
+    </div>
+
+    <div class="form-row">
+      <base-input
+        v-model:value="priceValue"
+        :error-message="priceError"
+        placeholder="Enter price"
+        type="number"
+        name="price"
+        label="Set the price for workout (USD $)"
+        required
       />
     </div>
 
@@ -59,14 +62,11 @@
     </div>
 
     <div class="form-row">
-      <base-input
-        v-model:value="priceValue"
-        :error-message="priceError"
-        placeholder="Enter price"
-        type="number"
-        name="price"
-        label="Set the price for workout (USD $)"
-        required
+      <ion-label class="label"> Choose intensity level </ion-label>
+      <choose-block
+        title="Workout type"
+        :value="workoutType"
+        @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
       />
     </div>
 
@@ -84,6 +84,7 @@
         type="submit"
         expand="block"
         :disabled="!isValidForm"
+        v-if="hasSubmitButton"
       >
         {{submitButtonText}}
       </ion-button>
@@ -170,6 +171,7 @@ const props = withDefaults(
     submitButtonText?: string;
     skipText?: string;
     hasSkipButton?: boolean;
+    hasSubmitButton?: boolean;
   }>(),
   {
     submitButtonText: "Upload & Finish",

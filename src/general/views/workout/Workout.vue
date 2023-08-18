@@ -36,12 +36,27 @@
         </ion-title>
         <workout-form 
           ref="workoutForm"
-          has-skip-button
           @submit="handleSubmit"
           @onSkip="onBack"
 			    @open-picker="(e) => openPicker(e)"
           skipText="Exit"
         />
+        <div class="holder-button">
+          <ion-button
+            expand="block"
+            class="secondary"
+            @click="onBack"
+          >
+            Exit
+          </ion-button>
+          <ion-button
+            @click="handleSubmit"
+            expand="block"
+            :disabled="!isValidForm"
+          >
+            Upload & Finish
+          </ion-button>
+        </div>
       </div>
     </template>
   </base-auth-layout>
@@ -286,5 +301,13 @@ const onLogout = () => {
 }
 .dashboard-btn {
   margin-top: 10px;
+}
+.holder-button {
+  display: flex;
+  gap: 16px;
+
+  .button {
+    margin: 0;
+  }
 }
 </style>
