@@ -376,6 +376,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ChooseLocation,
+    path: "/choose-location/:type",
+    component: () => import("@/general/views/ChooseLocation.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     path: "/dashboard/",
     component: () => import("@/general/views/dashboard/Index.vue"),
     meta: {

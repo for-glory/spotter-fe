@@ -23,6 +23,7 @@ export enum EntitiesEnum {
   SubscriptionPaymentMethod = "SUBSCRIPTION_PAYMENT_METHOD",
   ProfileScan = "PROFILE_SCAN",
   ProfileEditGym = "PROFILE_EDIT_GYM",
+  ChooseLocation = "CHOOSE_LOCATION",
   AddNewGym = "ADD_NEW_GYM",
   Login = "LOGIN",
   Register = "REGISTER",

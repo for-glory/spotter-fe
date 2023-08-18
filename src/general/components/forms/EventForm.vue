@@ -204,7 +204,7 @@
           :disabled="loading"
           class="form-row__control"
           @handle-click="onChooseLocation"
-          :value="selectedState?.name + ', ' + selectedCity?.country?.name"
+          :value="selectedState?.name + ', ' + selectedCity?.name"
         />
       </div>
     </template>
@@ -417,6 +417,8 @@ const eventDescriptionChange = (value: string) => {
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
+console.log({selectedCity});
+console.log({selectedState});
 
 const eventStartDate = computed(() => store.start_date);
 const eventEndDate = computed(() => store.end_date);
@@ -504,7 +506,8 @@ const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 
 const onChooseLocation = () => {
   router.push({
-    name: EntitiesEnum.ProfileGymLocation, 
+    name: EntitiesEnum.ChooseLocation, 
+    params: { type: 'event' }
   });
 }
 
