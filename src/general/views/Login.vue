@@ -45,7 +45,7 @@ const form = ref<LoginMutationVariables>({
 
 onDone(({ data, errors }) => {
   if (!data && errors) {
-    throw new Error(String(errors[0].extensions.reason))
+    throw new Error(String(errors[0].extensions.errors.message))
   }
   
   setAuthItems(data.login);
