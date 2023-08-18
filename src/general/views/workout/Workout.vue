@@ -34,86 +34,14 @@
         <ion-title class="title" color="primary">
           Create your workout plan
         </ion-title>
-        <div class="form-row">
-          <ion-label class="label"> Choose cover for workout </ion-label>
-          <photo-loader
-            :photo="store.workoutPreview"
-            @change="photoSelected"
-            :loading="filePreloadLoading"
-            :progress="percentLoaded"
-          />
-        </div>
-
-        <div class="form-row">
-          <base-input
-            v-model:value="titleValue"
-            :error-message="titleError"
-            placeholder="Enter title"
-            name="workoutTitle"
-            label="Title of workout"
-            required
-          />
-        </div>
-
-        <div class="form-row">
-          <ion-label class="label"> Choose intensity level </ion-label>
-          <choose-block
-            title="Workout type"
-            :value="workoutType"
-            @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
-          />
-        </div>
-
-        <div class="form-row">
-          <ion-label class="label"> Choose muscle group </ion-label>
-          <choose-block
-            title="Select muscle group"
-            :value="muscleTypesValue"
-            @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
-          />
-        </div>
-
-        <div class="form-row">
-          <ion-label class="label">
-            Choose the duration for the whole workout
-          </ion-label>
-          <wheel-picker
-            :options="durationOptions"
-            name="duration"
-            :values="[duration, 'min']"
-          >
-            <template #button>
-              <choose-block
-                title="Duration"
-                :value="duration ? `${duration} min` : ''"
-                @handle-click="openPicker('duration')"
-              />
-            </template>
-          </wheel-picker>
-        </div>
-
-        <div class="form-row">
-          <base-input
-            v-model:value="priceValue"
-            :error-message="priceError"
-            placeholder="Enter price"
-            type="number"
-            name="price"
-            label="Set the price for workout (USD $)"
-            required
-          />
-        </div>
-
-        <div class="action-wrap">
-          <ion-button
-            @click="handleSubmit"
-            type="submit"
-            expand="block"
-            :disabled="!isValidForm"
-          >
-						Next step
-          </ion-button>
-        </div>
+        <workout-form 
+          ref="workoutForm"
+          has-skip-button
+          @submit="createWorkout"
+          @onSkip="goToWorkout"
+			    skipText="Exit"
+          :loading="eventOnCreation"
+        />
       </div>
     </template>
   </base-auth-layout>
@@ -144,6 +72,7 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
 import { clearAuthItems } from "@/router/middleware/auth";
+import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 
 const percentLoaded = ref(0);
 
@@ -198,6 +127,7 @@ const emitter: Emitter<Record<EventType, unknown>> | undefined =
 const openPicker = (name: string): void => {
   emitter?.emit("open-picker", name);
 };
+const workoutForm = ref<typeof WorkoutForm | null>(null);
 
 onMounted(() => {
   if (store.workoutTitle) {
