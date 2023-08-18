@@ -335,6 +335,12 @@ const goTo = (name: EntitiesEnum) => {
     case EntitiesEnum.ProfileMembership:
       console.log({currentSubscriptionType});
       if(Capacitor.isNativePlatform()) {
+        if(currentSubscriptionType === 'BASIC') {
+          router.push({
+            name: EntitiesEnum.StartMembership,
+          });
+          break;
+        }
         router.push({
           name: EntitiesEnum.ChangeMembership,
           query: {
