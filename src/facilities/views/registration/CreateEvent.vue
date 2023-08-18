@@ -1,14 +1,46 @@
 <template>
-	<div class="content">
-		<event-form
-			ref="eventForm"
-			has-skip-button
-			@submit="createEvent"
-			@onSkip="handleCancel"
-			skipText="Cancel"
-			:loading="eventOnCreation"
-		/>
-	</div>
+  <base-auth-layout hide-header>
+    <template  #left-section>
+      <div class="content">
+        <div class="d-flex justify-content-between align-items-center">
+          <router-link
+            to="/"
+          >
+            <ion-img
+              src="assets/icon/logo-complete.png"
+              class="logo"
+              alt="logo"
+            />
+          </router-link>
+          <ion-button
+            class="login-btn"
+            type="button"
+            fill="clear"
+            @click="onLogout"
+          >
+            Log out
+          </ion-button>
+        </div>
+        <div class="top-buttons">
+          <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
+            Go to Dashboard
+            <ion-icon src="assets/icon/arrow-next.svg" />
+          </ion-button>
+        </div>
+        <ion-title class="title" color="primary">
+          Create your first event
+        </ion-title>
+        <event-form
+          ref="eventForm"
+          has-skip-button
+          @submit="createEvent"
+          @onSkip="goToWorkout"
+			    skipText="Skip"
+          :loading="eventOnCreation"
+        />
+      </div>
+    </template>
+  </base-auth-layout>
   <discard-changes
     :is-open="isConfirmedModalOpen"
     @close="discardModalClosed"
@@ -22,20 +54,18 @@ import {
   IonTitle,
 } from "@ionic/vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
-import { useRouter,useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
 import { toastController } from "@ionic/vue";
 import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
 const route = useRoute();
-const currentFacility = useFacilityStore();
 const goToDashboard = () => {
   // isConfirmedModalOpen.value = true;
   eventForm.value?.clearStore();
@@ -59,12 +89,12 @@ const {
 } = useMutation(CreateEventDocument);
 
 const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input: { ...input, facility_id: currentFacility.facility.id } });
+  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
 };
 
-const handleCancel = () => {
+const goToWorkout = () => {
   eventForm.value?.clearStore();
-  router.push({ name: EntitiesEnum.DashboardEvent });
+  router.push({ name: EntitiesEnum.CreateWorkout });
 };
 
 const eventForm = ref<typeof EventForm | null>(null);
@@ -74,7 +104,7 @@ eventCreated(() => {
   eventForm.value?.clearStore();
   // router.go(-1);
   router.push({
-      name: EntitiesEnum.DashboardEvent,
+      name: EntitiesEnum.CreateWorkout,
     });
 });
 
@@ -86,6 +116,10 @@ const showSuccessToast = async () => {
     cssClass: "success-toast",
   });
   return toast.present();
+};
+const onLogout = () => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 

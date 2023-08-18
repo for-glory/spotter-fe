@@ -134,6 +134,7 @@ facilityCreated((res) => {
       },
     });
   }
+  localStorage.setItem("first_facility", res?.data?.createFacility.id)
 });
 
 updatedSubscription(() => {
@@ -146,7 +147,8 @@ updatedSubscription(() => {
   }
   else if(actionAfterSiubmit.value === "create_event") {
     router.push({
-      name: EntitiesEnum.CreateEvent,
+      name: EntitiesEnum.RegisterCreateEvent,
+      params: { facility_id: localStorage.getItem("first_facility") },
     });
   }
 });

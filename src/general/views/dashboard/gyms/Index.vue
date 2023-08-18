@@ -69,7 +69,7 @@
     <div class="panel">
       <div>
         <ion-button class="share-btn">Share Gym</ion-button>
-        <div class="d-flex align-items-center justify-content-between black-box">
+        <!-- <div class="d-flex align-items-center justify-content-between black-box">
           <div :class="filter === 'recent' ? 'active-button' : 'normal-button'" @click="handleClick('recent')">Recent</div>
           <div :class="filter === 'positive' ? 'active-button' : 'normal-button'" @click="handleClick('positive')">Positive</div>
           <div :class="filter === 'negative' ? 'active-button' : 'normal-button'" @click="handleClick('negative')">Negative</div> 
@@ -95,6 +95,29 @@
             <ion-text class="review-date">{{"6 June, 2022"}}</ion-text>
           </div>
           <ion-text class="review-message">{{"Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me."}}</ion-text>
+        </div> -->
+        <div class="tabs-holder">
+          <page-tabs
+            :tabs="tabs"
+            class="page-tabs ion-padding-horizontal"
+            :value="activeTab"
+            @change="tabsChanged"
+          />
+          <div class="content ion-padding-horizontal">
+            <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
+            <div v-else>
+              <review-item
+                v-for="review in reviews"
+                :key="review.id"
+                class="review-item"
+                :avatar-url="review.avatarUrl"
+                :full-name="review.fullName"
+                :date="review.date"
+                :rating="review.rating"
+                :text="review.text"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div class="contact-field">
@@ -124,15 +147,18 @@ import {
   Facility,
   FollowDocument,
   FollowTypeEnum,
-  MeDocument,
+  FeedbackEntityEnum,
   Query,
   Review,
   ReviewsDocument,
-  RoleEnum,
+  ReviewTypeEnum,
   SettingsCodeEnum,
   UnfollowDocument,
 } from "@/generated/graphql";
+import { TabItem } from "@/interfaces/TabItem";
+import { Review as UserReview } from "@/ts/types/user";
 import { useQuery } from "@vue/apollo-composable";
+import PageTabs from "@/general/components/PageTabs.vue";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
@@ -155,6 +181,27 @@ const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
     id: currentFacility.facility.id,
   }
 );
+
+const tabs: TabItem[] = [
+  {
+    name: ReviewTypeEnum.Recent,
+    label: "Recent",
+  },
+  {
+    name: ReviewTypeEnum.Positive,
+    label: "Positive",
+  },
+  {
+    name: ReviewTypeEnum.Negative,
+    label: "Negative",
+  },
+];
+
+const activeTab = ref<ReviewTypeEnum>(ReviewTypeEnum.Recent);
+
+const tabsChanged = (newTab: ReviewTypeEnum) => {
+  activeTab.value = newTab;
+};
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
@@ -225,6 +272,39 @@ const router = useRouter();
 const handleClick = (value: string) => {
 	filter.value = value;
 }
+
+
+const {
+  result: reviewsResult,
+  loading: reviewLoading,
+  refetch,
+} = useQuery(ReviewsDocument, () => ({
+  id: currentFacility.facility.id,
+  type: FeedbackEntityEnum.Facility,
+  review_type: activeTab.value,
+}));
+
+onMounted(() => {
+  refetch();
+});
+
+const reviews = computed(() =>
+  reviewsResult?.value?.reviews?.data.reduce(
+    (acc: UserReview[], cur: Review) => {
+      acc.push({
+        id: cur.id,
+        date: cur.created_at,
+        rating: cur.score || 0,
+        text: cur.review,
+        avatarUrl: cur.author?.avatarUrl || "",
+        fullName: `${cur.author?.first_name} ${cur.author?.last_name}`,
+      });
+      return acc;
+    },
+    []
+  )
+);
+
 
 </script>
 
@@ -434,5 +514,8 @@ const handleClick = (value: string) => {
   top: 50vh;
   left: 50vw;
   --color: var(--ion-color-white);
+}
+.review-spinner {
+  margin: 20px auto;
 }
 </style>

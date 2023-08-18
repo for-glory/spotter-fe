@@ -89,15 +89,26 @@ import {
   IonSegment,
   IonSegmentButton,
 } from "@ionic/vue";
+import {
+  PaymentGatewayRefundDocument,
+  Query,
+  SettingsCodeEnum,
+  TrainingDocument,
+  TrainingStatesEnum,
+  FacilityItemPassDocument,
+} from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
+import { useLazyQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
+const currentFacility = useFacilityStore();
 
 const changeSegment = (segment: string) => {
   activeTab.value = segment;
@@ -106,6 +117,14 @@ const changeSegment = (segment: string) => {
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
+
+const {
+  result: facilityResult,
+  load: getFacility,
+  onResult: gotFacility,
+} = useLazyQuery<Pick<Query, "facilityItemPass">>(FacilityItemPassDocument, {
+  id: currentFacility.facility.id,
+});
 </script>
 
 <style scoped lang="scss">

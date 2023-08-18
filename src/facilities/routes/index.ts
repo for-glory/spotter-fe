@@ -83,6 +83,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.RegisterCreateEvent,
+    path: "/register/create-event",
+    component: () =>
+      import("@/facilities/views/registration/CreateEvent.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileEditGym,
     path: "/profile/edit-gym",
     component: () => import("@/facilities/views/EditGym.vue"),
