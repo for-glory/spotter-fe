@@ -41,6 +41,13 @@
 			    @open-picker="(e) => openPicker(e)"
           skipText="Exit"
         />
+        <exercise-form 
+          ref="exerciseForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
         <div class="holder-button">
           <ion-button
             expand="block"
@@ -88,6 +95,7 @@ import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
 import { clearAuthItems } from "@/router/middleware/auth";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
+import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 
 const percentLoaded = ref(0);
 
@@ -143,6 +151,7 @@ const openPicker = (name: string): void => {
   emitter?.emit("open-picker", name);
 };
 const workoutForm = ref<typeof WorkoutForm | null>(null);
+const exerciseForm = ref<typeof ExerciseForm | null>(null);
 
 onMounted(() => {
   if (store.workoutTitle) {
