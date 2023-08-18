@@ -96,11 +96,16 @@
             type="submit"
             expand="block"
             class="secondary"
-            :disabled="!isValidForm"
+            :disabled="!isValidForm||createWorkoutLoading"
           >
             {{ isEditing ? "Save exercise" : "Finish workout" }}
           </ion-button>
         </div>
+        <transition>
+          <ion-note v-if="errorMessage">
+            {{ errorMessage }}
+          </ion-note>
+        </transition>
       </div>
     </template>
   </base-auth-layout>
@@ -109,7 +114,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { IonLabel, IonButton, IonIcon, IonTitle } from "@ionic/vue";
+import { IonLabel, IonButton, IonIcon, IonTitle, IonNote } from "@ionic/vue";
 import { useField } from "vee-validate";
 import { useRouter, useRoute } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
@@ -118,16 +123,23 @@ import { useWorkoutsStore } from "../../../trainers/store/workouts";
 import { EntitiesEnum } from "@/const/entities";
 import UploadVideo from "@/general/components/UploadVideo.vue";
 import { dataURItoFile } from "@/utils/fileUtils";
-import { FilePreloadDocument } from "@/generated/graphql";
+import {
+  FilePreloadDocument,
+  CreateGymWorkoutDocument,
+  CreateGymWorkoutInput,
+  WorkoutVideosInput,
+} from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 
 const router = useRouter();
 const route = useRoute();
 const store = useWorkoutsStore();
+const errorMessage = ref("");
 
 const exerciseDescription = ref<string>("");
 const isConfirmationOpen = ref<boolean>(false);
@@ -263,14 +275,46 @@ const handleFinishWorkout = () => {
   store.setMedia();
   if (isValidForm.value) {
     if (!isEditing.value) {
-      router.push({
-        name: EntitiesEnum.DashboardOverview,
-      });
+      createWorkout(params.value)
+        .then(() => {
+          store.clearState();
+          router.push({
+            name: EntitiesEnum.DashboardOverview,
+          });
+        })
+        .catch((err) => {
+          errorMessage.value = err;
+          throw new Error(err);
+        });
     } else {
       router.go(-1);
     }
   }
 };
+
+const { mutate: createWorkout, loading: createWorkoutLoading } =
+  useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
+
+const params = computed(() => ({
+  preview: store.workoutPath,
+  body_parts: store.workoutMuscleTypesIds,
+  facility_id: localStorage.getItem("first_facility"),
+  type_id: store.workoutType?.id,
+  title: store.workoutTitle,
+  description: store.workoutDuration,
+  price: getSumForPayment(store.workoutPrice as number),
+  duration: Number(store.workoutDuration),
+  exercises: store.media.reduce((acc: WorkoutVideosInput[], cur) => {
+    acc.push({
+      id: cur.id,
+      title: cur.title,
+      file: cur.path,
+      preview: cur.previewPath,
+      description: cur.description,
+    });
+    return acc;
+  }, []),
+}));
 
 const discardModalClosed = (approved: boolean) => {
   isConfirmationOpen.value = false;

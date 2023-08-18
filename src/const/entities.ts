@@ -82,6 +82,8 @@ export enum EntitiesEnum {
   WriteTrainingReview = "WRITE_TRAINING_REVIEW",
   TrainingReviewSuccessful = "WRITE_TRAINING_SUCCESSFUL",
   CreateFacility = "CREATE_FACILITY",
+  RegisterCreateEvent = "REGISTER_CREATE_EVENT",
+  RegisterExerciseList = "REGISTER_EXERCISE_LIST",
   TrainerWorkouts = "TRAINER_WORKOUTS",
   TrainerWorkoutsUploading = "TRAINER_WORKOUTS_UPLOADING",
   TrainerWorkoutTypes = "TRAINER_WORKOUT_TYPES",

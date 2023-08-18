@@ -6,27 +6,27 @@
         <div>
           <div class="time">Today's</div>
           <ion-text class="content">Event counts</ion-text>
-          <span class="count">23</span>
+          <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
         <div>
           <div class="time">Today's</div>
           <ion-text class="content">Message counts</ion-text>
-          <span class="count">13</span>
+          <span class="count">{{ widgetInfo?.message_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
           <ion-text class="content">Active</ion-text>
-          <span class="count">60</span>
+          <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
           <ion-text class="content">New Sign-ups</ion-text>
-          <span class="count">14</span>
+          <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
           <ion-text class="content">Expiring memberships</ion-text>
-          <span class="count">24</span>
+          <span class="count">{{ widgetInfo?.expiring_membership_count }}</span>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
                 0.8%
                 <ion-icon class="arrow" src="assets/icon/call_made.svg" />
               </div>
-              <div class="chain">$3,689,076</div>
+              <div class="chain">${{ widgetInfo?.today_earn }}</div>
             </div>
           </ion-col>
           <ion-col size="12" size-xl="4">
@@ -51,7 +51,9 @@
                 <div class="type">Quarterly revenue</div>
                 <div class="period">Earned</div>
                 <div class="percent">70%</div>
-                <div class="chain">$1068<span class="period">/ day</span></div>
+                <div class="chain">${{ widgetInfo?.earn_last_thirty_days }}
+                  <!-- <span class="period">/ day</span> -->
+                </div>
               </div>
               <ion-icon class="vector" src="assets/icon/chat/Vector.svg" />
             </div>
@@ -64,7 +66,7 @@
                 0.8%
                 <ion-icon class="arrow" src="assets/icon/call_made.svg" />
               </div>
-              <div class="chain">$689,076</div>
+              <div class="chain">${{ widgetInfo?.year_earn }}</div>
             </div>
           </ion-col>
         </ion-row>
@@ -72,7 +74,7 @@
     </div>
     <ion-row>
       <ion-col size="12" size-lg="12" size-xl="7" class="col-gap">
-        <div class="block">
+        <!-- <div class="block">
           <ion-row>
             <ion-col size="12" size-sm="12" size-md="5">
               <div class="title white-text match">Equipment Status</div>
@@ -119,7 +121,7 @@
               </div>
             </ion-col>
           </ion-row>
-        </div>
+        </div> -->
         <div class="block row-gap">
           <div class="flex-container">
             <div class="title white-text">Attendance Trend</div>
@@ -189,6 +191,12 @@
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+import { computed, onMounted, ref } from "vue";
+import {
+  FacilityDashboardWidgetDocument,
+} from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const chartData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -203,6 +211,7 @@ const chartData = {
   ]
 };
 const selected = "February";
+const currentFacility = useFacilityStore();
 
 const handleDay = () => {
   console.log("Day");
@@ -213,6 +222,15 @@ const handleMon = () => {
 const handleWee = () => {
   console.log("Wee");
 };
+
+const { result: dashboardWidgetResult } = useQuery(
+  FacilityDashboardWidgetDocument,
+  {
+    id: currentFacility.facility.id,
+  }
+);
+console.log(dashboardWidgetResult)
+const widgetInfo = computed(() => dashboardWidgetResult?.value?.facilityDashboardWidget);
 </script>
 
 <style scoped lang="scss">
