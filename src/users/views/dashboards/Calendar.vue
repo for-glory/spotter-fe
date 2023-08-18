@@ -2,6 +2,15 @@
   <base-layout>
     <template #header>
       <page-header back-btn title="Calendar" @back="onBack" />
+      <div class="week-days">
+        <div class="week-day">SUN</div>
+        <div class="week-day">MON</div>
+        <div class="week-day">TUE</div>
+        <div class="week-day">WED</div>
+        <div class="week-day">THU</div>
+        <div class="week-day">FRI</div>
+        <div class="week-day">SAT</div>
+      </div>
     </template>
     <template #content>
       <base-calendar
@@ -133,5 +142,22 @@ const onBack = () => {
 <style scoped lang="scss">
 .calendar {
   margin-top: 24px;
+}
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  
+  .week-day {
+    text-align: center;
+    color: var(--gray-500);
+    font: 14px/1 var(--ion-font-family);
+    line-height: 14px;
+    padding-top: 4px;
+    padding-bottom: 8px;
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
 }
 </style>
