@@ -1,7 +1,48 @@
 <template>
   <base-auth-layout hideHeader>
     <template  #left-section>
-      <div class="content ion-padding-horizontal">
+      <div v-if="Capacitor.isNativePlatform()">
+				<div class="d-flex justify-content-between align-items-center">
+          <ion-icon src="assets/icon/arrow-back.svg" class="back-button" @click="goToCreateEvent"/>
+				</div>
+        <ion-title class="title" color="primary">
+          Create your workout plan
+        </ion-title>
+        <workout-form 
+          ref="workoutForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <ion-title class="title-mini" color="primary">
+          Upload Exercise
+        </ion-title>
+        <exercise-form 
+          ref="exerciseForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <div class="holder-button">
+          <ion-button
+            expand="block"
+            class="secondary"
+            @click="onBack"
+          >
+            Exit
+          </ion-button>
+          <ion-button
+            @click="handleSubmit"
+            expand="block"
+            :disabled="!isValidForm"
+          >
+            Upload & Finish
+          </ion-button>
+        </div>
+      </div>
+      <div v-else class="content ion-padding-horizontal">
 				<div class="d-flex justify-content-between align-items-center">
 					<router-link
 						to="/"
@@ -34,34 +75,84 @@
         <ion-title class="title" color="primary">
           Create your workout plan
         </ion-title>
-        <workout-form 
-          ref="workoutForm"
-          @submit="handleSubmit"
-          @onSkip="onBack"
-			    @open-picker="(e) => openPicker(e)"
-          skipText="Exit"
-        />
-        <exercise-form 
-          ref="exerciseForm"
-          @submit="handleSubmit"
-          @onSkip="onBack"
-			    @open-picker="(e) => openPicker(e)"
-          skipText="Exit"
-        />
-        <div class="holder-button">
-          <ion-button
-            expand="block"
-            class="secondary"
-            @click="onBack"
+        <div class="form-row">
+          <ion-label class="label"> Choose cover for workout </ion-label>
+          <photo-loader
+            :photo="store.workoutPreview"
+            @change="photoSelected"
+            :loading="filePreloadLoading"
+            :progress="percentLoaded"
+          />
+        </div>
+
+        <div class="form-row">
+          <base-input
+            v-model:value="titleValue"
+            :error-message="titleError"
+            placeholder="Enter title"
+            name="workoutTitle"
+            label="Title of workout"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <ion-label class="label"> Choose intensity level </ion-label>
+          <choose-block
+            title="Workout type"
+            :value="workoutType"
+            @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
+          />
+        </div>
+
+        <div class="form-row">
+          <ion-label class="label"> Choose muscle group </ion-label>
+          <choose-block
+            title="Select muscle group"
+            :value="muscleTypesValue"
+            @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
+          />
+        </div>
+
+        <div class="form-row">
+          <ion-label class="label">
+            Choose the duration for the whole workout
+          </ion-label>
+          <wheel-picker
+            :options="durationOptions"
+            name="duration"
+            :values="[duration, 'min']"
           >
-            Exit
-          </ion-button>
+            <template #button>
+              <choose-block
+                title="Duration"
+                :value="duration ? `${duration} min` : ''"
+                @handle-click="openPicker('duration')"
+              />
+            </template>
+          </wheel-picker>
+        </div>
+
+        <div class="form-row">
+          <base-input
+            v-model:value="priceValue"
+            :error-message="priceError"
+            placeholder="Enter price"
+            type="number"
+            name="price"
+            label="Set the price for workout (USD $)"
+            required
+          />
+        </div>
+
+        <div class="action-wrap">
           <ion-button
             @click="handleSubmit"
+            type="submit"
             expand="block"
             :disabled="!isValidForm"
           >
-            Upload & Finish
+						Next step
           </ion-button>
         </div>
       </div>
@@ -96,6 +187,7 @@ import { Emitter, EventType } from "mitt";
 import { clearAuthItems } from "@/router/middleware/auth";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
+import { Capacitor } from '@capacitor/core';
 
 const percentLoaded = ref(0);
 
@@ -283,6 +375,10 @@ const onLogout = () => {
 </script>
 
 <style lang="scss" scoped>
+.back-button {
+  width: 24px;
+  height: 24px;
+}
 .content {
   padding: 24px 24px calc(12px + var(--ion-safe-area-bottom));
 }
@@ -300,8 +396,17 @@ const onLogout = () => {
   font-size: 28px;
   line-height: 1.3;
   font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin-bottom: 64px;
+  margin-top: 44px;
+  text-align: center;
+}
+.title-mini {
+  padding: 0;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 400;
+  margin-bottom: 24px;
+  margin-top: 24px;
   text-align: center;
 }
 .top-buttons {
