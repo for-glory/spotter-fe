@@ -384,6 +384,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.Overview,
+    path: "/Overview",
+    component: () => import("@/general/views/Overview.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     path: "/dashboard/",
     component: () => import("@/general/views/dashboard/Index.vue"),
     meta: {
