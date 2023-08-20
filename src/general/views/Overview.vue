@@ -13,6 +13,32 @@
     </template>
     <template #content>
       <div class="profile">
+        <div class="membership">
+          <ion-title class="title">Membership Summary</ion-title>
+          <ion-grid class="block">
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="New Signs-up" value="14"/>
+              </ion-col>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="Active" value="60"/>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Today's" keyText="Event counts" value="23"/>
+              </ion-col>
+              <ion-col size="5">
+                <summary-item title="Today's" keyText="Message counts" value="13"/>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="Expiring membership" value="24"/>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
         <div>
           <ion-title class="title">Revenue</ion-title>
           <div class="block">
@@ -91,6 +117,7 @@ import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
 import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
 import DashboardItem from "@/general/components/DashboardItem.vue";
+import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -363,6 +390,32 @@ profileDeleted(() => {
   }
   .arrow {
     padding-left: 0.6rem;
+  }
+}
+.membership {
+  .count {
+    font-size: 1.625rem;
+    color: var(--gold);
+    padding-left: 0.6rem;
+    font-weight: bold;
+  }
+  .period {
+    font-size: 1rem;
+    color: grey;
+    padding-bottom: 0.6rem;
+  }
+  .time {
+    font-size: 0.875rem;
+    color: var(--gold);
+  }
+  .content {
+    font-size: 1rem;
+    color: #797979;
+  }
+
+  ion-row {
+    justify-content: space-between;
+    gap: 24px;
   }
 }
 .block {

@@ -31,6 +31,7 @@ const props = withDefaults(
 .content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 100%;
   gap: 16px;
 }
