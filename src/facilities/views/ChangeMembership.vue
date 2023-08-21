@@ -113,6 +113,7 @@
       </div>
     </template>
   </base-layout>
+  <change-membership ref="changeMembershipModal" @confirm="confirmChange"/>
 </template>
 
 <script setup lang="ts">
@@ -151,6 +152,7 @@ import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
+import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue"
 
 const router = useRouter();
 const route = useRoute();
@@ -164,6 +166,7 @@ const selectedPlanId = ref<string | number | boolean | undefined>(undefined);
 const isAgreed = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const currentPlan = ref<any>();
+const changeMembershipModal = ref<typeof ChangeMembership | null>(null);
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -200,6 +203,7 @@ onMounted(async () => {
       return acc;
     }, []);
     currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase() && plan)[0];
+    selectedPlanId.value = currentPlan.value.id;
     InAppPurchase2.ready(() => {
       products.value = InAppPurchase2.products;
       console.log("set up listeners after ready");
@@ -288,32 +292,39 @@ const setupListeners = async () => {
   InAppPurchase2.error(errorEvent);
 };
 const purchase = () => {
-  isLoading.value = true;
-  if (Capacitor.isNativePlatform()) {
-    InAppPurchase2.order(selectedItem.value)
-      .then(() => {
-        isLoading.value = false;
-        console.log(
-          "entered into Apple/Google pop up with the purchase confirmation"
-        );
-      })
-      .error((error: any) => {
-        isLoading.value = false;
-        errorMessage.value = `Failed to purchase: ${error}`;
-      });
-  } else {
-    console.log('Web platform', selectedItem.value);
-    router.push({
-      name: EntitiesEnum.SubscriptionPaymentMethod,
-      params: { subscriptionId: selectedItem.value.product_id },
-      query: {
-          facilityId: route?.query?.facilityId || "",
-        },
-    });
-  }
+  const newPlan = plans.value.find((plan) => plan.id === selectedPlanId.value);
+  console.log({currentPlan});
+  changeMembershipModal.value?.present({ currentPlan, newPlan });
 };
+const confirmChange = (newPlan: any) => {
+  console.log("********** confirm change *********");
+  // isLoading.value = true;
+  // if (Capacitor.isNativePlatform()) {
+  //   InAppPurchase2.order(selectedItem.value)
+  //     .then(() => {
+  //       isLoading.value = false;
+  //       console.log(
+  //         "entered into Apple/Google pop up with the purchase confirmation"
+  //       );
+  //     })
+  //     .error((error: any) => {
+  //       isLoading.value = false;
+  //       errorMessage.value = `Failed to purchase: ${error}`;
+  //     });
+  // } else {
+  //   console.log('Web platform', selectedItem.value);
+  //   router.push({
+  //     name: EntitiesEnum.SubscriptionPaymentMethod,
+  //     params: { subscriptionId: selectedItem.value.product_id },
+  //     query: {
+  //         facilityId: route?.query?.facilityId || "",
+  //       },
+  //   });
+  // }
+}
 
 const selectProduct = (plan: any) => {
+  console.log(selectedPlanId);
   if (Capacitor.isNativePlatform()) {
     selectedItem.value = InAppPurchase2.products
       .filter((value) => {

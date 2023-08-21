@@ -4,7 +4,7 @@
 			<ion-toolbar>
 				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
-					<ion-button @click="handleCancel">
+					<ion-button @click="onCancel">
 						<ion-icon src="assets/icon/close.svg" class="close" />
 					</ion-button>
 				</ion-buttons>
@@ -101,8 +101,7 @@ const currentPlan = ref<any>(null);
 const newPlan = ref<any>(null);
 
 const present = (props: any) => {
-  console.log(props.currentPlan.value[0], props.newPlan);
-  currentPlan.value = props.currentPlan.value[0];
+  currentPlan.value = props.currentPlan.value;
   newPlan.value = props.newPlan;
   modal?.value?.$el.present();
 };
@@ -116,7 +115,8 @@ const onCancel = () => {
 }
 
 const handleConfirm = () => {
-  emit('confirm',newPlan);
+  emit('confirm', newPlan);
+  modal?.value?.$el.dismiss();
 }
 
 defineExpose({
