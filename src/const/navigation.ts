@@ -76,17 +76,34 @@ export const navigationMenu: NavigationMenu = {
   ],
   FACILITY: [
     {
+      name: EntitiesEnum.Overview,
+      label: "Overview",
+      icon: "assets/icon/dashboard.svg",
+      category: "/overview",
+    },
+    {
       name: EntitiesEnum.FacilitiesEvents,
       label: "Events",
       icon: "assets/icon/events.svg",
       category: "/events",
     },
     {
-      name: EntitiesEnum.ProfileScan,
-      label: "QR-code",
-      icon: "assets/icon/qr-code.svg",
-      isMainButton: true,
-      category: "/qr/scan",
+      name: EntitiesEnum.Overview,
+      label: "Gym Pass",
+      icon: "assets/icon/Pass.svg",
+      category: "/pass/list",
+    },
+    {
+      name: EntitiesEnum.Overview,
+      label: "Drop-ins",
+      icon: "assets/icon/drop-ins.svg",
+      category: "/drop-ins",
+    },
+    {
+      name: EntitiesEnum.Overview,
+      label: "Dailys",
+      icon: "assets/icon/gym-user-icon.svg",
+      category: "/dailys",
     },
     {
       name: EntitiesEnum.Profile,
