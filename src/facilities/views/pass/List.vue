@@ -39,7 +39,7 @@
     </template>
     <template #content>
       <div class="main-content">
-        <div class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+        <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
           <ion-button>Create Gym pass</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
@@ -47,43 +47,40 @@
             <ion-text class="description">No registered member yet</ion-text>
           </div>
         </div>
-        <!-- <div class="ion-padding-vertical">
-          <ion-button
-            @click="navigate(EntitiesEnum.DashboardPassCreatePass)"
-            class="ion-margin-end"
-            fill="solid"
-            >Create Gym pass</ion-button
-          >
-          <ion-button
-            @click="navigate(EntitiesEnum.DashboardPassCreateDropin)"
-            class=""
-            fill="outline"
-            >Create Drop ins</ion-button
-          >
-        </div> -->
-        <!-- <div class="segment">
-          <ion-segment mode="ios" value="subscribers">
-            <ion-segment-button
-              @click="changeSegment('subscribers')"
-              value="subscribers"
-            >
-              <ion-label class="ion-text-wrap"
-                >Membership subscribers</ion-label
-              >
-            </ion-segment-button>
-            <ion-segment-button
-              @click="changeSegment('dropins')"
-              value="dropins"
-            >
-              <ion-label class="ion-text-wrap">Drop ins sales</ion-label>
-            </ion-segment-button>
-          </ion-segment>
-        </div> -->
-
-        <!-- <div>
-          <pass-subscriber-data-table v-if="activeTab === 'subscribers'" />
-          <pass-dropin-data-table v-if="activeTab === 'dropins'" />
-        </div> -->
+        <div v-else>
+          <ion-grid class="pass-table">
+            <ion-row class="table-header">
+              <ion-col size="4" class="table-th">
+                <ion-text>Customers</ion-text>
+              </ion-col>
+              <ion-col size="4" class="table-th">
+                <ion-text>Plan</ion-text>
+              </ion-col>
+              <ion-col size="4" class="table-th">
+                <ion-text>Status</ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row v-for="customer in customerData" :key="customer?.id" class="table-row ion-align-items-center">
+              <ion-col size="4" class="table-td">
+                <ion-text>{{customer?.name}}</ion-text>
+              </ion-col>
+              <ion-col size="4" class="table-td capitalize">
+                <ion-text>{{customer?.plan.toLowerCase()}}</ion-text>
+              </ion-col>
+              <ion-col size="4" class="table-td">
+                <ion-button
+                  size="small"
+                  :color="customer?.status==='active'?'success':customer?.status==='inactive'?'danger':'warning'"
+                  class="button-rounded capitalize"
+                  fill="outline"
+                >
+                  {{customer?.status}}
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-button id="gym-pass">View Gym pass</ion-button>
+        </div>
       </div>
     </template>
   </base-layout>
@@ -109,15 +106,60 @@ import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscri
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import useFacilityId from "@/hooks/useFacilityId";
+import useRoles from "@/hooks/useRole";
+import { v4 as uuidv4 } from "uuid";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
 const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
+const { role } = useRoles();
+const { id: myFacilityId } = useFacilityId();
+const tempPassData = [
+  {
+    id: uuidv4(),
+    name: "Frank Autumn",
+    plan: "GOLD",
+    status: "active",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "SILVER",
+    status: "pending",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "BRONZE",
+    status: "inactive",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "GOLD",
+    status: "active",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "GOLD",
+    status: "pending",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "SILVER",
+    status: "pending",
+  },{
+    id: uuidv4(),
+    name: "Jimmy Jane",
+    plan: "BRONZE",
+    status: "pending",
+  },
+];
+const customerData = ref<any>();
+customerData.value = tempPassData;
 
 const changeSegment = (segment: string) => {
   activeTab.value = segment;
@@ -128,17 +170,24 @@ const navigate = (name: EntitiesEnum) => {
 };
 
 const {
-  result: facilityResult,
-  load: getFacility,
-  onResult: gotFacility,
+  result: facilityPassResult,
+  load: getFacilityPass,
+  onResult: gotFacilityPass,
 } = useLazyQuery<Pick<Query, "facilityItemPass">>(FacilityItemPassDocument, {
-  id: currentFacility.facility.id,
+  id: myFacilityId,
 });
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
-  console.log(selectedTab.value === 'All');
+  customerData.value = tempPassData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
+  console.log(customerData.value);
 }
+
+onMounted(() => {
+  console.log(getFacilityPass());
+  console.log("id:", myFacilityId);
+  console.log(facilityPassResult);
+});
 
 const onBack = () => {
   router.go(-1);
@@ -247,5 +296,45 @@ ion-label {
     }
   }
 }
+.pass-table {
+  border: 1px solid var(--fitnesswhite);
+  background: var(--gray-700);
+  width: 100%;
+  padding: 0;
 
+  .table-th {
+    border-bottom: 1px solid var(--beige);
+    padding: 10px 16px;
+  }
+
+  .table-td {
+    //  border: 1px solid var(--beige);
+    padding: 0 0 0 16px;
+
+    ion-button {
+      font-size: 14px;
+      height: 32px;
+      margin: 16px 0;
+    }
+  }
+}
+.table-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: var(--main-color);
+  color: var(--gold);
+}
+
+.table-row {
+  border-top: 1px solid var(--beige);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+ion-button#gym-pass {
+  width: 100%;
+  font: 500 16px/1 Yantramanav;
+  margin-top: 56px;
+}
 </style>

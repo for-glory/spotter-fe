@@ -241,30 +241,16 @@ onMounted(() => {
 });
 
 const attendanceDatas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
+const attendanceBackgroundColors = ['#F7685B', '#FFB946', '#2F9BFF', '#2ED47A'];
 const attendanceChartData = {
   labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
   datasets: [
     {
       label: "",
-      backgroundColor: (ctx: any) => {
-        const canvas = ctx.chart.ctx;
-        const gradientColors = [
-          '#E53030',
-          '#FFDE67',
-          '#109CF1',
-          '#2ED47A',
-        ];
-        const gradients = attendanceDatas.map((data) => {
-
-          const gradient = canvas.createLinearGradient(0,0,0,160);
-          for(let step = 0; step < data / 25; step ++) {
-            gradient.addColorStop(step * (25 / data), gradientColors[step % 4]);
-          }
-          return gradient;
-        });
-
-        return gradients;
-      },
+      backgroundColor: attendanceDatas.map((data) => {
+        if(data >= 0 && data < 75) return attendanceBackgroundColors[Math.floor(data / 25)];
+        else return attendanceBackgroundColors[3];
+      }),
       data: attendanceDatas,
       barThickness: 15,
       borderRadius: 4
@@ -330,16 +316,16 @@ const marketDatas = [
     [78, 78, 78, 78, 78, 78, 78]];
 const backgroundColors = ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'];
 const marketChartData = {
-    labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
-    datasets: backgroundColors.map((colors, index) => {
-      return {
-        label: `Dataset ${index + 1}`,
-        backgroundColor: colors,
-        data: marketDatas[index],
-        barThickness: 3,
-        borderRadius: 4,
-      };
-    }),
+  labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
+  datasets: backgroundColors.map((colors, index) => {
+    return {
+      label: `Dataset ${index + 1}`,
+      backgroundColor: colors,
+      data: marketDatas[index],
+      barThickness: 3,
+      borderRadius: 4,
+    };
+  }),
 };
 const marketChartOption = {
   responsive: true,
