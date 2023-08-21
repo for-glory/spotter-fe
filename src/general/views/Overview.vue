@@ -324,34 +324,22 @@ const attendanceChartOption = {
 };
 
 const marketDatas = [
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78], 
-  [30, 58, 18, 78]];
-const backgroundColors = [
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
-];
-
+    [30, 30, 30, 30, 30, 30, 30],
+    [58, 58, 58, 58, 58, 58, 58],
+    [18, 18, 18, 18, 18, 18, 18],
+    [78, 78, 78, 78, 78, 78, 78]];
+const backgroundColors = ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'];
 const marketChartData = {
-  labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
-  datasets: backgroundColors.map((colors, index) => {
-    return {
-      label: `Dataset ${index + 1}`,
-      backgroundColor: colors,
-      data: marketDatas.map(data => data[index]),
-      barThickness: 3,
-      borderRadius: 4,
-    };
-  }),
+    labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
+    datasets: backgroundColors.map((colors, index) => {
+      return {
+        label: `Dataset ${index + 1}`,
+        backgroundColor: colors,
+        data: marketDatas[index],
+        barThickness: 3,
+        borderRadius: 4,
+      };
+    }),
 };
 const marketChartOption = {
   responsive: true,
