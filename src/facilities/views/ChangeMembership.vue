@@ -296,7 +296,7 @@ const purchase = () => {
   console.log({currentPlan});
   changeMembershipModal.value?.present({ currentPlan, newPlan });
 };
-const confirmChange = (newPlan: any) => {
+const confirmChange = (isConfirmed: boolean) => {
   console.log("********** confirm change *********");
   // isLoading.value = true;
   // if (Capacitor.isNativePlatform()) {

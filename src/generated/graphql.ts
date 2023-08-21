@@ -4223,6 +4223,15 @@ export const CancelSubscriptionDocument = gql`
   }
 }
     `;
+  export const UpdateSubscriptionDocument = gql`
+    mutation UpdateSubscription($unique_identifier: String!, $new_product_id: String!, $fees_percent: Int!, $facility_id: ID) {
+    updateSubscription(
+    input: {unique_identifier: $unique_identifier, new_product_id: $new_product_id, fees_percent: $fees_percent, facility_id: $facility_id}
+  ) {
+    session
+  }
+}
+    `;
 export const SubscriptionUserDocument = gql`
     mutation subscriptionUser($facility_id: ID!) {
   subscriptionUser(
@@ -6149,6 +6158,10 @@ query facilityDashboardWidget($id:ID!) {
     earn_last_thirty_days
     year_earn
     checkin_data
+    {
+      value
+      month
+    }
   }
 }
     `;

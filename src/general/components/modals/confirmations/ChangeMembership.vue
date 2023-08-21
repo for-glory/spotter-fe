@@ -1,8 +1,8 @@
 <template>
-	<ion-modal id="modal" ref="modal" :backdrop-dismiss="false">
+	<ion-modal v-if="Capacitor.isNativePlatform()"  id="modal" ref="modal" :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Change Membership Plan</ion-title>
+				<ion-title>Cancel Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="onCancel">
 						<ion-icon src="assets/icon/close.svg" class="close" />
@@ -82,6 +82,96 @@
       </div>
     </div>
   </ion-modal>
+  <div v-else class="ion-padding">
+    <ion-row>
+      <ion-col size="6">
+        <div class="plan">
+          <ion-text>Current Plan</ion-text>
+          <div class="paragraph">
+            <ion-title class="radiobutton__label">
+              {{ currentPlan.title }}
+            </ion-title>
+
+            <ion-text class="radiobutton__cost"
+              >${{ currentPlan?.prices.length? currentPlan?.prices[0].price/100:"" }}
+              <span>
+                /per location
+              </span>
+            </ion-text>
+          </div>
+          <div class="flex-container">
+            <div>
+              <ion-icon
+                src="assets/icon/medal.svg"
+                class="silver grade-image"
+              />
+            </div>
+            <div>
+              <ul>
+                <li
+                  class="accessibility"
+                  v-for="(benefit, idx) in currentPlan?.benefits"
+                  :key="idx"
+                >
+                  <div>
+                    <ion-icon src="assets/icon/accessibility.svg" />
+                  </div>
+                  <div>
+                    <ion-text>{{ benefit?.description }}</ion-text>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <div class="plan">
+          <ion-text>New Plan</ion-text>
+          <div class="paragraph">
+            <ion-title class="radiobutton__label">
+              {{ newPlan.title }}
+            </ion-title>
+
+            <ion-text class="radiobutton__cost"
+              >${{ newPlan?.prices.length? newPlan?.prices[0].price/100:"" }}
+              <span>
+                /per location
+              </span>
+            </ion-text>
+          </div>
+          <div class="flex-container">
+            <div>
+              <ion-icon
+                src="assets/icon/medal.svg"
+                class="silver grade-image"
+              />
+            </div>
+            <div>
+              <ul>
+                <li
+                  class="accessibility"
+                  v-for="(benefit, idx) in newPlan?.benefits"
+                  :key="idx"
+                >
+                  <div>
+                    <ion-icon src="assets/icon/accessibility.svg" />
+                  </div>
+                  <div>
+                    <ion-text>{{ benefit?.description }}</ion-text>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <div class="buttons">
+      <ion-button class="confirm" @click="handleConfirm">Confirm change</ion-button>
+      <ion-button class="cancel" @click="handleCancel">Back</ion-button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -91,14 +181,28 @@ import {
   IonModal,
   IonHeader,
   IonToolbar,
-  IonContent,
+  IonText,
   IonTitle,
+	IonGrid,
+	IonRow,
+	IonCol
 } from "@ionic/vue";
 import { defineComponent, ref, defineProps, defineEmits, withDefaults, defineExpose, computed } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 const modal = ref<typeof IonModal | null>(null);
 const currentPlan = ref<any>(null);
 const newPlan = ref<any>(null);
+
+withDefaults(
+  defineProps<{
+    currentPlan: any;
+    newPlan: any;
+    isVisible: boolean;
+  }>(),
+  {
+  }
+);
 
 const present = (props: any) => {
   currentPlan.value = props.currentPlan.value;
@@ -106,8 +210,9 @@ const present = (props: any) => {
   modal?.value?.$el.present();
 };
 
-const emit = defineEmits<{
-  (e: "confirm", newPlan: any): void;
+const emits = defineEmits<{
+  (e: "confirm", isConfirmed: boolean): void;
+  (e: "cancel", isConfirmed: boolean): void;
 }>();
 
 const onCancel = () => {
@@ -115,14 +220,18 @@ const onCancel = () => {
 }
 
 const handleConfirm = () => {
-  emit('confirm', newPlan);
-  modal?.value?.$el.dismiss();
-}
+  emits("confirm", true);
+};
+
+const handleCancel = () => {
+  emits("cancel", false);
+};
 
 defineExpose({
   present,
 });
 </script>
+
 <style scoped lang="scss">
 .flex-container {
   display: flex;
@@ -244,5 +353,12 @@ ion-header {
 .close {
   width: 1rem;
   height: 1rem;
+}
+
+.plan {
+	margin: 0 auto;
+	width: fit-content;
+	color: var(--gold);
+	text-align: center;
 }
 </style>
