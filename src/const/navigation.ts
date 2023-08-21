@@ -94,10 +94,10 @@ export const navigationMenu: NavigationMenu = {
       category: "/facilities/pass/list",
     },
     {
-      name: EntitiesEnum.Overview,
+      name: EntitiesEnum.FacilityDropins,
       label: "Drop-ins",
       icon: "assets/icon/drop-ins.svg",
-      category: "/drop-ins",
+      category: "/facilities/drop-ins/list",
     },
     {
       name: EntitiesEnum.Overview,

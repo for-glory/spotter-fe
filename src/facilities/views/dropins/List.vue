@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym pass" />
+      <page-header back-btn @back="onBack" title="Drop-ins" />
       <div class="pass-list ion-margin-top">
         <div class="d-flex justify-content-between pass-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
@@ -39,12 +39,12 @@
     </template>
     <template #content>
       <div class="main-content">
-        <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button>Create Gym pass</ion-button>
+        <div v-if="!tempDropinsData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+          <ion-button>Create Drop-in</ion-button>
           <div class="empty-box d-flex-col align-items-center">
-            <ion-icon src="assets/icon/pass.svg"></ion-icon>
-            <ion-text class="status">Gym pass Empty</ion-text>
-            <ion-text class="description">No registered member yet</ion-text>
+            <ion-icon src="assets/icon/drop-ins.svg"></ion-icon>
+            <ion-text class="status">Drop-in Empty</ion-text>
+            <ion-text class="description">No booked client yet</ion-text>
           </div>
         </div>
         <div v-else>
@@ -54,7 +54,7 @@
                 <ion-text>Customers</ion-text>
               </ion-col>
               <ion-col size="4" class="table-th">
-                <ion-text>Plan</ion-text>
+                <ion-text>No of day(s)</ion-text>
               </ion-col>
               <ion-col size="4" class="table-th">
                 <ion-text>Status</ion-text>
@@ -65,7 +65,7 @@
                 <ion-text>{{customer?.name}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td capitalize">
-                <ion-text>{{customer?.plan.toLowerCase()}}</ion-text>
+                <ion-text>{{customer?.days}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td">
                 <ion-button
@@ -79,7 +79,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-button id="gym-pass">View Gym pass</ion-button>
+          <ion-button id="gym-pass">View Drop-in</ion-button>
         </div>
       </div>
     </template>
@@ -120,46 +120,46 @@ const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
 const { id: myFacilityId } = useFacilityId();
-const tempPassData = [
+const tempDropinsData = [
   {
     id: uuidv4(),
     name: "Frank Autumn",
-    plan: "GOLD",
+    days: 2,
     status: "active",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "SILVER",
+    days: 1,
     status: "pending",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "BRONZE",
+    days: 1,
     status: "inactive",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "GOLD",
+    days: 1,
     status: "active",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "GOLD",
+    days: 1,
     status: "pending",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "SILVER",
+    days: 1,
     status: "pending",
   },{
     id: uuidv4(),
     name: "Jimmy Jane",
-    plan: "BRONZE",
+    days: 1,
     status: "pending",
   },
 ];
 const customerData = ref<any>();
-customerData.value = tempPassData;
+customerData.value = tempDropinsData;
 
 const changeSegment = (segment: string) => {
   activeTab.value = segment;
@@ -179,7 +179,7 @@ const {
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
-  customerData.value = tempPassData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
+  customerData.value = tempDropinsData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
 }
 
 onMounted(() => {
