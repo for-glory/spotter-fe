@@ -108,9 +108,17 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    name: EntitiesEnum.ChangeMembership,
+    name: EntitiesEnum.Membership,
     path: "/facilities/membership",
     component: () => import("@/facilities/views/Membership.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.ChangeMembership,
+    path: "/facilities/change-membership",
+    component: () => import("@/facilities/views/ChangeMembership.vue"),
     meta: {
       middleware: [auth],
     },

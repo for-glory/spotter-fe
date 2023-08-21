@@ -77,7 +77,7 @@ export const profileMenu: ProfileMenu = {
       isTrusted: true,
     },
     {
-      name: EntitiesEnum.ProfileMembership,
+      name: EntitiesEnum.Membership,
       label: "Membership",
       icon: "membership",
       isTrusted: true,

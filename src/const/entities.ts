@@ -36,6 +36,7 @@ export enum EntitiesEnum {
   PasswordReset = "PASSWORD_RESET",
   Quizz = "QUIZZ",
   Facilities = "FACILITIES",
+  Membership="MEMBERSHIP",
   ChangeMembership = "CHANGE_MEMBERSHIP",
   Facility = "FACILITY",
   Trainers = "TRAINERS",

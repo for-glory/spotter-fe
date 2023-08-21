@@ -1,8 +1,5 @@
 <template>
   <base-layout>
-    <template #header>
-      <page-header back-btn @back="onBack" title="Membership" />
-    </template>
     <template #content>
       <ion-spinner
         v-if="loading || plansLoading"
@@ -10,58 +7,70 @@
         class="spinner"
       />
       <div class="membership" v-else>
-        <ion-text class="status-text">Your plan is currently active</ion-text>
-        <div class="plans">
-          <ion-item
-            lines="none"
-            class="radiobutton"
-            @click="selectMembership(plan)"
+        <ion-radio-group class="plans" v-model="selectedPlanId">
+          <ion-slides 
+            ref="slide"
           >
-            <div class="radiobutton__block">
-              <div class="radiobutton__icon">
-                <ion-icon src="assets/icon/medal.svg" 
-                  :class="currentPlan?.tier === 'BRONZE' ? 'bronze' : currentPlan?.tier === 'SILVER' ? 'silver' : 'gold'" 
-                />
-              </div>
-              <div class="radiobutton__description">
-                <ion-label class="radiobutton__label">
-                  {{ currentPlan?.title }}
-                </ion-label>
+            <ion-slide
+              v-for="plan in plans"
+              :key="plan.id"
+            >
+              <ion-item
+                lines="none"
+                class="radiobutton"
+                @click="selectMembership(plan)"
+              >
+                <div class="radiobutton__block">
+                  <div class="radiobutton__icon">
+                    <ion-icon src="assets/icon/medal.svg" 
+                      :class="plan.tier === 'BRONZE' ? 'bronze' : plan.tier === 'SILVER' ? 'silver' : 'gold'" 
+                    />
+                  </div>
+                  <div class="radiobutton__description">
+                    <ion-label class="radiobutton__label">
+                      {{ plan.title }}
+                    </ion-label>
 
-                <ion-text class="radiobutton__cost"
-                  >${{ currentPlan?.prices[0].price / 100 }}
-                  <span>
-                    /{{ currentPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}
-                  </span>
-                </ion-text>
-                <ul>
-                  <li
-                    class="accessibility"
-                    v-for="(benefit, idx) in currentPlan?.benefits"
-                    :key="idx"
-                  >
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>{{ benefit?.description }}</ion-text>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div class="tax-text">
-                {{currentPlan?.tier === 'SILVER' ? "* Taxes and fees may apply." : currentPlan?.tier === 'GOLD' ? '* Reduced rate for multiple locations. Contact us for pricing.' : ''}}
-              </div>
-            </div>
-          </ion-item>
-        </div>
-        <div class="membership-buttons">
+                    <ion-text class="radiobutton__cost"
+                      >${{ plan.prices[0].price / 100 }}
+                      <span>
+                        /{{ plan.tier === 'GOLD' ? 'for first location' : 'per location'}}
+                      </span>
+                    </ion-text>
+                    <ul>
+                      <li
+                        class="accessibility"
+                        v-for="(benefit, idx) in plan?.benefits"
+                        :key="idx"
+                      >
+                        <div>
+                          <ion-icon src="assets/icon/accessibility.svg" />
+                        </div>
+                        <div>
+                          <ion-text>{{ benefit?.description }}</ion-text>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="tax-text">
+                    * Taxes and fees may apply.
+                  </div>
+                </div>
+                <ion-radio :value="plan.id" slot="end"></ion-radio>
+              </ion-item>
+            </ion-slide>
+          </ion-slides>
+          <ion-icon class="prev" src="assets/icon/arrow-back.svg" @click="prev"></ion-icon>
+          <ion-icon class="next" src="assets/icon/arrow-next.svg" @click="next"></ion-icon>
+        </ion-radio-group>
+        <div class="membership-buttons d-flex align-items-center justify-content-between">
           <ion-button id="change" @click="onChangeMembership">Change Membership</ion-button>
-          <ion-button id="cancel" fill="outline" >Cancel Membership</ion-button> 
+          <ion-button id="cancel" >Cancel Membership</ion-button> 
         </div>
       </div>
     </template>
   </base-layout>
+  <change-membership ref="changeMembershipModal" @confirm="confirmChange"/>
 </template>
 
 <script setup lang="ts">
@@ -102,6 +111,7 @@ import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
+import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue"
 
 const router = useRouter();
 const route = useRoute();
@@ -117,6 +127,7 @@ const isLoading = ref<boolean>(false);
 const slide = ref<typeof IonSlides | null>();
 const currentPlan = ref<any>();
 const { type: currentSubscriptionType } = useSubscription();
+const changeMembershipModal = ref<typeof ChangeMembership | null>(null);
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -153,10 +164,95 @@ onMounted(async () => {
       }
       return acc;
     }, []);
-    currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase() && plan)[0];
+    currentPlan.value = plans.value.filter((plan) => plan.tier.toLowerCase() === currentSubscriptionType.toLowerCase() && plan);
+    InAppPurchase2.ready(() => {
+      products.value = InAppPurchase2.products;
+      console.log("set up listeners after ready");
+    });
+    await registerProducts();
   });
 });
 // Get the real product information
+const registerProducts = async () => {
+  plans.value.forEach((plan) => {
+    InAppPurchase2.register({
+      id: plan.subscriptionPlan.product_id,
+      type: InAppPurchase2.PAID_SUBSCRIPTION,
+    });
+  });
+  console.log({InAppPurchase2});
+  setupListeners();
+  InAppPurchase2.refresh();
+};
+onIonViewDidLeave(() => {
+  InAppPurchase2.off(approvedEvent);
+  InAppPurchase2.off(verifiedEvent);
+  InAppPurchase2.off(errorEvent);
+  InAppPurchase2.off(updatedEvent);
+  InAppPurchase2.off(ownedEvent);
+});
+
+const updatedEvent = (data: any) => {
+  console.log(data);
+  plans.value.forEach((plan) => {
+    const product = InAppPurchase2.get(plan.subscriptionPlan.product_id) || {};
+    if (!plan?.subscriptionPlan?.product_id === product.id) {
+      return;
+    }
+    plan.title = product.title;
+    plan.state = product.state;
+    plan.price = product.price;
+    plan.description = product.description;
+    plan.expiryDate = product.expiryDate;
+    plan.canPurchase = product.canPurchase;
+    plan.owned = product.owned;
+    plan.billingPeriodUnit = product.billingPeriodUnit;
+  });
+};
+
+const approvedEvent = async (p: IAPProduct) => {
+  p.verify();
+};
+
+const verifiedEvent = (p: IAPProduct) => {
+  p.finish();
+};
+const ownedEvent = (p: IAPProduct) => {
+  plans.value.forEach((plan: any) => {
+    if (!plan?.subscriptionPlan?.product_id === p.id) {
+      return;
+    }
+    const product = p;
+    plan.title = product.title;
+    plan.state = product.state;
+    plan.price = product.price;
+    plan.description = product.description;
+    plan.expiryDate = product.expiryDate;
+    plan.canPurchase = product.canPurchase;
+    plan.owned = product.owned;
+    plan.billingPeriodUnit = product.billingPeriodUnit;
+    if (plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())) {
+      let fullplan = plans.value.find(
+        (plan: any) => product.id === plan.subscriptionPlan.product_id
+      );
+      selectedPlanId.value = fullplan?.id;
+      setTimeout(() => {
+        getMyProfile();
+      }, 1000);
+    }
+  });
+};
+const errorEvent = (error: any) => {
+  console.log(`${error.code}: ${error.message}`);
+};
+const setupListeners = async () => {
+  InAppPurchase2.when().updated(updatedEvent);
+  InAppPurchase2.when().approved(approvedEvent);
+  InAppPurchase2.when().verified(verifiedEvent);
+  InAppPurchase2.when().owned(ownedEvent);
+
+  InAppPurchase2.error(errorEvent);
+};
 
 const {
   loading,
@@ -190,30 +286,54 @@ const onBack = () => {
   router.go(-1);
 };
 
+const prev = () => {
+	slide.value?.$el.slidePrev();
+}
+const next = () => {
+	slide.value?.$el.slideNext();
+}
+
+
+const showAgreement = async (url: string) => {
+  await Browser.open({ url });
+};
 
 const onChangeMembership = () => {
-  router.push({
-    name: EntitiesEnum.ChangeMembership,
+  slide.value?.$el.getActiveIndex().then((index: number) => {
+    console.log({index});
+    changeMembershipModal.value?.present({ currentPlan, newPlan: plans.value[index] });
   });
 }
 
+const selectMembership = (plan: any) => {
+  console.log("********");
+}
+const confirmChange = (newPlan: any) => {
+  isLoading.value = true;
+  console.log(newPlan.value);
+  console.log({InAppPurchase2});
+  console.log("[IAP] verbosity: " + InAppPurchase2.verbosity);
+  InAppPurchase2.order(newPlan.value)
+    .then(() => {
+      isLoading.value = false;
+      console.log(
+        "entered into Apple/Google pop up with the purchase confirmation"
+      );
+    })
+    .error((error: any) => {
+      isLoading.value = false;
+      errorMessage.value = `Failed to purchase: ${error}`;
+    });
+}
 </script>
 
 <style scoped lang="scss">
 
-.status-text {
-  display: block;
-  color: var(--gray-600);
-  font: 500 20px/1 Lato;
-  margin-top: 11px;
-  width: 100%;
-  text-align: center;
-}
 .plans {
 	display: flex;
 	justify-content: center;
 	gap: 1rem;
-	margin-top: 22px;
+	margin-top: 1rem;
 	position: relative;
 	.radiobutton {
 		max-width: 340px;
@@ -304,7 +424,7 @@ const onChangeMembership = () => {
     .tax-text {
       color: #ffffff6a;
       font: 12px/1 var(--ion-font-family);
-      margin-top: 26px;
+      margin-top: 92px;
     }
 		.gold {
 			color: var(--gold);
@@ -424,6 +544,7 @@ const onChangeMembership = () => {
 }
 .membership {
   padding: 24px;
+  margin-top: 64px;
 
   .membership-buttons {
     padding-top: 48px;
@@ -433,13 +554,12 @@ const onChangeMembership = () => {
       --border-radius: 12px;
       --color: #000000;
       font: 700 16px/1 var(--ion-font-family);
-      width: 100%;
     }
     ion-button#cancel {
+      --background: #DBB582;
       --border-radius: 12px;
-      --color: var(--gold);
+      --color: var(--gray-700);
       font: 700 16px/1 var(--ion-font-family);
-      width: 100%;
     }
   }
 }
