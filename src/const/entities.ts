@@ -188,4 +188,5 @@ export enum EntitiesEnum {
   FacilityPassList = "FACILITY_PASS_LIST",
   FacilityCreatePass = "FACILITY_CREATE_PASS",
   FacilityDropins = "FACILITY_DROPINS",
+  FacilityCreateDropins = "FACILITY_CREATE_DROPINS",
 }

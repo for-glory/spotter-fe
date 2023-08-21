@@ -79,6 +79,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+          <ion-button id="gym-pass" @click="onCreate">Create Drop-in</ion-button>
           <ion-button id="gym-pass">View Drop-in</ion-button>
         </div>
       </div>
@@ -188,6 +189,10 @@ onMounted(() => {
   console.log(facilityPassResult);
 });
 
+const onCreate = () => {
+  router.push({ name: EntitiesEnum.FacilityCreateDropins });
+}
+
 const onBack = () => {
   router.go(-1);
 };
@@ -209,6 +214,7 @@ const onBack = () => {
   padding: 16px 20px;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 }
 .pass-list {
   background-color: var(--gray-700);
@@ -334,6 +340,6 @@ ion-label {
 ion-button#gym-pass {
   width: 100%;
   font: 500 16px/1 Yantramanav;
-  margin-top: 56px;
+  margin-top: 28px;
 }
 </style>
