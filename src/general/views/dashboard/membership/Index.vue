@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<ion-spinner
-			v-if="plansLoading || subscriptionUserLoading"
+			v-if="plansLoading || subscriptionUserLoading || updateLoading"
 			name="lines"
 			class="spinner"
 		/>
@@ -18,7 +18,6 @@
 						class="radiobutton"
 						v-for="plan in plans"
 						:key="plan.id"
-						@click="selectProduct(plan)"
 						:class="{
 							'other':
 								!plan.owned
@@ -31,9 +30,7 @@
 									<ion-icon src="assets/icon/medal.svg" />
 								</div>
 								<div v-if="!plan.owned">
-									<ion-button v-if="currentSubscription==SubscriptionsTierEnum.Bronze" @click="handleChange">Upgrade</ion-button>
-									<ion-button v-if="currentSubscription==SubscriptionsTierEnum.Silver" @click="handleChange">{{ plan.tier===SubscriptionsTierEnum.Gold?'Upgrade':'Downgrade'}}</ion-button>
-									<ion-button v-if="currentSubscription==SubscriptionsTierEnum.Gold" @click="handleChange">Downgrade</ion-button>
+									<ion-button @click="handleChange(plan.id)">Change</ion-button>
 								</div>
 							</div>
 							<div class="radiobutton__description">
@@ -77,6 +74,13 @@
     @confirm="handleCancelMembership"
     @cancel="hideCancelModal"
   />
+	<change-membership
+    :is-visible="showChangeConfirmModal"
+		:currentPlan="currentPlan"
+		:newPlan="selectedPlan"
+    @confirm="handleChangeMembership"
+    @cancel="hideChangeModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -89,9 +93,9 @@ import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { BackendStripe } from "@/services/stripe/stripe";
-import useSubscription from "@/hooks/useSubscription";
 import {
   CancelSubscriptionDocument,
+	UpdateSubscriptionDocument,
 	SubscriptionUserDocument,
   PlansDocument,
   RoleEnum,
@@ -100,14 +104,22 @@ import {
   SubscriptionsTypeEnum,
 } from "@/generated/graphql";
 import CancelMembership from "@/general/components/modals/confirmations/CancelMembership.vue";
+import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
-import useFacilityId from "@/hooks/useFacilityId";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
+const currentFacility = useFacilityStore();
 const router = useRouter();
 const {
 	showConfirmationModal: showCancelConfirmModal,
 	hideModal: hideCancelModal,
 	showModal: showCancelModal
+} = useConfirmationModal();
+
+const {
+	showConfirmationModal: showChangeConfirmModal,
+	hideModal: hideChangeModal,
+	showModal: showChangeModal
 } = useConfirmationModal();
 
 const isLoading = ref<boolean>(false);
@@ -118,11 +130,6 @@ const currentPlan = ref<any>();
 const currentStripeSubscription = ref<any>();
 const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
-const errorMessage = ref("");
-const products = ref<any[]>([]);
-const isAgreed = ref<boolean>(false);
-const selectedProductId = ref<string | number | boolean | undefined>(undefined);
-
 
 const backendStripe = new BackendStripe(
   process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
@@ -141,10 +148,9 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
   { type: typeValue.value as SubscriptionsTypeEnum, first: 100, page: 1 }
 );
 
-const { currentFacilityId } = useFacilityId();
 const { loading: subscriptionUserLoading, onResult } = useQuery(
   SubscriptionUserDocument,
-  { facility_id: currentFacilityId }
+  { facility_id: currentFacility.facility?.id }
 );
 
 onResult(({ data }) => {
@@ -156,7 +162,6 @@ onResult(({ data }) => {
 	}
 });
 
-const { currentSubscription } = useSubscription();
 onMounted(async () => {
 
   backendStripe.init();
@@ -168,16 +173,16 @@ onMounted(async () => {
         );
         acc.push({
           ...cur,
-					owned: currentSubscription === cur.tier,
+					owned: currentStripeSubscription.value.plan_id === cur.id,
           subscriptionPlan:
             subscriptionPlan.length && subscriptionPlan[0]?.is_active
               ? subscriptionPlan[0]
               : {},
         });
-				if (currentSubscription === cur.tier) {
+				if (currentStripeSubscription.value.plan_id === cur.id) {
 					currentPlan.value = {
 						...cur,
-						owned: currentSubscription === cur.tier,
+						owned: currentStripeSubscription.value.plan_id === cur.id,
 						subscriptionPlan:
 							subscriptionPlan.length && subscriptionPlan[0]?.is_active
 								? subscriptionPlan[0]
@@ -191,27 +196,12 @@ onMounted(async () => {
   });
 });
 
-const handleChange = () => {
-  isLoading.value = true;
-	console.log(selectedItem.value);
-	// const { mutate: createSubscriptionIntent } = backendStripe.createSubscriptionIntent();
-  // createSubscriptionIntent({
-  //   product_id: selectedItem.value.product_id,
-  //   fees_percent: selectedPlan.value.fee,
-  // })
-  //   .then((data) => {
-  //     console.log("data==>", data)
-  //     let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
-  //     backendStripe.redirectToCheckout(intent.id);
-  //   })
-  //   .catch((err) => {
-  //     errorMessage.value = err;
-  //     throw new Error(err);
-  //   });
+const handleChange = (id) => {
+	selectMembership(id)
+	showChangeModal();
 };
 
 const handleCancel = () => {
-  // isLoading.value = true;
 	console.log(selectedItem.value);
 	showCancelModal();
 };
@@ -221,8 +211,6 @@ const { mutate: cancelSubscription, onDone: cancelledSubscription } = useMutatio
 );
 
 const handleCancelMembership = () => {
-  // isLoading.value = true;
-	console.log("-----------------------------");
 	cancelSubscription({
 		unique_identifier: currentStripeSubscription.value.unique_identifier,
   });
@@ -232,20 +220,36 @@ cancelledSubscription(() => {
 	router.push({
 		name: EntitiesEnum.DashboardStartMembership,
 	});
+	hideCancelModal();
 })
 
-const selectProduct = (plan: any) => {
-	console.log('plan.subscriptionPlan', plan);
-	selectedItem.value = plan.subscriptionPlan
-	selectedProductId.value = plan.subscriptionPlan.product_id
+const { mutate: updateSubscription, onDone: updatedSubscription, loading: updateLoading } = useMutation(
+  UpdateSubscriptionDocument
+);
+
+const handleChangeMembership = () => {
+	hideChangeModal();
+	updateSubscription({
+		unique_identifier: currentStripeSubscription.value.unique_identifier,
+		new_product_id: selectedItem.value.product_id,
+		fees_percent: selectedPlan.value.fee,
+		facility_id: currentFacility.facility?.id
+  }).then((data) => {
+      console.log("data==>", data)
+      let intent = JSON.parse(data?.data?.updateSubscription?.session);
+      backendStripe.redirectToCheckout(intent.id);
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
 };
+
 const selectMembership = (id: any) => {
 	plans.value.forEach((plan: any) => {
 		if (plan.id == id) {
 			console.log(plan)
 			selectedPlan.value = plan
 			selectedItem.value = plan.subscriptionPlan
-			selectedProductId.value = plan.subscriptionPlan.product_id
 		}
 	})
 }

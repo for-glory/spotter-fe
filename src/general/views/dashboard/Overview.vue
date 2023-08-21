@@ -198,18 +198,6 @@ import {
 import { useQuery } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
-const chartData = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  datasets: [
-    {
-      label: 'Data One',
-      backgroundColor: '#2ED47A',
-      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
-      barThickness: 8,
-      borderRadius: 10
-    }
-  ]
-};
 const selected = "February";
 const currentFacility = useFacilityStore();
 
@@ -231,6 +219,25 @@ const { result: dashboardWidgetResult } = useQuery(
 );
 console.log(dashboardWidgetResult)
 const widgetInfo = computed(() => dashboardWidgetResult?.value?.facilityDashboardWidget);
+
+const chartData = computed(() => {
+  const datasets = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+  widgetInfo?.value?.checkin_data.map(data => {
+    datasets[parseInt(data.month) - 1] = data.value
+  })
+  return {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: 'Data One',
+        backgroundColor: '#2ED47A',
+        data: datasets,
+        barThickness: 8,
+        borderRadius: 10
+      }
+    ]
+  }
+});
 </script>
 
 <style scoped lang="scss">
