@@ -76,6 +76,35 @@
             </div>
           </div>
         </div>
+        <div class="attendance">
+          <div class="d-flex align-items-center justify-content-between">
+            <ion-title class="title">Attendance Trend</ion-title>
+          </div>
+          <div class="block attendance">
+            <custom-chart :chartData="chartData" :chartOptions="customChartOptions" :selected="selected" />
+            <div class="split" />
+            <div class="d-flex align-items-center justify-content-between gap">
+              <div class="description">
+                <div class="poor">
+                  <ion-text>0 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Poor</ion-text>
+                </div>
+                <div class="fair">
+                  <ion-text>25 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Fair</ion-text>
+                </div>
+                <div class="good">
+                  <ion-text>50 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Good</ion-text>
+                </div>
+                <div class="excellent">
+                  <ion-text>75 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Excellent</ion-text>
+                </div>
+              </div>
+              <div class="warning-box">
+                <ion-text >Here’s a visualization chart which depict attendance trends over a specified period. Gym owner can identify peak and low attendance periods.</ion-text>
+                <ion-img src="assets/icon/warning-2.svg"></ion-img>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
   </base-layout>
@@ -118,6 +147,7 @@ import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
+import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -148,6 +178,90 @@ const isTrusted = computed(() =>
 onMounted(() => {
   refetch();
 });
+
+const datas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
+const chartData = {
+  labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
+  datasets: [
+    {
+      label: "",
+      backgroundColor: (ctx: any) => {
+        const canvas = ctx.chart.ctx;
+        const gradientColors = [
+          '#E53030',
+          '#FFDE67',
+          '#109CF1',
+          '#2ED47A',
+        ];
+        const gradients = datas.map((data) => {
+
+          const gradient = canvas.createLinearGradient(0,0,0,160);
+          for(let step = 0; step < data / 25; step ++) {
+            gradient.addColorStop(step * (25 / data), gradientColors[step % 4]);
+          }
+          return gradient;
+        });
+
+        return gradients;
+      },
+      data: datas,
+      barThickness: 15,
+      borderRadius: 4
+    }
+  ]
+};
+const customChartOptions = {
+  responsive: true,
+  scales: {
+    y: {
+      ticks: {
+        callback: (value: number) => `${value}%`, // Display percentage symbol
+        stepSize: 25, // Set step size to 25
+        max: 100, // Set maximum value to 100
+        min: 0, // Set minimum value to 0
+      },
+      grid: {
+        display: true, // Display y-axis grid lines
+        drawBorder: false
+      }
+    },
+    x: {
+      ticks: {
+        angle: 45,
+      },
+      grid: {
+        display: false
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      xAlign: "center",
+      yAlign: "top",
+    }
+  },
+  elements: {
+    bar: {
+      backgroundColor: (context: any) => {
+        const value = context.parsed.y;
+        if (value >= 0 && value < 25) {
+          return 'red';
+        } else if (value >= 25 && value < 50) {
+          return 'blue';
+        } else if (value >= 50 && value < 75) {
+          return 'lightblue';
+        } else {
+          return 'green';
+        }
+      },
+      borderRadius: 10
+    }
+  }
+};
+
 
 const facilities = computed(() => {
   switch (role) {
@@ -416,6 +530,66 @@ profileDeleted(() => {
   ion-row {
     justify-content: space-between;
     gap: 24px;
+  }
+}
+.attendance {
+  min-height: 275px;
+
+  .chart-container {
+    position: static;
+    display: block;
+    height: auto;
+  }
+
+  .split {
+    width: 100%;
+    height: 1px;
+    background-color: var(--gray-600);
+    margin-top: 14px;
+    margin-bottom: 14px;
+  }
+
+  .description {
+    min-width: 95px;
+
+    .poor {
+      color: #F7685B;
+      margin-bottom: 7px;
+    }
+    .fair {
+      color: #FFB946;
+      margin-bottom: 7px;
+    }
+    .good {
+      color: #2F9BFF;
+      margin-bottom: 7px;
+    }
+    .excellent {
+      color: #2ED47A;
+      margin-bottom: 7px;
+    }
+  }
+  .warning-box {
+    min-height: 80px;
+    padding: 1px 7px 10px 6px;
+    background-color: var(--ion-color-gray-900-tint);
+    position: relative;
+
+    ion-text {
+      color: var(--ion-gray-400);
+      font: 300 10px/1 Lato;
+    }
+    ion-img {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      bottom: 3px;
+      right: 6px;
+      flex: auto;
+    }
+  }
+  .gap {
+    gap: 25px;
   }
 }
 .block {
