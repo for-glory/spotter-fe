@@ -147,4 +147,9 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth],
     },
   },
+  {
+    name: EntitiesEnum.FacilityPassList,
+    path: "/facilities/pass/list",
+    component: () => import("@/facilities/views/pass/List.vue"),
+  },
 ];

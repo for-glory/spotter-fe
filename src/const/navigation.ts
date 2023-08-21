@@ -88,10 +88,10 @@ export const navigationMenu: NavigationMenu = {
       category: "/events",
     },
     {
-      name: EntitiesEnum.Overview,
+      name: EntitiesEnum.FacilityPassList,
       label: "Gym Pass",
       icon: "assets/icon/Pass.svg",
-      category: "/pass/list",
+      category: "/facilities/pass/list",
     },
     {
       name: EntitiesEnum.Overview,

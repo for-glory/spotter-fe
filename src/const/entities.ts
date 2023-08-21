@@ -184,5 +184,6 @@ export enum EntitiesEnum {
   DashboardGymManagerProfile = "DASHBOARD_GYM_MANAGER_PROFILE",
   DashboardManageGyms = "DASHBOARD_MANAGE_GYMS",
   DashboardMessage = "DASHBOARD_MESSAGE",
-  Overview = "Overview"
+  Overview = "Overview",
+  FacilityPassList = "FACILITY_PASS_LIST"
 }
