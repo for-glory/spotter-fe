@@ -40,7 +40,7 @@
     <template #content>
       <div class="main-content">
         <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button>Create Gym pass</ion-button>
+          <ion-button @click="onCreate">Create Gym pass</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
             <ion-text class="status">Gym pass Empty</ion-text>
@@ -79,6 +79,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+          <ion-button id="gym-pass" @click="onCreate">Create Gym pass</ion-button>
           <ion-button id="gym-pass">View Gym pass</ion-button>
         </div>
       </div>
@@ -188,6 +189,9 @@ onMounted(() => {
   console.log(facilityPassResult);
 });
 
+const onCreate = () => {
+  router.push({ name: EntitiesEnum.FacilityCreatePass });
+}
 const onBack = () => {
   router.go(-1);
 };
@@ -209,6 +213,7 @@ const onBack = () => {
   padding: 16px 20px;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 }
 .pass-list {
   background-color: var(--gray-700);
@@ -334,6 +339,6 @@ ion-label {
 ion-button#gym-pass {
   width: 100%;
   font: 500 16px/1 Yantramanav;
-  margin-top: 56px;
+  margin-top: 28px;
 }
 </style>

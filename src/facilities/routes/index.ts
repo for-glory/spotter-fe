@@ -153,6 +153,11 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/facilities/views/pass/List.vue"),
   },
   {
+    name: EntitiesEnum.FacilityCreatePass,
+    path: "/facilities/pass/create",
+    component: () => import("@/facilities/views/pass/CreatePass.vue"),
+  },
+  {
     name: EntitiesEnum.FacilityDropins,
     path: "/facilities/dropins/list",
     component: () => import("@/facilities/views/dropins/List.vue"),

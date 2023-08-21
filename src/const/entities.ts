@@ -186,5 +186,6 @@ export enum EntitiesEnum {
   DashboardMessage = "DASHBOARD_MESSAGE",
   Overview = "Overview",
   FacilityPassList = "FACILITY_PASS_LIST",
-  FacilityDropins = "FACILITY_DROPINS"
+  FacilityCreatePass = "FACILITY_CREATE_PASS",
+  FacilityDropins = "FACILITY_DROPINS",
 }
