@@ -146,6 +146,7 @@
               </ion-row>
             </ion-grid>
           </div>
+          <ion-button @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create workout plan</ion-button>
         </div>
       </div>
     </template>
