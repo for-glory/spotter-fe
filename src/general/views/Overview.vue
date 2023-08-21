@@ -47,7 +47,10 @@
               <div class="period">Today</div>
               <div class="percent">
                 0.8%
-                <ion-icon class="arrow" src="assets/icon/arrow-down-light.svg" />
+                <ion-icon
+                  class="vector"
+                  src="assets/icon/vector.svg"
+                />
               </div>
               <div class="chain">$3,689,076</div>
             </div>
@@ -60,10 +63,6 @@
                   $1068<span class="period">/ day</span>
                 </div>
               </div>
-              <ion-icon
-                class="vector"
-                src="assets/icon/chat/Vector.svg"
-              />
             </div>
             <div class="revenue">
               <div class="type">Earned revenue</div>
@@ -145,6 +144,27 @@
             </div>
           </div>
         </div>
+        <div>
+          <div class="title">Event Status</div>
+          <div class="block">
+            <div class="perform">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="title white-text">Completed</div>
+                <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
+              </div>
+              <event-item
+                title="Swimming & Cycling1111"
+                dateTime="Saturday, April 14 | 08:00 AM"
+                status="Closed"
+              />
+              <event-item
+                title="Swimming & Cycling"
+                dateTime="Saturday, April 14 | 08:00 AM"
+                status="Closed"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </template>
   </base-layout>
@@ -188,6 +208,7 @@ import useSubscription from "@/hooks/useSubscription";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+import EventItem from "@/general/components/dashboard/EventItem.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -750,5 +771,8 @@ profileDeleted(() => {
   border-radius: 4px;
   margin-bottom: 1rem;
   padding: 1rem 1rem 1rem 1rem;
+}
+.perform {
+  margin: 0 1.5rem;
 }
 </style>
