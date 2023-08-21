@@ -100,10 +100,10 @@ export const navigationMenu: NavigationMenu = {
       category: "/facilities/drop-ins/list",
     },
     {
-      name: EntitiesEnum.Overview,
+      name: EntitiesEnum.FacilityWorkout,
       label: "Dailys",
       icon: "assets/icon/gym-user-icon.svg",
-      category: "/dailys",
+      category: "/dailys/list",
     },
     {
       name: EntitiesEnum.Profile,
