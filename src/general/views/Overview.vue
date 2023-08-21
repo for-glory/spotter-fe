@@ -78,10 +78,14 @@
         </div>
         <div class="attendance">
           <div class="d-flex align-items-center justify-content-between">
-            <ion-title class="title">Attendance Trend</ion-title>
+            <ion-title class="title">Market Stats</ion-title>
+            <div class="view-option">
+              <ion-text>This Year</ion-text>
+              <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
+            </div>
           </div>
           <div class="block attendance">
-            <custom-chart :chartData="chartData" :chartOptions="customChartOptions" :selected="selected" />
+            <custom-chart :chartData="attendanceChartData" :chartOptions="attendanceChartOption" />
             <div class="split" />
             <div class="d-flex align-items-center justify-content-between gap">
               <div class="description">
@@ -101,6 +105,42 @@
               <div class="warning-box">
                 <ion-text >Here’s a visualization chart which depict attendance trends over a specified period. Gym owner can identify peak and low attendance periods.</ion-text>
                 <ion-img src="assets/icon/warning-2.svg"></ion-img>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="attendance">
+          <div class="d-flex align-items-center justify-content-between">
+            <ion-title class="title">Market Stats</ion-title>
+            <div class="view-option">
+              <ion-text>This Year</ion-text>
+              <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
+            </div>
+          </div>
+          <div class="block attendance">
+            <custom-chart :chartData="marketChartData" :chartOptions="marketChartOption"/>
+            <div class="split" />
+            <div class="d-flex align-items-center justify-content-between gap">
+              <div class="market-description d-flex align-items-center justify-content-center">
+                <div>
+                  <ion-icon class="yellow" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                  <ion-text>Workout</ion-text>
+                </div>
+                <div>
+                  <ion-icon class="green" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                  <ion-text>Gym pass</ion-text>
+                </div>
+                <div>
+                  <ion-icon class="purple" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                  <ion-text>Drop-ins</ion-text>
+                </div>
+                <div>
+                  <ion-icon class="red" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                  <ion-text>Event pass</ion-text>
+                </div>
+              </div>
+              <div class="stats">
+                <ion-text>{{-0.88}}%</ion-text>
               </div>
             </div>
           </div>
@@ -179,8 +219,8 @@ onMounted(() => {
   refetch();
 });
 
-const datas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
-const chartData = {
+const attendanceDatas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
+const attendanceChartData = {
   labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
   datasets: [
     {
@@ -193,7 +233,7 @@ const chartData = {
           '#109CF1',
           '#2ED47A',
         ];
-        const gradients = datas.map((data) => {
+        const gradients = attendanceDatas.map((data) => {
 
           const gradient = canvas.createLinearGradient(0,0,0,160);
           for(let step = 0; step < data / 25; step ++) {
@@ -204,13 +244,95 @@ const chartData = {
 
         return gradients;
       },
-      data: datas,
+      data: attendanceDatas,
       barThickness: 15,
       borderRadius: 4
     }
   ]
 };
-const customChartOptions = {
+const attendanceChartOption = {
+  responsive: true,
+  scales: {
+    y: {
+      ticks: {
+        callback: (value: number) => `${value}%`, // Display percentage symbol
+        stepSize: 25, // Set step size to 25
+        max: 100, // Set maximum value to 100
+        min: 0, // Set minimum value to 0
+      },
+      grid: {
+        display: true, // Display y-axis grid lines
+        drawBorder: false
+      }
+    },
+    x: {
+      ticks: {
+        angle: 45,
+      },
+      grid: {
+        display: false
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      xAlign: "center",
+      yAlign: "top",
+    }
+  },
+  elements: {
+    bar: {
+      backgroundColor: (context: any) => {
+        const value = context.parsed.y;
+        if (value >= 0 && value < 25) {
+          return 'red';
+        } else if (value >= 25 && value < 50) {
+          return 'blue';
+        } else if (value >= 50 && value < 75) {
+          return 'lightblue';
+        } else {
+          return 'green';
+        }
+      },
+      borderRadius: 10
+    }
+  }
+};
+
+const marketDatas = [
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78], 
+  [30, 58, 18, 78]];
+const backgroundColors = [
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+  ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'],
+];
+
+const marketChartData = {
+  labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
+  datasets: backgroundColors.map((colors, index) => {
+    return {
+      label: `Dataset ${index + 1}`,
+      backgroundColor: colors,
+      data: marketDatas.map(data => data[index]),
+      barThickness: 3,
+      borderRadius: 4,
+    };
+  }),
+};
+const marketChartOption = {
   responsive: true,
   scales: {
     y: {
@@ -458,6 +580,21 @@ profileDeleted(() => {
     font-size: 1.6rem;
     line-height: 1.3;
     font-weight: 400;
+    color: var(--fitnesswhite);
+  }
+  .view-option {
+    color: #E1DBC5;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    ion-text {
+      font: 500 14px/1 Lato;
+    }
+    ion-img {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 .background-content {
@@ -591,6 +728,21 @@ profileDeleted(() => {
   .gap {
     gap: 25px;
   }
+}
+.market-description {
+  gap: 8px;
+
+  ion-icon {
+    margin-right: 4px;
+  }
+  ion-text {
+    font: 10px/1 Lato;
+    color: #ffffff6a;
+  }
+}
+.stats {
+  font: 600 20px/1 Lato;
+  color: #F7685B;
 }
 .block {
   width: 100%;
