@@ -72,7 +72,12 @@
           </ion-segment>
         </div>
 
-        <div>
+        <ion-spinner
+          v-if="loadingFacilityPass"
+          name="lines"
+          class="spinner"
+        />
+        <div v-else>
           <pass-subscriber-data-table v-if="activeTab === 'subscribers'" />
           <pass-dropin-data-table v-if="activeTab === 'dropins'" />
         </div>
@@ -88,6 +93,10 @@ import {
   IonLabel,
   IonSegment,
   IonSegmentButton,
+  IonSpinner,
+  IonGrid,
+  IonRow,
+  IonCol
 } from "@ionic/vue";
 import {
   PaymentGatewayRefundDocument,
@@ -95,11 +104,11 @@ import {
   SettingsCodeEnum,
   TrainingDocument,
   TrainingStatesEnum,
-  FacilityItemPassDocument,
+  FacilityItemsByFacilityIdAndTypeDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
-import { useLazyQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -119,12 +128,14 @@ const navigate = (name: EntitiesEnum) => {
 };
 
 const {
-  result: facilityResult,
-  load: getFacility,
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
   onResult: gotFacility,
-} = useLazyQuery<Pick<Query, "facilityItemPass">>(FacilityItemPassDocument, {
-  id: currentFacility.facility.id,
+} = useQuery<Pick<Query, "facilityItemPass">>(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacility.facility.id,
+  item_type: "PASS"
 });
+console.log(facilityItemPassResult)
 </script>
 
 <style scoped lang="scss">
@@ -172,5 +183,10 @@ ion-segment-button {
 
 ion-label {
   font-size: 16px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
