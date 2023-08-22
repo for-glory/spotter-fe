@@ -57,9 +57,8 @@
         >
           <empty-block
             title="Library Empty"
-            hideButton
             text="You have not uploaded any videos yet..."
-            @button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
+            @button-click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })"
           />
         </div>
         <div class="" v-else>
@@ -166,6 +165,7 @@ import {
   RecommendedWorkoutsDocument,
   RecommendedWorkoutsByBodyPartsDocument,
   RecommendedWorkoutsByTypeDocument,
+  WorkoutDocument,
   Workout,
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -195,7 +195,6 @@ const handleWorkoutFilter = (workoutT: string) => {
 
 
 //////////////////////////////////////////////////////
-
 const { result: recommendedResult, loading: recommendedLoading } = useQuery(
   RecommendedWorkoutsDocument,
   {

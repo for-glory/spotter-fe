@@ -61,13 +61,21 @@
         {{ skipText }}
       </ion-button>
       <ion-button
-        @click="() => $emit('submit')"
+        @click="handleAddNextExercise"
         type="submit"
         expand="block"
         :disabled="!isValidForm"
         v-if="hasSubmitButton"
       >
         {{submitButtonText}}
+      </ion-button>
+      <ion-button
+        @click="handleFinishWorkout"
+        expand="block"
+        fill="outline"
+        :disabled="!isValidForm && !isValidWorkoutForm"
+      >
+        Finish workout
       </ion-button>
     </div>
   </div>
@@ -84,12 +92,18 @@ import { useWorkoutsStore } from "../../../trainers/store/workouts";
 import { EntitiesEnum } from "@/const/entities";
 import UploadVideo from "@/general/components/UploadVideo.vue";
 import { dataURItoFile } from "@/utils/fileUtils";
-import { FilePreloadDocument } from "@/generated/graphql";
+import {
+  FilePreloadDocument,
+  CreateGymWorkoutDocument,
+  CreateGymWorkoutInput,
+  WorkoutVideosInput,
+} from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 
 const router = useRouter();
 const route = useRoute();
@@ -103,6 +117,9 @@ const props = withDefaults(
     skipText?: string;
     hasSkipButton?: boolean;
     hasSubmitButton?: boolean;
+    hasFinishWorkoutButton?: boolean;
+    workoutId?: any;
+    isValidWorkoutForm?: boolean;
   }>(),
   {
     submitButtonText: "Upload & Finish",
@@ -113,9 +130,7 @@ const emits = defineEmits<{
   (e: "submit"): void;
   (e: "onSkip"): void;
 }>();
-
-const { value: exerciseTitle, errorMessage: titleError } =
-  useField<string>("exerciseTitle");
+const errorMessage = ref("");
 
 const exerciseDescription = ref<string>("");
 const isConfirmationOpen = ref<boolean>(false);
@@ -129,6 +144,43 @@ const path = ref<string>("");
 const videoPath = ref<string>("");
 const percentLoaded = ref<number | undefined>();
 const videoInfo = ref<{ name: string; size: string }>({ name: "", size: "" });
+
+watch(
+  () => props.workoutId,
+  (newVal) => {
+    checkExercise(newVal.toString());
+  }
+);
+
+const { value: exerciseTitle, errorMessage: titleError } =
+  useField<string>("exerciseTitle");
+
+const pushValueToStore = async () => {
+  store.setExercise({
+    title: exerciseTitle.value,
+    description: exerciseDescription.value,
+    videoPath: videoPath.value,
+    previewUrl: previewUrl.value,
+    previewPath: previewPath.value,
+    path: path.value,
+    id: props.workoutId as string,
+    videoSize: videoInfo.value.size,
+    videoName: videoInfo.value.name,
+  });
+};
+
+const handleAddNextExercise = () => {
+  pushValueToStore();
+  exerciseTitle.value = "";
+  videoPath.value = "";
+  exerciseDescription.value = "";
+  previewUrl.value = "";
+  exerciseIndex.value++;
+};
+
+const isValidForm = computed(
+  () => exerciseTitle.value && previewUrl.value && videoPath.value
+);
 
 const photoSelected = async (value: string): Promise<void> => {
   if (!value?.length) {
@@ -151,10 +203,6 @@ const photoSelected = async (value: string): Promise<void> => {
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
     });
-};
-
-const removePhoto = () => {
-  previewUrl.value = "";
 };
 
 const videoSelected = async (
@@ -201,6 +249,134 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   },
 });
 
+const removePhoto = () => {
+  previewUrl.value = "";
+};
+
+const removeVideo = () => {
+  videoPath.value = "";
+};
+
+const handleFinishWorkout = () => {
+  store.setMedia();
+  if (isValidForm.value) {
+    if (!isEditing.value) {
+      createWorkout(params.value)
+        .then(() => {
+          store.clearState();
+          router.push({
+            name: EntitiesEnum.FacilityWorkout,
+          });
+        })
+        .catch((err) => {
+          errorMessage.value = err;
+          throw new Error(err);
+        });
+    } else {
+      router.go(-1);
+    }
+  }
+};
+
+const { mutate: createWorkout, loading: createWorkoutLoading } =
+  useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
+
+const params = computed(() => ({
+  preview: store.workoutPath,
+  body_parts: store.workoutMuscleTypesIds,
+  facility_id: localStorage.getItem("first_facility"),
+  type_id: store.workoutType?.id,
+  title: store.workoutTitle,
+  description: store.workoutDuration,
+  price: getSumForPayment(store.workoutPrice as number),
+  duration: Number(store.workoutDuration),
+  exercises: store.media.reduce((acc: WorkoutVideosInput[], cur) => {
+    acc.push({
+      id: cur.id,
+      title: cur.title,
+      file: cur.path,
+      preview: cur.previewPath,
+      description: cur.description,
+    });
+    return acc;
+  }, []),
+}));
+
+const discardModalClosed = (approved: boolean) => {
+  isConfirmationOpen.value = false;
+  if (approved) {
+    if (store.exercises[route.params.id.toString()]) {
+      store.removeExercise(route.params.id.toString());
+    }
+    router.go(-1);
+  }
+};
+
+const onBack = () => {
+  if (
+    !isEditing.value &&
+    (videoPath.value || exerciseTitle.value || exerciseDescription.value)
+  ) {
+    isConfirmationOpen.value = true;
+  } else {
+    router.go(-1);
+  }
+};
+
+const checkExercise = (id: string) => {
+  const exercise = store.exercises[id];
+  if (exercise) {
+    exerciseTitle.value = exercise.title;
+    videoPath.value = exercise.videoPath;
+    previewUrl.value = exercise.previewUrl;
+    previewPath.value = exercise.previewPath;
+    exerciseDescription.value = exercise.description || "";
+    videoInfo.value = {
+      size: exercise?.videoSize || "",
+      name: exercise?.videoName || "",
+    };
+  }
+};
+
+const id = route.params.id;
+if (id) {
+  checkExercise(id.toString());
+}
+
+const exerciseId = ref<string | null>(
+  route.params.id ? String(route.params.id) : null
+);
+const isEditing = ref<boolean>(Boolean(route.query["edit"]));
+
+if (isEditing.value && exerciseId.value) {
+  const exercise = store.exercises[exerciseId.value];
+
+  exerciseTitle.value = exercise.title;
+  exerciseDescription.value = exercise.description || "";
+  videoPath.value = exercise.videoPath;
+  previewUrl.value = exercise.previewUrl;
+  previewPath.value = exercise.previewPath;
+  path.value = exercise.path;
+  videoInfo.value = {
+    size: exercise.videoSize,
+    name: exercise.videoName,
+  };
+}
+
+const updateExercise = () => {
+  store.editExercise(exerciseId.value as string, {
+    title: exerciseTitle.value,
+    description: exerciseDescription.value,
+    videoPath: videoPath.value,
+    previewUrl: previewUrl.value,
+    previewPath: previewPath.value,
+    path: path.value,
+    id: route.params.id as string,
+    videoSize: videoInfo.value.size,
+    videoName: videoInfo.value.name,
+  });
+};
+
 </script>
 
 <style lang="scss">
@@ -214,10 +390,16 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
 
 .holder-button {
   display: flex;
+  flex-direction: column;
   gap: 16px;
+  margin-bottom: 16px;
 
   .button {
     margin: 0;
+  }
+
+  ion-button {
+    width: 100%;
   }
 }
 

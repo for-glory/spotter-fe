@@ -10,34 +10,21 @@
           @submit="handleSubmit"
           @onSkip="onBack"
           @open-picker="(e) => openPicker(e)"
-          skipText="Exit"
         />
         <ion-title class="title-mini" color="primary">
           Upload Exercise
         </ion-title>
         <exercise-form 
           ref="exerciseForm"
+          :workoutId="workoutId"
+          :isValidWorkoutForm="isValidForm"
+          hasSubmitButton
+          hasFinishWorkoutButton
           @submit="handleSubmit"
           @onSkip="onBack"
           @open-picker="(e) => openPicker(e)"
-          skipText="Exit"
+          submitButtonText="Add next exercise"
         />
-        <div class="holder-button">
-          <ion-button
-            expand="block"
-            class="secondary"
-            @click="onBack"
-          >
-            Exit
-          </ion-button>
-          <ion-button
-            @click="handleSubmit"
-            expand="block"
-            :disabled="!isValidForm"
-          >
-            Upload & Finish
-          </ion-button>
-        </div>
       </div>
     </template>
   </base-layout>
@@ -76,6 +63,7 @@ const percentLoaded = ref(0);
 const router = useRouter();
 
 const store = useWorkoutsStore();
+const workoutId = uuidv4();
 
 const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
@@ -164,6 +152,7 @@ const isValidForm = computed(
 
 const handleSubmit = () => {
   if (isValidForm.value) {
+    store.setMedia();
     router.push({
       name: EntitiesEnum.DashboardCreateExercise,
       params: { id: uuidv4() },
@@ -212,5 +201,11 @@ const onBack = () => {
 }
 .content {
   padding: 0 40px 26px;
+}
+
+.holder-button {
+  ion-button {
+    width: 100%;
+  }
 }
 </style>
