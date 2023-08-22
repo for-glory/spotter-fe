@@ -148,6 +148,13 @@
           <div class="title">Event Status</div>
           <div class="block">
             <div class="perform">
+              <doughnut 
+                :data="chartData"
+                :options="chartOptions"
+                :width="null"
+                :height="null"
+                class="doughnut"
+              />
               <div class="d-flex align-items-center justify-content-between">
                 <div class="title white-text">Completed</div>
                 <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
@@ -162,6 +169,46 @@
                 dateTime="Saturday, April 14 | 08:00 AM"
                 status="Closed"
               />
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="red-title">Upcoming</div>
+                <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
+              </div>
+              <div>
+                <div class="upcomming">
+                  <div class="main-box d-flex align-items-center justify-content-between">
+                    <ion-img src="assets/backgrounds/banner1.jpeg" id="cover"></ion-img>
+                    <div>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <ion-text>Run competition</ion-text>
+                        <ion-text>$100.00</ion-text>
+                      </div>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <ion-text>10 July</ion-text>
+                        <ion-text>Entry</ion-text>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <div>
+                          <div>
+                            <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                            08:30 AM
+                          </div>
+                          <address-item class="event__address">
+                            Light Street 1
+                          </address-item>
+                        </div>
+                        <div>
+                          <ion-button id="count">10 Round</ion-button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <ion-text class="description">
+                      Ready to take the biggest 2022 competition event? Join our event and win the best trophies as: one-time pass to “Summer Gym”, personal training with fitness trainer Jenny Cooper and much more interesting!
+                    </ion-text>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -209,6 +256,17 @@ import DashboardItem from "@/general/components/DashboardItem.vue";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  ArcElement
+} from 'chart.js';
+import { Doughnut } from 'vue-chartjs';
+
+ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
 const router = useRouter();
 const route = useRoute();
@@ -379,6 +437,37 @@ const marketChartOption = {
   }
 };
 
+const chartData = {
+  labels: [
+    'Completed',
+    'Upcoming events',
+  ],
+  datasets: [{
+    data: [60, 40],
+    backgroundColor: [
+      '#E1DBC5',
+      '#F7685B',
+    ],
+    circumference: 180,
+    rotation: -90,
+    borderJoinStyle: 'rounded',
+    cutout: 50,
+    borderWidth: 0
+  }]
+};
+const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'right',
+      useBorderRadius: true,
+      borderRadius: 100
+    },
+    title: {
+      display: false,
+    }
+  }
+};
 
 const facilities = computed(() => {
   switch (role) {
@@ -748,5 +837,52 @@ profileDeleted(() => {
 }
 .perform {
   margin: 0 1.5rem;
+}
+.red-text {
+  color: #DC5858;
+}
+
+.upcomming {
+  border-radius: 12px;
+  background-color: var(--gray-800);
+  padding: 16px 6px;
+
+  .main-box {
+    padding: 16px 6px;
+  }
+  .description {
+    font: 300 12px/1 Lato;
+    color: var(--gray-400);
+  }
+  .input-wrapper {
+    display: block;
+  }
+  
+  ion-img {
+    width: 62px;
+    height: 62px;
+    margin-right: 14px;
+
+    --border-radius: 12px;
+  }
+
+  ion-button#count {
+    --border-radius: 12px;
+    width: 62px;
+    height: 20px;
+    color: #F7685B;
+    font: 500 10px/1 Lato;
+  }
+}
+.red-title {
+  padding: 8px 0px;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight: 400;
+  color: #DC5858;
+}
+.doughnut {
+  margin-top: -50px;
+  margin-bottom: -50px;
 }
 </style>
