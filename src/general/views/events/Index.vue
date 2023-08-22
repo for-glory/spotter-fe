@@ -119,6 +119,8 @@ import {
   QueryEventsOrderByColumn,
   RoleEnum,
   SortOrder,
+  UserDocument,
+  Query,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, onMounted } from "vue";
@@ -130,6 +132,8 @@ import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
+import { useProfileStore } from "@/general/stores/profile";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
@@ -141,6 +145,28 @@ const { id } = useId();
 
 const { role: myRole } = useRoles();
 const filter = ref<string>('all');
+
+//must be changed after gym selection completed
+const store = useProfileStore();
+const facilityStore = useFacilityStore();
+const facilities = ref();
+
+const {
+  result,
+  refetch,
+  onResult: gotUser,
+} = useQuery<Pick<Query, "user">>(UserDocument, { id });
+
+gotUser(({ data }) => {
+	if(data.user) {
+		store.setValue("first_name", data.user?.first_name??"Default");
+		store.setValue("last_name", data.user?.last_name??"Default");
+		store.setValue("email", data.user?.email??"");
+		store.setValue("avatarUrl", data.user?.avatarUrl??"");
+	}
+	facilities.value = result.value?.user?.owned_facilities;
+  facilityStore.setFacility(facilities.value[0]);
+});
 
 const unreadMessages = ref<number[]>([]);
 
@@ -203,6 +229,7 @@ gotEvents((response) => {
   totalEvents.value = response.data.events?.paginatorInfo.total ?? 0;
   if (!events.value?.length) {
     events.value = response.data.events?.data;
+    console.log("*******************", events.value);
   }
 });
 

@@ -89,6 +89,7 @@
 
       <div class="form-row">
         <base-input
+          type="number"
           :disabled="loading"
           label="Discount"
           placeholder="Enter discount value"
@@ -113,7 +114,7 @@
         <ion-label class="label"> End date </ion-label>
         <choose-block
           title="End date"
-          :disabled="!eventStartTime || !eventStartDate || loading"
+          :disabled="!eventStartDate || loading"
           :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
           @handle-click="
             showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
@@ -259,7 +260,7 @@
         <ion-label class="label"> End date </ion-label>
         <choose-block
           title="End date"
-          :disabled="!eventStartTime || !eventStartDate || loading"
+          :disabled="!eventStartDate || loading"
           :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
           @handle-click="
             showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
@@ -757,8 +758,6 @@ const invalid = computed<boolean>(
         !selectedCity.value ||
         !selectedAddress.value ||
         !eventEndDate.value ||
-        !eventStartTime.value ||
-        !eventEndTime.value ||
         !eventMaxParticipants.value))
 );
 
@@ -838,13 +837,9 @@ const onSkip = () => {
 }
 
 const formatTime = (date: number, time: string): string => {
-  const isPm = time.split(" ")[1] === "PM",
-    hour = Number(time.split(":")[0]) + (isPm ? 12 : 0),
-    minute = Number(time.split(":")[1].split(" ")[0]);
-
   return dayjs(date)
-    .hour(hour)
-    .minute(minute)
+    .hour(0)
+    .minute(0)
     .second(0)
     .millisecond(0)
     .format("YYYY-MM-DD HH:mm:ss");

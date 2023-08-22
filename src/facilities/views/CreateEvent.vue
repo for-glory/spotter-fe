@@ -7,7 +7,6 @@
       <div class="content">
         <event-form
           ref="eventForm"
-          has-skip-button
           @submit="createEvent"
           @onSkip="goToWorkout"
 			    skipText="Skip"
@@ -39,6 +38,7 @@ import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const route = useRoute();
@@ -57,6 +57,7 @@ const discardModalClosed = (approved: boolean) => {
     // router.push({ name: EntitiesEnum.Dashboard });
   }
 };
+const currentFacility = useFacilityStore();
 
 const {
   mutate: createEventMutate,
@@ -65,7 +66,8 @@ const {
 } = useMutation(CreateEventDocument);
 
 const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
+  console.log({input});
+  createEventMutate({ input: { ...input, facility_id: currentFacility.facility?.id } });
 };
 
 const goToWorkout = () => {
@@ -80,8 +82,8 @@ eventCreated(() => {
   eventForm.value?.clearStore();
   // router.go(-1);
   router.push({
-      name: EntitiesEnum.CreateWorkout,
-    });
+    name: EntitiesEnum.FacilitiesEvents,
+  });
 });
 
 const showSuccessToast = async () => {
