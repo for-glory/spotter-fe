@@ -83,6 +83,12 @@ export const profileMenu: ProfileMenu = {
       isTrusted: true,
     },
     {
+      name: EntitiesEnum.ProfileScan,
+      label: "Scan",
+      icon: "qr-code",
+      isTrusted: true,
+    },
+    {
       name: EntitiesEnum.DashboardGettingPaid,
       label: "Getting Paid",
       icon: "payment",
