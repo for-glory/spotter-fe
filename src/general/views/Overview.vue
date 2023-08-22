@@ -274,6 +274,7 @@ import {
 import { Doughnut } from 'vue-chartjs';
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
@@ -304,6 +305,7 @@ const isTrusted = computed(() =>
 );
 
 const unreadMessages = ref<number[]>([]);
+const facilityStore = useFacilityStore();
 
 onMounted(() => {
   refetch();
@@ -505,7 +507,7 @@ const facilities = computed(() => {
 
     case RoleEnum.Manager:
     case RoleEnum.FacilityOwner:
-      return result.value?.user?.facilities;
+      return result.value?.user?.owned_facilities;
 
     default:
       return [];
@@ -582,6 +584,8 @@ gotUser(({ data }) => {
     facilities.value?.length && facilities.value[0]
       ? facilities.value[0].id
       : null;
+
+  facilityStore.setFacility(facilities.value[0]);
 
   progress.value = data?.user?.settings?.find(
     (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser

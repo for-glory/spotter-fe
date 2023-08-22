@@ -21,7 +21,7 @@
         />
         <div class="profile__head">
           <ion-title
-            @click="role === RoleEnum.OrganizationOwner && showGymModal()"
+            @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()"
             class="profile__fullname"
           >
             <template
@@ -34,8 +34,8 @@
             </template>
             <ion-icon
               class="profile__fullname-icon"
-              icon="assets/icon/arrow-down.svg"
-              v-if="role === RoleEnum.OrganizationOwner"
+              src="assets/icon/arrow-down-light.svg"
+              v-if="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner"
             />
           </ion-title>
           <div class="profile__address">
@@ -170,6 +170,7 @@ import useId from "@/hooks/useId";
 import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
 import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const route = useRoute();
@@ -185,6 +186,7 @@ const { role } = useRoles();
 const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
+const currentFacility = useFacilityStore();
 
 const {
   result,
@@ -198,17 +200,22 @@ const isTrusted = computed(() =>
 );
 
 onMounted(() => {
+  activeFacilityId.value = currentFacility.facility?.id;
+  router.push({
+    name: router?.currentRoute?.value?.name,
+    query: { facilityId: activeFacilityId.value },
+  });
   refetch();
 });
 
 const facilities = computed(() => {
   switch (role) {
-    case RoleEnum.OrganizationOwner: {
+    case RoleEnum.OrganizationOwner:
+    case RoleEnum.FacilityOwner: {
       return result.value?.user?.owned_facilities;
     }
 
     case RoleEnum.Manager:
-    case RoleEnum.FacilityOwner:
       return result.value?.user?.facilities;
 
     default:
@@ -219,8 +226,9 @@ const facilities = computed(() => {
 const activeFacilityId = ref<string | null>(null);
 
 watch(
-  () => activeFacilityId.value,
+  () => currentFacility.facility?.id,
   (newVal) => {
+    activeFacilityId.value = currentFacility.facility?.id;
     router.push({
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
@@ -282,11 +290,14 @@ const symbols = computed<string>(() => {
 });
 
 gotUser(({ data }) => {
-  activeFacilityId.value =
-    facilities.value?.length && facilities.value[0]
-      ? facilities.value[0].id
-      : null;
+  if(role !== RoleEnum.FacilityOwner) {
+    activeFacilityId.value =
+      facilities.value?.length && facilities.value[0]
+        ? facilities.value[0].id
+        : null;
+  }
 
+  console.log(facilities);
   progress.value = data?.user?.settings?.find(
     (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser
   )?.value
