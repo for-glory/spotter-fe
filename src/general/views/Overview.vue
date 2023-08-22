@@ -8,7 +8,14 @@
 						{{ facilityName?.charAt(0) }}
 					</template>
 				</ion-avatar>
-        <ion-title class="header__title">Overview</ion-title>
+        <page-header title="Overview">
+          <template #custom-btn>
+            <ion-button @click="onViewChat" class="header-btn">
+              <ion-icon src="assets/icon/chat.svg" />
+              <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+            </ion-button>
+          </template>
+        </page-header>
       </div>
     </template>
     <template #content>
@@ -265,6 +272,8 @@ import {
   ArcElement
 } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
+import { onValue } from "firebase/database";
+import { chatsRef } from "@/firebase/db";
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
@@ -294,8 +303,11 @@ const isTrusted = computed(() =>
   role === RoleEnum.User ? Number(progress.value) >= 100 : true
 );
 
+const unreadMessages = ref<number[]>([]);
+
 onMounted(() => {
   refetch();
+  fetchChats();
 });
 
 const attendanceDatas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
@@ -467,6 +479,22 @@ const chartOptions = {
       display: false,
     }
   }
+};
+
+const fetchChats = () => {
+  if (unreadMessages.value.length) unreadMessages.value = [];
+  onValue(chatsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const chat = childSnapshot.val();
+      if (chat.unread && chat.unread[id]) {
+        unreadMessages.value.push(chat.unread[id]);
+      }
+    });
+  });
+};
+
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
 };
 
 const facilities = computed(() => {
@@ -884,5 +912,39 @@ profileDeleted(() => {
 .doughnut {
   margin-top: -50px;
   margin-bottom: -50px;
+}
+.header-btn {
+  height: 32px;
+  margin: 0 5px;
+  font-size: 24px;
+  display: block;
+  min-width: 32px;
+  --border-radius: 50% !important;
+  --icon-font-size: 24px;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
+  --icon-padding-bottom: 0;
+  --icon-padding-end: 0;
+  --icon-padding-start: 0;
+  --icon-padding-top: 0;
+  --min-height: 32px;
+  --min-width: 32px;
+
+  ion-icon {
+    font-size: 1em;
+  }
+
+  &__badge {
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    margin: -12px 0 0 4px;
+    background: var(--ion-color-danger-tint);
+  }
 }
 </style>

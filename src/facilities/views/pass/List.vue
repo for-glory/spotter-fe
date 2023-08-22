@@ -1,7 +1,14 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym pass" />
+      <page-header back-btn @back="onBack" title="Gym pass">
+        <template #custom-btn>
+          <ion-button @click="onViewChat" class="header-btn">
+            <ion-icon src="assets/icon/chat.svg" />
+            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+          </ion-button>
+        </template>
+      </page-header>
       <div class="pass-list ion-margin-top">
         <div class="d-flex justify-content-between pass-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
@@ -114,6 +121,9 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
+import { onValue } from "firebase/database";
+import { chatsRef } from "@/firebase/db";
+import useId from "@/hooks/useId";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -121,6 +131,9 @@ const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
 const { id: myFacilityId } = useFacilityId();
+
+const { id } = useId();
+
 const tempPassData = [
   {
     id: uuidv4(),
@@ -170,6 +183,8 @@ const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
 
+const unreadMessages = ref<number[]>([]);
+
 const {
   result: facilityPassResult,
   load: getFacilityPass,
@@ -183,10 +198,27 @@ const handleSelectTab = (tabName: string) => {
   customerData.value = tempPassData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
 }
 
+const fetchChats = () => {
+  if (unreadMessages.value.length) unreadMessages.value = [];
+  onValue(chatsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const chat = childSnapshot.val();
+      if (chat.unread && chat.unread[id]) {
+        unreadMessages.value.push(chat.unread[id]);
+      }
+    });
+  });
+};
+
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
+};
+
 onMounted(() => {
   console.log(getFacilityPass());
   console.log("id:", myFacilityId);
   console.log(facilityPassResult);
+  fetchChats();
 });
 
 const onCreate = () => {
@@ -340,5 +372,28 @@ ion-button#gym-pass {
   width: 100%;
   font: 500 16px/1 Yantramanav;
   margin-top: 28px;
+}
+.header-btn {
+  height: 32px;
+  margin: 0 5px;
+  font-size: 24px;
+  display: block;
+  min-width: 32px;
+  --border-radius: 50% !important;
+  --icon-font-size: 24px;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
+  --icon-padding-bottom: 0;
+  --icon-padding-end: 0;
+  --icon-padding-start: 0;
+  --icon-padding-top: 0;
+  --min-height: 32px;
+  --min-width: 32px;
+
+  ion-icon {
+    font-size: 1em;
+  }
 }
 </style>

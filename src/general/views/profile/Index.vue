@@ -1,7 +1,7 @@
 <template>
   <base-layout content-full-height>
     <template #header>
-      <page-header title="Profile" />
+      <page-header title="Settings" />
     </template>
     <template #content>
       <div class="profile">

@@ -1,6 +1,14 @@
 <template>
   <base-layout>
     <template #header>
+      <page-header back-btn @back="onBack" title="Events">
+        <template #custom-btn>
+          <ion-button @click="onViewChat" class="header-btn">
+            <ion-icon src="assets/icon/chat.svg" />
+            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+          </ion-button>
+        </template>
+      </page-header>
       <div class="banner">
         <ion-title class="banner__title">Create events for clients and trainers</ion-title>
         <ion-text class="banner__text">
@@ -113,21 +121,28 @@ import {
   SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import useFacilityId from "@/hooks/useFacilityId";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import { onValue } from "firebase/database";
+import { chatsRef } from "@/firebase/db";
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
+
+const { id } = useId();
+
 const { role: myRole } = useRoles();
 const filter = ref<string>('all');
+
+const unreadMessages = ref<number[]>([]);
 
 const idFilter =
   myRole === RoleEnum.Trainer
@@ -149,6 +164,26 @@ const eventsParams: EventsQueryVariables = {
   // },
   ...idFilter,
 };
+
+const fetchChats = () => {
+  if (unreadMessages.value.length) unreadMessages.value = [];
+  onValue(chatsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const chat = childSnapshot.val();
+      if (chat.unread && chat.unread[id]) {
+        unreadMessages.value.push(chat.unread[id]);
+      }
+    });
+  });
+};
+
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
+};
+
+onMounted(() => {
+  fetchChats();
+});
 
 const {
   onResult: gotEvents,
@@ -203,6 +238,9 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
       ev.target.complete();
     });
   }
+};
+const onBack = () => {
+  router.go(-1);
 };
 </script>
 
