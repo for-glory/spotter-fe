@@ -148,6 +148,7 @@ const addressSelected = async (
   type?: EntitiesEnum
 ) => {
   if (!selected) return;
+  console.log(selected);
   switch (type) {
     case EntitiesEnum.State:
       selectedState.value = { ...states.value?.find(
@@ -166,9 +167,9 @@ const addressSelected = async (
       break;
 
     case EntitiesEnum.City:
-      selectedCity.value = cities.value?.find(
+      selectedCity.value = { ...cities.value?.find(
         (city) => city.name === selected.city.name
-      );
+      ), id: selected.city.id };
       if (selectedCity.value?.name !== selectedAddress.value?.locality) {
         selectedAddress.value = undefined;
       }

@@ -3948,6 +3948,39 @@ export const CreateEventDocument = gql`
     mutation createEvent($input: CreateEventInput!) {
   createEvent(input: $input) {
     id
+    title
+    description
+    start_date
+    end_date
+    price
+    address {
+      city {
+        id
+        name
+        state {
+          name
+        }
+      }
+      lat
+      lng
+      street
+    }
+    max_participants
+    equipments
+     {
+       icon
+       iconUrl
+       name
+     }
+    amenities
+     {
+       icon
+       iconUrl
+       name
+     }
+    media {
+      title
+    }
   }
 }
     `;
@@ -4293,6 +4326,23 @@ export const UpdateEventDocument = gql`
     mutation updateEvent($id: ID!, $input: UpdateEventInput!) {
   updateEvent(id: $id, input: $input) {
     id
+    title
+    description
+    start_date
+    end_date
+    price
+    address {
+      lat
+      lng
+      street
+    }
+    max_participants
+    equipments
+    amenities
+    media {
+      title
+      file
+    }
   }
 }
     `;

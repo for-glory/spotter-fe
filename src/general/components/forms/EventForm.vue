@@ -788,17 +788,17 @@ const submitEvent = async () => {
         end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
         price: Number(store.price),
         address: {
-          lat: selectedAddress.value?.latitude
-            ? Number(selectedAddress.value.latitude)
+          lat: selectedAddress.value?.address?.latitude
+            ? Number(selectedAddress.value?.address.latitude)
             : 34.034744,
-          lng: selectedAddress.value?.longitude
-            ? Number(selectedAddress.value.longitude)
+          lng: selectedAddress.value?.address?.longitude
+            ? Number(selectedAddress.value?.address.longitude)
             : -118.2381,
           street: `${
-            selectedAddress.value?.thoroughfare
-              ? selectedAddress.value?.thoroughfare + ", "
+            selectedAddress.value?.address?.thoroughfare
+              ? selectedAddress.value?.address?.thoroughfare + ", "
               : ""
-          }${selectedAddress.value?.subThoroughfare || ""}`,
+          }${selectedAddress.value?.address?.subThoroughfare || ""}`,
           city_id: selectedCity.value?.id,
         },
         max_participants: store.max_participants,

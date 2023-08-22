@@ -229,7 +229,6 @@ gotEvents((response) => {
   totalEvents.value = response.data.events?.paginatorInfo.total ?? 0;
   if (!events.value?.length) {
     events.value = response.data.events?.data;
-    console.log("*******************", events.value);
   }
 });
 
