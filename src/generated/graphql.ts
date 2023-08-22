@@ -4332,16 +4332,32 @@ export const UpdateEventDocument = gql`
     end_date
     price
     address {
+      city {
+        id
+        name
+        state {
+          name
+        }
+      }
       lat
       lng
       street
     }
     max_participants
     equipments
+     {
+       icon
+       iconUrl
+       name
+     }
     amenities
+     {
+       icon
+       iconUrl
+       name
+     }
     media {
       title
-      file
     }
   }
 }
