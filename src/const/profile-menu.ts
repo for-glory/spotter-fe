@@ -77,6 +77,12 @@ export const profileMenu: ProfileMenu = {
       isTrusted: true,
     },
     {
+      name: EntitiesEnum.DashboardGymManager,
+      label: "Managers",
+      icon: "working",
+      isTrusted: true,
+    },
+    {
       name: EntitiesEnum.Membership,
       label: "Membership",
       icon: "membership",

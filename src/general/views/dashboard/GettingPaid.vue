@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Capacitor.isNativePlatform()">
+  <div v-if="!Capacitor.isNativePlatform()">
     <div class="flex-row">
       <ion-text class="page">Getting Paid</ion-text>
       <ion-icon src="assets/icon/arrow-next.svg" />

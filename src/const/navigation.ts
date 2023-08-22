@@ -108,7 +108,7 @@ export const navigationMenu: NavigationMenu = {
     {
       name: EntitiesEnum.Profile,
       label: "Profile",
-      icon: "assets/icon/profile.svg",
+      icon: "assets/icon/Setting.svg",
       category: "/profile",
     },
   ],

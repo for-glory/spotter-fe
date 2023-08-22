@@ -1,5 +1,6 @@
 <template>
 	<div
+    v-if="!Capacitor.isNativePlatform()"
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
     id="main-content"
@@ -109,6 +110,78 @@
       </div>
     </div>
 	</div>
+  <base-layout v-else>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Gym Managers">
+        <template #custom-btn>
+          <ion-button
+            class="header-btn"
+            @click="router.push({ name: EntitiesEnum.CreateEvent })"
+          >
+            <ion-icon src="assets/icon/plus.svg" />
+          </ion-button>
+        </template>
+      </page-header>
+    </template>
+    <template #content>
+      <div class="main-content">
+        <ion-grid class="pass-table">
+          <ion-row>
+            <ion-col size="4" class="table-th">
+              <ion-text>Full Name</ion-text>
+            </ion-col>
+            <ion-col size="4" class="table-th">
+              <ion-text>Type</ion-text>
+            </ion-col>
+            <ion-col size="4" class="table-th">
+              <ion-text>Availability</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row id="body" v-for="manager in managers" :key="manager?.id" class="table-row ion-align-items-center">
+            <ion-col size="4" class="table-td">
+              <ion-text>{{manager?.name}}</ion-text>
+            </ion-col>
+            <ion-col size="4" class="table-td capitalize">
+              <ion-text>{{manager?.type?.toLowerCase()}}</ion-text>
+            </ion-col>
+            <ion-col size="4" class="table-td">
+              <ion-text
+                :class="manager.availability === 'available' ? 'available' : 'unavailable'"
+              >
+                {{manager?.availability}}
+              </ion-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-title class="title">Membership Summary</ion-title>
+        <div class="content-box content-box__membership flex-auto">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="New Signs-up" value="14"/>
+              </ion-col>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="Active" value="60"/>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Today's" keyText="Event counts" value="23"/>
+              </ion-col>
+              <ion-col size="5">
+                <summary-item title="Today's" keyText="Message counts" value="13"/>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="5">
+                <summary-item title="Total" keyText="Expiring membership" value="24"/>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>
+    </template>
+  </base-layout>
 </template>
 
 <script setup lang="ts">
@@ -137,7 +210,8 @@ import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
-
+import { Capacitor } from '@capacitor/core';
+import { v4 as uuidv4 } from "uuid";
 
 const filter = ref<string>('profile');
 
@@ -150,13 +224,13 @@ const { id } = JSON.parse(localStorage.getItem("user") || "{}");
 const router = useRouter();
 
 const managers = [{
-  id: 0,
+  id: uuidv4(),
   name: "Gabby Alao",
   type: "Full-Time",
   email: "Gabrielalao@gmail.com",
   availability: "unavailable"
 },{
-  id: 1,
+  id: uuidv4(),
   name: "Ajebo Hustler",
   type: "Full-Time",
   email: "Ajebohustler@gmil.co",
@@ -348,5 +422,88 @@ const handleEdit = () => {
   padding-bottom: 2px;
   padding-left: 4px;
   padding-right: 4px;
+}
+
+.main-content {
+  padding: 16px 20px;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+
+  .content-box {
+    padding: 26px 14px 16px 14px;
+
+    ion-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+  }
+  .title {
+    padding: 8px 0px;
+    font-size: 1.6rem;
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--fitnesswhite);
+  }
+}
+
+.pass-table {
+  border: 1px solid var(--fitnesswhite);
+  background: var(--gray-700);
+  width: 100%;
+  padding: 0;
+
+  .table-th {
+    border-bottom: 1px solid var(--beige);
+    padding: 10px 16px;
+  }
+
+  .table-td {
+    //  border: 1px solid var(--beige);
+    padding: 0 0 0 16px;
+
+    ion-button {
+      font-size: 14px;
+      height: 32px;
+      margin: 16px 0;
+    }
+  }
+
+  .table-row {
+    border-top: 1px solid var(--beige);
+  }
+
+  ion-row#body {
+    padding: 14px 0 14px;
+
+    ion-text {
+      font: 500 12px/1 Lato;
+    }
+  }
+}
+.header-btn {
+  height: 32px;
+  margin: 0 5px;
+  font-size: 24px;
+  display: block;
+  min-width: 32px;
+  --border-radius: 50% !important;
+  --icon-font-size: 24px;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
+  --icon-padding-bottom: 0;
+  --icon-padding-end: 0;
+  --icon-padding-start: 0;
+  --icon-padding-top: 0;
+  --min-height: 32px;
+  --min-width: 32px;
+
+  ion-icon {
+    font-size: 1em;
+  }
 }
 </style>
