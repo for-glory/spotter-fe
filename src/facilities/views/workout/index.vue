@@ -121,7 +121,6 @@
                     :hide="true"
                     :hidden="false"
                   />
-                  {{ workout }}
                 </ion-col>
               </ion-row>
             </ion-grid>
