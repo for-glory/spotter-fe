@@ -324,17 +324,6 @@ const recommendedWorkoutsByType = computed(
     letter-spacing: 0.1px;
   }
 }
-.workout-list {
-  background-color: var(--gray-700);
-  margin-top: 0;
-
-  &__top {
-    padding: 8px 24px;
-    .button {
-      height: 42px;
-    }
-  }
-}
 .filter-tabs {
   width: 100%;
   
