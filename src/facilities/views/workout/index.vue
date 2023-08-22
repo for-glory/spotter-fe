@@ -10,7 +10,9 @@
           <img src="assets/backgrounds/banner1.jpeg" alt="">
         </div>
       </div>
-      <div class="workout-list">
+      <div class="workout-list" v-if="!(recommendedLoading ||
+            recommendedByTypeLoading ||
+            recommendedByBodyLoading) || !recommendedWorkouts.length">
         <div class="d-flex justify-content-between workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
             <ion-button 
