@@ -116,7 +116,6 @@
         <template #custom-btn>
           <ion-button
             class="header-btn"
-            @click="router.push({ name: EntitiesEnum.CreateEvent })"
           >
             <ion-icon src="assets/icon/plus.svg" />
           </ion-button>
