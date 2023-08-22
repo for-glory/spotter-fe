@@ -174,7 +174,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.FacilityCreateWorkout,
-    path: "/facilities/dailys/list",
+    path: "/facilities/dailys/create",
     component: () => import("@/facilities/views/workout/CreateWorkout.vue"),
   },
 ];

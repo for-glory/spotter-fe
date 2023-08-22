@@ -146,7 +146,7 @@
               </ion-row>
             </ion-grid>
           </div>
-          <ion-button @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create workout plan</ion-button>
+          <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create workout plan</ion-button>
         </div>
       </div>
     </template>
@@ -348,5 +348,10 @@ const recommendedWorkoutsByType = computed(
   .normal {
     color: var(--grey-text);
   }
+}
+ion-button#create {
+  width: 100%;
+  font: 500 16px/1 Yantramanav;
+  margin-top: 28px;
 }
 </style>

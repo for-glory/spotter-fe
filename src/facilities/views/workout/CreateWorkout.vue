@@ -4,38 +4,40 @@
       <page-header back-btn @back="onBack" title="Create workout plan" />
     </template>
     <template #content>
-      <workout-form 
-        ref="workoutForm"
-        @submit="handleSubmit"
-        @onSkip="onBack"
-        @open-picker="(e) => openPicker(e)"
-        skipText="Exit"
-      />
-      <ion-title class="title-mini" color="primary">
-        Upload Exercise
-      </ion-title>
-      <exercise-form 
-        ref="exerciseForm"
-        @submit="handleSubmit"
-        @onSkip="onBack"
-        @open-picker="(e) => openPicker(e)"
-        skipText="Exit"
-      />
-      <div class="holder-button">
-        <ion-button
-          expand="block"
-          class="secondary"
-          @click="onBack"
-        >
-          Exit
-        </ion-button>
-        <ion-button
-          @click="handleSubmit"
-          expand="block"
-          :disabled="!isValidForm"
-        >
-          Upload & Finish
-        </ion-button>
+      <div class="content">
+        <workout-form 
+          ref="workoutForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+          @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <ion-title class="title-mini" color="primary">
+          Upload Exercise
+        </ion-title>
+        <exercise-form 
+          ref="exerciseForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+          @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <div class="holder-button">
+          <ion-button
+            expand="block"
+            class="secondary"
+            @click="onBack"
+          >
+            Exit
+          </ion-button>
+          <ion-button
+            @click="handleSubmit"
+            expand="block"
+            :disabled="!isValidForm"
+          >
+            Upload & Finish
+          </ion-button>
+        </div>
       </div>
     </template>
   </base-layout>
@@ -207,5 +209,8 @@ const onBack = () => {
 }
 .dashboard-btn {
   margin-top: 10px;
+}
+.content {
+  padding: 0 40px 26px;
 }
 </style>
