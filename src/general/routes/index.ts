@@ -392,6 +392,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ViewPassAndDropins,
+    path: "/products/:type",
+    component: () => import("@/general/views/ItemsList.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     path: "/dashboard/",
     component: () => import("@/general/views/dashboard/Index.vue"),
     meta: {

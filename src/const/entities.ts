@@ -191,5 +191,6 @@ export enum EntitiesEnum {
   FacilityCreateDropins = "FACILITY_CREATE_DROPINS",
   FacilityWorkout = "FACILITY_WORKOUT",
   FacilityCreateWorkout = "FACILITY_CREATE_WORKOUT",
-  FacilityCreateEvent = "FACILITY_CREATE_EVENT"
+  FacilityCreateEvent = "FACILITY_CREATE_EVENT",
+  ViewPassAndDropins = "VIEW_PASS_AND_DROPINS",
 }

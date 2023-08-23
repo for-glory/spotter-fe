@@ -45,9 +45,14 @@
       </div>
     </template>
     <template #content>
-      <div class="main-content">
+      <ion-spinner
+          v-if="loadingFacilityPass"
+          name="lines"
+          class="spinner"
+        />
+      <div v-else class="main-content">
         <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button @click="onCreate">Create Gym pass</ion-button>
+          <ion-button @click="handleCreate">Create Gym pass</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
             <ion-text class="status">Gym pass Empty</ion-text>
@@ -86,8 +91,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-button id="gym-pass" @click="onCreate">Create Gym pass</ion-button>
-          <ion-button id="gym-pass">View Gym pass</ion-button>
+          <ion-button @click="handleView" id="gym-pass">View Gym pass</ion-button>
         </div>
       </div>
     </template>
@@ -108,7 +112,7 @@ import {
   SettingsCodeEnum,
   TrainingDocument,
   TrainingStatesEnum,
-  FacilityItemPassDocument,
+  FacilityItemsByFacilityIdAndTypeDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
@@ -124,6 +128,7 @@ import { v4 as uuidv4 } from "uuid";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import useId from "@/hooks/useId";
+import { useQuery } from "@vue/apollo-composable";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -133,6 +138,15 @@ const { role } = useRoles();
 const { id: myFacilityId } = useFacilityId();
 
 const { id } = useId();
+
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+  onResult: gotFacility,
+} = useQuery<Pick<Query, "facilityItemPass">>(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacility.facility.id,
+  item_type: "PASS"
+});
 
 const tempPassData = [
   {
@@ -175,23 +189,11 @@ const tempPassData = [
 const customerData = ref<any>();
 customerData.value = tempPassData;
 
-const changeSegment = (segment: string) => {
-  activeTab.value = segment;
-  console.log("segment: " + segment);
-};
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
 
 const unreadMessages = ref<number[]>([]);
-
-const {
-  result: facilityPassResult,
-  load: getFacilityPass,
-  onResult: gotFacilityPass,
-} = useLazyQuery<Pick<Query, "facilityItemPass">>(FacilityItemPassDocument, {
-  id: myFacilityId,
-});
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
@@ -210,20 +212,23 @@ const fetchChats = () => {
   });
 };
 
-const onViewChat = () => {
-  router.push({ name: EntitiesEnum.ChatList });
-};
-
 onMounted(() => {
-  console.log(getFacilityPass());
-  console.log("id:", myFacilityId);
-  console.log(facilityPassResult);
+  console.log(currentFacility.facility.id);
   fetchChats();
 });
 
-const onCreate = () => {
+const handleCreate = () => {
   router.push({ name: EntitiesEnum.FacilityCreatePass });
 }
+
+gotFacility(({ data }) => {
+  console.log({ data });
+});
+
+const handleView = () => {
+  router.push({ name: EntitiesEnum.ViewPassAndDropins, params: { type: 'pass' } },);
+}
+
 const onBack = () => {
   router.go(-1);
 };
@@ -395,5 +400,10 @@ ion-button#gym-pass {
   ion-icon {
     font-size: 1em;
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

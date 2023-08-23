@@ -1,0 +1,359 @@
+<template>
+  <base-layout>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Gym pass">
+        <template #custom-btn>
+        </template>
+      </page-header>
+    </template>
+    <template #content>
+      <ion-spinner
+        v-if="loadingFacilityPass"
+        name="lines"
+        class="spinner"
+      />
+      <div v-else-if="products?.length > 0" class="main-content">
+        <product-item 
+          v-for="(product, id) in products"
+          :key="id"
+          :item="product"
+          @open-settings="showSettingsModal"
+        />
+      </div>
+    </template>
+  </base-layout>
+  <ion-modal
+    ref="modal"
+    :is-open="isSettingModalOpen"
+    class="settings-modal"
+    @willDismiss="isSettingModalOpen = false"
+  >
+    <div class="main-buttons">
+      <ion-button
+        id="delete"
+        @click="deleteGymPass"
+        expand="block"
+      >
+        Delete gym pass
+      </ion-button>
+      <div class="split"/>
+      <ion-button
+        id="create"
+        @click="addNewGymPass"
+        expand="block"
+      >
+        Edit gym pass
+      </ion-button>
+    </div>
+    <ion-button
+      id="cancel"
+      @click="isSettingModalOpen = false"
+      expand="block"
+    >
+      Cancel
+    </ion-button>
+  </ion-modal>
+</template>
+
+<script setup lang="ts">
+import {
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
+  IonModal
+} from "@ionic/vue";
+import {
+  PaymentGatewayRefundDocument,
+  Query,
+  SettingsCodeEnum,
+  TrainingDocument,
+  TrainingStatesEnum,
+  FacilityItemsByFacilityIdAndTypeDocument,
+} from "@/generated/graphql";
+import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
+import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
+import { useLazyQuery } from "@vue/apollo-composable";
+import { chevronBackOutline } from "ionicons/icons";
+import { computed, onMounted, ref } from "vue";
+import { EntitiesEnum } from "@/const/entities";
+import { useRouter } from "vue-router";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import useFacilityId from "@/hooks/useFacilityId";
+import useRoles from "@/hooks/useRole";
+import { v4 as uuidv4 } from "uuid";
+import useId from "@/hooks/useId";
+import { useQuery } from "@vue/apollo-composable";
+import ProductItem from "@/facilities/components/ProductItem.vue";
+
+const modal = ref<typeof IonModal | null>(null);
+
+const router = useRouter();
+const activeTab = ref("subscribers");
+const currentFacility = useFacilityStore();
+const selectedTab = ref("All");
+const { role } = useRoles();
+const { id } = useId();
+
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+  onResult: gotFacility,
+} = useQuery<any>(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacility.facility.id,
+  item_type: "PASS"
+});
+
+const products = ref<any>();
+
+onMounted(() => {
+  console.log(currentFacility.facility.id);
+});
+
+const handleCreate = () => {
+  router.push({ name: EntitiesEnum.FacilityCreatePass });
+}
+
+gotFacility(({ data }) => {
+  products.value = data.facilityItemsByFacilityIdAndType.data.map((product: any) => {
+    return { ...product, id: uuidv4() };
+  });
+  console.log(products.value);
+});
+
+const isSettingModalOpen = ref<boolean>(false);
+const showSettingsModal = () => {
+  isSettingModalOpen.value = true;
+};
+
+const addNewGymPass = () => {
+  console.log("add new gym pass");
+}
+const deleteGymPass = () => {
+  console.log("delete gym pass");
+}
+
+const onBack = () => {
+  router.go(-1);
+};
+</script>
+
+<style scoped lang="scss">
+.title {
+  padding: 0;
+  display: block;
+  color: var(--beige);
+  font: 400 24px var(--ion-font-family);
+
+  ion-icon {
+    margin-right: 8px;
+    margin-left: -6px;
+  }
+}
+.main-content {
+  padding: 16px 20px;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+.pass-list {
+  background-color: var(--gray-700);
+
+  &__top {
+    margin-bottom: 16px;
+    padding: 8px 24px;
+    .button {
+      height: 42px;
+    }
+  }
+}
+.segment {
+  margin-bottom: 72px;
+  width: fit-content;
+}
+ion-segment {
+  border: 1px solid var(--beige);
+  --background: var(--gray-700);
+  border-radius: 0;
+  width: 230px;
+}
+
+ion-segment-button {
+  padding: 12px 16px;
+  --indicator-color: var(--beige);
+  --color: var(--ion-color-light);
+  --color-checked: var(--ion-color-dark);
+  --border-radius: 0;
+  margin: 0 -2px;
+}
+
+ion-label {
+  font-size: 16px;
+}
+
+.filter-tabs {
+  width: 100%;
+  
+  ion-button {
+    --border-radius: 100px;
+    font: 500 14px/1 Lato;
+  }
+  
+  .selected {
+    color: var(--main-color);
+  }
+  .normal {
+    color: var(--grey-text);
+  }
+}
+.d-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.gap-25 {
+  gap: 25px;
+}
+
+.empty-pass {
+  width: 100%;
+  height: 100%;
+
+  ion-button {
+    width: 100%;
+    font: 500 16px/1 Yantramanav;
+  }
+  .empty-box {
+
+    ion-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 24px;
+    }
+    
+    .status {
+      color: var(--ion-gray-500);
+      font: 500 24px/1 Yantramanav;
+      margin-bottom: 8px;
+    }
+    .description {
+      color: var(--ion-gray-500);
+      font: 300 16px/1 Yantramanav;
+    }
+  }
+}
+.pass-table {
+  border: 1px solid var(--fitnesswhite);
+  background: var(--gray-700);
+  width: 100%;
+  padding: 0;
+
+  .table-th {
+    border-bottom: 1px solid var(--beige);
+    padding: 10px 16px;
+  }
+
+  .table-td {
+    //  border: 1px solid var(--beige);
+    padding: 0 0 0 16px;
+
+    ion-button {
+      font-size: 14px;
+      height: 32px;
+      margin: 16px 0;
+    }
+  }
+}
+.table-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: var(--main-color);
+  color: var(--gold);
+}
+
+.table-row {
+  border-top: 1px solid var(--beige);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+ion-button#gym-pass {
+  width: 100%;
+  font: 500 16px/1 Yantramanav;
+  margin-top: 28px;
+}
+.header-btn {
+  height: 32px;
+  margin: 0 5px;
+  font-size: 24px;
+  display: block;
+  min-width: 32px;
+  --border-radius: 50% !important;
+  --icon-font-size: 24px;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
+  --icon-padding-bottom: 0;
+  --icon-padding-end: 0;
+  --icon-padding-start: 0;
+  --icon-padding-top: 0;
+  --min-height: 32px;
+  --min-width: 32px;
+
+  ion-icon {
+    font-size: 1em;
+  }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
+}
+.settings-modal {
+  --height: auto;
+  align-items: flex-end;
+  --backdrop-opacity: 0.6;
+  --background: none;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  &::part(content) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border-radius: 20px 20px 0 0;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 24px calc(16px + var(--ion-safe-area-bottom));
+    max-height: calc(
+      100vh - 136px - var(--ion-safe-area-top) - var(--ion-safe-area-bottom)
+    );
+  }
+}
+.main-buttons {
+  border-radius: 8px;
+  background: #262626;
+
+  ion-button#create {
+    --color: #EFEFEF;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+  ion-button#delete {
+    --color: #EB4336;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+}
+
+ion-button#cancel {
+  --color: #FFFFFF6a;
+  --background: #262626;
+  font: 500 16px/1 Lato;
+  margin-top: 16px;
+}
+.split {
+  height: 1px;
+  background-color: #3D3D3D;
+}
+</style>
