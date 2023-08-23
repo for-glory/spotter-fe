@@ -7,27 +7,25 @@
       <div class="content">
         <workout-form 
           ref="workoutForm"
-          @submit="handleSubmit"
-          @onSkip="onBack"
           @open-picker="(e) => openPicker(e)"
         />
-        <ion-title class="title-mini" color="primary">
+        <ion-title v-if="isValidForm" class="sub-title" color="primary">
           Upload Exercise
         </ion-title>
         <exercise-form 
           ref="exerciseForm"
-          :workoutId="workoutId"
-          :isValidWorkoutForm="isValidForm"
           hasSubmitButton
-          hasFinishWorkoutButton
-          @submit="handleSubmit"
-          @onSkip="onBack"
-          @open-picker="(e) => openPicker(e)"
           submitButtonText="Add next exercise"
+          @open-picker="(e) => openPicker(e)"
+          v-if="isValidForm"
         />
+        <div class="holder-button">
+          <ion-button :disabled="!isValidForm" fill="outline">Finish workout</ion-button>
+        </div>
       </div>
     </template>
   </base-layout>
+  <discard-changes :is-open="isConfirmationOpen" @close="discardModalClosed" />
 </template>
 
 <script setup lang="ts">
@@ -57,13 +55,14 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const percentLoaded = ref(0);
 
 const router = useRouter();
 
 const store = useWorkoutsStore();
-const workoutId = uuidv4();
+const isConfirmationOpen = ref<boolean>(false);
 
 const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
@@ -117,6 +116,10 @@ const openPicker = (name: string): void => {
 };
 
 onMounted(() => {
+  router.push({
+    name: router?.currentRoute?.value?.name,
+    params: { id: uuidv4() },
+  });
   if (store.workoutTitle) {
     titleValue.value = store.workoutTitle;
   }
@@ -153,10 +156,7 @@ const isValidForm = computed(
 const handleSubmit = () => {
   if (isValidForm.value) {
     store.setMedia();
-    router.push({
-      name: EntitiesEnum.DashboardCreateExercise,
-      params: { id: uuidv4() },
-    });
+    console.log({store});
   }
 };
 
@@ -168,8 +168,27 @@ const resetWorkout = () => {
   store.clearState();
 };
 
+const discardModalClosed = (approved: boolean) => {
+  isConfirmationOpen.value = false;
+  if (approved) {
+    router.go(-1);
+  }
+};
+
 const onBack = () => {
-  router.go(-1);
+  if (!titleError.value ||
+    titleValue.value ||
+    !priceError.value ||
+    priceValue.value ||
+    store.workoutMuscleTypesIds?.length ||
+    store.workoutDuration ||
+    store.workoutPreview ||
+    store.workoutType
+  ) {
+    isConfirmationOpen.value = true;
+  } else {
+    router.go(-1);
+  }
 };
 </script>
 
@@ -201,6 +220,10 @@ const onBack = () => {
 }
 .content {
   padding: 0 40px 26px;
+}
+.sub-title {
+  margin: 0;
+  padding: 0 0 16px;
 }
 
 .holder-button {

@@ -74,7 +74,7 @@ withDefaults(
 .header {
   margin-bottom: 8px;
   --min-height: 24px;
-  --padding-top: 32px;
+  --padding-top: 16px;
   --padding-bottom: 7px;
 
   &__btn {
@@ -95,7 +95,7 @@ withDefaults(
 }
 
 .swiper-slide {
-  width: 86%;
+  width: 100%;
 }
 
 .title {

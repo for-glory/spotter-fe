@@ -73,7 +73,8 @@
         @click="handleFinishWorkout"
         expand="block"
         fill="outline"
-        :disabled="!isValidForm && !isValidWorkoutForm"
+        :disabled="!isValidForm"
+        v-if="hadFinishButton"
       >
         Finish workout
       </ion-button>
@@ -104,6 +105,7 @@ import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const route = useRoute();
@@ -117,9 +119,8 @@ const props = withDefaults(
     skipText?: string;
     hasSkipButton?: boolean;
     hasSubmitButton?: boolean;
-    hasFinishWorkoutButton?: boolean;
     workoutId?: any;
-    isValidWorkoutForm?: boolean;
+    hadFinishButton?: boolean;
   }>(),
   {
     submitButtonText: "Upload & Finish",
@@ -144,9 +145,10 @@ const path = ref<string>("");
 const videoPath = ref<string>("");
 const percentLoaded = ref<number | undefined>();
 const videoInfo = ref<{ name: string; size: string }>({ name: "", size: "" });
+const currentFacility = useFacilityStore();
 
 watch(
-  () => props.workoutId,
+  () => route.params.id,
   (newVal) => {
     checkExercise(newVal.toString());
   }
@@ -163,7 +165,7 @@ const pushValueToStore = async () => {
     previewUrl: previewUrl.value,
     previewPath: previewPath.value,
     path: path.value,
-    id: props.workoutId as string,
+    id: route.params.id as string,
     videoSize: videoInfo.value.size,
     videoName: videoInfo.value.name,
   });
@@ -176,6 +178,33 @@ const handleAddNextExercise = () => {
   exerciseDescription.value = "";
   previewUrl.value = "";
   exerciseIndex.value++;
+  router.push({
+    name: EntitiesEnum.CreateExercise,
+    params: { id: uuidv4() },
+  });
+};
+
+const handleFinishWorkout = () => {
+  !isEditing.value ? pushValueToStore() : updateExercise();
+  store.setMedia();
+  if (isValidForm.value) {
+    console.log(params.value);
+    if (!isEditing.value) {
+      createWorkout(params.value)
+        .then(() => {
+          store.clearState();
+          router.push({
+            name: EntitiesEnum.FacilityWorkout,
+          });
+        })
+        .catch((err) => {
+          errorMessage.value = err;
+          throw new Error(err);
+        });
+    } else {
+      router.go(-1);
+    }
+  }
 };
 
 const isValidForm = computed(
@@ -257,34 +286,13 @@ const removeVideo = () => {
   videoPath.value = "";
 };
 
-const handleFinishWorkout = () => {
-  store.setMedia();
-  if (isValidForm.value) {
-    if (!isEditing.value) {
-      createWorkout(params.value)
-        .then(() => {
-          store.clearState();
-          router.push({
-            name: EntitiesEnum.FacilityWorkout,
-          });
-        })
-        .catch((err) => {
-          errorMessage.value = err;
-          throw new Error(err);
-        });
-    } else {
-      router.go(-1);
-    }
-  }
-};
-
 const { mutate: createWorkout, loading: createWorkoutLoading } =
   useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
 
 const params = computed(() => ({
   preview: store.workoutPath,
   body_parts: store.workoutMuscleTypesIds,
-  facility_id: localStorage.getItem("first_facility"),
+  facility_id: currentFacility.facility?.id,
   type_id: store.workoutType?.id,
   title: store.workoutTitle,
   description: store.workoutDuration,

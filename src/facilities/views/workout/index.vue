@@ -283,7 +283,6 @@ const recommendedWorkoutsByType = computed(
 }
 .workout-list {
 	background-color: var(--gray-700);
-  margin-top: 54px;
 
   &__top {
     margin-bottom: 16px;
@@ -329,6 +328,7 @@ const recommendedWorkoutsByType = computed(
   ion-button {
     --border-radius: 100px;
     font: 500 14px/1 Lato;
+    height: 36px;
   }
   
   .selected {
