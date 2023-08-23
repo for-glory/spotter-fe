@@ -89,7 +89,7 @@
               class="ion-margin-end"
               >Cancel</ion-button
             >
-            <ion-button type="submit"> Create </ion-button>
+            <ion-button type="submit" @click="createNewFacilityItemPass"> Create </ion-button>
           </div>
         </ion-col>
         <ion-col size="0" size-md="3"></ion-col>
@@ -99,14 +99,60 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon, IonLabel } from "@ionic/vue";
+import { IonButton, IonIcon, IonLabel, toastController } from "@ionic/vue";
 import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
+import { useMutation } from "@vue/apollo-composable";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import {
+  CreateFacilityItemDocument,
+} from "@/generated/graphql";
 
 const router = useRouter();
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
+};
+
+const currentFacility = useFacilityStore();
+
+const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useMutation(
+  CreateFacilityItemDocument
+);
+
+const createNewFacilityItemPass = () => {
+  const sampledata = {
+    title: "test item pass",
+    price: 50,
+    duration: 20,
+  }
+  createFacilityItemPass({
+    input: {
+      facility_id: currentFacility.facility.id,
+      title: sampledata.title,
+      price: sampledata.price,
+      duration: sampledata.duration,
+      item_type: "PASS",
+    },
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "New Gym Pass was created successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
 };
 </script>
 

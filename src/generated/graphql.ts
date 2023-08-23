@@ -327,12 +327,30 @@ export type CreateFacilityInput = {
   registration_code?: InputMaybe<Scalars['String']>;
 };
 
+/** TrainerTypeEnum Variants */
+export enum FacilityItemTypeEnum {
+  /** Pass */
+  Pass = 'PASS',
+  /** Drop in */
+  DropIn = 'DROPIN',
+}
+
 export type CreateFacilityItemInput = {
   facility_id: Scalars['ID'];
   title: Scalars['String'];
   front_price?: Scalars['String'];
   price: Scalars['Int'];
-  product_id: Scalars['String'];
+  // product_id: Scalars['String'];
+  qr_code_lifetime_enum?: Scalars['String'];
+  qr_code_lifetime_value?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
+  item_type?: Maybe<FacilityItemTypeEnum>;
+};
+
+export type UpdateFacilityItemInput = {
+  title?: Scalars['String'];
+  front_price?: Scalars['String'];
+  price?: Scalars['Int'];
   qr_code_lifetime_enum?: Scalars['String'];
   qr_code_lifetime_value?: Maybe<Scalars['Int']>;
   duration?: Maybe<Scalars['Int']>;
@@ -1020,6 +1038,11 @@ export type MutationUpdatePasswordArgs = {
 export type MutationUpdateTrainerWorkoutArgs = {
   id: Scalars['ID'];
   input?: InputMaybe<UpdateTrainerWorkoutInput>;
+};
+
+export type MutationUpdateGymWorkoutArgs = {
+  id: Scalars['ID'];
+  input?: InputMaybe<UpdateGymWorkoutInput>;
 };
 
 
@@ -2739,6 +2762,17 @@ export type UpdatePasswordResponse = {
 };
 
 export type UpdateTrainerWorkoutInput = {
+  body_parts?: InputMaybe<Array<Scalars['ID']>>;
+  description?: InputMaybe<Scalars['String']>;
+  duration?: InputMaybe<Scalars['Int']>;
+  level?: InputMaybe<Scalars['ID']>;
+  media?: InputMaybe<Array<WorkoutVideosInput>>;
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  price?: InputMaybe<Scalars['Float']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateGymWorkoutInput = {
   body_parts?: InputMaybe<Array<Scalars['ID']>>;
   description?: InputMaybe<Scalars['String']>;
   duration?: InputMaybe<Scalars['Int']>;
@@ -6025,6 +6059,15 @@ export const CreateGymWorkoutDocument = gql`
   }
 }
     `;
+
+export const UpdateGymWorkoutDocument = gql`
+    mutation updateGymWorkout($id: ID!, $input: UpdateGymWorkoutInput!) {
+  updateGymWorkout(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+
 export const FilePreloadDocument = gql`
     mutation filePreload($file: Upload!) {
   filePreload(file: $file) {
@@ -6232,13 +6275,60 @@ query facilityDashboardWidget($id:ID!) {
 }
     `;
 export const CreateFacilityItemDocument = gql`
-    query createFacilityItem($input: CreateFacilityItemInput!) {
+    mutation createFacilityItem($input: CreateFacilityItemInput!) {
   createFacilityItem(input: $input) {
+    id
+    title
+    price
+    facility
+    {
+      id
+    }
+    product_id
+    duration
+    item_type
+  }
+}
+    `;
+
+    
+export const UpdateFacilityItemDocument = gql`
+    mutation updateFacilityItem($id: ID!, $input: UpdateFacilityItemInput!) {
+  updateFacilityItem(id: $id, input: $input) {
+    id
+  }
+}
+`;
+
+export const FacilityItemDocument = gql`
+    query facilityItemById($id: ID!) {
+  facilityItemById(id: $id) {
     id
     title
     price
     facility_id
     product_id
+    duration
+    item_type
+  }
+}
+`;
+
+export const FacilityItemsByFacilityIdAndTypeDocument = gql`
+    query facilityItemsByFacilityIdAndType($facility_id: ID!, $item_type: FacilityItemTypeEnum) {
+  facilityItemsByFacilityIdAndType(facility_id: $facility_id, item_type: $item_type) {
+    data {
+      id
+      title
+      price
+      facility
+      {
+        id
+      }
+      product_id
+      duration
+      item_type
+    }
   }
 }
     `;
