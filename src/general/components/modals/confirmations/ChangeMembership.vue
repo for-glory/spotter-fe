@@ -1,16 +1,16 @@
 <template>
-	<ion-modal id="modal" ref="modal" :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :is-open="isVisible"  :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Cancel Membership Plan</ion-title>
+				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
-					<ion-button @click="onCancel">
+					<ion-button @click="handleCancel">
 						<ion-icon src="assets/icon/close.svg" class="close" />
 					</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
-		<div class="ion-padding">
+		<div v-if="!Capacitor.isNativePlatform()" class="ion-padding">
       <ion-row>
         <ion-col size="6">
           <div class="plan">
@@ -100,6 +100,77 @@
 				<ion-button class="cancel" @click="handleCancel">Back</ion-button>
 			</div>
 		</div>
+    <div v-else class="ion-padding">
+      <div class="current-plan">
+        <ion-text>Current Plan</ion-text>
+        <div class="paragraph">
+          <ion-text>{{currentPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text
+            >${{currentPlan?.prices[0].price / 100}}</ion-text
+          >
+          <span class="location">/{{currentPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              src="assets/icon/medal.svg"
+              class="grade-image"
+              :class="currentPlan?.tier === 'GOLD' ? 'gold' : currentPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
+            />
+          </div>
+          <div>
+            <ul>
+              <li v-for="(benefit, id) in currentPlan?.benefits" :key="id" class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>{{benefit.description}}</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <div class="split" />
+      </div>
+      <div class="new-plan">
+        <ion-text class="text-golden">New Plan</ion-text>
+        <div class="paragraph">
+          <ion-text class="text-golden">{{newPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="text-golden"
+            >${{newPlan?.prices[0].price / 100}}</ion-text
+          >
+          <span class="location">/{{newPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              src="assets/icon/medal.svg"
+              class="grade-image"
+              :class="newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
+            />
+          </div>
+          <div>
+            <ul>
+              <li v-for="(benefit, id) in newPlan?.benefits" :key="id" class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>{{benefit.description}}</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="buttons d-flex align-items-center justify-content-between">
+        <ion-button id="confirm" @click="handleConfirm"
+          >Confirm change</ion-button
+        >
+        <ion-button id="cancel" @click="handleCancel">Cancel</ion-button>
+      </div>
+    </div>
 	</ion-modal>
 </template>
 
@@ -117,6 +188,7 @@ import {
 	IonCol
 } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 withDefaults(
   defineProps<{

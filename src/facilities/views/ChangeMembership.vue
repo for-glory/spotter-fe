@@ -5,7 +5,7 @@
     </template>
     <template #content>
       <ion-spinner
-        v-if="loading || plansLoading"
+        v-if="loading || plansLoading || subscriptionUserLoading"
         name="lines"
         class="spinner"
       />
@@ -101,7 +101,7 @@
         </div>
         <ion-button
           expand="block"
-          @click="purchase"
+          @click="handleChange"
           :disabled="!isAgreed || isLoading"
         >
           <ion-spinner name="lines" v-if="isLoading"></ion-spinner>
@@ -113,7 +113,13 @@
       </div>
     </template>
   </base-layout>
-  <change-membership ref="changeMembershipModal" @confirm="confirmChange"/>
+  <change-membership
+    :is-visible="showChangeConfirmModal"
+		:currentPlan="currentPlan"
+		:newPlan="selectedPlan"
+    @confirm="handleChangeMembership"
+    @cancel="hideChangeModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -140,6 +146,8 @@ import {
   RoleEnum,
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
+  UpdateSubscriptionDocument,
+	SubscriptionUserDocument,
 } from "@/generated/graphql";
 import useId from "@/hooks/useId";
 import { ref, onMounted } from "vue";
@@ -153,6 +161,8 @@ import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
 import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue"
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const route = useRoute();
@@ -167,6 +177,14 @@ const isAgreed = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const currentPlan = ref<any>();
 const changeMembershipModal = ref<typeof ChangeMembership | null>(null);
+const currentFacility = useFacilityStore();
+const selectedPlan = ref<any>({});
+
+const {
+	showConfirmationModal: showChangeConfirmModal,
+	hideModal: hideChangeModal,
+	showModal: showChangeModal
+} = useConfirmationModal();
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -180,6 +198,11 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
   PlansDocument,
   { type: typeValue.value as SubscriptionsTypeEnum, first: 100, page: 1 }
 );
+const { loading: subscriptionUserLoading, onResult } = useQuery(
+  SubscriptionUserDocument,
+  { facility_id: currentFacility.facility?.id }
+);
+
 onMounted(async () => {
   InAppPurchase2.validator =
     process.env.VUE_APP_IAP_RECEIPT_VALIDATION_URL + `/${id}`;
@@ -291,37 +314,38 @@ const setupListeners = async () => {
 
   InAppPurchase2.error(errorEvent);
 };
-const purchase = () => {
-  const newPlan = plans.value.find((plan) => plan.id === selectedPlanId.value);
-  console.log({currentPlan});
-  changeMembershipModal.value?.present({ currentPlan, newPlan });
-};
-const confirmChange = (isConfirmed: boolean) => {
-  console.log("********** confirm change *********");
-  // isLoading.value = true;
-  // if (Capacitor.isNativePlatform()) {
-  //   InAppPurchase2.order(selectedItem.value)
-  //     .then(() => {
-  //       isLoading.value = false;
-  //       console.log(
-  //         "entered into Apple/Google pop up with the purchase confirmation"
-  //       );
-  //     })
-  //     .error((error: any) => {
-  //       isLoading.value = false;
-  //       errorMessage.value = `Failed to purchase: ${error}`;
-  //     });
-  // } else {
-  //   console.log('Web platform', selectedItem.value);
-  //   router.push({
-  //     name: EntitiesEnum.SubscriptionPaymentMethod,
-  //     params: { subscriptionId: selectedItem.value.product_id },
-  //     query: {
-  //         facilityId: route?.query?.facilityId || "",
-  //       },
-  //   });
-  // }
+
+const selectMembership = () => {
+	plans.value.forEach((plan: any) => {
+		if (plan.id == selectedPlanId.value) {
+			console.log(plan)
+			selectedPlan.value = plan
+			selectedItem.value = plan.subscriptionPlan
+		}
+	});
 }
+
+const handleChange = () => {
+	selectMembership()
+	showChangeModal();
+};
+
+const handleChangeMembership = () => {
+	hideChangeModal();
+	// updateSubscription({
+	// 	unique_identifier: currentStripeSubscription.value.unique_identifier,
+	// 	new_product_id: selectedItem.value.product_id,
+	// 	fees_percent: selectedPlan.value.fee,
+	// 	facility_id: currentFacility.facility?.id
+  // }).then((data) => {
+  //     console.log("data==>", data)
+  //     let intent = JSON.parse(data?.data?.updateSubscription?.session);
+  //     backendStripe.redirectToCheckout(intent.id);
+  //   })
+  //   .catch((err) => {
+  //     throw new Error(err);
+  //   });
+};
 
 const selectProduct = (plan: any) => {
   console.log(selectedPlanId);
