@@ -4,8 +4,13 @@
       <page-header back-btn @back="onBack" title="Gym Managers" />
     </template>
     <template #content>
-      <div class="main-content">
-        <ion-grid class="managers-table">
+      <ion-spinner
+          v-if="loadingManagersData || loadingUserData"
+          name="lines"
+          class="spinner"
+        />
+      <div v-else class="main-content">
+        <ion-grid class="managers-table" v-if="managerData?.length > 0">
           <ion-row class="table-header">
             <ion-col size="4" class="table-th">
               <ion-text>Full Name</ion-text>
@@ -74,12 +79,10 @@ import {
   IonSegmentButton,
 } from "@ionic/vue";
 import {
-  PaymentGatewayRefundDocument,
   Query,
-  SettingsCodeEnum,
-  TrainingDocument,
-  TrainingStatesEnum,
-  FacilityItemPassDocument,
+  GetManagersByFacilityDocument,
+  UserDocument,
+  RoleEnum
 } from "@/generated/graphql";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
@@ -91,12 +94,35 @@ import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
+import { useQuery } from "@vue/apollo-composable";
+import useId from "@/hooks/useId";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
 const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
+const { id } = useId();
+
+const {
+  result,
+  loading: loadingUserData,
+  refetch,
+  onResult: gotUser,
+} = useQuery<Pick<Query, "user">>(UserDocument, { id });
+
+const facilities = computed(() => {
+  return result.value?.user?.owned_facilities?.map((facility) => facility?.id);
+});
+
+const {
+  result: managersResult,
+  loading: loadingManagersData,
+  onResult: gotManagers,
+} = useQuery<any>(GetManagersByFacilityDocument, {
+  role: "MANAGER",
+  facilities,
+});
 
 const tempManagersData = [
   {
@@ -116,14 +142,14 @@ const tempManagersData = [
 const managerData = ref<any>();
 managerData.value = tempManagersData;
 
-
 onMounted(() => {
   console.log("id:", currentFacility.facility.id);
 });
 
-const onCreate = () => {
-  router.push({ name: EntitiesEnum.FacilityCreatePass });
-}
+gotManagers(({data}) => {
+  managerData.value = data;
+})
+
 const onBack = () => {
   router.go(-1);
 };
@@ -231,5 +257,10 @@ const onBack = () => {
   line-height: 1.3;
   font-weight: 400;
   color: var(--fitnesswhite);
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

@@ -184,7 +184,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.ManagersOverview,
-    path: "/facilities/managers/overview",
+    path: "/facilities/managers",
     component: () => import("@/facilities/views/managers/index.vue"),
   },
 ];

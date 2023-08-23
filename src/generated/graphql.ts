@@ -6332,3 +6332,50 @@ export const FacilityItemsByFacilityIdAndTypeDocument = gql`
   }
 }
     `;
+export const GetManagersByFacilityDocument = gql`
+    query managers($role: RoleEnum, $first: Int, $page: Int, $facilities: [ID]) {
+  managers(
+    role: $role
+    facilities: $facilities
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      score
+      first_name
+      last_name
+      avatarUrl
+      is_followed
+      trainer_type
+      address {
+        lat
+        lng
+        street
+      }
+      facilities {
+        id
+        name
+        address {
+          lat
+          lng
+          street
+        }
+      }
+      media {
+        pathUrl
+      }
+      settings {
+        setting {
+          code
+        }
+        value
+      }
+    }
+    paginatorInfo {
+      total
+      firstItem
+    }
+  }
+}
+    `;
