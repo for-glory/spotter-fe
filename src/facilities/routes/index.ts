@@ -182,4 +182,9 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/facilities/events/create",
     component: () => import("@/facilities/views/CreateEvent.vue"),
   },
+  {
+    name: EntitiesEnum.ManagersOverview,
+    path: "/facilities/managers/overview",
+    component: () => import("@/facilities/views/managers/index.vue"),
+  },
 ];
