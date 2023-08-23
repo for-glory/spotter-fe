@@ -12,7 +12,7 @@
       <div class="banner">
         <ion-title class="banner__title">Create events for clients and trainers</ion-title>
         <ion-text class="banner__text">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod 
+          Your hub for creating memorable gatherings. Effortlessly set up events, and easily track registrations to ensure a seamless experience.
         </ion-text>
         <div class="banner__background-image">
           <img src="assets/backgrounds/Banner_2.png" alt="">
@@ -20,7 +20,7 @@
       </div>
       <div class="filter-list" v-if="events.length">
         <div class="d-flex justify-content-between filter-list__top">
-          <div class="filter-tabs d-flex align-items-center justify-content-between">
+          <div class="filter-tabs d-flex align-items-center justify-content-around">
             <ion-button 
               :fill="filter === 'all' ? 'solid' : 'outline'"
               :color="filter === 'all' ? '' : 'medium'"
@@ -77,7 +77,7 @@
           <event-item
             :item="event"
             :key="event.id"
-            v-for="event in events"
+            v-for="event in displayedEvents"
             @click="openEvent(event.id)"
           />
           <ion-infinite-scroll
@@ -128,7 +128,7 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import useFacilityId from "@/hooks/useFacilityId";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
@@ -219,17 +219,36 @@ const {
   fetchPolicy: "no-cache",
 });
 
-const handleChangeFilter = (value: string) => {
-		filter.value = value;
-}
-
 const events = ref([]);
+const displayedEvents = ref([]);
+
+const handleChangeFilter = (value: string) => {
+  filter.value = value;
+  switch(filter.value) {
+    case 'ongoing' :
+      displayedEvents.value = events.value.filter((event) => event.isOngoing);
+      break;
+    
+    case 'finished' :
+      displayedEvents.value = events.value.filter((event) => !event.isOngoing);
+      break;
+    
+    default :
+      displayedEvents.value = events.value;
+      break;
+  }
+}
 
 gotEvents((response) => {
   totalEvents.value = response.data.events?.paginatorInfo.total ?? 0;
   if (!events.value?.length) {
     events.value = response.data.events?.data;
   }
+  events.value = events.value.map((event) => { 
+    return { ...event , isOngoing: formatTime(event.end_date) >= formatTime(event.start_date)};
+  });
+  displayedEvents.value = events.value;
+  console.log(displayedEvents);
 });
 
 const router = useRouter();
@@ -264,6 +283,15 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
       ev.target.complete();
     });
   }
+};
+
+const formatTime = (date: number): string => {
+  return dayjs(date)
+    .hour(0)
+    .minute(0)
+    .second(0)
+    .millisecond(0)
+    .format("YYYY-MM-DD HH:mm:ss");
 };
 const onBack = () => {
   router.go(-1);
@@ -330,6 +358,10 @@ const onBack = () => {
     position: absolute;
     inset: 0;
     z-index: -1;
+
+    img {
+      width: 100%;
+    }
   }
 
   &__title {
@@ -340,6 +372,7 @@ const onBack = () => {
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    margin-bottom: 16px;
   }
   &__text {
     color: #FFF;
