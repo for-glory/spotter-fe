@@ -4,7 +4,12 @@
       <page-header title="Settings" />
     </template>
     <template #content>
-      <div class="profile">
+      <ion-spinner
+        v-if="loadingUser"
+        name="lines"
+        class="spinner"
+      />
+      <div v-else class="profile">
         <progress-avatar
           :src="avatarUrl || ''"
           :progress="progress"
@@ -191,6 +196,7 @@ const currentFacility = useFacilityStore();
 const {
   result,
   refetch,
+  loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 const progress = ref<string | number>("");
@@ -494,5 +500,10 @@ profileDeleted(() => {
 
 .add-facility-button {
   margin: 0 8px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

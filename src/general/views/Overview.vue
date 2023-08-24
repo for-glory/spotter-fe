@@ -1,26 +1,26 @@
 <template>
   <base-layout content-full-height>
     <template #header>
-      <div class="d-flex align-items-center header">
-        <ion-avatar class="header__photo">
-					<ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
-					<template v-else>
-						{{ facilityName?.charAt(0) }}
-					</template>
-				</ion-avatar>
-        <page-header title="Overview">
-          <template #custom-btn>
-            <ion-button @click="onViewChat" class="header-btn">
-              <ion-icon src="assets/icon/chat.svg" />
-              <span class="header-btn__badge" v-if="unreadMessages.length"></span>
-            </ion-button>
-          </template>
-        </page-header>
-      </div>
+      <page-header title="Overview">
+        <template #avatar-field>
+          <ion-avatar class="header__photo" @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()">
+            <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
+            <template v-else>
+              {{ facilityName?.charAt(0) }}
+            </template>
+          </ion-avatar>
+        </template>
+        <template #custom-btn>
+          <ion-button @click="onViewChat" class="header-btn">
+            <ion-icon src="assets/icon/chat.svg" />
+            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+          </ion-button>
+        </template>
+      </page-header>
     </template>
     <template #content>
       <ion-spinner
-        v-if="loadingUsers"
+        v-if="loadingUser"
         name="lines"
         class="spinner"
       />
@@ -227,6 +227,34 @@
       </div>
     </template>
   </base-layout>
+  <ion-modal
+    ref="modal"
+    :is-open="isGymModalOpen"
+    class="choose-facility-modal"
+    @willDismiss="isGymModalOpen = false"
+    v-if="facilities?.length && activeFacilityId"
+  >
+    <div class="modal-gym__content">
+      <ion-radio-group
+        v-model="activeFacilityId"
+        @ionChange="isGymModalOpen = false"
+      >
+        <choice-location
+          :id="facility?.id"
+          :key="facility?.id"
+          :facility="facility"
+          v-for="facility in facilities"
+        />
+      </ion-radio-group>
+      <ion-button
+        @click="addNewFacility"
+        class="add-facility-button secondary"
+        expand="block"
+      >
+        Add new gym
+      </ion-button>
+    </div>
+  </ion-modal>
 </template>
 
 <script setup lang="ts">
@@ -301,7 +329,7 @@ const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
 const {
   result,
   refetch,
-  loading: loadingUsers,
+  loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 const progress = ref<string | number>("");
@@ -312,6 +340,7 @@ const isTrusted = computed(() =>
 
 const unreadMessages = ref<number[]>([]);
 const facilityStore = useFacilityStore();
+const modal = ref<typeof IonModal | null>(null);
 
 onMounted(() => {
   refetch();
@@ -961,5 +990,27 @@ profileDeleted(() => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.choose-facility-modal {
+  --height: auto;
+  align-items: flex-end;
+  --backdrop-opacity: 0.6;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  &::part(content) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border-radius: 20px 20px 0 0;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 24px calc(16px + var(--ion-safe-area-bottom));
+    max-height: calc(
+      100vh - 136px - var(--ion-safe-area-top) - var(--ion-safe-area-bottom)
+    );
+  }
+}
+
+.add-facility-button {
+  margin: 0 8px;
 }
 </style>

@@ -13,6 +13,7 @@
       <ion-button v-if="closeBtn" class="close-btn" @click="$emit('back')">
         <ion-icon src="assets/icon/close.svg" />
       </ion-button>
+      <slot name="avatar-field"></slot>
     </ion-buttons>
     <ion-buttons slot="end">
       <slot name="custom-btn"></slot>
