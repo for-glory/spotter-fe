@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" :title="type === 'pass' ? 'Gym pass' : 'Drop-ins'">
+      <page-header back-btn @back="onBack" :title="type === 'PASS' ? 'Gym pass' : 'Drop-ins'">
         <template #custom-btn>
           <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/plus.svg" />
@@ -11,16 +11,16 @@
     </template>
     <template #content>
       <ion-spinner
-        v-if="loadingFacilityPass"
+        v-if="loadingFacilityItems"
         name="lines"
         class="spinner"
       />
       <div v-else class="main-content">
-        <div v-if="!customersList" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button @click="handleCreate">{{type === 'pass' ? 'Create Pass' : 'Create Drop-in'}}</ion-button>
+        <div v-if="!products?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+          <ion-button @click="handleCreate">{{type === 'PASS' ? 'Create Pass' : 'Create Drop-in'}}</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/drop-ins.svg"></ion-icon>
-            <ion-text class="status">{{ type === 'pass' ? 'Pass' : 'Drop-in' }} Empty</ion-text>
+            <ion-text class="status">{{ type === 'PASS' ? 'Pass' : 'Drop-in' }} Empty</ion-text>
           </div>
         </div>
         <div v-else>
@@ -46,7 +46,7 @@
         @click="handleDelete"
         expand="block"
       >
-        Delete {{type === 'pass' ? 'Gym pass' : 'Drop-in'}}
+        Delete {{type === 'PASS' ? 'Gym pass' : 'Drop-in'}}
       </ion-button>
       <div class="split"/>
       <ion-button
@@ -54,7 +54,7 @@
         @click="handleEdit"
         expand="block"
       >
-        Edit {{type === 'pass' ? 'Gym pass' : 'Drop-in'}}
+        Edit {{type === 'PASS' ? 'Gym pass' : 'Drop-in'}}
       </ion-button>
     </div>
     <ion-button
@@ -113,7 +113,7 @@ const type = route.params.type === 'pass' ? 'PASS' : 'DROPIN';
 
 const {
   result: facilityItemPassResult,
-  loading: loadingFacilityPass,
+  loading: loadingFacilityItems,
   onResult: gotFacility,
 } = useQuery<any>(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,

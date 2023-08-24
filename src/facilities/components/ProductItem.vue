@@ -15,7 +15,7 @@
       </div>
       <div class="section">
         <ion-title>Features</ion-title>
-        <ion-text></ion-text>
+        <ion-text>Full access(amenities & equipment)</ion-text>
       </div>
       <div class="section">
         <ion-title>Pass Fee</ion-title>
