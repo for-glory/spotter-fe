@@ -77,7 +77,7 @@
                 <ion-text>{{customer?.user?.first_name + ' ' + customer?.user?.last_name}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td capitalize">
-                <ion-text>{{customer?.plan?.toLowerCase() ?? 'Full Time'}}</ion-text>
+                <ion-text>{{customer?.plan?.toLowerCase() ?? 'Gold'}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td">
                 <ion-button

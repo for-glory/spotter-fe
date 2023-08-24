@@ -3,7 +3,7 @@
     <template #header>
       <page-header back-btn @back="onBack" title="Gym Managers">
         <template #custom-btn>
-          <ion-icon @click="handleAddGymManager" src="assets/icon/plus.svg" />
+          <ion-icon id="header" @click="handleAddGymManager" src="assets/icon/plus.svg" />
         </template>
       </page-header>
     </template>
@@ -26,19 +26,19 @@
               <ion-text>Availability</ion-text>
             </ion-col>
           </ion-row>
-          <ion-row v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
+          <ion-row @click="handleViewProfile(manager?.id)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
             <ion-col size="4" class="table-td">
-              <ion-text>{{manager?.name}}</ion-text>
+              <ion-text>{{manager?.first_name + ' ' + manager?.last_name}}</ion-text>
             </ion-col>
             <ion-col size="4" class="table-td">
-              <ion-text>{{manager?.type}}</ion-text>
+              <ion-text>{{manager?.type ?? 'Full Time'}}</ion-text>
             </ion-col>
             <ion-col size="4" class="table-td">
               <span
                 class="status-text"
                 :class="manager?.availability==='available'?'available':'unavailable'"
               >
-                {{manager?.availability}}
+                {{manager?.availability ?? 'unavailiable'}}
               </span>
             </ion-col>
           </ion-row>
@@ -111,7 +111,6 @@ const { id } = useId();
 const {
   result,
   loading: loadingUserData,
-  refetch,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 
@@ -122,40 +121,34 @@ const facilities = computed(() => {
 const {
   result: managersResult,
   loading: loadingManagersData,
+  refetch,
   onResult: gotManagers,
 } = useQuery<any>(GetManagersByFacilityDocument, {
   role: "MANAGER",
   facilities,
 });
 
-const tempManagersData = [
-  {
-    id: uuidv4(),
-    name: "Gabby Alao",
-    type: "Full-Time",
-    email: "Gabrielalao@gmail.com",
-    availability: "available"
-  },{
-    id: uuidv4(),
-    name: "Ajebo Hustler",
-    type: "Full-Time",
-    email: "Ajebohustler@gmil.co",
-    availability: "unavailable"
-  }
-];
 const managerData = ref<any>();
-managerData.value = tempManagersData;
 
 const handleAddGymManager = () => {
   router.push({name: EntitiesEnum.AddManager});
+}
+
+const handleViewProfile = (id: string) => {
+  router.push({ name: EntitiesEnum.ManagerProfile, params: { id } });
 }
 
 onMounted(() => {
   console.log("id:", currentFacility.facility.id);
 });
 
+gotUser(({data}) => {
+  console.log({data});
+  refetch();
+});
 gotManagers(({data}) => {
-  managerData.value = data;
+  console.log({data});
+  managerData.value = data.managers.data;
 })
 
 const onBack = () => {
@@ -270,5 +263,10 @@ const onBack = () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+ion-icon#header {
+  width: 18px;
+  height: 18px;
 }
 </style>
