@@ -26,7 +26,7 @@
               <ion-text>Availability</ion-text>
             </ion-col>
           </ion-row>
-          <ion-row @click="handleViewProfile(manager?.id)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
+          <ion-row @click="handleViewProfile(manager)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
             <ion-col size="4" class="table-td">
               <ion-text>{{manager?.first_name + ' ' + manager?.last_name}}</ion-text>
             </ion-col>
@@ -100,6 +100,7 @@ import { v4 as uuidv4 } from "uuid";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
+import { useManagerStore } from "@/facilities/store/manager";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -107,6 +108,7 @@ const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
 const { id } = useId();
+const store = useManagerStore();
 
 const {
   result,
@@ -134,8 +136,11 @@ const handleAddGymManager = () => {
   router.push({name: EntitiesEnum.AddManager});
 }
 
-const handleViewProfile = (id: string) => {
-  router.push({ name: EntitiesEnum.ManagerProfile, params: { id } });
+const handleViewProfile = (manager: any) => {
+  store.setName(manager.first_name, manager.last_name);
+  store.setAddress(manager.address.lat, manager.address.lng, manager.address.street);
+  store.setAvatarUrl(manager.avatarUrl);
+  router.push({ name: EntitiesEnum.ManagerProfile, params: { id: manager.id } });
 }
 
 onMounted(() => {
