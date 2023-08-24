@@ -91,19 +91,19 @@ export const navigationMenu: NavigationMenu = {
       name: EntitiesEnum.FacilityPassList,
       label: "Gym Pass",
       icon: "assets/icon/Pass.svg",
-      category: "/facilities/pass/list",
+      category: "/facilities/pass",
     },
     {
       name: EntitiesEnum.FacilityDropins,
       label: "Drop-ins",
       icon: "assets/icon/drop-ins.svg",
-      category: "/facilities/drop-ins/list",
+      category: "/facilities/dropins",
     },
     {
       name: EntitiesEnum.FacilityWorkout,
       label: "Dailys",
       icon: "assets/icon/gym-user-icon.svg",
-      category: "/dailys/list",
+      category: "/dailys",
     },
     {
       name: EntitiesEnum.Profile,
