@@ -29,10 +29,10 @@
             </div>
             <div class="ion-padding-vertical">
               <ion-button
-                @click="navigate(EntitiesEnum.DashboardPassCreate)"
-                class="ion-margin-end"
+                @click="navigate(EntitiesEnum.DashboardDropinCreate)"
+                class=""
                 fill="solid"
-                >Create Gym pass</ion-button
+                >Create Drop ins</ion-button
               >
             </div>
           </div>
@@ -43,7 +43,7 @@
           class="spinner"
         />
         <div v-else>
-          <pass-subscriber-data-table />
+          <pass-dropin-data-table/>
         </div>
       </ion-col>
     </ion-row>
@@ -53,25 +53,40 @@
 <script setup lang="ts">
 import {
   IonButton,
+  IonIcon,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
   IonSpinner,
   IonGrid,
   IonRow,
   IonCol
 } from "@ionic/vue";
 import {
+  PaymentGatewayRefundDocument,
   Query,
+  SettingsCodeEnum,
+  TrainingDocument,
+  TrainingStatesEnum,
   FacilityItemsByFacilityIdAndTypeDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
+import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
 import { useQuery } from "@vue/apollo-composable";
+import { chevronBackOutline } from "ionicons/icons";
 import { ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
+const activeTab = ref("subscribers");
 const currentFacility = useFacilityStore();
 
+const changeSegment = (segment: string) => {
+  activeTab.value = segment;
+  console.log("segment: " + segment);
+};
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };

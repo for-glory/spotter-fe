@@ -2191,6 +2191,14 @@ export enum RoleEnum {
   User = 'USER'
 }
 
+/** Employment Type Variants */
+export enum EmploymentTypeEnum {
+  /** PART_TIME */
+  PartTime = 'PART_TIME',
+  /** FULL_TIME */
+  FullTime = 'FULL_TIME'
+}
+
 /** The available SQL operators that are used to filter query results. */
 export enum SqlOperator {
   /** Whether a value is within a range of values (`BETWEEN`) */
@@ -2798,6 +2806,20 @@ export type UpdateUserInput = {
   settings?: InputMaybe<Array<SetSettingInput>>;
   trainer_type?: InputMaybe<TrainerTypeEnum>;
   weiver_and_labilities?: InputMaybe<Array<DocumentUploadInput>>;
+};
+
+export type CreateManagerInput = {
+  address?: InputMaybe<AddressInput>;
+  avatar?: InputMaybe<Scalars['StringOrUpload']>;
+  email?: InputMaybe<Scalars['String']>;
+  facility_id?: InputMaybe<Scalars['ID']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<RoleEnum>;
+  employment_type?: InputMaybe<EmploymentTypeEnum>;
+  tax_id?: InputMaybe<Scalars['String']>;
+  postal?: InputMaybe<Scalars['String']>;
+  birth?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type User = {
@@ -6262,6 +6284,98 @@ export const FacilityItemsByFacilityIdAndTypeDocument = gql`
       product_id
       duration
       item_type
+    }
+  }
+}
+    `;
+
+export const GetCustomersByFacilityItemsDocument = gql`
+    query getCustomersByFacilityItems($facility_id: ID!, $item_type: FacilityItemTypeEnum) {
+  getCustomersByFacilityItems(facility_id: $facility_id, item_type: $item_type) {
+    data {
+      id
+      start_date
+      end_date
+      is_active_pass
+      user {
+        id
+        email
+        first_name
+        last_name
+      }
+      facilityItem {
+        title
+        qr_code_lifetime_value
+        facility {
+          id
+          name
+          media {
+            pathUrl
+          }
+          address {
+            street
+          }
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}
+    `;
+
+export const CreateMangerDocument = gql`
+    mutation createManager($input: CreateManagerInput!) {
+  createManager(input: $input) {
+    id
+  }
+}
+    `;
+
+export const GetManagersByFacilityDocument = gql`
+    query managers($role: RoleEnum, $first: Int, $page: Int, $facilities: [ID]) {
+  managers(
+    role: $role
+    facilities: $facilities
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      score
+      first_name
+      last_name
+      avatarUrl
+      is_followed
+      trainer_type
+      address {
+        lat
+        lng
+        street
+      }
+      facilities {
+        id
+        name
+        address {
+          lat
+          lng
+          street
+        }
+      }
+      media {
+        pathUrl
+      }
+      settings {
+        setting {
+          code
+        }
+        value
+      }
+    }
+    paginatorInfo {
+      total
+      firstItem
     }
   }
 }
