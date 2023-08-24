@@ -3,14 +3,14 @@
     <template #header>
       <page-header back-btn @back="onBack" title="Drop-ins">
         <template #custom-btn>
-          <ion-button @click="onViewChat" class="header-btn">
+          <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
         </template>
       </page-header>
       <div class="pass-list ion-margin-top">
-        <div class="d-flex justify-content-between pass-list__top">
+        <div v-if="!loadingCustomers && customersList?.getCustomersByFacilityItems?.data?.length" class="d-flex justify-content-between pass-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
             <ion-button 
               :fill="selectedTab === 'All' ? 'solid' : 'outline'"
@@ -45,9 +45,14 @@
       </div>
     </template>
     <template #content>
-      <div class="main-content">
-        <div v-if="!tempDropinsData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button>Create Drop-in</ion-button>
+      <ion-spinner
+        v-if="loadingCustomers"
+        name="lines"
+        class="spinner"
+      />
+      <div v-else class="main-content">
+        <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+          <ion-button @click="handleCreate">Create Drop-in</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/drop-ins.svg"></ion-icon>
             <ion-text class="status">Drop-in Empty</ion-text>
@@ -69,7 +74,7 @@
             </ion-row>
             <ion-row v-for="customer in customerData" :key="customer?.id" class="table-row ion-align-items-center">
               <ion-col size="4" class="table-td">
-                <ion-text>{{customer?.name}}</ion-text>
+                <ion-text>{{customer?.user?.first_name + ' ' + customer?.user?.last_name}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td capitalize">
                 <ion-text>{{customer?.days}}</ion-text>
@@ -77,17 +82,16 @@
               <ion-col size="4" class="table-td">
                 <ion-button
                   size="small"
-                  :color="customer?.status==='active'?'success':customer?.status==='inactive'?'danger':'warning'"
+                  :color="customer?.is_active_pass?'success':'warning'"
                   class="button-rounded capitalize"
                   fill="outline"
                 >
-                  {{customer?.status}}
+                  {{customer?.is_active_pass ? 'active' : 'inactive'}}
                 </ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-button id="gym-pass" @click="onCreate">Create Drop-in</ion-button>
-          <ion-button id="gym-pass">View Drop-in</ion-button>
+          <ion-button @click="handleView" id="gym-pass">View Drop-in</ion-button>
         </div>
       </div>
     </template>
@@ -109,10 +113,9 @@ import {
   TrainingDocument,
   TrainingStatesEnum,
   FacilityItemPassDocument,
+  GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
-import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
-import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
-import { useLazyQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { computed, onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -130,71 +133,23 @@ const activeTab = ref("subscribers");
 const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
-const { id: myFacilityId } = useFacilityId();
 const { id } = useId();
 
-const tempDropinsData = [
-  {
-    id: uuidv4(),
-    name: "Frank Autumn",
-    days: 2,
-    status: "active",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "inactive",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "active",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    days: 1,
-    status: "pending",
-  },
-];
+const {
+  result: customersList,
+  loading: loadingCustomers,
+  onResult: gotCustomers,
+} = useQuery<any>(GetCustomersByFacilityItemsDocument, {
+  facility_id: currentFacility?.facility?.id,
+  item_type: "DROPIN"
+});
 const customerData = ref<any>();
-customerData.value = tempDropinsData;
-
-const changeSegment = (segment: string) => {
-  activeTab.value = segment;
-  console.log("segment: " + segment);
-};
-const navigate = (name: EntitiesEnum) => {
-  router.push({ name });
-};
 
 const unreadMessages = ref<number[]>([]);
 
-const {
-  result: facilityPassResult,
-  load: getFacilityPass,
-  onResult: gotFacilityPass,
-} = useLazyQuery<Pick<Query, "facilityItemPass">>(FacilityItemPassDocument, {
-  id: myFacilityId,
-});
-
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
-  customerData.value = tempDropinsData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
+  customerData.value = customersList.value.getCustomersByFacilityItems.data.filter((data: any) => selectedTab.value === 'All' || (data.is_active_pass && selectedTab.value?.toLocaleLowerCase() === 'active'));
 }
 
 const fetchChats = () => {
@@ -214,14 +169,21 @@ const onViewChat = () => {
 };
 
 onMounted(() => {
-  console.log(getFacilityPass());
-  console.log("id:", myFacilityId);
-  console.log(facilityPassResult);
+  console.log(currentFacility.facility.id);
   fetchChats();
 });
 
-const onCreate = () => {
+const handleCreate = () => {
   router.push({ name: EntitiesEnum.FacilityCreateDropins });
+}
+
+gotCustomers(({ data }) => {
+  console.log( data.getCustomersByFacilityItems.data );
+  customerData.value = data.getCustomersByFacilityItems.data;
+});
+
+const handleView = () => {
+  router.push({ name: EntitiesEnum.ViewPassAndDropins, params: { type: 'dropin' } },);
 }
 
 const onBack = () => {
@@ -395,5 +357,10 @@ ion-button#gym-pass {
   ion-icon {
     font-size: 1em;
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

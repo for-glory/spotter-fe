@@ -3,13 +3,13 @@
     <template #header>
       <page-header back-btn @back="onBack" title="Gym pass">
         <template #custom-btn>
-          <ion-button @click="onViewChat" class="header-btn">
+          <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
         </template>
       </page-header>
-      <div class="pass-list ion-margin-top">
+      <div v-if="!loadingCustomers && customersList?.getCustomersByFacilityItems?.data?.length" class="pass-list ion-margin-top">
         <div class="d-flex justify-content-between pass-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
             <ion-button 
@@ -51,7 +51,7 @@
         class="spinner"
       />
       <div v-else class="main-content">
-        <div v-if="!customersList" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+        <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
           <ion-button @click="handleCreate">Create Gym pass</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
@@ -74,10 +74,10 @@
             </ion-row>
             <ion-row v-for="customer in customerData" :key="customer?.id" class="table-row ion-align-items-center">
               <ion-col size="4" class="table-td">
-                <ion-text>{{customer?.user?.first_name + customer?.user?.last_name}}</ion-text>
+                <ion-text>{{customer?.user?.first_name + ' ' + customer?.user?.last_name}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td capitalize">
-                <ion-text>{{customer?.plan?.toLowerCase()}}</ion-text>
+                <ion-text>{{customer?.plan?.toLowerCase() ?? 'Full Time'}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td">
                 <ion-button
@@ -114,9 +114,7 @@ import {
   TrainingStatesEnum,
   GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
-import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
-import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
-import { useLazyQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { computed, onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -128,15 +126,12 @@ import { v4 as uuidv4 } from "uuid";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import useId from "@/hooks/useId";
-import { useQuery } from "@vue/apollo-composable";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
 const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
-const { id: myFacilityId } = useFacilityId();
-
 const { id } = useId();
 
 const {
@@ -149,15 +144,11 @@ const {
 });
 const customerData = ref<any>();
 
-const navigate = (name: EntitiesEnum) => {
-  router.push({ name });
-};
-
 const unreadMessages = ref<number[]>([]);
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
-  customerData.value = customersList.value.filter((data: any) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
+  customerData.value = customersList.value.getCustomersByFacilityItems.data.filter((data: any) => selectedTab.value === 'All' || (data.is_active_pass && selectedTab.value?.toLocaleLowerCase() === 'active'));
 }
 
 const fetchChats = () => {
@@ -184,6 +175,7 @@ const handleCreate = () => {
 gotCustomers(({ data }) => {
   console.log( data.getCustomersByFacilityItems.data );
   customerData.value = data.getCustomersByFacilityItems.data;
+  console.log(customersList.value.getCustomersByFacilityItems.data);
 });
 
 const handleView = () => {

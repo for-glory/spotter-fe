@@ -11,7 +11,7 @@
           </ion-avatar>
         </template>
         <template #custom-btn>
-          <ion-button @click="onViewChat" class="header-btn">
+          <ion-button v-if="!loadingUser" @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>

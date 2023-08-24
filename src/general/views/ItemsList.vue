@@ -1,8 +1,11 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym pass">
+      <page-header back-btn @back="onBack" :title="type === 'pass' ? 'Gym pass' : 'Drop-ins'">
         <template #custom-btn>
+          <ion-button @click="handleCreate" class="header-btn">
+            <ion-icon src="assets/icon/plus.svg" />
+          </ion-button>
         </template>
       </page-header>
     </template>
@@ -12,13 +15,22 @@
         name="lines"
         class="spinner"
       />
-      <div v-else-if="products?.length > 0" class="main-content">
-        <product-item 
-          v-for="(product, id) in products"
-          :key="id"
-          :item="product"
-          @open-settings="showSettingsModal"
-        />
+      <div v-else class="main-content">
+        <div v-if="!customersList" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+          <ion-button @click="handleCreate">{{type === 'pass' ? 'Create Pass' : 'Create Drop-in'}}</ion-button>
+          <div class="empty-box d-flex-col align-items-center">
+            <ion-icon src="assets/icon/drop-ins.svg"></ion-icon>
+            <ion-text class="status">{{ type === 'pass' ? 'Pass' : 'Drop-in' }} Empty</ion-text>
+          </div>
+        </div>
+        <div v-else>
+          <product-item 
+            v-for="(product, id) in products"
+            :key="id"
+            :item="product"
+            @open-settings="showSettingsModal"
+          />
+        </div>
       </div>
     </template>
   </base-layout>
@@ -31,18 +43,18 @@
     <div class="main-buttons">
       <ion-button
         id="delete"
-        @click="deleteGymPass"
+        @click="handleDelete"
         expand="block"
       >
-        Delete gym pass
+        Delete {{type === 'pass' ? 'Gym pass' : 'Drop-in'}}
       </ion-button>
       <div class="split"/>
       <ion-button
         id="create"
-        @click="addNewGymPass"
+        @click="handleEdit"
         expand="block"
       >
-        Edit gym pass
+        Edit {{type === 'pass' ? 'Gym pass' : 'Drop-in'}}
       </ion-button>
     </div>
     <ion-button
@@ -78,7 +90,7 @@ import { useLazyQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { computed, onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
@@ -95,6 +107,9 @@ const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
 const { id } = useId();
+const route = useRoute();
+const products = ref<any>();
+const type = route.params.type === 'pass' ? 'PASS' : 'DROPIN';
 
 const {
   result: facilityItemPassResult,
@@ -102,17 +117,21 @@ const {
   onResult: gotFacility,
 } = useQuery<any>(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
-  item_type: "PASS"
+  item_type: type,
 });
-
-const products = ref<any>();
 
 onMounted(() => {
   console.log(currentFacility.facility.id);
+  console.log(route.params.type);
+  console.log(type);
 });
 
 const handleCreate = () => {
-  router.push({ name: EntitiesEnum.FacilityCreatePass });
+  if(type === 'PASS'){
+    router.push({ name: EntitiesEnum.FacilityCreatePass });
+  } else {
+    router.push({ name: EntitiesEnum.FacilityCreateDropins });
+  }
 }
 
 gotFacility(({ data }) => {
@@ -127,11 +146,11 @@ const showSettingsModal = () => {
   isSettingModalOpen.value = true;
 };
 
-const addNewGymPass = () => {
-  console.log("add new gym pass");
+const handleEdit = () => {
+  console.log("edit");
 }
-const deleteGymPass = () => {
-  console.log("delete gym pass");
+const handleDelete = () => {
+  console.log("delete");
 }
 
 const onBack = () => {
@@ -303,7 +322,8 @@ ion-button#gym-pass {
   --min-width: 32px;
 
   ion-icon {
-    font-size: 1em;
+    width: 18px;
+    height: 18px;
   }
 }
 .spinner {
