@@ -23,7 +23,7 @@ onMounted(async () => {
   getMyProfile();
 
   if (!isPlatform("desktop")) {
-    await StatusBar.setStyle({style: Style.Dark});
+    await StatusBar.setStyle({ style: Style.Dark });
   }
 
   const { registerPushNotifications } = usePushNotifications();
