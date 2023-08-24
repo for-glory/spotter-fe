@@ -458,17 +458,27 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/general/views/dashboard/pass/List.vue"),
       },
       {
-        name: EntitiesEnum.DashboardPassCreatePass,
+        name: EntitiesEnum.DashboardPassCreate,
         path: "pass/create-pass",
         component: () => import("@/general/views/dashboard/pass/CreatePass.vue"),
       },
       {
-        name: EntitiesEnum.DashboardPassCreateDropin,
-        path: "pass/create-drop-in",
-        component: () => import("@/general/views/dashboard/pass/CreateDropin.vue"),
+        name: EntitiesEnum.DashboardPassProfile,
+        path: "pass/profile",
+        component: () => import("@/general/views/dashboard/pass/Profile.vue"),
       },
       {
-        name: EntitiesEnum.DashboardPassProfile,
+        name: EntitiesEnum.DashboardDropinList,
+        path: "dropin/list",
+        component: () => import("@/general/views/dashboard/dropins/List.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardDropinCreate,
+        path: "dropin/create-drop-in",
+        component: () => import("@/general/views/dashboard/dropins/CreateDropin.vue"),
+      },
+      {
+        name: EntitiesEnum.DashboardDropinProfile,
         path: "pass/profile",
         component: () => import("@/general/views/dashboard/pass/Profile.vue"),
       },
