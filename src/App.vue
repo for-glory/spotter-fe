@@ -22,8 +22,8 @@ import { Capacitor } from '@capacitor/core';
 onMounted(async () => {
   getMyProfile();
 
-  if (!isPlatform("mobileweb")) {
-    StatusBar.setStyle({ style: Style.Dark });
+  if (!isPlatform("desktop")) {
+    await StatusBar.setStyle({style: Style.Dark});
   }
 
   const { registerPushNotifications } = usePushNotifications();
