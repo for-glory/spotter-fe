@@ -194,4 +194,5 @@ export enum EntitiesEnum {
   FacilityCreateEvent = "FACILITY_CREATE_EVENT",
   ViewPassAndDropins = "VIEW_PASS_AND_DROPINS",
   ManagersOverview = "MANAGERS_OVERVIEW",
+  AddManager = "ADD_MANAGER"
 }

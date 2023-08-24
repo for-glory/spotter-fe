@@ -1,7 +1,11 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym Managers" />
+      <page-header back-btn @back="onBack" title="Gym Managers">
+        <template #custom-btn>
+          <ion-icon @click="handleAddGymManager" src="assets/icon/plus.svg" />
+        </template>
+      </page-header>
     </template>
     <template #content>
       <ion-spinner
@@ -141,6 +145,10 @@ const tempManagersData = [
 ];
 const managerData = ref<any>();
 managerData.value = tempManagersData;
+
+const handleAddGymManager = () => {
+  router.push({name: EntitiesEnum.AddManager});
+}
 
 onMounted(() => {
   console.log("id:", currentFacility.facility.id);

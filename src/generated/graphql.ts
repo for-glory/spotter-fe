@@ -303,6 +303,16 @@ export type CreateDeviceTokenInput = {
   token: Scalars['String'];
 };
 
+export type CreateManagerInput = {
+  address?: InputMaybe<AddressInput>;
+  avatar?: InputMaybe<Scalars['StringOrUpload']>;
+  email?: InputMaybe<Scalars['String']>;
+  facility_id?: InputMaybe<Scalars['ID']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<RoleEnum>;
+};
+
 export type CreateEventInput = {
   address: AddressInput;
   amenities?: InputMaybe<Array<Scalars['ID']>>;
@@ -4015,6 +4025,13 @@ export const CreateEventDocument = gql`
     media {
       title
     }
+  }
+}
+    `;
+export const CreateMangerDocument = gql`
+    mutation createManager($input: CreateManagerInput!) {
+  createManager(input: $input) {
+    id
   }
 }
     `;

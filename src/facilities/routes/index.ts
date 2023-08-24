@@ -185,6 +185,11 @@ export const routes: Array<RouteRecordRaw> = [
   {
     name: EntitiesEnum.ManagersOverview,
     path: "/facilities/managers",
-    component: () => import("@/facilities/views/managers/index.vue"),
+    component: () => import("@/facilities/views/managers/Index.vue"),
+  },
+  {
+    name: EntitiesEnum.AddManager,
+    path: "/facilities/managers/add-new-manager",
+    component: () => import("@/facilities/views/managers/AddManager.vue"),
   },
 ];
