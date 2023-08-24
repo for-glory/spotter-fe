@@ -22,7 +22,7 @@ import { Capacitor } from '@capacitor/core';
 onMounted(async () => {
   getMyProfile();
 
-  if (!isPlatform("desktop")) {
+  if (!isPlatform("desktop") && !isPlatform("mobileweb")) {
     StatusBar.setStyle({ style: Style.Dark });
   }
 
