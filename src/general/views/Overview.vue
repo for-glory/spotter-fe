@@ -124,34 +124,35 @@
           <div class="d-flex align-items-center justify-content-between">
             <ion-title class="title">Market Stats</ion-title>
             <div class="view-option">
-              <ion-text>This Year</ion-text>
+              <ion-text>This Month</ion-text>
               <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
             </div>
           </div>
           <div class="block attendance">
             <custom-chart :chartData="marketChartData" :chartOptions="marketChartOption"/>
             <div class="split" />
-            <div class="d-flex align-items-center justify-content-between gap">
+            <div class="d-flex align-items-center justify-content-between">
               <div class="market-description d-flex align-items-center justify-content-center">
-                <div>
-                  <ion-icon class="yellow" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                <div class="d-flex aling-items-center">
+                  <ion-icon class="yellow" src="assets/icon/Ellipse-yellow.svg" slot="icon-only"></ion-icon>
                   <ion-text>Workout</ion-text>
                 </div>
-                <div>
-                  <ion-icon class="green" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                <div class="d-flex aling-items-center">
+                  <ion-icon class="green" src="assets/icon/Ellipse-green.svg" slot="icon-only"></ion-icon>
                   <ion-text>Gym pass</ion-text>
                 </div>
-                <div>
-                  <ion-icon class="purple" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                <div class="d-flex aling-items-center">
+                  <ion-icon class="purple" src="assets/icon/Ellipse-purple.svg" slot="icon-only"></ion-icon>
                   <ion-text>Drop-ins</ion-text>
                 </div>
-                <div>
-                  <ion-icon class="red" src="assets/Ellipse.svg" slot="icon-only"></ion-icon>
+                <div class="d-flex aling-items-center">
+                  <ion-icon class="red" src="assets/icon/Ellipse-red.svg" slot="icon-only"></ion-icon>
                   <ion-text>Event pass</ion-text>
                 </div>
               </div>
-              <div class="stats">
+              <div class="stats d-flex align-items-center">
                 <ion-text>{{-0.88}}%</ion-text>
+                <ion-icon src="assets/icon/arrow-square-up.svg"></ion-icon>
               </div>
             </div>
           </div>
@@ -181,14 +182,24 @@
                 dateTime="Saturday, April 14 | 08:00 AM"
                 status="Closed"
               />
-              <div class="d-flex align-items-center justify-content-between">
+              <event-item
+                title="Swimming & Cycling"
+                dateTime="Saturday, April 14 | 08:00 AM"
+                status="Closed"
+              />
+              <event-item
+                title="Swimming & Cycling"
+                dateTime="Saturday, April 14 | 08:00 AM"
+                status="Closed"
+              />
+              <!-- <div class="d-flex align-items-center justify-content-between">
                 <div class="red-title">Upcoming</div>
                 <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
               </div>
               <div>
                 <div class="upcomming">
-                  <div class="main-box d-flex align-items-center justify-content-between">
-                    <ion-img src="assets/backgrounds/banner1.jpeg" id="cover"></ion-img>
+                  <div class="main-box d-flex align-items-center">
+                    <img src="assets/backgrounds/banner1.jpeg" id="cover" />
                     <div>
                       <div class="d-flex align-items-center justify-content-between">
                         <ion-text>Run competition</ion-text>
@@ -220,7 +231,7 @@
                     </ion-text>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -501,7 +512,8 @@ const chartData = {
     rotation: -90,
     borderJoinStyle: 'rounded',
     cutout: 50,
-    borderWidth: 0
+    borderWidth: 0,
+    pointStyle: 'circle'
   }]
 };
 const chartOptions = {
@@ -510,7 +522,10 @@ const chartOptions = {
     legend: {
       position: 'right',
       useBorderRadius: true,
-      borderRadius: 100
+      borderRadius: 100,
+      labels: {
+        usePointStyle: true,
+      },
     },
     title: {
       display: false,
@@ -949,7 +964,7 @@ profileDeleted(() => {
   color: #DC5858;
 }
 .doughnut {
-  margin-top: -50px;
+  margin-top: -100px;
   margin-bottom: -50px;
 }
 .header-btn {
@@ -1012,5 +1027,14 @@ profileDeleted(() => {
 
 .add-facility-button {
   margin: 0 8px;
+}
+img#cover {
+  width: 62px;
+  height: 62px;
+  border-radius: 12px;
+}
+.time-icon {
+  width: 12px;
+  height: 12px;
 }
 </style>
