@@ -46,10 +46,10 @@
     </template>
     <template #content>
       <ion-spinner
-          v-if="loadingFacilityPass"
-          name="lines"
-          class="spinner"
-        />
+        v-if="loadingCustomers"
+        name="lines"
+        class="spinner"
+      />
       <div v-else class="main-content">
         <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
           <ion-button @click="handleCreate">Create Gym pass</ion-button>
@@ -74,19 +74,19 @@
             </ion-row>
             <ion-row v-for="customer in customerData" :key="customer?.id" class="table-row ion-align-items-center">
               <ion-col size="4" class="table-td">
-                <ion-text>{{customer?.name}}</ion-text>
+                <ion-text>{{customer?.user?.first_name + customer?.user?.last_name}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td capitalize">
-                <ion-text>{{customer?.plan.toLowerCase()}}</ion-text>
+                <ion-text>{{customer?.plan?.toLowerCase()}}</ion-text>
               </ion-col>
               <ion-col size="4" class="table-td">
                 <ion-button
                   size="small"
-                  :color="customer?.status==='active'?'success':customer?.status==='inactive'?'danger':'warning'"
+                  :color="customer?.is_active_pass?'success':'warning'"
                   class="button-rounded capitalize"
                   fill="outline"
                 >
-                  {{customer?.status}}
+                  {{customer?.is_active_pass ? 'active' : 'inactive'}}
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -112,7 +112,7 @@ import {
   SettingsCodeEnum,
   TrainingDocument,
   TrainingStatesEnum,
-  FacilityItemsByFacilityIdAndTypeDocument,
+  GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
@@ -140,54 +140,14 @@ const { id: myFacilityId } = useFacilityId();
 const { id } = useId();
 
 const {
-  result: facilityItemPassResult,
-  loading: loadingFacilityPass,
-  onResult: gotFacility,
-} = useQuery<Pick<Query, "facilityItemPass">>(FacilityItemsByFacilityIdAndTypeDocument, {
-  facility_id: currentFacility.facility.id,
+  result: customersList,
+  loading: loadingCustomers,
+  onResult: gotCustomers,
+} = useQuery<any>(GetCustomersByFacilityItemsDocument, {
+  facility_id: currentFacility?.facility?.id,
   item_type: "PASS"
 });
-
-const tempPassData = [
-  {
-    id: uuidv4(),
-    name: "Frank Autumn",
-    plan: "GOLD",
-    status: "active",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "SILVER",
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "BRONZE",
-    status: "inactive",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "GOLD",
-    status: "active",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "GOLD",
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "SILVER",
-    status: "pending",
-  },{
-    id: uuidv4(),
-    name: "Jimmy Jane",
-    plan: "BRONZE",
-    status: "pending",
-  },
-];
 const customerData = ref<any>();
-customerData.value = tempPassData;
 
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
@@ -197,7 +157,7 @@ const unreadMessages = ref<number[]>([]);
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
-  customerData.value = tempPassData.filter((data) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
+  customerData.value = customersList.value.filter((data: any) => selectedTab.value === 'All' || data.status === selectedTab.value?.toLocaleLowerCase());
 }
 
 const fetchChats = () => {
@@ -221,8 +181,9 @@ const handleCreate = () => {
   router.push({ name: EntitiesEnum.FacilityCreatePass });
 }
 
-gotFacility(({ data }) => {
-  console.log({ data });
+gotCustomers(({ data }) => {
+  console.log( data.getCustomersByFacilityItems.data );
+  customerData.value = data.getCustomersByFacilityItems.data;
 });
 
 const handleView = () => {

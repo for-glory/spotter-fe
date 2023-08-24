@@ -19,7 +19,12 @@
       </div>
     </template>
     <template #content>
-      <div class="profile">
+      <ion-spinner
+        v-if="loadingUsers"
+        name="lines"
+        class="spinner"
+      />
+      <div v-else class="profile">
         <div class="membership">
           <ion-title class="title">Membership Summary</ion-title>
           <ion-grid class="block">
@@ -296,6 +301,7 @@ const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
 const {
   result,
   refetch,
+  loading: loadingUsers,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 const progress = ref<string | number>("");
@@ -950,5 +956,10 @@ profileDeleted(() => {
     margin: -12px 0 0 4px;
     background: var(--ion-color-danger-tint);
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

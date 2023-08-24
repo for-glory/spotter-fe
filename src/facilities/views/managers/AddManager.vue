@@ -312,7 +312,7 @@ const addManager = () => {
           city_id: selectedCity.value?.id,
         },
       role: 'MANAGER',
-      facility_id: 41,
+      facility_id: currentFacility?.facility.id,
     }
   }).then(async () => {
         const toast = await toastController.create({

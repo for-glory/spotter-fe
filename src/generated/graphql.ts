@@ -6396,3 +6396,38 @@ export const GetManagersByFacilityDocument = gql`
   }
 }
     `;
+export const GetCustomersByFacilityItemsDocument = gql`
+    query getCustomersByFacilityItems($facility_id: ID!, $item_type: FacilityItemTypeEnum) {
+  getCustomersByFacilityItems(facility_id: $facility_id, item_type: $item_type) {
+    data {
+      id
+      start_date
+      end_date
+      is_active_pass
+      user {
+        id
+        email
+        first_name
+        last_name
+      }
+      facilityItem {
+        title
+        qr_code_lifetime_value
+        facility {
+          id
+          name
+          media {
+            pathUrl
+          }
+          address {
+            street
+          }
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}
+    `;
