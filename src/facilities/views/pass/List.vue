@@ -51,7 +51,7 @@
         class="spinner"
       />
       <div v-else class="main-content">
-        <div v-if="!tempPassData" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
+        <div v-if="!customersList" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
           <ion-button @click="handleCreate">Create Gym pass</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
