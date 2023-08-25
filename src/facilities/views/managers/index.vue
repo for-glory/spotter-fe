@@ -33,7 +33,7 @@
             <ion-col size="4" class="table-td">
               <ion-text>{{manager?.type ?? 'Full Time'}}</ion-text>
             </ion-col>
-            <ion-col size="4" class="table-td">
+            <ion-col size="4" class="table-td" id="status">
               <span
                 class="status-text"
                 :class="manager?.availability==='available'?'available':'unavailable'"
@@ -45,30 +45,33 @@
         </ion-grid>
         <div class="membership">
           <ion-title class="title">Membership Summary</ion-title>
-          <ion-grid class="block">
-            <ion-row>
-              <ion-col size="5">
-                <summary-item title="Total" keyText="New Signs-up" value="14"/>
-              </ion-col>
-              <ion-col size="5">
-                <summary-item title="Total" keyText="Active" value="60"/>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="5">
-                <summary-item title="Today's" keyText="Event counts" value="23"/>
-              </ion-col>
-              <ion-col size="5">
-                <summary-item title="Today's" keyText="Message counts" value="13"/>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="5">
-                <summary-item title="Total" keyText="Expiring membership" value="24"/>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+          <div class="block">
+            <table class="custom-table">
+              <tr>
+                <td>
+                  <summary-item title="Total" keyText="New Signs-up" value="14" />
+                </td>
+                <td>
+                  <summary-item title="Total" keyText="Active" value="60" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <summary-item title="Today's" keyText="Event counts" value="23" />
+                </td>
+                <td>
+                  <summary-item title="Today's" keyText="Message counts" value="13" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1">
+                  <summary-item title="Total" keyText="Expiring membership" value="24" />
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
+
       </div>
     </template>
   </base-layout>
@@ -182,13 +185,14 @@ const onBack = () => {
 
   ion-col {
     padding: 7px 15px 7px;
+    border: 1px solid;
+    border-color: #E1DBC5;
   }
   ion-text {
     font: 14px/1 Lato;
     color: #E1DBC5;
   }
 }
-
 .table-row {
   // border-top: 1px solid var(--beige);
   ion-col {
@@ -200,7 +204,6 @@ const onBack = () => {
     font: 12px/1 Lato;
   }
 }
-
 .status-text {
   border-radius: 16px;
   height: 20px;
@@ -219,44 +222,39 @@ const onBack = () => {
 }
 .membership {
   margin-top: 16px;
-
-  .count {
-    font-size: 1.625rem;
-    color: var(--gold);
-    padding-left: 0.6rem;
-    font-weight: bold;
-  }
-  .period {
-    font-size: 1rem;
-    color: grey;
-    padding-bottom: 0.6rem;
-  }
-  .time {
-    font-size: 0.875rem;
-    color: var(--gold);
-  }
-  .content {
-    font-size: 1rem;
-    color: #797979;
-  }
-
-  ion-row {
-    justify-content: space-between;
-    gap: 24px;
-  }
 }
+
+.count {
+  font-size: 1.625rem;
+  color: var(--gold);
+  padding-left: 0.6rem;
+  font-weight: bold;
+}
+
+.period {
+  font-size: 1rem;
+  color: grey;
+  padding-bottom: 0.6rem;
+}
+
+.time {
+  font-size: 0.875rem;
+  color: var(--gold);
+}
+
+.content {
+  font-size: 1rem;
+  color: #797979;
+}
+
 .block {
   width: 100%;
   background-color: #262626;
   border-radius: 8px;
   margin-bottom: 1rem;
-  padding: 1rem 1rem 1rem 1rem;
-
-  ion-row {
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
+  padding: 26px 14px 16px 12px;
 }
+
 .title {
   padding: 8px 0px;
   font-size: 1.6rem;
@@ -268,6 +266,17 @@ const onBack = () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+td {
+  padding: 5px;
+}
+.custom-table {
+  border-spacing: 10px;
+}
+
+ion-col#status {
+  background-color: #19191B;
 }
 
 ion-icon#header {
