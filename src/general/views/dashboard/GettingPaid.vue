@@ -91,8 +91,18 @@ import {
   IonButton,
   IonIcon,
 } from "@ionic/vue";
+import {
+  PayoutDocument,
+} from "@/generated/graphql";
+import { useMutation } from "@vue/apollo-composable";
+
+const { mutate: payout, onDone: afterPayout } = useMutation(
+  PayoutDocument
+);
+
 const handleGet = () => {
   console.log("get");
+  payout();
 };
 const handleAdd = () => {
   console.log("add");
