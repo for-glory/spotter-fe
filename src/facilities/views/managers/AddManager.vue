@@ -2,9 +2,6 @@
   <base-layout>
     <template #header>
       <page-header back-btn @back="onBack" title="Add New Manager">
-        <template #custom-btn>
-          <ion-icon @click="handleAddGymManager" src="assets/icon/plus.svg" />
-        </template>
       </page-header>
     </template>
     <template #content>
@@ -71,7 +68,7 @@
               title="Address"
               class="form-row__control"
               @handle-click="onChooseLocation"
-              :value="selectedState?.name + ', ' + selectedCity?.name"
+              :value="(selectedState?.name ? selectedState?.name : '') + (selectedCity?.name ? ', ' + selectedCity?.name : '')"
             />
           </div>
 
@@ -91,13 +88,21 @@
             />
           </div>
 
+          <div class="form-row">
+            <base-input
+              label="Phone number"
+              v-model:value="managerPhoneNumber"
+              placeholder="Phone number"
+            />
+          </div>
+
           <div
             class="actions-wrapper"
             :class="{ 'actions-wrapper--fixed': footerFixed }"
           >
             <ion-button
               expand="block"
-              class="secondary"
+              fill="solid"
               @click="addManager"
             >
               Add Manager
@@ -134,6 +139,7 @@ import {
   CitiesDocument, 
   CreateMangerDocument,
   MeDocument,
+  EmploymentTypeEnum,
 } from "@/generated/graphql";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { v4 as uuidv4 } from "uuid";
@@ -172,6 +178,7 @@ const managerCode = ref<string>("");
 const managerBOD = ref<any>();
 const managerType = ref<string>();
 const managerTaxID = ref<string>();
+const managerPhoneNumber = ref<string>();
 const media = ref<
   Array<{
     __typename?: "Media";
@@ -182,6 +189,7 @@ const media = ref<
     url?: string;
   }>
 >([]);
+const error = ref<string>();
 
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
@@ -287,6 +295,11 @@ const getMedia = (media: any, savedMedia: any) => {
     return acc;
   }, []);
 };
+const phoneRegex = /^(?:\+1)?[-. ]?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$/ as RegExp;
+
+function isValidPhoneNumber(phoneNumber: any): boolean {
+  return phoneRegex.test(phoneNumber);
+}
 
 const addManager = () => {
   const newMedia = getMedia(media.value, savedMedia.value);
@@ -312,6 +325,9 @@ const addManager = () => {
           city_id: selectedCity.value?.id,
         },
       role: 'MANAGER',
+      employment_type: managerType.value?.toLocaleLowerCase() === 'full time' ? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.PartTime,
+      tax_id: managerTaxID.value,
+      postal: managerCode.value,
       facility_id: currentFacility?.facility.id,
     }
   }).then(async () => {
@@ -325,15 +341,15 @@ const addManager = () => {
         refetch();
       })
       .catch(async (error) => {
-        const toast = await toastController.create({
-          message: "Something went wrong. Please try again.",
-          icon: "assets/icon/info.svg",
-          cssClass: "danger-toast",
-        });
-        toast.present();
-
-        throw new Error(error);
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
       });
+      toast.present();
+
+      throw new Error(error);
+    });
 }
 
 const onBack = () => {
