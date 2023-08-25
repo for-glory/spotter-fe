@@ -188,14 +188,13 @@ export enum EntitiesEnum {
   DashboardMessage = "DASHBOARD_MESSAGE",
   Overview = "Overview",
   FacilityPassList = "FACILITY_PASS_LIST",
-  FacilityCreatePass = "FACILITY_CREATE_PASS",
   FacilityDropins = "FACILITY_DROPINS",
-  FacilityCreateDropins = "FACILITY_CREATE_DROPINS",
   FacilityWorkout = "FACILITY_WORKOUT",
   FacilityCreateWorkout = "FACILITY_CREATE_WORKOUT",
   FacilityCreateEvent = "FACILITY_CREATE_EVENT",
   ViewPassAndDropins = "VIEW_PASS_AND_DROPINS",
   ManagersOverview = "MANAGERS_OVERVIEW",
   AddManager = "ADD_MANAGER",
-  ManagerProfile = "MANAGER_PROFILE"
+  ManagerProfile = "MANAGER_PROFILE",
+  CreateItem = "CREATE_ITEM"
 }

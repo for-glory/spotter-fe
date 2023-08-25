@@ -128,9 +128,9 @@ onMounted(() => {
 
 const handleCreate = () => {
   if(type === 'PASS'){
-    router.push({ name: EntitiesEnum.FacilityCreatePass });
+    router.push({ name: EntitiesEnum.CreateItem, params: { type: route.params.type } });
   } else {
-    router.push({ name: EntitiesEnum.FacilityCreateDropins });
+    router.push({ name: EntitiesEnum.CreateItem, params: { type: route.params.type } });
   }
 }
 

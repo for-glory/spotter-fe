@@ -526,6 +526,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "gyms",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
       },
+      {
+        name: EntitiesEnum.CreateItem,
+        path: "/products/create/:type",
+        component: () => import("@/general/views/CreateItem.vue"),
+      },
     ]
   },
 ];

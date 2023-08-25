@@ -169,7 +169,7 @@ onMounted(() => {
 });
 
 const handleCreate = () => {
-  router.push({ name: EntitiesEnum.FacilityCreatePass });
+  router.push({ name: EntitiesEnum.CreateItem, params: { type: "pass" } });
 }
 
 gotCustomers(({ data }) => {

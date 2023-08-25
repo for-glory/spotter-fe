@@ -174,7 +174,7 @@ onMounted(() => {
 });
 
 const handleCreate = () => {
-  router.push({ name: EntitiesEnum.FacilityCreateDropins });
+  router.push({ name: EntitiesEnum.CreateItem, params: { type: "drop-ins" } });
 }
 
 gotCustomers(({ data }) => {
@@ -183,7 +183,7 @@ gotCustomers(({ data }) => {
 });
 
 const handleView = () => {
-  router.push({ name: EntitiesEnum.ViewPassAndDropins, params: { type: 'dropin' } },);
+  router.push({ name: EntitiesEnum.ViewPassAndDropins, params: { type: 'drop-ins' } },);
 }
 
 const onBack = () => {

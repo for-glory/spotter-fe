@@ -1,19 +1,19 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Create gym pass" />
+      <page-header back-btn @back="onBack" :title="'Create ' + type" />
     </template>
     <template #content>
       <div class="form-body">
-        <ion-grid v-if="previousPass" fixed>
+        <ion-grid v-if="previousItem" fixed>
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="form-row">
-                <div class="label">Title of gym pass</div>
+                <div class="label">Title of {{ type }}</div>
                 <input
                   class="input-text-field"
                   type="text"
-                  :placeholder="previousPass?.title"
+                  :placeholder="previousItem?.title"
                   name="plan"
                   disabled
                 />
@@ -25,7 +25,7 @@
               <div class="form-row">
                 <div class="label">Duration</div>
                 <select class="input-select-field" name="cars" id="cars" disabled>
-                  <option value="30">30 days (1 month)</option>
+                  <option value="1">1 day</option>
                 </select>
               </div>
             </ion-col>
@@ -33,11 +33,11 @@
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="form-row">
-                <div class="label">Set the price for gym pass(USD $)</div>
+                <div class="label">Set the price for {{ type }}(USD $)</div>
                 <input
                   class="input-text-field"
                   type="number"
-                  :placeholder="previousPass?.price"
+                  :placeholder="previousItem?.price"
                   name="cost"
                   disabled
                 />
@@ -46,7 +46,7 @@
           </ion-row>
           <ion-row>
             <ion-col size="12" size-md="6">
-              <ion-title>Next gym pass</ion-title>
+              <ion-title>Next {{ type }}</ion-title>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -70,13 +70,13 @@
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="form-row">
-                <div class="label">Title of gym pass</div>
+                <div class="label">Title of {{ type }}</div>
                 <input
                   class="input-text-field"
                   type="text"
-                  placeholder="Basic"
+                  placeholder="Enter title"
                   name="plan"
-                  v-model="passTitle"
+                  v-model="itemTitle"
                 />
               </div>
             </ion-col>
@@ -84,7 +84,7 @@
               <div class="form-row">
                 <div class="label">Duration</div>
                 <select class="input-select-field" name="cars" id="cars">
-                  <option value="30">30 days (1 month)</option>
+                  <option value="1">1 day</option>
                 </select>
               </div>
             </ion-col>
@@ -102,13 +102,13 @@
             </ion-col>
             <ion-col size="12" size-md="6">
               <div class="form-row">
-                <div class="label">Set the price for gym pass(USD $)</div>
+                <div class="label">Set the price for {{ type }}(USD $)</div>
                 <input
                   class="input-text-field"
                   type="number"
                   placeholder="Enter price"
                   name="cost"
-                  v-model="passPrice"
+                  v-model="itemPrice"
                 />
               </div>
             </ion-col>
@@ -116,14 +116,14 @@
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="submit-buttons">
-                <ion-button @click="addNextFacilityItemPass" type="submit"> Add next Gym pass </ion-button>
+                <ion-button @click="addNextFacilityItem" type="submit"> Add next {{ type }} </ion-button>
                 <ion-button
                   fill="outline"
                   color="medium"
                   type="submit"
-                  @click="createNewFacilityItemPass"
+                  @click="createNewFacilityItem"
                 >
-                  Create Gym pass
+                  Create {{ type }}
                 </ion-button>
               </div>
             </ion-col>
@@ -137,7 +137,6 @@
     ref="equipmentAndAmenitiessModal"
     @cancel="equipmentAndAmenitiessSelected"
   />
-  <date-picker-modal ref="datePickerModal" @select="dateSelected" />
 </template>
 
 <script setup lang="ts">
@@ -152,17 +151,17 @@ import {
 } from "vue";
 import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
 import { 
-  FilePreloadDocument,
+  FilePreloadDocument, 
   CitiesDocument,
   CreateFacilityItemDocument
 } from "@/generated/graphql";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
 import { newFacilityStoreTypes } from "@/ts/types/store";
-import { useNewFacilityStore } from "../../store/new-facility";
+import { useNewFacilityStore } from "../../facilities/store/new-facility";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
@@ -173,6 +172,7 @@ const router = useRouter();
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
+const route = useRoute();
 const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
   null
 );
@@ -183,10 +183,11 @@ const currentFacility = useFacilityStore();
 const facilityEquipments = computed(() => store.equipments);
 const facilityAmenities = computed(() => store.amenities);
 const facilityPhotos = computed(() => store.photos);
-const passTitle = ref<string>();
-const passDuration = ref<number>();
-const passPrice = ref<number>();
-const previousPass = ref<any>(null);
+const itemTitle = ref<string>();
+const itemDuration = ref<number>();
+const itemPrice = ref<number>();
+const previousItem = ref<any>(null);
+const type = computed(() => route.params.type);
 
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
@@ -250,31 +251,33 @@ const onChooseAmenities = () => {
   });
 };
 
-const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useMutation(
+const addNextFacilityItem = () => {
+  previousItem.value = {
+    title: itemTitle.value,
+    price: itemPrice.value,
+    duration: itemDuration.value,
+  }
+  console.log(previousItem.value);
+  // createNewFacilityItem();
+}
+
+const { mutate: createFacilityItem, onDone: facilityItemCreated } = useMutation(
   CreateFacilityItemDocument
 );
 
-const addNextFacilityItemPass = () => {
-  previousPass.value = {
-    title: passTitle.value,
-    price: passPrice.value,
-    duration: passDuration.value,
-  }
-  createNewFacilityItemPass();
-}
-const createNewFacilityItemPass = () => {
-  createFacilityItemPass({
+const createNewFacilityItem = () => {
+  createFacilityItem({
     input: {
       facility_id: currentFacility.facility.id,
-      title: passTitle.value,
-      price: passPrice.value,
-      duration: passDuration.value,
-      item_type: "PASS",
+      title: itemTitle.value,
+      price: itemPrice.value,
+      duration: itemDuration.value,
+      item_type: type.value === 'pass' ? 'PASS' : 'DROPIN',
     },
   })
     .then(async () => {
       const toast = await toastController.create({
-        message: "New Gym Pass was created successfully",
+        message: "New Gym Item was created successfully",
         duration: 2000,
         icon: "assets/icon/success.svg",
         cssClass: "success-toast",
@@ -342,7 +345,7 @@ ion-label {
   border: 1px solid var(--gray-500);
   border-radius: 8px;
   font-size: 13px;
-  color: #E1DBC5;
+  color: var(--ion-color-medium);
 }
 
 .input-select-field {
@@ -352,7 +355,7 @@ ion-label {
   border: 1px solid var(--gray-500);
   border-radius: 8px;
   font-size: 13px;
-  color: #E1DBC5;
+  color: var(--ion-color-medium);
 }
 
 // .input-select-field::after {
