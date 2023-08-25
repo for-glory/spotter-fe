@@ -33,13 +33,6 @@
             >
               Inactive
             </ion-button>
-            <ion-button
-              :fill="selectedTab === 'Expired' ? 'solid' : 'outline'"
-              :color="selectedTab === 'Expired' ? '' : 'medium'"
-              @click="handleSelectTab('Expired')"
-            >
-              Expired
-            </ion-button>
           </div>
         </div>
       </div>
@@ -140,7 +133,7 @@ const {
   onResult: gotCustomers,
 } = useQuery<any>(GetCustomersByFacilityItemsDocument, {
   facility_id: currentFacility?.facility?.id,
-  item_type: "PASS"
+  item_type: 'PASS'
 });
 const customerData = ref<any>();
 
@@ -169,7 +162,7 @@ onMounted(() => {
 });
 
 const handleCreate = () => {
-  router.push({ name: EntitiesEnum.CreateItem, params: { type: "pass" } });
+  router.push({ name: EntitiesEnum.CreateItem, params: { type: 'pass' } });
 }
 
 gotCustomers(({ data }) => {

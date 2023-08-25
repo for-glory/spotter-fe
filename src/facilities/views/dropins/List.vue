@@ -33,13 +33,6 @@
             >
               Inactive
             </ion-button>
-            <ion-button
-              :fill="selectedTab === 'Expired' ? 'solid' : 'outline'"
-              :color="selectedTab === 'Expired' ? '' : 'medium'"
-              @click="handleSelectTab('Expired')"
-            >
-              Expired
-            </ion-button>
           </div>
         </div>
       </div>
@@ -52,10 +45,10 @@
       />
       <div v-else class="main-content">
         <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button @click="handleCreate">Create Drop-in</ion-button>
+          <ion-button @click="handleCreate">Create {{ type === 'pass' ? 'Pass' : 'Drop-in' }}</ion-button>
           <div class="empty-box d-flex-col align-items-center">
-            <ion-icon src="assets/icon/drop-ins.svg"></ion-icon>
-            <ion-text class="status">Drop-in Empty</ion-text>
+            <ion-icon :src="type === 'pass' ? 'assets/icon/pass.svg' : 'assets/icon/drop-ins.svg'"></ion-icon>
+            <ion-text class="status">{{ type === 'pass' ? 'Pass' : 'Drop-in' }} Empty</ion-text>
             <ion-text class="description">No booked client yet</ion-text>
           </div>
         </div>
@@ -91,7 +84,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-button @click="handleView" id="gym-pass">View Drop-in</ion-button>
+          <ion-button @click="handleView" id="gym-item">View {{ type === 'pass' ? 'Pass' : 'Drop-in' }}</ion-button>
         </div>
       </div>
     </template>
@@ -141,7 +134,7 @@ const {
   onResult: gotCustomers,
 } = useQuery<any>(GetCustomersByFacilityItemsDocument, {
   facility_id: currentFacility?.facility?.id,
-  item_type: "DROPIN"
+  item_type: 'DROPIN'
 });
 const customerData = ref<any>();
 
@@ -174,7 +167,7 @@ onMounted(() => {
 });
 
 const handleCreate = () => {
-  router.push({ name: EntitiesEnum.CreateItem, params: { type: "drop-ins" } });
+  router.push({ name: EntitiesEnum.CreateItem, params: { type: 'drop-ins' } });
 }
 
 gotCustomers(({ data }) => {
@@ -330,7 +323,7 @@ ion-label {
 .capitalize {
   text-transform: capitalize;
 }
-ion-button#gym-pass {
+ion-button#gym-item {
   width: 100%;
   font: 500 16px/1 Yantramanav;
   margin-top: 28px;
