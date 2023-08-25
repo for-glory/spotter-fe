@@ -28,7 +28,7 @@
             v-for="(product, id) in products"
             :key="id"
             :item="product"
-            @open-settings="showSettingsModal"
+            @open-settings="showSettingsModal(product.id)"
           />
         </div>
       </div>
@@ -65,6 +65,14 @@
       Cancel
     </ion-button>
   </ion-modal>
+  <confirmation
+    :is-visible="showConfirmationModal"
+    :title="'Do you want to delete' + (type === 'PASS' ? ' Gym pass' : ' drop-in?') + '?'"
+    :description="(type === 'PASS' ? 'Gym Pass' : 'Drop-in') + ' will be deleted'"
+    button-text="Delete"
+    @discard="onDelete"
+    @decline="hideModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -83,6 +91,7 @@ import {
   TrainingDocument,
   TrainingStatesEnum,
   FacilityItemsByFacilityIdAndTypeDocument,
+  DeleteFacilityItemDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
@@ -96,7 +105,9 @@ import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
 import useId from "@/hooks/useId";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import ProductItem from "@/facilities/components/ProductItem.vue";
 
 const modal = ref<typeof IonModal | null>(null);
@@ -110,15 +121,25 @@ const { id } = useId();
 const route = useRoute();
 const products = ref<any>();
 const type = route.params.type === 'pass' ? 'PASS' : 'DROPIN';
+const selectedId = ref<number>();
 
 const {
   result: facilityItemPassResult,
   loading: loadingFacilityItems,
+  refetch,
   onResult: gotFacility,
 } = useQuery<any>(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
   item_type: type,
 });
+
+const {
+  showConfirmationModal,
+  hideModal,
+  showModal: showModal,
+} = useConfirmationModal();
+
+const { mutate } = useMutation(DeleteFacilityItemDocument);
 
 onMounted(() => {
   console.log(currentFacility.facility.id);
@@ -135,22 +156,36 @@ const handleCreate = () => {
 }
 
 gotFacility(({ data }) => {
-  products.value = data.facilityItemsByFacilityIdAndType.data.map((product: any) => {
-    return { ...product, id: uuidv4() };
-  });
+  products.value = data.facilityItemsByFacilityIdAndType.data;
   console.log(products.value);
 });
 
 const isSettingModalOpen = ref<boolean>(false);
-const showSettingsModal = () => {
+const showSettingsModal = (id: number) => {
+  console.log({id});
   isSettingModalOpen.value = true;
+  selectedId.value = id;
 };
 
 const handleEdit = () => {
   console.log("edit");
 }
 const handleDelete = () => {
-  console.log("delete");
+  isSettingModalOpen.value = false;
+  showModal();
+}
+const onDelete = () => {
+  hideModal();
+  console.log(selectedId.value);
+  mutate({
+    id: selectedId.value,
+  })
+    .then(() => {
+      refetch();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 const onBack = () => {

@@ -4040,6 +4040,13 @@ export const CreateEventDocument = gql`
   }
 }
     `;
+export const DeleteFacilityItemDocument = gql`
+    mutation deleteFacilityItem($id: ID!) {
+  deleteFacilityItem(id: $id) {
+    id
+  }
+}
+`;
 export const DeleteChatDocument = gql`
     mutation deleteChat($id: ID!) {
   deleteChat(id: $id) {
