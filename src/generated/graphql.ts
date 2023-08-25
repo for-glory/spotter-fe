@@ -4254,6 +4254,24 @@ export const PaymentIntentDocument = gql`
   }
 }
     `;
+export const PayoutDocument = gql`
+    mutation stripePayout($id: ID) {
+  stripePayout(id: $id) {
+    message
+    success
+  }
+}
+    `;
+
+export const getRevenuesDocument = gql`
+    query facilityDashboardWidget($id:ID!) {
+  facilityDashboardWidget(id: $id) {
+      today_earn
+      earn_last_thirty_days
+      year_earn
+    }
+  }
+    `;
 export const CreateSubscriptionIntentDocument = gql`
     mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!, $facility_id: ID) {
     createSubscriptionIntent(
@@ -6217,6 +6235,9 @@ export const FacilityDashboardWidgetDocument = gql`
 query facilityDashboardWidget($id:ID!) {
   facilityDashboardWidget(id: $id) {
     event_count
+    dropin_count
+    pass_count
+    daily_count
     message_count
     expiring_membership_count
     today_earn
@@ -6302,6 +6323,7 @@ export const GetCustomersByFacilityItemsDocument = gql`
         email
         first_name
         last_name
+        avatarUrl
       }
       facilityItem {
         title
@@ -6343,6 +6365,8 @@ export const GetManagersByFacilityDocument = gql`
   ) {
     data {
       id
+      email
+      employment_type
       score
       first_name
       last_name
