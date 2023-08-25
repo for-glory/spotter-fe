@@ -14,7 +14,7 @@
           <ion-button expand="block">Add new manager</ion-button>
         </ion-menu-toggle>
       </div>
-      <div class="d-flex justify-content-between">
+      <!-- <div class="d-flex justify-content-between">
         <div class="content-box content-box__membership flex-auto">
           <ion-title class="top">Membership Summary</ion-title>
           <ion-grid>
@@ -50,7 +50,7 @@
           <ion-text class="detail">Manager's attendance</ion-text>
           <custom-chart :chartData="chartData" :selected="selected"/>
         </div>
-      </div>
+      </div> -->
       <div class="d-flex justify-content-between">
         <div class="flex-auto">
           <table class="manager-table">
@@ -88,7 +88,7 @@
                   <ion-text :class="manager.availability === 'available' ? 'available' : 'unavailable'">{{ manager.availability }}</ion-text>
                 </td>
                 <td class="table-td edit-btn">
-                  <ion-button expand="block" fill="outline" @click="handleEdit">
+                  <ion-button expand="block" fill="outline" @click="handleEdit" class="edit-button">
                     <ion-icon slot="icon-only" src="assets/icon/three-dot.svg"></ion-icon>
                   </ion-button>
                 </td>
@@ -96,7 +96,7 @@
             </tbody>
           </table>
         </div>
-        <div class="content-box chart d-flex-col justify-content-end">
+        <!-- <div class="content-box chart d-flex-col justify-content-end">
           <div class="d-flex justify-content-between align-items-center">
             <ion-text class="availability">Availability stats</ion-text>
             <ion-button fill="outline">
@@ -106,7 +106,7 @@
           </div>
           <ion-text class="detail">Worker's attendance</ion-text>
           <custom-chart :chartData="chartData" :selected="selected"/>
-        </div>
+        </div> -->
       </div>
     </div>
 	</div>
@@ -192,6 +192,8 @@ import {
   IonTitle,
   IonIcon,
   IonMenuToggle,
+  IonRow,
+  IonCol
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -364,9 +366,14 @@ const handleEdit = () => {
 }
 
 .edit-btn {
-  padding: 18px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: end;
+  
+  ion-button {
+    height: 36px;
+    width: 42px;
+  }
 }
 
 .chart {

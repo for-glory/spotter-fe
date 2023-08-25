@@ -176,8 +176,18 @@ import { useRouter } from "vue-router";
 import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
+import {
+  PayoutDocument,
+} from "@/generated/graphql";
+import { useMutation } from "@vue/apollo-composable";
+
+const { mutate: payout, onDone: afterPayout } = useMutation(
+  PayoutDocument
+);
+
 const handleGet = () => {
   console.log("get");
+  payout();
 };
 const handleAdd = () => {
   console.log("add");

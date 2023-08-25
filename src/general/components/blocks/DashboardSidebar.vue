@@ -38,7 +38,7 @@
 					<ion-text>Gym pass</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardDropinList)">
-					<ion-icon src="assets/icon/Pass.svg" />
+					<ion-icon src="assets/icon/dropin.svg" />
 					<ion-text>Drop-ins</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
