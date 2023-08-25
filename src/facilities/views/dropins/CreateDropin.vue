@@ -5,6 +5,51 @@
     </template>
     <template #content>
       <div class="form-body">
+        <ion-grid v-if="previousItem" fixed>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="form-row">
+                <div class="label">Title of drop-in</div>
+                <input
+                  class="input-text-field"
+                  type="text"
+                  :placeholder="previousItem?.title"
+                  name="plan"
+                  disabled
+                />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="form-row">
+                <div class="label">Duration</div>
+                <select class="input-select-field" name="cars" id="cars" disabled>
+                  <option value="1">1 day</option>
+                </select>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="form-row">
+                <div class="label">Set the price for drop-in(USD $)</div>
+                <input
+                  class="input-text-field"
+                  type="number"
+                  :placeholder="previousItem?.price"
+                  name="cost"
+                  disabled
+                />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-title>Next drop-in</ion-title>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
         <ion-grid fixed>
           <ion-row>
             <ion-col size="12">
@@ -31,6 +76,7 @@
                   type="text"
                   placeholder="Enter title"
                   name="plan"
+                  v-model="itemTitle"
                 />
               </div>
             </ion-col>
@@ -38,7 +84,7 @@
               <div class="form-row">
                 <div class="label">Duration</div>
                 <select class="input-select-field" name="cars" id="cars">
-                  <option value="30">30 days (1 month)</option>
+                  <option value="1">1 day</option>
                 </select>
               </div>
             </ion-col>
@@ -50,7 +96,7 @@
                 <choose-block
                   title="Equipment and amenities"
                   @handle-click="onChooseAmenities"
-                  :value="facilityEquipments?.value?.length + facilityAmenities?.value?.length || ''"
+                  :value="facilityEquipments?.length + facilityAmenities?.length || ''"
                 />
               </div>
             </ion-col>
@@ -59,9 +105,10 @@
                 <div class="label">Set the price for drop-in(USD $)</div>
                 <input
                   class="input-text-field"
-                  type="text"
+                  type="number"
                   placeholder="Enter price"
                   name="cost"
+                  v-model="itemPrice"
                 />
               </div>
             </ion-col>
@@ -69,11 +116,12 @@
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="submit-buttons">
-                <ion-button type="submit"> Add next drop-in </ion-button>
+                <ion-button @click="addNextFacilityItem" type="submit"> Add next drop-in </ion-button>
                 <ion-button
                   fill="outline"
                   color="medium"
                   type="submit"
+                  @click="createNewFacilityItem"
                 >
                   Create drop-in
                 </ion-button>
@@ -92,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon, IonLabel } from "@ionic/vue";
+import { IonButton, IonIcon, IonLabel, toastController } from "@ionic/vue";
 import {
   ref,
   computed,
@@ -105,7 +153,11 @@ import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
-import { FilePreloadDocument, CitiesDocument } from "@/generated/graphql";
+import { 
+  FilePreloadDocument, 
+  CitiesDocument,
+  CreateFacilityItemDocument
+} from "@/generated/graphql";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -113,6 +165,7 @@ import { useNewFacilityStore } from "../../store/new-facility";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 
 const router = useRouter();
@@ -124,17 +177,21 @@ const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
 );
 
 const store = useNewFacilityStore();
+const currentFacility = useFacilityStore();
 
-const facilityEquipments = ref<any>();
-const facilityAmenities = ref<any>();
+const facilityEquipments = computed(() => store.equipments);
+const facilityAmenities = computed(() => store.amenities);
 const facilityPhotos = computed(() => store.photos);
+const itemTitle = ref<string>();
+const itemDuration = ref<number>();
+const itemPrice = ref<number>();
+const previousItem = ref<any>(null);
 
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
 ) => {
-  facilityEquipments.value = result.equipments || [];
-  facilityAmenities.value = result.amenities || [];
-  console.log({facilityEquipments}, {facilityAmenities});
+  store.setEquipments(result.equipments || []);
+  store.setAmenities(result.amenities || []);
 };
 
 const photoOnLoad = ref<boolean>(false);
@@ -191,6 +248,50 @@ const onChooseAmenities = () => {
     ),
   });
 };
+
+const addNextFacilityItem = () => {
+  previousItem.value = {
+    title: itemTitle.value,
+    price: itemPrice.value,
+    duration: itemDuration.value,
+  }
+  console.log(previousItem.value);
+  // createNewFacilityItem();
+}
+
+const { mutate: createFacilityItem, onDone: facilityItemCreated } = useMutation(
+  CreateFacilityItemDocument
+);
+
+const createNewFacilityItem = () => {
+  createFacilityItem({
+    input: {
+      facility_id: currentFacility.facility.id,
+      title: itemTitle.value,
+      price: itemPrice.value,
+      duration: itemDuration.value,
+      item_type: "DROPIN",
+    },
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "New Gym Item was created successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
+}
 const onBack = () => {
   router.go(-1);
 };
