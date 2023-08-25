@@ -4040,6 +4040,13 @@ export const CreateEventDocument = gql`
   }
 }
     `;
+export const DeleteManagerDocument = gql`
+    mutation deleteManager($id: ID!) {
+  deleteManager(id: $id) {
+    id
+  }
+}
+`;
 export const DeleteFacilityItemDocument = gql`
     mutation deleteFacilityItem($id: ID!) {
   deleteFacilityItem(id: $id) {

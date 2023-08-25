@@ -73,8 +73,8 @@
     :is-visible="showConfirmationModal"
     title="Do you want to delete account"
     description="Gym manager will be deleted"
-    button-text="Cancel"
-    cancel-button-text="No"
+    button-text="Delete"
+    cancel-button-text="Cancel"
     @discard="onDeleteManager"
     @decline="hideModal"
   />
@@ -93,7 +93,8 @@ import {
   GetManagersByFacilityDocument,
   UserDocument,
   RoleEnum,
-  UserAvailabilityDocument
+  UserAvailabilityDocument,
+  DeleteManagerDocument,
 } from "@/generated/graphql";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
@@ -104,7 +105,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from "dayjs";
 import useId from "@/hooks/useId";
 import { useManagerStore } from "@/facilities/store/manager";
@@ -144,6 +145,7 @@ const { result: calendarWidgetResult } = useQuery(
 );
 
 const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
+const { mutate } = useMutation(DeleteManagerDocument);
 
 const bookings = computed(() => {
   const availability = [];
@@ -171,6 +173,17 @@ onMounted(() => {
 
 const onDeleteManager = () => {
   console.log("delete manager");
+  hideModal();
+  console.log(managerId.value);
+  mutate({
+    id: managerId.value,
+  })
+    .then(() => {
+      onBack();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 const onBack = () => {
   router.go(-1);

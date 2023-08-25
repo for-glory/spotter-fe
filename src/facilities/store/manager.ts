@@ -11,6 +11,11 @@ export const useManagerStore = defineStore("manager", {
         lng: null,
         street: "",
       },
+      tax_id: "",
+      email: "",
+      phone_number: "",
+      postal_code: "",
+      employment_type: "",
     };
   },
   actions: {
@@ -27,6 +32,21 @@ export const useManagerStore = defineStore("manager", {
       street: string | null
     ) {
       this.address = { lat, lng, street };
+    },
+    setTaxID(tax_id: string) {
+      this.tax_id = tax_id;
+    },
+    setEmail(email: string) {
+      this.email = email;
+    },
+    setPhoneNumber(phone_number: string) {
+      this.phone_number = phone_number;
+    },
+    setPostalCode(postal_code: string) {
+      this.postal_code = postal_code;
+    },
+    setEmploymentType(employment_type: string) {
+      this.employment_type = employment_type;
     },
     clear() {
       this.first_name = "";

@@ -29,7 +29,6 @@
           <ion-row @click="handleViewProfile(manager)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
             <ion-col size="4" class="table-td">
               <ion-text>{{ manager?.first_name + ' ' + manager?.last_name }}</ion-text>
-              <ion-text>{{ manager?.email }}</ion-text>
             </ion-col>
             <ion-col size="4" class="table-td">
               <ion-text>{{ manager?.type ?? 'Full Time' }}</ion-text>
