@@ -10,7 +10,7 @@
         </template>
       </page-header>
       <div class="banner">
-        <ion-title class="banner__title">Create events for clients and trainers</ion-title>
+        <ion-text class="banner__title">Create events for clients and trainers</ion-text>
         <ion-text class="banner__text">
           Your hub for creating memorable gatherings. Effortlessly set up events, and easily track registrations to ensure a seamless experience.
         </ion-text>
@@ -373,6 +373,7 @@ const onBack = () => {
     font-weight: 700;
     line-height: normal;
     margin-bottom: 16px;
+    display: block;
   }
   &__text {
     color: #FFF;
