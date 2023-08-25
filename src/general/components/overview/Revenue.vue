@@ -1,30 +1,38 @@
 <template>
   <div>
-    <ion-title class="title">Membership Summary</ion-title>
+    <ion-title class="title">Revenue</ion-title>
     <div class="block">
-      <table class="custom-table">
-        <tr>
-          <td>
-            <summary-item title="Total" keyText="New Signs-up" value="14" />
-          </td>
-          <td>
-            <summary-item title="Total" keyText="Active" value="60" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <summary-item title="Today's" keyText="Event counts" value="23" />
-          </td>
-          <td>
-            <summary-item title="Today's" keyText="Message counts" value="13" />
-          </td>
-        </tr>
-        <tr>
-          <td colspan="1">
-            <summary-item title="Total" keyText="Expiring membership" value="24" />
-          </td>
-        </tr>
-      </table>
+      <div class="revenue">
+        <div class="type">Total revenue</div>
+        <div class="period">Today</div>
+        <div class="percent">
+          0.8%
+          <ion-icon
+            class="vector"
+            src="assets/icon/vector.svg"
+          />
+        </div>
+        <div class="chain">$3,689,076</div>
+      </div>
+      <div class="revenue">
+        <div>
+          <div class="type">Quarterly revenue</div>
+          <div class="period">Earned</div>
+          <div class="percent">70%</div>
+          <div class="chain">
+            $1068<span class="period">/ day</span>
+          </div>
+        </div>
+      </div>
+      <div class="revenue">
+        <div class="type">Earned revenue</div>
+        <div class="period">This year</div>
+        <div class="percent">
+          0.8%
+          <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+        </div>
+        <div class="chain">$689,076</div>
+      </div>
     </div>
   </div>
 </template>
@@ -78,9 +86,6 @@ const route = useRoute();
 
 </script>
 <style scoped lang="scss">
-.custom-table {
-  border-spacing: 10px;
-}
 .title {
   padding: 8px 0px;
   font-size: 1.6rem;
@@ -88,8 +93,29 @@ const route = useRoute();
   font-weight: 400;
   color: var(--fitnesswhite);
 }
-td {
-  padding: 5px;
+.revenue {
+  margin: 0.3rem 0.3rem;
+  padding: 1rem 0 1rem 1rem;
+  border: 1px solid white;
+  border-radius: 8px;
+
+  .type {
+    font-size: 1rem;
+    color: white;
+    padding-bottom: 10px;
+  }
+  .percent {
+    font-size: 1.625rem;
+    color: #2ed47a;
+    padding-bottom: 5px;
+  }
+  .chain {
+    font-size: 1.625rem;
+    color: white;
+  }
+  .arrow {
+    padding-left: 0.6rem;
+  }
 }
 .block {
   width: 100%;
