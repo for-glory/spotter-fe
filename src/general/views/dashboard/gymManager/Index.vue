@@ -89,7 +89,7 @@
                 </td>
                 <td class="table-td edit-btn">
                   <ion-button expand="block" fill="outline" @click="handleEdit" class="edit-button">
-                    <ion-icon slot="icon-only" src="assets/icon/three-dot.svg"></ion-icon>
+                    <ion-icon slot="icon-only" src="assets/icon/more.svg.svg"></ion-icon>
                   </ion-button>
                 </td>
               </tr>
