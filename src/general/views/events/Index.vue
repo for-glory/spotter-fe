@@ -361,16 +361,14 @@ const onBack = () => {
 
     img {
       width: 100%;
+      height: 100%;
     }
   }
 
   &__title {
     padding: 0;
     color: #FFF;
-    font-family: Lato;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
+    font: 600 20px/1 Lato;
     line-height: normal;
     margin-bottom: 16px;
     display: block;

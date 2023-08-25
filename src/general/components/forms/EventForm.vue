@@ -1,5 +1,5 @@
 <template>
-  <div class="create-event" v-if="!Capacitor.isNativePlatform()">
+  <div class="create-event" v-if="Capacitor.isNativePlatform()">
     <div class="form-row">
       <ion-label class="label"> Choose photos for event </ion-label>
       <photos-loader
@@ -148,7 +148,7 @@
   </div>
   <div class="create-event" v-else>
     <div class="form-row">
-      <ion-label class="label"> Choose photos for event </ion-label>
+      <ion-label class="label"> Choose cover for Event </ion-label>
       <photos-loader
         @upload="uploadPhoto"
         @delete="deletePhoto"
@@ -178,7 +178,7 @@
         :disabled="loading"
         @change="eventPriceChange"
         v-model:value="eventPrice"
-        label="Entry fee"
+        label="Entry fee(USD $)"
         placeholder="Set entry fee"
       />
     </div>
@@ -209,18 +209,6 @@
         />
       </div>
     </template>
-
-    <div class="form-row">
-      <base-input
-        :rows="3"
-        :maxlength="150"
-        :disabled="loading"
-        label="Event description"
-        @change="eventDescriptionChange"
-        v-model:value="eventDescription"
-        placeholder="Enter a description"
-      />
-    </div>
 
     <template v-if="!edit">
       <div class="form-row">
@@ -268,6 +256,18 @@
               title: 'End date',
             })
           "
+        />
+      </div>
+
+      <div class="form-row">
+        <base-input
+          :rows="4"
+          :maxlength="150"
+          :disabled="loading"
+          label="Event description"
+          @change="eventDescriptionChange"
+          v-model:value="eventDescription"
+          placeholder="Enter a description"
         />
       </div>
     </template>
@@ -865,7 +865,9 @@ defineExpose({
 
 .holder-button {
   display: flex;
+  flex-direction: column;
   gap: 16px;
+  width: 100%;
 
   .button {
     margin: 0;
