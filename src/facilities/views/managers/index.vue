@@ -28,17 +28,18 @@
           </ion-row>
           <ion-row @click="handleViewProfile(manager)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
             <ion-col size="4" class="table-td">
-              <ion-text>{{manager?.first_name + ' ' + manager?.last_name}}</ion-text>
+              <ion-text>{{ manager?.first_name + ' ' + manager?.last_name }}</ion-text>
+              <ion-text>{{ manager?.email }}</ion-text>
             </ion-col>
             <ion-col size="4" class="table-td">
-              <ion-text>{{manager?.type ?? 'Full Time'}}</ion-text>
+              <ion-text>{{ manager?.type ?? 'Full Time' }}</ion-text>
             </ion-col>
             <ion-col size="4" class="table-td" id="status">
               <span
                 class="status-text"
                 :class="manager?.availability==='available'?'available':'unavailable'"
               >
-                {{manager?.availability ?? 'unavailiable'}}
+                {{ manager?.availability ?? 'unavailiable' }}
               </span>
             </ion-col>
           </ion-row>
@@ -129,7 +130,7 @@ const {
   onResult: gotManagers,
 } = useQuery<any>(GetManagersByFacilityDocument, {
   role: "MANAGER",
-  facilities,
+  facilities: facilities.value,
 });
 
 const managerData = ref<any>();
@@ -151,6 +152,7 @@ onMounted(() => {
 
 gotUser(({data}) => {
   console.log({data});
+  console.log(facilities.value);
   refetch();
 });
 gotManagers(({data}) => {

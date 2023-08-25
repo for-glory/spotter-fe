@@ -65,10 +65,19 @@
             </ion-row>
           </ion-grid>
         </div>
-        <ion-button fill="outline" color="danger" id="delete">Delete Manager</ion-button>
+        <ion-button @click="showModal" fill="outline" color="danger" id="delete">Delete Manager</ion-button>
       </div>
     </template>
   </base-layout>
+  <confirmation
+    :is-visible="showConfirmationModal"
+    title="Do you want to delete account"
+    description="Gym manager will be deleted"
+    button-text="Cancel"
+    cancel-button-text="No"
+    @discard="onDeleteManager"
+    @decline="hideModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -95,13 +104,15 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import { useQuery } from "@vue/apollo-composable";
-import useId from "@/hooks/useId";
-import Calendar from "@/general/components/dashboard/Calendar.vue";
-import { useManagerStore } from "@/facilities/store/manager";
-import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
 import dayjs, { Dayjs } from "dayjs";
+import useId from "@/hooks/useId";
+import { useManagerStore } from "@/facilities/store/manager";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import Calendar from "@/general/components/dashboard/Calendar.vue";
+import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
+import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -132,6 +143,8 @@ const { result: calendarWidgetResult } = useQuery(
   }
 );
 
+const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
+
 const bookings = computed(() => {
   const availability = [];
   if (calendarWidgetResult && calendarWidgetResult?.value) {
@@ -156,6 +169,9 @@ onMounted(() => {
   console.log({ address });
 });
 
+const onDeleteManager = () => {
+  console.log("delete manager");
+}
 const onBack = () => {
   router.go(-1);
 };
