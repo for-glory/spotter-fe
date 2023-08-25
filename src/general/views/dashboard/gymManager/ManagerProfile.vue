@@ -1,7 +1,13 @@
 <template>
+  <ion-spinner
+        v-if="loading"
+        name="lines"
+        class="spinner"
+      />
 	<div
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
+    v-else
 	>
     <div class="banner d-flex justify-content-between align-items-center">
       <ion-title class="banner__title">Gym Manager Profile</ion-title>
@@ -10,14 +16,18 @@
     <div class="content-container">
       <div class="profile-field">
         <div class="contact-field">
-          <ion-img src="assets/manager-avatar.png"></ion-img>
+          <ion-avatar class="photo">
+            <ion-img v-if="manager.avatarUrl" :src="manager.avatarUrl"></ion-img>
+            <template v-else>
+              {{ manager.first_name?.charAt(0) }}
+            </template>
+          </ion-avatar>
           <ion-label class="name">
-            {{"Ray Espinal"}}
-            <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon>
+            {{ `${manager.first_name} ${manager.last_name}`}}
           </ion-label>
-          <ion-text class="contact">{{"Gym Manager"}}</ion-text>
-          <ion-text class="contact">{{"gymmanager@spotterfitness.com"}}</ion-text>
-          <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text>
+          <!-- <ion-text class="contact">{{ manager.employment_type }}</ion-text> -->
+          <ion-text class="contact">{{ manager.email }}</ion-text>
+          <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
         </div>
         <div class="data-box d-flex align-items-center justify-content-between">
           <div class="d-flex-col align-items-center">
@@ -26,7 +36,7 @@
           </div>
           <div class="vertical-line"/>
           <div class="d-flex-col align-items-center">
-            <ion-text>{{"Full-Time"}}</ion-text>
+            <ion-text>{{ manager.employment_type }}</ion-text>
             <ion-text class="field-label">Employment type</ion-text>
           </div>
           <div class="vertical-line"/>
@@ -35,16 +45,8 @@
             <ion-text class="field-label">Position</ion-text>
           </div>
         </div>
-        <ion-title class="calendar-title">Calendar</ion-title>
-        <calendar
-          :selected="selectedDate"
-          @change-day="dayChanged"
-          :showAdditionalContent="false"
-          :min="props?.options?.min"
-          :max="props?.options?.max"
-        />
       </div>
-      <div class="data-field">
+      <!-- <div class="data-field">
         <div class="content-box">
           <ion-title class="top">Membership Summary</ion-title>
           <ion-grid>
@@ -69,23 +71,7 @@
             </ion-row>
           </ion-grid>
         </div>
-        <div class="content-box">
-          <div >
-            <div class="top d-flex justify-content-between align-items-center">
-              <ion-title>Notification</ion-title>
-              <div>
-                <ion-text>{{ 8 }} task</ion-text>
-                <ion-text>{{ " " + "completed" + " " }}</ion-text>
-                <ion-text>out of {{ 10 }}</ion-text>
-              </div>
-            </div>
-          </div>
-          <div class="notification-box">
-            <notification-item></notification-item>
-            <notification-item></notification-item>
-          </div>
-        </div>
-      </div>
+      </div> -->
     </div>
 	</div>
 </template>
@@ -97,49 +83,36 @@ import {
   IonGrid,
   IonText,
   IonTitle,
-  IonIcon
+  IonAvatar,
+  IonImg
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  WorkoutsDocument,
+  UserDocument,
   QueryWorkoutsOrderByColumn,
   RoleEnum,
   SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
+import { useRoute } from "vue-router";
 // import dayjs from "dayjs";
-import useRoles from "@/hooks/useRole";
-import {
-  DatePickerModalResult,
-  DatePickerModalOptions,
-} from "@/interfaces/DatePickerModal";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
-import NotificationItem from "@/general/components/dashboard/NotificationItem.vue";
-import Calendar from "@/general/components/dashboard/Calendar.vue";
 
-const filter = ref<string>('profile');
+const route = useRoute();
 
-const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
-
-const { id } = JSON.parse(localStorage.getItem("user") || "{}");
-const props = ref<DatePickerModalOptions>();
-const selectedDate = ref<number>(Date.now());
-
-const router = useRouter();
-
-const handleClick = (value: string) => {
-	filter.value = value;
-}
-const dayChanged = (event: any) => {
-  selectedDate.value = new Date(event).getTime();
-};
-
+const { result, loading } = useQuery(UserDocument, {
+  id: route.params.id
+});
+console.log(result.value)
+const manager = computed(() => {
+  return result.value?.user ?? {
+    first_name: "",
+    last_name: "",
+    avatarUrl: "",
+    employment_type: ""
+  };
+});
 </script>
 
 <style scoped lang="scss">
@@ -244,6 +217,15 @@ const dayChanged = (event: any) => {
   border-radius: 2px;
   min-height: 32px;
   border-color: var(--main-color);
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
+}
+.photo {
+  width: 94px;
+  height: 94px;
 }
 
 </style>

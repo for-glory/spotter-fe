@@ -5619,6 +5619,8 @@ export const UserDocument = gql`
   user(id: $id) {
     id
     email
+    employment_type
+    birth
     first_name
     last_name
     avatar
@@ -6277,6 +6279,14 @@ export const UpdateFacilityItemDocument = gql`
 }
 `;
 
+export const DeleteFacilityItemDocument = gql`
+    mutation deleteFacilityItem($id: ID!) {
+  deleteFacilityItem(id: $id) {
+    id
+  }
+}
+`;
+
 export const FacilityItemDocument = gql`
     query facilityItemById($id: ID!) {
   facilityItemById(id: $id) {
@@ -6347,13 +6357,21 @@ export const GetCustomersByFacilityItemsDocument = gql`
 }
     `;
 
-export const CreateMangerDocument = gql`
+export const CreateManagerDocument = gql`
     mutation createManager($input: CreateManagerInput!) {
   createManager(input: $input) {
     id
   }
 }
     `;
+
+export const DeleteManagerDocument = gql`
+    mutation deleteManager($id: ID!) {
+  deleteManager(id: $id) {
+    id
+  }
+}
+`;
 
 export const GetManagersByFacilityDocument = gql`
     query managers($role: RoleEnum, $first: Int, $page: Int, $facilities: [ID]) {
