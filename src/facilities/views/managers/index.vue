@@ -104,6 +104,7 @@ import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
 import { useManagerStore } from "@/facilities/store/manager";
+import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -112,16 +113,7 @@ const selectedTab = ref("All");
 const { role } = useRoles();
 const { id } = useId();
 const store = useManagerStore();
-
-const {
-  result,
-  loading: loadingUserData,
-  onResult: gotUser,
-} = useQuery<Pick<Query, "user">>(UserDocument, { id });
-
-const facilities = computed(() => {
-  return result.value?.user?.owned_facilities?.map((facility) => facility?.id);
-});
+const userStore = useUserStore();
 
 const {
   result: managersResult,
@@ -130,7 +122,7 @@ const {
   onResult: gotManagers,
 } = useQuery<any>(GetManagersByFacilityDocument, {
   role: "MANAGER",
-  facilities: facilities.value,
+  facilities: userStore.owned_facilities.map((facility: any) => facility.id),
 });
 
 const managerData = ref<any>();
@@ -147,14 +139,9 @@ const handleViewProfile = (manager: any) => {
 }
 
 onMounted(() => {
-  console.log("id:", currentFacility.facility.id);
+  console.log("********", userStore.owned_facilities);
 });
 
-gotUser(({data}) => {
-  console.log({data});
-  console.log(facilities.value);
-  refetch();
-});
 gotManagers(({data}) => {
   console.log({data});
   managerData.value = data.managers.data;

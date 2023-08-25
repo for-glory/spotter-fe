@@ -43,6 +43,9 @@ export const useUserStore = defineStore("user", {
     ) {
       this.address = { state, city, address };
     },
+    setOwnedFacilities(owned_facilities: any) {
+      this.owned_facilities = owned_facilities;
+    },
     clear() {
       this.id= "",
       this.email= "",

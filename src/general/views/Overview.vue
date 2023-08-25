@@ -319,6 +319,7 @@ import { Doughnut } from 'vue-chartjs';
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useUserStore } from "@/general/stores/user";
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
@@ -352,6 +353,7 @@ const isTrusted = computed(() =>
 const unreadMessages = ref<number[]>([]);
 const facilityStore = useFacilityStore();
 const modal = ref<typeof IonModal | null>(null);
+const userStore = useUserStore();
 
 onMounted(() => {
   refetch();
@@ -636,6 +638,14 @@ gotUser(({ data }) => {
       : null;
 
   facilityStore.setFacility(facilities.value[0]);
+
+  userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
+  userStore.setEmail(result.value?.user?.email);
+  userStore.setId(result.value?.user?.id);
+  userStore.setSubscription(result.value?.user?.currentSubscription);
+  userStore.setAvatarUrl(result.value?.user?.avatarUrl);
+  userStore.setAddress(result.value?.user?.address?.city?.state, result.value?.user?.address?.city, result.value?.user?.address);
+  userStore.setOwnedFacilities(result.value?.user?.owned_facilities);
 
   progress.value = data?.user?.settings?.find(
     (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser
