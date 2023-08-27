@@ -3,7 +3,7 @@
     <template #header>
       <page-header title="Overview">
         <template #avatar-field>
-          <ion-avatar class="header__photo" @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()">
+          <ion-avatar v-if="!loadingUser || !loadingDashboarData" class="header__photo" @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()">
             <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
             <template v-else>
               {{ facilityName?.charAt(0) }}
@@ -11,9 +11,12 @@
           </ion-avatar>
         </template>
         <template #custom-btn>
-          <ion-button v-if="!loadingUser" @click="onViewChat" class="header-btn">
+          <ion-button v-if="!loadingUser || !loadingDashboarData" @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+          </ion-button>
+          <ion-button v-if="!loadingUser || !loadingDashboarData" @click="openQR" class="header-btn">
+            <ion-icon src="assets/icon/scan.svg" />
           </ion-button>
         </template>
       </page-header>
@@ -233,6 +236,12 @@ const fetchChats = () => {
         unreadMessages.value.push(chat.unread[id]);
       }
     });
+  });
+};
+
+const openQR = () => {
+  router.push({
+    name: EntitiesEnum.ProfileScan,
   });
 };
 
