@@ -20,14 +20,14 @@
     </template>
     <template #content>
       <ion-spinner
-        v-if="loadingUser"
+        v-if="loadingUser || loadingDashboarData"
         name="lines"
         class="spinner"
       />
       <div v-else class="profile">
-        <fitness-center-stats  />
-        <revenue />
-        <attendance-trend />
+        <fitness-center-stats :overviewData="overviewData"  />
+        <revenue :overviewData="overviewData" />
+        <attendance-trend :overviewData="overviewData" />
         <market-stats />
         <event-status />
       </div>
@@ -83,6 +83,7 @@ import {
   UserDocument,
   DeleteProfileDocument,
   SubscriptionsTypeEnum,
+  FacilityDashboardWidgetDocument
 } from "@/generated/graphql";
 import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
@@ -133,63 +134,33 @@ const {
 
 const { id } = useId();
 const { role } = useRoles();
-const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
+const unreadMessages = ref<number[]>([]);
+const facilityStore = useFacilityStore();
+const userStore = useUserStore();
+const overviewData = ref<any>({});
+const modal = ref<typeof IonModal | null>(null);
 
 const {
   result,
-  refetch,
   loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 const progress = ref<string | number>("");
 
-const isTrusted = computed(() =>
-  role === RoleEnum.User ? Number(progress.value) >= 100 : true
-);
-
-const unreadMessages = ref<number[]>([]);
-const facilityStore = useFacilityStore();
-const modal = ref<typeof IonModal | null>(null);
-const userStore = useUserStore();
+const {
+  result: dashboardData,
+  loading: loadingDashboarData,
+  refetch,
+  onResult: gotData,
+} = useQuery(FacilityDashboardWidgetDocument, { id: facilityStore?.facility.id })
 
 onMounted(() => {
-  refetch();
   fetchChats();
 });
 
-const fetchChats = () => {
-  if (unreadMessages.value.length) unreadMessages.value = [];
-  onValue(chatsRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      const chat = childSnapshot.val();
-      if (chat.unread && chat.unread[id]) {
-        unreadMessages.value.push(chat.unread[id]);
-      }
-    });
-  });
-};
-
-const onViewChat = () => {
-  router.push({ name: EntitiesEnum.ChatList });
-};
-
-const facilities = computed(() => {
-  switch (role) {
-    case RoleEnum.OrganizationOwner: {
-      return result.value?.user?.owned_facilities;
-    }
-
-    case RoleEnum.Manager:
-    case RoleEnum.FacilityOwner:
-      return result.value?.user?.owned_facilities;
-
-    default:
-      return [];
-  }
-});
-
+const facilities = computed(() => result.value?.user?.owned_facilities);
 const activeFacilityId = ref<string | null>(null);
 
 watch(
@@ -199,6 +170,7 @@ watch(
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
     });
+    facilityStore.setFacility(facilities.value?.filter((facility) => facility?.id === newVal));
   }
 );
 
@@ -223,37 +195,6 @@ const avatarUrl = computed(() => {
       return "";
   }
 });
-const facilityName = computed<string>(
-  () =>
-    facilities.value?.find(
-      (focility: any) => focility.id === activeFacilityId.value
-    )?.name ??
-    result.value?.user?.email ??
-    ""
-);
-const facilityAddress = computed<string>(
-  () =>
-    facilities.value?.find(
-      (focility: any) => focility.id === activeFacilityId.value
-    )?.address?.street ?? defaultAddress
-);
-const symbols = computed<string>(() => {
-  switch (role) {
-    case RoleEnum.User:
-    case RoleEnum.Trainer:
-      return `${result.value?.user?.first_name?.charAt(0) || ""}${
-        result.value?.user?.last_name?.charAt(0) || ""
-      }`;
-
-    case RoleEnum.Manager:
-    case RoleEnum.FacilityOwner:
-    case RoleEnum.OrganizationOwner:
-      return facilityName.value?.charAt(0) || "";
-
-    default:
-      return "";
-  }
-});
 
 gotUser(({ data }) => {
   activeFacilityId.value =
@@ -262,6 +203,7 @@ gotUser(({ data }) => {
       : null;
 
   facilityStore.setFacility(facilities.value[0]);
+  refetch( { id: facilityStore.facility.id } );
 
   userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
   userStore.setEmail(result.value?.user?.email);
@@ -277,6 +219,26 @@ gotUser(({ data }) => {
     ? 100
     : 0;
 });
+
+gotData(({ data }) => {
+  overviewData.value = data.facilityDashboardWidget;
+})
+
+const fetchChats = () => {
+  if (unreadMessages.value.length) unreadMessages.value = [];
+  onValue(chatsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const chat = childSnapshot.val();
+      if (chat.unread && chat.unread[id]) {
+        unreadMessages.value.push(chat.unread[id]);
+      }
+    });
+  });
+};
+
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
+};
 
 const onLogout = () => {
   showModal();

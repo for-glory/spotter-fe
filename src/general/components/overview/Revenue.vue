@@ -6,21 +6,21 @@
         <div class="type">Total revenue</div>
         <div class="period">Today</div>
         <div class="percent">
-          0.8%
+          0.0%
           <ion-icon
             class="vector"
             src="assets/icon/vector.svg"
           />
         </div>
-        <div class="chain">$3,689,076</div>
+        <div class="chain">${{ todayEarn }}</div>
       </div>
       <div class="revenue">
         <div>
           <div class="type">Quarterly revenue</div>
           <div class="period">Earned</div>
-          <div class="percent">70%</div>
+          <div class="percent">0.0%</div>
           <div class="chain">
-            $1068<span class="period">/ day</span>
+            ${{ earnLastThirtyDays }}<span class="period">/ day</span>
           </div>
         </div>
       </div>
@@ -28,10 +28,10 @@
         <div class="type">Earned revenue</div>
         <div class="period">This year</div>
         <div class="percent">
-          0.8%
+          0.0%
           <ion-icon class="arrow" src="assets/icon/call_made.svg" />
         </div>
-        <div class="chain">$689,076</div>
+        <div class="chain">${{ yearEarn }}</div>
       </div>
     </div>
   </div>
@@ -62,11 +62,17 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref, watch } from "vue";
+import { 
+  computed, 
+  onMounted, 
+  ref, 
+  watch,
+  withDefaults,
+  defineProps,
+} from "vue";
 import useRoles from "@/hooks/useRole";
 import useId from "@/hooks/useId";
 import { Capacitor } from "@capacitor/core";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import {
   Chart as ChartJS,
   Title,
@@ -76,13 +82,14 @@ import {
   ArcElement
 } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const route = useRoute();
+
+const props = defineProps<{ overviewData?: any; }>();
+const todayEarn = computed(() => props.overviewData?.today_earn);
+const earnLastThirtyDays = computed(() => props.overviewData?.earn_last_thirty_days);
+const yearEarn = computed(() => props.overviewData?.year_earn);
 
 </script>
 <style scoped lang="scss">

@@ -5,23 +5,23 @@
       <table class="custom-table">
         <tr>
           <td>
-            <summary-item title="Total" keyText="Drop-ins" value="14" />
+            <summary-item title="Total" keyText="Drop-ins" :value="dropinCount" />
           </td>
           <td>
-            <summary-item title="Total" keyText="Gym pass" value="60" />
+            <summary-item title="Total" keyText="Gym pass" :value="passCount" />
           </td>
         </tr>
         <tr>
           <td>
-            <summary-item title="Today's" keyText="Event counts" value="23" />
+            <summary-item title="Today's" keyText="Event counts" :value="eventsCount" />
           </td>
           <td>
-            <summary-item title="Today's" keyText="Message counts" value="13" />
+            <summary-item title="Today's" keyText="Message counts" :value="messageCount" />
           </td>
         </tr>
         <tr>
           <td colspan="1">
-            <summary-item title="Total" keyText="Dailys" value="24" />
+            <summary-item title="Total" keyText="Dailys" :value="dailyCount" />
           </td>
         </tr>
       </table>
@@ -54,7 +54,14 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref, watch } from "vue";
+import { 
+  computed, 
+  onMounted, 
+  ref, 
+  watch,
+  withDefaults,
+  defineProps,
+} from "vue";
 import useRoles from "@/hooks/useRole";
 import useId from "@/hooks/useId";
 import { Capacitor } from "@capacitor/core";
@@ -68,13 +75,16 @@ import {
   ArcElement
 } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const route = useRoute();
+
+const props = defineProps<{ overviewData?: any; }>();
+const dropinCount = computed(() => props.overviewData?.dropin_count);
+const passCount = computed(() => props.overviewData?.pass_count);
+const eventsCount = computed(() => props.overviewData?.event_count);
+const messageCount = computed(() => props.overviewData?.message_count);
+const dailyCount = computed(() => props.overviewData?.daily_count);
 
 </script>
 <style scoped lang="scss">

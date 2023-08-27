@@ -59,41 +59,46 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref, watch } from "vue";
+import { 
+  computed, 
+  onMounted, 
+  ref, 
+  watch,
+  withDefaults,
+  defineProps,
+} from "vue";
 import useRoles from "@/hooks/useRole";
 import useId from "@/hooks/useId";
 import { Capacitor } from "@capacitor/core";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  ArcElement
-} from 'chart.js';
-import { Doughnut } from 'vue-chartjs';
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const route = useRoute();
 
-const attendanceDatas = [97, 53, 72, 27, 97, 105, 50, 53, 105, 105];
+const props = defineProps<{ overviewData?: any; }>();
+const checkinData = computed(() => props.overviewData?.checkin_data);
+const attendanceDatas = ref<Array<number>>([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+watch(
+  () => checkinData.value,
+  (newVal: any) => {
+    newVal.map((val: any) => {
+      attendanceDatas.value[val.month] = val.value;
+    });
+  }
+);
+
 const attendanceBackgroundColors = ['#F7685B', '#FFB946', '#2F9BFF', '#2ED47A'];
 const attendanceChartData = {
-  labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   datasets: [
     {
       label: "",
-      backgroundColor: attendanceDatas.map((data) => {
+      backgroundColor: attendanceDatas.value?.map((data) => {
         if(data >= 0 && data < 75) return attendanceBackgroundColors[Math.floor(data / 25)];
         else return attendanceBackgroundColors[3];
       }),
-      data: attendanceDatas,
+      data: attendanceDatas.value,
       barThickness: 15,
       borderRadius: 4
     }
