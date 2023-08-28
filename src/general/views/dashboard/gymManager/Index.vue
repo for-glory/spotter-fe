@@ -14,44 +14,12 @@
           <ion-button expand="block">Add new manager</ion-button>
         </ion-menu-toggle>
       </div>
-      <!-- <div class="d-flex justify-content-between">
-        <div class="content-box content-box__membership flex-auto">
-          <ion-title class="top">Membership Summary</ion-title>
-          <ion-grid>
-            <ion-row>
-              <ion-col size="3">
-                <summary-item title="Total" keyText="New Signs-up" value="14"/>
-              </ion-col>
-              <ion-col size="3">
-                <summary-item title="Total" keyText="Active" value="60"/>
-              </ion-col>
-              <ion-col size="5">
-                <summary-item title="Total" keyText="Experiment membership" value="24"/>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="3">
-                <summary-item title="Today's" keyText="Event counts" value="23"/>
-              </ion-col>
-              <ion-col size="3">
-                <summary-item title="Today's" keyText="Event counts" value="13"/>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
-        <div class="content-box chart d-flex-col justify-content-end">
-          <div class="d-flex justify-content-between align-items-center">
-            <ion-text class="availability">Availability stats</ion-text>
-            <ion-button fill="outline">
-              <ion-icon src="assets/icon/calendar.svg"></ion-icon>
-              Monthly
-            </ion-button>
-          </div>
-          <ion-text class="detail">Manager's attendance</ion-text>
-          <custom-chart :chartData="chartData" :selected="selected"/>
-        </div>
-      </div> -->
-      <div class="d-flex justify-content-between">
+      <ion-spinner
+        v-if="loading"
+        name="lines"
+        class="spinner"
+      />
+      <div class="d-flex justify-content-between" v-else>
         <div class="flex-auto">
           <table class="manager-table">
             <thead>
@@ -76,37 +44,26 @@
             <tbody>
               <tr class="table-row" v-for="manager in managers" :key="manager.id">
                 <td class="table-td">
-                  <ion-text>{{ manager.name }}</ion-text>
+                  <ion-text>{{ `${manager.first_name} ${manager.last_name}` }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text>{{ manager.type }}</ion-text>
+                  <ion-text>{{ manager.employment_type }}</ion-text>
                 </td>
                 <td class="table-td">
                   <ion-text>${{ manager.email }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text :class="manager.availability === 'available' ? 'available' : 'unavailable'">{{ manager.availability }}</ion-text>
+                  <ion-text :class="manager?.availability === 'available' ? 'available' : 'unavailable'">{{ manager.availability }}</ion-text>
                 </td>
                 <td class="table-td edit-btn">
-                  <ion-button expand="block" fill="outline" @click="handleEdit" class="edit-button">
-                    <ion-icon slot="icon-only" src="assets/icon/more.svg.svg"></ion-icon>
+                  <ion-button expand="block" fill="outline" @click="handleEdit(manager.id)" class="edit-button">
+                    <ion-icon slot="icon-only" src="assets/icon/three-dot.svg"></ion-icon>
                   </ion-button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <!-- <div class="content-box chart d-flex-col justify-content-end">
-          <div class="d-flex justify-content-between align-items-center">
-            <ion-text class="availability">Availability stats</ion-text>
-            <ion-button fill="outline">
-              <ion-icon src="assets/icon/calendar.svg"></ion-icon>
-              Monthly
-            </ion-button>
-          </div>
-          <ion-text class="detail">Worker's attendance</ion-text>
-          <custom-chart :chartData="chartData" :selected="selected"/>
-        </div> -->
       </div>
     </div>
 	</div>
@@ -197,7 +154,7 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  WorkoutsDocument,
+  GetManagersByFacilityDocument,
   QueryWorkoutsOrderByColumn,
   RoleEnum,
   SortOrder,
@@ -213,58 +170,32 @@ import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import { Capacitor } from '@capacitor/core';
 import { v4 as uuidv4 } from "uuid";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+
 
 const filter = ref<string>('profile');
+const currentFacility = useFacilityStore();
 
-const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
+const { result, loading } = useQuery(GetManagersByFacilityDocument, {
+  facilities: [currentFacility.facility?.id],
+  role: RoleEnum.Manager,
+  first: 100,
+  page: 1
+});
 
-const { id } = JSON.parse(localStorage.getItem("user") || "{}");
+const managers = computed(() => {
+  return result.value?.managers.data;
+});
 
 const router = useRouter();
 
-const managers = [{
-  id: uuidv4(),
-  name: "Gabby Alao",
-  type: "Full-Time",
-  email: "Gabrielalao@gmail.com",
-  availability: "unavailable"
-},{
-  id: uuidv4(),
-  name: "Ajebo Hustler",
-  type: "Full-Time",
-  email: "Ajebohustler@gmil.co",
-  availability: "available"
-}];
-const chartData = {
-  labels: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-  ],
-  datasets: [
-    {
-      label: 'Data One',
-      backgroundColor: '#2ED47A',
-      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
-      barThickness: 8,
-      borderRadius: 10
-    }
-  ]
-};
-const selected = "February";
-
-const handleClick = (value: string) => {
-	filter.value = value;
-}
-
-const handleEdit = () => {
+const handleEdit = (id) => {
+  console.log(id)
   router.push({
     name: EntitiesEnum.DashboardGymManagerProfile,
+    params: {
+      id: id as string,
+    },
   })
 }
 
@@ -511,5 +442,10 @@ const handleEdit = () => {
   ion-icon {
     font-size: 1em;
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
