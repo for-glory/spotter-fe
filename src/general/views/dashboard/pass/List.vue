@@ -68,7 +68,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const currentFacility = useFacilityStore();
-const filter = ref<String>("all");
+const filter = ref<string>("all");
 
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
@@ -97,7 +97,7 @@ const passes = computed(() => {
     }
   })
 });
-const handleFilter = (filterStr: String) => {
+const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
 }
 </script>

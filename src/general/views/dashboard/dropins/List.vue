@@ -72,7 +72,7 @@ import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
-const filter = ref<String>("all");
+const filter = ref<string>("all");
 const currentFacility = useFacilityStore();
 
 const navigate = (name: EntitiesEnum) => {
@@ -101,7 +101,7 @@ const dropins = computed(() => {
     }
   })
 });
-const handleFilter = (filterStr: String) => {
+const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
 }
 </script>
