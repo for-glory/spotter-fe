@@ -26,7 +26,7 @@
 					</div>
 				</div>
 				<div class="facility-list__dropdown" v-if="facilities.length > 1 && isOpenFacilityDropdown">
-					<div class="facility" v-for="facilityItem in facilities" @click="selectFacility(facilityItem.id)">
+					<div class="facility" v-for="facilityItem in facilities" :key="facilityItem.id" @click="selectFacility(facilityItem.id)">
 						<ion-avatar class="photo">
 							<ion-img v-if="facilityItem.media[0]?.pathUrl" :src="facilityItem.media[0]?.pathUrl"></ion-img>
 							<template v-else>
