@@ -21,198 +21,36 @@
           <ion-text>Status</ion-text>
         </ion-col>
       </ion-row>
-      <ion-row class="table-row ion-align-items-center">
+      <ion-row class="table-row ion-align-items-center" v-for="pass in passes" :key="pass.id">
         <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
+          <ion-text>{{ `${pass.user?.first_name} ${pass.user?.last_name}` }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
+          <ion-text>{{ pass.facilityItem?.title }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
+          <ion-text>{{ pass.user?.email }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
+          <ion-text>{{ pass.start_date?dayjs(pass.start_date).format("MM/DD/YY"):"-" }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="warning"
-            class="button-rounded"
-            fill="outline"
-          >
-            Pending renewal
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
+          <ion-text>{{ pass.end_date?dayjs(pass.end_date).format("MM/DD/YY"):"-" }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
           <ion-button
             size="small"
-            color="success"
+            :color="pass.is_active_pass?'success':'danger'"
             class="button-rounded"
             fill="outline"
           >
-            Active
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="warning"
-            class="button-rounded"
-            fill="outline"
-          >
-            Pending renewal
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="success"
-            class="button-rounded"
-            fill="outline"
-          >
-            Active
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="danger"
-            class="button-rounded"
-            fill="outline"
-          >
-            Expired
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col class="table-td">
-          <ion-button
-            size="small"
-            color="success"
-            class="button-rounded"
-            fill="outline"
-          >
-            Active
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="success"
-            class="button-rounded"
-            fill="outline"
-          >
-            Active
+            {{ pass.is_active_pass?'Active':'Expired' }}
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
 
-    <ion-grid>
+    <!-- <ion-grid>
       <ion-row class="pagination-bar">
         <ion-col size="2">
           <ion-button
@@ -253,14 +91,25 @@
           ></ion-button>
         </ion-col>
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon } from "@ionic/vue";
+import { IonButton, IonIcon, IonGrid, IonCol, IonRow, IonText } from "@ionic/vue";
 import { chevronForwardOutline } from "ionicons/icons";
 import { chevronBackOutline } from "ionicons/icons";
+import dayjs from "dayjs";
+import { defineProps, withDefaults } from "vue";
+
+withDefaults(
+  defineProps<{
+    passes: any;
+  }>(),
+  {
+		passes:[]
+  }
+);
 </script>
 
 <style scoped lang="scss">

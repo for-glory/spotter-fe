@@ -68,7 +68,7 @@
     </div>
     <div class="panel">
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn">Add new gym</ion-button>
+        <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button>
       </div>
       <div class="contact-field" v-if="manager">
         <ion-avatar class="photo">
@@ -160,8 +160,6 @@ import { useQuery } from "@vue/apollo-composable";
 import PageTabs from "@/general/components/PageTabs.vue";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
@@ -219,12 +217,6 @@ const tabsChanged = (newTab: ReviewTypeEnum) => {
   activeTab.value = newTab;
 };
 
-const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
-
-const { id } = JSON.parse(localStorage.getItem("user") || "{}");
-
 const router = useRouter();
 
 const {
@@ -258,7 +250,11 @@ const reviews = computed(() =>
   )
 );
 
-
+const goToGymCreate = () => {
+  router.push({
+    name: EntitiesEnum.DashboardGymCreate
+  })
+}
 </script>
 
 <style scoped lang="scss">

@@ -5,35 +5,32 @@
         <div class="pass-list ion-margin-top">
           <div class="d-flex justify-content-between pass-list__top">
             <div class="ion-padding-vertical">
-              <ion-button class="button-rounded ion-margin-end" fill="solid"
-                >All</ion-button
-              >
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Active</ion-button
-              >
+                :fill="filter==='all'?'solid':'outline'"
+                @click="handleFilter('all')">
+                All
+              </ion-button>
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Renewal</ion-button
-              >
+                :fill="filter==='active'?'solid':'outline'"
+                @click="handleFilter('active')">
+                Active
+              </ion-button>
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Expired</ion-button
-              >
+                :fill="filter==='expired'?'solid':'outline'"
+                @click="handleFilter('expired')">
+                Expired
+              </ion-button>
             </div>
             <div class="ion-padding-vertical">
               <ion-button
                 @click="navigate(EntitiesEnum.DashboardPassCreate)"
                 class="ion-margin-end"
-                fill="solid"
-                >Create Gym pass</ion-button
-              >
+                fill="solid">
+                Create Gym pass
+              </ion-button>
             </div>
           </div>
         </div>
@@ -43,7 +40,7 @@
           class="spinner"
         />
         <div v-else>
-          <pass-subscriber-data-table />
+          <pass-subscriber-data-table :passes="passes" />
         </div>
       </ion-col>
     </ion-row>
@@ -60,17 +57,18 @@ import {
 } from "@ionic/vue";
 import {
   Query,
-  FacilityItemsByFacilityIdAndTypeDocument,
+  GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import { useQuery } from "@vue/apollo-composable";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const currentFacility = useFacilityStore();
+const filter = ref<String>("all");
 
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
@@ -80,11 +78,28 @@ const {
   result: facilityItemPassResult,
   loading: loadingFacilityPass,
   onResult: gotFacility,
-} = useQuery<Pick<Query, "facilityItemPass">>(FacilityItemsByFacilityIdAndTypeDocument, {
+} = useQuery(GetCustomersByFacilityItemsDocument, {
   facility_id: currentFacility.facility.id,
   item_type: "PASS"
 });
 console.log(facilityItemPassResult)
+
+const passes = computed(() => {
+  return facilityItemPassResult.value?.getCustomersByFacilityItems?.data.filter(item => {
+    if (filter.value === "all") {
+      return true;
+    }
+    else if (filter.value === "active") {
+      return item.is_active_pass;
+    }
+    else if (filter.value === "expired") {
+      return !item.is_active_pass;
+    }
+  })
+});
+const handleFilter = (filterStr: String) => {
+  filter.value = filterStr;
+}
 </script>
 
 <style scoped lang="scss">

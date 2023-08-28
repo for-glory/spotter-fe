@@ -95,12 +95,12 @@ import {
   SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 
 const eventsPage = ref<number>(1);
@@ -111,10 +111,11 @@ const { id: myId } = useId();
 const currentFacility = useFacilityStore();
 const { role: myRole } = useRoles();
 
-const idFilter =
-  myRole === RoleEnum.Trainer
+const idFilter = computed(() => {
+  return myRole === RoleEnum.Trainer
     ? { created_by_trainer: myId }
-    : { created_by_facility: currentFacility.facility?.id };
+    : { created_by_facility: currentFacility.facility?.id }
+});
 
 const eventsParams: EventsQueryVariables = {
   first: 8,
@@ -129,25 +130,55 @@ const eventsParams: EventsQueryVariables = {
   //   from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   //   to: dayjs().add(1, 'y').format("YYYY-MM-DD HH:mm:ss"),
   // },
-  ...idFilter,
+  ...idFilter.value,
 };
 
 const {
+  result,
   onResult: gotEvents,
   loading: eventsLoading,
   refetch: eventsRefetch,
 } = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
   fetchPolicy: "no-cache",
 });
 
-const events = ref([]);
+const allEvents = ref([]);
+const events = computed(() => {
+  return allEvents.value.filter(ev => ev.status === isOngoing.value);
+});
 
 gotEvents((response) => {
-  totalEvents.value = response.data.events?.paginatorInfo.total ?? 0;
-  if (!events.value?.length) {
-    events.value = response.data.events?.data;
-  }
+  totalEvents.value = response.data?.events?.paginatorInfo.total ?? 0;
+  response.data?.events?.data.map(item => {
+    allEvents.value.push({
+      ...item,
+      status: dayjs().isBefore(item.end_date)
+    })
+  });
 });
+
+watch(
+  () => currentFacility,
+  () => {
+    console.log(currentFacility.facility?.id)
+    console.log(idFilter.value)
+    eventsRefetch({
+      first: 8,
+      page: eventsPage.value,
+      orderBy: [
+        {
+          column: QueryEventsOrderByColumn.StartDate,
+          order: SortOrder.Asc,
+        },
+      ],
+      ...idFilter.value,
+    });
+  },
+  {
+    deep: true
+  }
+);
 
 const router = useRouter();
 const openEvent = (eventId: string) => {
@@ -175,7 +206,7 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
       //   from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       //   to: dayjs().add(1, 'y').format("YYYY-MM-DD HH:mm:ss"),
       // },
-      ...idFilter,
+      ...idFilter.value,
     })?.then((response) => {
       events.value = [...events.value, ...(response.data.events?.data ?? [])];
       ev.target.complete();
@@ -186,9 +217,11 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
 const handleEventType = (evT: string) => {
 	if(evT === 'ongoing') {
 		isOngoing.value = true;
+    // events.value = allEvents.value.filter(ev => ev.status);
 	}
 	else if (evT === 'finished') {
 		isOngoing.value = false;
+    // events.value = allEvents.value.filter(ev => !ev.status);
 	}
 }
 </script>

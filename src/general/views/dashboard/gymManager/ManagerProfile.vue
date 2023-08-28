@@ -29,49 +29,32 @@
           <ion-text class="contact">{{ manager.email }}</ion-text>
           <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
         </div>
-        <div class="data-box d-flex align-items-center justify-content-between">
-          <div class="d-flex-col align-items-center">
-            <ion-text>{{40}}</ion-text>
-            <ion-text class="field-label">Age</ion-text>
+        <div class="data-box">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex-col align-items-center data-box__item">
+              <ion-text>{{ dayjs(manager.birth).format("D MMMM YY") }}</ion-text>
+              <ion-text class="field-label">Birthday</ion-text>
+            </div>
+            <div class="vertical-line"/>
+            <div class="d-flex-col align-items-center data-box__item">
+              <ion-text>{{ manager.tax_id }}</ion-text>
+              <ion-text class="field-label">Tax ID</ion-text>
+            </div>
+            <div class="vertical-line"/>
+            <div class="d-flex-col align-items-center data-box__item">
+              <ion-text>{{ manager.postal }}</ion-text>
+              <ion-text class="field-label">Postal Code</ion-text>
+            </div>
           </div>
-          <div class="vertical-line"/>
-          <div class="d-flex-col align-items-center">
-            <ion-text>{{ manager.employment_type }}</ion-text>
-            <ion-text class="field-label">Employment type</ion-text>
-          </div>
-          <div class="vertical-line"/>
-          <div class="d-flex-col align-items-center">
-            <ion-text>{{"Manager"}}</ion-text>
-            <ion-text class="field-label">Position</ion-text>
+          <div class="horizontal-line"/>
+          <div>
+            <div class="d-flex-col align-items-center">
+              <ion-text>{{ `${manager.address?.street} ${manager.address?.city?.state?.name} ${manager.address?.city?.country?.name}`}}</ion-text>
+              <ion-text class="field-label">Address</ion-text>
+            </div>
           </div>
         </div>
       </div>
-      <!-- <div class="data-field">
-        <div class="content-box">
-          <ion-title class="top">Membership Summary</ion-title>
-          <ion-grid>
-            <ion-row>
-              <ion-col size="4">
-                <summary-item title="Total" keyText="New Signs-up" value="14"/>
-              </ion-col>
-              <ion-col size="4">
-                <summary-item title="Total" keyText="Active" value="60"/>
-              </ion-col>
-              <ion-col size="4">
-                <summary-item title="Total" keyText="Experiment membership" value="24"/>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="4">
-                <summary-item title="Today's" keyText="Event counts" value="23"/>
-              </ion-col>
-              <ion-col size="4">
-                <summary-item title="Today's" keyText="Event counts" value="13"/>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
-      </div> -->
     </div>
 	</div>
 </template>
@@ -89,15 +72,11 @@ import {
 import { EntitiesEnum } from "@/const/entities";
 import {
   UserDocument,
-  QueryWorkoutsOrderByColumn,
-  RoleEnum,
-  SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-// import dayjs from "dayjs";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
+import dayjs from "dayjs";
 
 const route = useRoute();
 
@@ -140,12 +119,12 @@ const manager = computed(() => {
   padding-top: 51px;
   display: flex;
   gap: 62px;
+  justify-content: center;
 
   .top {
     margin-bottom: 40px;
   }
   .profile-field {
-    width: 350px;
     display: flex;
     flex-direction: column;
     gap:22px;
@@ -195,6 +174,13 @@ const manager = computed(() => {
   padding-right: 28px;
   padding-left: 28px;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__item {
+    width: 140px;
+  }
 
   .field-label {
     font: 300 14px/1 var(--ion-font-family);
@@ -213,9 +199,16 @@ const manager = computed(() => {
 }
 .vertical-line {
   border: solid;
-  border-width: 2px;
-  border-radius: 2px;
+  border-width: 1px;
+  border-radius: 1px;
   min-height: 32px;
+  border-color: var(--main-color);
+}
+.horizontal-line {
+  border: solid;
+  border-width: 1px;
+  border-radius: 1px;
+  min-width: 70%;
   border-color: var(--main-color);
 }
 .spinner {
