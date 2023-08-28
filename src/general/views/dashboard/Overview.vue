@@ -1,5 +1,10 @@
 <template>
-  <div class="overview">
+  <ion-spinner
+    v-if="loading || eventsLoading"
+    name="lines"
+    class="spinner"
+  />
+  <div class="overview" v-else>
     <div class="block">
       <div class="title white-text">Fitness Center Overview</div>
       <div class="flex-container">
@@ -15,18 +20,18 @@
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Active</ion-text>
-          <span class="count">{{ widgetInfo?.event_count }}</span>
+          <ion-text class="content">Drop-ins</ion-text>
+          <span class="count">{{ widgetInfo?.dropin_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">New Sign-ups</ion-text>
-          <span class="count">{{ widgetInfo?.event_count }}</span>
+          <ion-text class="content">Gym pass</ion-text>
+          <span class="count">{{ widgetInfo?.pass_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Expiring memberships</ion-text>
-          <span class="count">{{ widgetInfo?.expiring_membership_count }}</span>
+          <ion-text class="content">Dailys</ion-text>
+          <span class="count">{{ widgetInfo?.daily_count }}</span>
         </div>
       </div>
     </div>
@@ -127,7 +132,6 @@
             <div class="title white-text">Attendance Trend</div>
             <div class="dropdown">
               <div class="date">
-                <ion-img class="calendar" src="assets/icon/calendar.png" />
                 Monthly
               </div>
               <div class="dropdown-content">
@@ -146,7 +150,6 @@
             <div class="title white-text">Event Status</div>
             <div class="dropdown">
               <div class="date">
-                <ion-img class="calendar" src="assets/icon/calendar.png" />
                 Monthly
               </div>
               <div class="dropdown-content">
@@ -158,11 +161,7 @@
           </div>
           <div class="event-ring">
             <div>
-              <ion-img
-                class="ring"
-                src="assets/icon/chat/Ring.svg"
-                alt="ring"
-              />
+              <!-- event chart -->
             </div>
           </div>
           <div class="perform">
@@ -170,14 +169,14 @@
               <div class="title white-text">Completed</div>
               <div class="view">View All</div>
             </div>
+            <div v-if="!events?.length" class="no-events">
+              <ion-text>No Closed Events</ion-text>
+            </div>
             <event-item
-              title="Swimming & Cycling1111"
-              dateTime="Saturday, April 14 | 08:00 AM"
-              status="Closed"
-            />
-            <event-item
-              title="Swimming & Cycling"
-              dateTime="Saturday, April 14 | 08:00 AM"
+              v-for="event in events"
+              :key="event.id"
+              :title="event.title"
+              :dateTime="dayjs(event.end_date).format('dddd D MMMM | HH:mm')"
               status="Closed"
             />
           </div>
@@ -188,14 +187,21 @@
 </template>
 
 <script setup lang="ts">
-import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
+import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonSpinner } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import { computed, onMounted, ref } from "vue";
 import {
+  EventsDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  RoleEnum,
+  EventsQuery,
+  SortOrder,
   FacilityDashboardWidgetDocument,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
+import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const selected = "February";
@@ -211,7 +217,7 @@ const handleWee = () => {
   console.log("Wee");
 };
 
-const { result: dashboardWidgetResult } = useQuery(
+const { result: dashboardWidgetResult, loading } = useQuery(
   FacilityDashboardWidgetDocument,
   {
     id: currentFacility.facility.id,
@@ -237,6 +243,36 @@ const chartData = computed(() => {
       }
     ]
   }
+});
+
+const idFilter = computed(() => {
+  return { created_by_facility: currentFacility.facility?.id }
+});
+
+const eventsParams: EventsQueryVariables = {
+  first: 4,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  end_date: {
+    from: dayjs().add(-1, 'y').format("YYYY-MM-DD HH:mm:ss"),
+    to: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+  },
+  ...idFilter.value,
+};
+const {
+  result: eventRes,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  fetchPolicy: "no-cache",
+});
+
+const events = computed(() => {
+  return eventRes.value?.events?.data;
 });
 </script>
 
@@ -407,6 +443,15 @@ const chartData = computed(() => {
 .view {
   padding-right: 2.5rem;
   color: var(--gold);
+}
+.no-events {
+  padding: 30px 12px;
+  text-align: center;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 @media (max-width: 1220px) {
   .flex-container {

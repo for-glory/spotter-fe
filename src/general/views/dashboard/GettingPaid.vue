@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <ion-spinner
+    v-if="loading"
+    name="lines"
+    class="spinner"
+  />
+  <div v-else>
     <div class="flex-row">
       <ion-text class="page">Getting Paid</ion-text>
       <ion-icon src="assets/icon/arrow-next.svg" />
@@ -12,7 +17,7 @@
             <div class="flex-container">
               <ion-text class="content"
                 >Your available balance is
-                <span class="fund">$3,689,076</span>
+                <span class="fund">${{ revenue?.year_earn }}</span>
               </ion-text>
               <IonButton class="get" @click="handleGet">Get paid now</IonButton>
             </div>
@@ -38,11 +43,11 @@
                   <div class="revenue">
                     <div class="type">Total revenue</div>
                     <div class="period">Today</div>
-                    <div class="percent">
+                    <!-- <div class="percent">
                       0.8%
                       <ion-icon class="arrow" src="assets/icon/call_made.svg" />
-                    </div>
-                    <div class="chain">$3,689,076</div>
+                    </div> -->
+                    <div class="chain">${{ revenue?.today_earn }}</div>
                   </div>
                 </ion-col>
                 <ion-col size="12" size-xl="12">
@@ -50,26 +55,22 @@
                     <div>
                       <div class="type">Quarterly revenue</div>
                       <div class="period">Earned</div>
-                      <div class="percent">70%</div>
+                      <!-- <div class="percent">70%</div> -->
                       <div class="chain">
-                        $1068<span class="period">/ day</span>
+                        ${{ revenue?.earn_last_thirty_days }}
                       </div>
                     </div>
-                    <ion-icon
-                      class="vector"
-                      src="assets/icon/chat/Vector.svg"
-                    />
                   </div>
                 </ion-col>
                 <ion-col size="12" size-xl="12">
                   <div class="revenue">
                     <div class="type">Earned revenue</div>
                     <div class="period">This year</div>
-                    <div class="percent">
+                    <!-- <div class="percent">
                       0.8%
                       <ion-icon class="arrow" src="assets/icon/call_made.svg" />
-                    </div>
-                    <div class="chain">$689,076</div>
+                    </div> -->
+                    <div class="chain">${{ revenue?.year_earn }}</div>
                   </div>
                 </ion-col>
               </ion-row>
@@ -90,11 +91,17 @@ import {
   IonTitle,
   IonButton,
   IonIcon,
+  toastController
 } from "@ionic/vue";
 import {
   PayoutDocument,
+  getRevenuesDocument,
 } from "@/generated/graphql";
-import { useMutation } from "@vue/apollo-composable";
+import { computed, ref } from "vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+
+const currentFacility = useFacilityStore();
 
 const { mutate: payout, onDone: afterPayout } = useMutation(
   PayoutDocument
@@ -102,11 +109,41 @@ const { mutate: payout, onDone: afterPayout } = useMutation(
 
 const handleGet = () => {
   console.log("get");
-  payout();
+  payout({
+    id: currentFacility.facility.id
+  }).then(async () => {
+      const toast = await toastController.create({
+        message: "Payout success",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
 };
 const handleAdd = () => {
   console.log("add");
 };
+
+const { result: revenueRes, loading } = useQuery(
+  getRevenuesDocument,
+  {
+    id: currentFacility.facility.id,
+  }
+);
+
+const revenue = computed(() => {
+  return revenueRes.value?.facilityDashboardWidget;
+});
 </script>
 
 <style scoped lang="scss">
@@ -241,6 +278,11 @@ const handleAdd = () => {
 }
 .get {
   height: 45px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 @media (max-width: 800px) {
   .flex-container {

@@ -5621,6 +5621,8 @@ export const UserDocument = gql`
     email
     employment_type
     birth
+    postal
+    tax_id
     first_name
     last_name
     avatar
@@ -6328,6 +6330,7 @@ export const GetCustomersByFacilityItemsDocument = gql`
       start_date
       end_date
       is_active_pass
+      created_at
       user {
         id
         email
@@ -6338,6 +6341,7 @@ export const GetCustomersByFacilityItemsDocument = gql`
       facilityItem {
         title
         qr_code_lifetime_value
+        duration
         facility {
           id
           name

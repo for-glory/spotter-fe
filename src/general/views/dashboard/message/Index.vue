@@ -7,19 +7,25 @@
             <ion-searchbar class="search"></ion-searchbar>
             <div>
               <div class="tabs">
-                <div :class="allStatus ? 'all' : 'unread'" @click="handleAll">
+                <div
+                  :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
+                  @click="handleTab(RoomType.Chat)">
                   Chats
                 </div>
                 <div
-                  :class="!allStatus ? 'all' : 'unread'"
-                  @click="handleUnRead"
+                  :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'"
+                  @click="handleTab(RoomType.Request)"
                 >
                 Requests
                 </div>
               </div>
-              <template v-if="allStatus">
+              <template v-if="activeTab === RoomType.Chat">
                 <div class="listRoom">
-                  <ion-spinner v-if="loading" class="spinner" />
+                  <ion-spinner
+                    v-if="loading"
+                    name="lines"
+                    class="spinner"
+                  />
                   <div class="rooms__container" v-else>
                     <list-empty
                       v-if="!data.chats.length"
@@ -80,7 +86,7 @@
                   /> -->
                 </div>
               </template>
-              <template v-else>
+              <template v-if="activeTab === RoomType.Request">
               </template>
             </div>
           </ion-col>
@@ -172,16 +178,6 @@ import useId from "@/hooks/useId";
 import { mapChats, mapRequests } from "@/helpers/chats/chatroom";
 import { useMutation } from "@vue/apollo-composable";
 
-const allStatus = ref<boolean>(false);
-
-const handleAll = () => {
-  allStatus.value = true;
-};
-const handleUnRead = () => {
-  allStatus.value = false;
-};
-
-
 const { id } = useId();
 
 const router = useRouter();
@@ -210,15 +206,18 @@ const data = reactive({
   activeUsers: [],
 });
 
-const activeTab = ref<RoomType | string>("");
+const activeTab = ref<RoomType | string>("CHAT");
 
 const { mutate } = useMutation(DeleteChatDocument);
 
 const currenTab = computed(() =>
-  !isTrainer.value || activeTab.value === RoomType.Chat ? "chats" : "requests"
+  activeTab.value === RoomType.Chat ? "chats" : "requests"
 );
 
-const isTrainer = computed(() => role === RoleEnum.Trainer);
+const handleTab = (tab: RoomType) => {
+  activeTab.value = tab;
+}
+
 const requests = computed(
   () => currenTab.value === RoomType.Request.toLocaleLowerCase()
 );
@@ -273,8 +272,10 @@ const getChats = (snapshot) => {
 
 const fetchChats = () => {
   loading.value = true;
+  console.log("---", requests.value)
 
   onValue(requests.value ? requestsRef : chatsRef, (snapshot) => {
+    console.log("---", snapshot)
     if (data.chats.length) data.chats = [];
     if (requests.value) {
       snapshot.forEach((childSnapshot) => {
@@ -378,6 +379,7 @@ onMounted(() => {
 .border {
   border-right: 1px solid var(--gold);
   padding-left: 15px;
+  height: calc(100vh - 120px);
 }
 .chatRoom {
   padding: 25px 10px 36px 36px;
@@ -397,22 +399,20 @@ onMounted(() => {
   flex-direction: row;
   align-items: center;
 }
-.all {
+.tab-item {
   width: 30%;
   text-align: center;
-  color: 2px solid #e1dbc5;
-  border-bottom: 2px solid #e1dbc5;
   font-size: 16px;
-  cursor: pointer;
-}
-.unread {
-  font-size: 16px;
-  text-align: center;
-  width: 30%;
   border-bottom: 1px solid #efefef;
   color: #efefef;
   opacity: 0.4;
   cursor: pointer;
+
+  &__active {
+    color: 2px solid #e1dbc5;
+    border-bottom: 2px solid #e1dbc5;
+    opacity: 1;
+  }
 }
 .search {
   color: #efefef;
@@ -456,5 +456,10 @@ onMounted(() => {
   width: 6px;
   height: 6px;
   margin-left: 30px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
