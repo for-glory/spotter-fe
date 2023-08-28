@@ -2,7 +2,7 @@
 	<ion-modal id="modal" :is-open="isVisible" :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Change Membership Plan</ion-title>
+				<ion-title>Cancel Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="handleCancel">
 						<ion-icon src="assets/icon/red-close.svg" class="close" />
@@ -10,16 +10,22 @@
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
-    <div class="ion-padding">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-sm="6" class="silver">
+		<div class="ion-padding">
+      <ion-row>
+        <ion-col size="6">
+          <div class="plan">
             <ion-text>Current Plan</ion-text>
             <div class="paragraph">
-              <ion-text>Bronze</ion-text>&nbsp&nbsp<ion-text
-                >$149.99</ion-text
-              >
-              <span>/per location</span>
+              <ion-title class="radiobutton__label">
+                {{ currentPlan.title }}
+              </ion-title>
+
+              <ion-text class="radiobutton__cost"
+                >${{ currentPlan?.prices.length? currentPlan?.prices[0].price/100:"" }}
+                <span>
+                  /per location
+                </span>
+              </ion-text>
             </div>
             <div class="flex-container">
               <div>
@@ -30,144 +36,112 @@
               </div>
               <div>
                 <ul>
-                  <li class="accessibility">
+                  <li
+                    class="accessibility"
+                    v-for="(benefit, idx) in currentPlan?.benefits"
+                    :key="idx"
+                  >
                     <div>
                       <ion-icon src="assets/icon/accessibility.svg" />
                     </div>
                     <div>
-                      <ion-text>All Bronze features +</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text
-                        >List unlimited offerings on the Network
-                        profile</ion-text
-                      >
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Reduced flat booking fee</ion-text>
+                      <ion-text>{{ benefit?.description }}</ion-text>
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
-          </ion-col>
-          <ion-col size="12" size-sm="6" class="gold">
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="plan">
             <ion-text>New Plan</ion-text>
             <div class="paragraph">
-              <ion-text>Gold</ion-text>&nbsp&nbsp<ion-text>$199.99</ion-text>
-              <span class="gold-location">/for first location</span>
+              <ion-title class="radiobutton__label">
+                {{ newPlan.title }}
+              </ion-title>
+
+              <ion-text class="radiobutton__cost"
+                >${{ newPlan?.prices.length? newPlan?.prices[0].price/100:"" }}
+                <span>
+                  /per location
+                </span>
+              </ion-text>
             </div>
             <div class="flex-container">
               <div>
                 <ion-icon
-                  class="gold grade-image"
                   src="assets/icon/medal.svg"
+                  class="silver grade-image"
                 />
               </div>
               <div>
                 <ul>
-                  <li class="accessibility">
+                  <li
+                    class="accessibility"
+                    v-for="(benefit, idx) in newPlan?.benefits"
+                    :key="idx"
+                  >
                     <div>
                       <ion-icon src="assets/icon/accessibility.svg" />
                     </div>
                     <div>
-                      <ion-text>All Bronze & Silver features +</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text
-                        >Reporting features on Spotter Dashboard</ion-text
-                      >
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Marketing/branding consultation</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Reduced flat booking fee</ion-text>
-                    </div>
-                  </li>
-                  <li class="accessibility">
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>Create and post local events</ion-text>
+                      <ion-text>{{ benefit?.description }}</ion-text>
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div class="buttons">
-        <ion-button class="confirm" @click="handleConfirm"
-          >Confirm change</ion-button
-        >
-        <ion-button class="cancel" @click="setOpen(false)">Cancel</ion-button>
-      </div>
-    </div>
-  </ion-modal>
+          </div>
+        </ion-col>
+      </ion-row>
+			<div class="buttons">
+				<ion-button class="confirm" @click="handleConfirm">Confirm change</ion-button>
+				<ion-button class="cancel" @click="handleCancel">Back</ion-button>
+			</div>
+		</div>
+	</ion-modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   IonButtons,
   IonButton,
   IonModal,
   IonHeader,
   IonToolbar,
-  IonContent,
+  IonText,
   IonTitle,
+	IonGrid,
+	IonRow,
+	IonCol
 } from "@ionic/vue";
-import { defineComponent, ref } from "vue";
+import { defineProps, defineEmits, withDefaults } from "vue";
 
-export default defineComponent({
-  components: {
-    IonButtons,
-    IonButton,
-    IonModal,
-    IonHeader,
-    IonContent,
-    IonToolbar,
-    IonTitle,
-  },
-  data() {
-    return {
-      isOpen: false,
-    };
-  },
-  methods: {
-    setOpen(isOpen: boolean) {
-      this.isOpen = isOpen;
-    },
-  },
-});
+withDefaults(
+  defineProps<{
+    currentPlan: any;
+    newPlan: any;
+    isVisible: boolean;
+  }>(),
+  {
+  }
+);
+
+const emits = defineEmits<{
+  (e: "confirm", isConfirmed: boolean): void;
+  (e: "cancel", isConfirmed: boolean): void;
+}>();
+
+const handleConfirm = () => {
+  emits("confirm", true);
+};
+
+const handleCancel = () => {
+  emits("cancel", false);
+};
 </script>
+
 <style scoped lang="scss">
 .flex-container {
   display: flex;
@@ -263,5 +237,12 @@ ion-modal#modal {
 .close {
   width: 1rem;
   height: 1rem;
+}
+
+.plan {
+	margin: 0 auto;
+	width: fit-content;
+	color: var(--gold);
+	text-align: center;
 }
 </style>

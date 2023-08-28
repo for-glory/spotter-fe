@@ -37,13 +37,17 @@
 					<ion-icon src="assets/icon/Pass.svg" />
 					<ion-text>Gym pass</ion-text>
 				</div>
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
-					<ion-icon src="assets/icon/Rate.svg" />
-					<ion-text>Membership</ion-text>
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardDropinList)">
+					<ion-icon src="assets/icon/dropin.svg" />
+					<ion-text>Drop-ins</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
-					<ion-text>Workout plans</ion-text>
+					<ion-text>Dailys</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+					<ion-icon src="assets/icon/Rate.svg" />
+					<ion-text>Membership</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
