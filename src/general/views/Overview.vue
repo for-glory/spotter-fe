@@ -173,7 +173,7 @@ watch(
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
     });
-    facilityStore.setFacility(facilities.value?.filter((facility) => facility?.id === newVal));
+    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal));
   }
 );
 

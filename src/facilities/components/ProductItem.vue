@@ -5,7 +5,7 @@
         <ion-title>Title</ion-title>
         <ion-text>{{product.title}}</ion-text>
       </div>
-      <ion-icon @click="$emit('open-settings')" src="assets/icon/more.svg.svg" slot="icon-only"></ion-icon>
+      <ion-icon @click="$emit('open-settings')" src="assets/icon/more.svg" slot="icon-only"></ion-icon>
     </div>
     <div class="split" />
     <div class="details">
