@@ -4004,9 +4004,49 @@ export const CreateEventDocument = gql`
     mutation createEvent($input: CreateEventInput!) {
   createEvent(input: $input) {
     id
+    title
+    description
+    start_date
+    end_date
+    price
+    address {
+      city {
+        id
+        name
+        state {
+          name
+        }
+      }
+      lat
+      lng
+      street
+    }
+    max_participants
+    equipments
+     {
+       icon
+       iconUrl
+       name
+     }
+    amenities
+     {
+       icon
+       iconUrl
+       name
+     }
+    media {
+      title
+    }
   }
 }
     `;
+export const DeleteFacilityItemDocument = gql`
+    mutation deleteFacilityItem($id: ID!) {
+  deleteFacilityItem(id: $id) {
+    id
+  }
+}
+`;
 export const DeleteChatDocument = gql`
     mutation deleteChat($id: ID!) {
   deleteChat(id: $id) {
@@ -4367,6 +4407,39 @@ export const UpdateEventDocument = gql`
     mutation updateEvent($id: ID!, $input: UpdateEventInput!) {
   updateEvent(id: $id, input: $input) {
     id
+    title
+    description
+    start_date
+    end_date
+    price
+    address {
+      city {
+        id
+        name
+        state {
+          name
+        }
+      }
+      lat
+      lng
+      street
+    }
+    max_participants
+    equipments
+     {
+       icon
+       iconUrl
+       name
+     }
+    amenities
+     {
+       icon
+       iconUrl
+       name
+     }
+    media {
+      title
+    }
   }
 }
     `;
@@ -6276,14 +6349,6 @@ export const CreateFacilityItemDocument = gql`
 export const UpdateFacilityItemDocument = gql`
     mutation updateFacilityItem($id: ID!, $input: UpdateFacilityItemInput!) {
   updateFacilityItem(id: $id, input: $input) {
-    id
-  }
-}
-`;
-
-export const DeleteFacilityItemDocument = gql`
-    mutation deleteFacilityItem($id: ID!) {
-  deleteFacilityItem(id: $id) {
     id
   }
 }

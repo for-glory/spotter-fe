@@ -93,27 +93,23 @@ export const editProfileMenu: EditProfileMenu = {
       name: EntitiesEnum.ProfilePassword,
       label: "Change password",
     },
-    // {
-    //   name: EntitiesEnum.ProfileLanguages,
-    //   label: "Language",
-    //   value: EntitiesEnum.Language,
-    // },
-    // {
-    //   name: EntitiesEnum.ProfileAppMode,
-    //   label: "App mode",
-    //   value: EntitiesEnum.AppMode,
-    // },
-    // {
-    //   name: EntitiesEnum.ProfileNotifications,
-    //   label: "Notifications",
-    // },
-    // {
-    //   name: EntitiesEnum.ProfilePreferences,
-    //   label: "Add social links",
-    // },
     {
-      name: EntitiesEnum.ProfileLocation,
-      label: "Location",
+      name: EntitiesEnum.ProfileLanguages,
+      label: "Language",
+      value: EntitiesEnum.Language,
+    },
+    {
+      name: EntitiesEnum.ProfileAppMode,
+      label: "App mode",
+      value: EntitiesEnum.AppMode,
+    },
+    {
+      name: EntitiesEnum.ProfileNotifications,
+      label: "Notifications",
+    },
+    {
+      name: EntitiesEnum.Profile,
+      label: "Add social links",
     },
     {
       name: EntitiesEnum.ProfileOrderConfirmation,

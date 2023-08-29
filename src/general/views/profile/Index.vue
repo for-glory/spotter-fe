@@ -1,10 +1,15 @@
 <template>
   <base-layout content-full-height>
     <template #header>
-      <page-header title="Profile" />
+      <page-header title="Settings" />
     </template>
     <template #content>
-      <div class="profile">
+      <ion-spinner
+        v-if="loadingUser"
+        name="lines"
+        class="spinner"
+      />
+      <div v-else class="profile">
         <progress-avatar
           :src="avatarUrl || ''"
           :progress="progress"
@@ -21,7 +26,7 @@
         />
         <div class="profile__head">
           <ion-title
-            @click="role === RoleEnum.OrganizationOwner && showGymModal()"
+            @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()"
             class="profile__fullname"
           >
             <template
@@ -34,8 +39,8 @@
             </template>
             <ion-icon
               class="profile__fullname-icon"
-              icon="assets/icon/arrow-down.svg"
-              v-if="role === RoleEnum.OrganizationOwner"
+              src="assets/icon/arrow-down-light.svg"
+              v-if="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner"
             />
           </ion-title>
           <div class="profile__address">
@@ -153,6 +158,7 @@ import {
   SettingsCodeEnum,
   UserDocument,
   DeleteProfileDocument,
+  SubscriptionsTypeEnum,
 } from "@/generated/graphql";
 import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
@@ -167,6 +173,9 @@ import useRoles from "@/hooks/useRole";
 import { profileMenu } from "@/const/profile-menu";
 import useId from "@/hooks/useId";
 import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
+import { Capacitor } from "@capacitor/core";
+import useSubscription from "@/hooks/useSubscription";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 const route = useRoute();
@@ -179,12 +188,15 @@ const {
 
 const { id } = useId();
 const { role } = useRoles();
+const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
+const currentFacility = useFacilityStore();
 
 const {
   result,
   refetch,
+  loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
 const progress = ref<string | number>("");
@@ -194,17 +206,22 @@ const isTrusted = computed(() =>
 );
 
 onMounted(() => {
+  activeFacilityId.value = currentFacility.facility?.id;
+  router.push({
+    name: router?.currentRoute?.value?.name,
+    query: { facilityId: activeFacilityId.value },
+  });
   refetch();
 });
 
 const facilities = computed(() => {
   switch (role) {
-    case RoleEnum.OrganizationOwner: {
+    case RoleEnum.OrganizationOwner:
+    case RoleEnum.FacilityOwner: {
       return result.value?.user?.owned_facilities;
     }
 
     case RoleEnum.Manager:
-    case RoleEnum.FacilityOwner:
       return result.value?.user?.facilities;
 
     default:
@@ -215,8 +232,9 @@ const facilities = computed(() => {
 const activeFacilityId = ref<string | null>(null);
 
 watch(
-  () => activeFacilityId.value,
+  () => currentFacility.facility?.id,
   (newVal) => {
+    activeFacilityId.value = currentFacility.facility?.id;
     router.push({
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
@@ -278,11 +296,14 @@ const symbols = computed<string>(() => {
 });
 
 gotUser(({ data }) => {
-  activeFacilityId.value =
-    facilities.value?.length && facilities.value[0]
-      ? facilities.value[0].id
-      : null;
+  if(role !== RoleEnum.FacilityOwner) {
+    activeFacilityId.value =
+      facilities.value?.length && facilities.value[0]
+        ? facilities.value[0].id
+        : null;
+  }
 
+  console.log(facilities);
   progress.value = data?.user?.settings?.find(
     (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser
   )?.value
@@ -329,6 +350,22 @@ const goTo = (name: EntitiesEnum) => {
 
       break;
     case EntitiesEnum.ProfileMembership:
+      console.log({currentSubscriptionType});
+      if(Capacitor.isNativePlatform()) {
+        if(currentSubscriptionType === 'BASIC') {
+          router.push({
+            name: EntitiesEnum.StartMembership,
+          });
+          break;
+        }
+        router.push({
+          name: EntitiesEnum.ChangeMembership,
+          query: {
+            facilityId: route?.query?.facilityId || "",
+          },
+        });
+        break;
+      }
       router.push({
         name,
         query: {
@@ -463,5 +500,10 @@ profileDeleted(() => {
 
 .add-facility-button {
   margin: 0 8px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

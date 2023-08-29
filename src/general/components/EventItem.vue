@@ -27,9 +27,16 @@
         {{ date }}
         <template v-if="dateRange">- {{ endDate }}</template>
       </ion-text>
-      <address-item class="event__address" v-if="item.address?.street">
-        {{ item.address?.street }}
-      </address-item>
+      <div class="d-flex align-items-center justify-content-between">
+        <address-item class="event__address" v-if="item.address?.street">
+          {{ item.address?.street }}
+        </address-item>
+        <ion-text 
+          class="status-text"
+          :class="formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? 'ongoing' : 'finished'">
+          {{ formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? "Ongoing" : "Finished" }}
+        </ion-text>
+      </div>
     </div>
   </ion-item>
 </template>
@@ -69,6 +76,14 @@ const endDate = computed(() =>
   )
 );
 const time = computed(() => dayjs(props.item.start_date).format("hh:mm A"));
+const formatTime = (date: number, time: string): string => {
+  return dayjs(date)
+    .hour(0)
+    .minute(0)
+    .second(0)
+    .millisecond(0)
+    .format("YYYY-MM-DD HH:mm:ss");
+};
 </script>
 
 <style scoped lang="scss">
@@ -158,5 +173,19 @@ const time = computed(() => dayjs(props.item.start_date).format("hh:mm A"));
 .time-icon {
   font-size: 22px;
   padding-right: 4px;
+}
+.status-text {
+  font: 12px/1 Lato;
+  padding: 2px 8px 2px 8px;
+  border-radius: 16px;
+}
+.ongoing {
+  background-color: #E1DBC5;
+  color: #19191B;
+}
+.finished {
+  background: none;
+  border: 1px #AFAFAF;
+  color: #AFAFAF;
 }
 </style>

@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div class="main-menu">
-				<div v-if="!isNative" :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
 				</div>
@@ -115,7 +115,6 @@ import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { Capacitor } from '@capacitor/core';
 
 const props = withDefaults(
   defineProps<{
@@ -125,8 +124,6 @@ const props = withDefaults(
 		facilities:[]
   }
 );
-
-let isNative = Capacitor.isNativePlatform();
 
 const facilityStore = useFacilityStore();
 
