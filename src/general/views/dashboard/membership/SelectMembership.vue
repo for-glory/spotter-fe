@@ -353,7 +353,9 @@ import {
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
 } from "@/generated/graphql";
-import useFacilityId from "@/hooks/useFacilityId";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+
+const currentFacility = useFacilityStore();
 
 const router = useRouter();
 
@@ -378,7 +380,6 @@ const backendStripe = new BackendStripe(
   process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
 );
 
-const { currentFacilityId } = useFacilityId();
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -427,7 +428,7 @@ const handleContinue = () => {
   createSubscriptionIntent({
     product_id: selectedItem.value.product_id,
     fees_percent: selectedPlan.value.fee,
-		facility_id: currentFacilityId
+		facility_id: currentFacility.facility?.id
   })
     .then((data) => {
       console.log("data==>", data)

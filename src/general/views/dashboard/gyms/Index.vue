@@ -67,45 +67,36 @@
       </div>
     </div>
     <div class="panel">
+      <div class="d-flex justify-content-center">
+        <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button>
+      </div>
+      <div class="contact-field" v-if="manager">
+        <ion-avatar class="photo">
+					<ion-img v-if="manager.avatarUrl" :src="manager.avatarUrl"></ion-img>
+					<template v-else>
+						{{ manager.first_name?.charAt(0) }}
+					</template>
+				</ion-avatar>
+        <ion-label class="name">
+          {{ `${manager.first_name} ${manager.last_name}`}}
+          <!-- <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon> -->
+        </ion-label>
+        <ion-text class="contact">{{"Gym Manager"}}</ion-text>
+        <ion-text class="contact">{{ manager.email }}</ion-text>
+        <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
+      </div>
       <div>
         <ion-button class="share-btn">Share Gym</ion-button>
-        <!-- <div class="d-flex align-items-center justify-content-between black-box">
-          <div :class="filter === 'recent' ? 'active-button' : 'normal-button'" @click="handleClick('recent')">Recent</div>
-          <div :class="filter === 'positive' ? 'active-button' : 'normal-button'" @click="handleClick('positive')">Positive</div>
-          <div :class="filter === 'negative' ? 'active-button' : 'normal-button'" @click="handleClick('negative')">Negative</div> 
-        </div>
-        <div class="black-box review">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex reviewer align-items-center">
-              <ion-img src="assets/profile_photo.png"></ion-img>
-              <ion-text class="reviewer-name">{{"Sharon Jem"}}</ion-text>
-              <ion-text class="review-point">{{4.9}}</ion-text>
-            </div>
-            <ion-text class="review-date">{{"6 June, 2022"}}</ion-text>
-          </div>
-          <ion-text class="review-message">{{"Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me."}}</ion-text>
-        </div>
-        <div class="black-box review">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex reviewer align-items-center">
-              <ion-img src="assets/profile_photo.png"></ion-img>
-              <ion-text class="reviewer-name">{{"Sharon Jem"}}</ion-text>
-              <ion-text class="review-point">{{4.9}}</ion-text>
-            </div>
-            <ion-text class="review-date">{{"6 June, 2022"}}</ion-text>
-          </div>
-          <ion-text class="review-message">{{"Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me."}}</ion-text>
-        </div> -->
         <div class="tabs-holder">
           <page-tabs
             :tabs="tabs"
-            class="page-tabs ion-padding-horizontal"
+            class="page-tabs"
             :value="activeTab"
             @change="tabsChanged"
           />
-          <div class="content ion-padding-horizontal">
+          <div class="content">
             <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
-            <div v-else>
+            <!-- <div v-else>
               <review-item
                 v-for="review in reviews"
                 :key="review.id"
@@ -116,19 +107,24 @@
                 :rating="review.rating"
                 :text="review.text"
               />
+            </div> -->
+
+            <div v-else>
+              <div class="black-box review" v-for="review in reviews" :key="review.id">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex reviewer align-items-center">
+                    <avatar :src="review.avatarUrl" />
+                    <ion-text class="reviewer-name">{{ review.fullName }}</ion-text>
+                    <ion-text class="review-point">{{ review.rating }}</ion-text>
+                  </div>
+                  <ion-text class="review-date">{{ dayjs(review.date).format("D MMMM, YYYY") }}</ion-text>
+                </div>
+                <ion-text class="review-message">{{ review.text }}</ion-text>
+              </div>
             </div>
+            
           </div>
         </div>
-      </div>
-      <div class="contact-field">
-        <ion-img src="assets/manager-avatar.png"></ion-img>
-        <ion-label class="name">
-          {{"Ray Espinal"}}
-          <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon>
-        </ion-label>
-        <ion-text class="contact">{{"Gym Manager"}}</ion-text>
-        <ion-text class="contact">{{"gymmanager@spotterfitness.com"}}</ion-text>
-        <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text>
       </div>
     </div>
 	</div> 
@@ -141,12 +137,15 @@ import {
   IonLabel,
   IonText,
   IonIcon,
+  IonImg,
+  IonTitle,
+  IonAvatar
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
   Facility,
-  FollowDocument,
-  FollowTypeEnum,
+  RoleEnum,
+  GetManagersByFacilityDocument,
   FeedbackEntityEnum,
   Query,
   Review,
@@ -161,8 +160,6 @@ import { useQuery } from "@vue/apollo-composable";
 import PageTabs from "@/general/components/PageTabs.vue";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
@@ -170,6 +167,9 @@ import StarRating from "@/general/components/dashboard/StarRating.vue";
 import ReviewStatusBar from "@/general/components/dashboard/ReviewStatusBar.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
+import Avatar from "@/general/components/blocks/Avatar.vue";
+import dayjs from "dayjs";
 
 const currentFacility = useFacilityStore();
 
@@ -180,6 +180,20 @@ const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
   {
     id: currentFacility.facility.id,
   }
+);
+
+const { result: managerResult, loading: managerLoading } = useQuery(
+  GetManagersByFacilityDocument,
+  {
+    role: RoleEnum.Manager,
+    facilities: [currentFacility.facility.id],
+    first: 1,
+    page: 1
+  }
+);
+console.log(managerResult)
+const manager = computed(() =>
+  managerResult?.value?.managers?.data.length ? managerResult?.value?.managers?.data[0] : {}
 );
 
 const tabs: TabItem[] = [
@@ -203,76 +217,7 @@ const tabsChanged = (newTab: ReviewTypeEnum) => {
   activeTab.value = newTab;
 };
 
-const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
-
-const { id } = JSON.parse(localStorage.getItem("user") || "{}");
-
-const rating = 5.0;
-
-const equipments = ref<Array<object>>([
-  {
-    id: uuidv4(),
-    name: "Cardio Items",
-    iconPath: "assets/icon/gym/gym-heart.svg"
-  },{
-    id: uuidv4(),
-    name: "Gym Items",
-    iconPath: "assets/icon/gym/gym-man.svg"
-  },{
-    id: uuidv4(),
-    name: "Shower & Bath",
-    iconPath: "assets/icon/gym/gym-shower.svg"
-  },{
-    id: uuidv4(),
-    name: "Gym Items",
-    iconPath: "assets/icon/gym/gym-dumbbell.svg"
-  },{
-    id: uuidv4(),
-    name: "Cycling Items",
-    iconPath: "assets/icon/gym/gym-cycling.svg"
-  },
-]);
-
-const amenities = ref<Array<object>>([
-  {
-    id: uuidv4(),
-    name: "Play Maze",
-    iconPath: "assets/icon/gym/gym-maze.svg"
-  },{
-    id: uuidv4(),
-    name: "Sauna",
-    iconPath: "assets/icon/gym/gym-sauna.svg"
-  },{
-    id: uuidv4(),
-    name: "SPA",
-    iconPath: "assets/icon/gym/gym-spa.svg"
-  },{
-    id: uuidv4(),
-    name: "Steam Room",
-    iconPath: "assets/icon/gym/gym-steam.svg"
-  },{
-    id: uuidv4(),
-    name: "Lounge",
-    iconPath: "assets/icon/gym/gym-lounge.svg"
-  },{
-    id: uuidv4(),
-    name: "Cafe",
-    iconPath: "assets/icon/gym/gym-cafe.svg"
-  },{
-    id: uuidv4(),
-    name: "Cardio Equipment",
-    iconPath: "assets/icon/gym/gym-heart.svg"
-  },
-]);
-
 const router = useRouter();
-
-const handleClick = (value: string) => {
-	filter.value = value;
-}
-
 
 const {
   result: reviewsResult,
@@ -305,7 +250,11 @@ const reviews = computed(() =>
   )
 );
 
-
+const goToGymCreate = () => {
+  router.push({
+    name: EntitiesEnum.DashboardGymCreate
+  })
+}
 </script>
 
 <style scoped lang="scss">
@@ -339,13 +288,14 @@ const reviews = computed(() =>
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
-  ion-img {
+  img {
     width: 100%;
     max-width: 650px;
     max-height: 310px;
   }
 }
 .data-box {
+  padding-top: 24px;
   padding-bottom: 40px;
   
   .field-label {
@@ -389,6 +339,7 @@ const reviews = computed(() =>
   gap: 30px;
 
   .features {
+    margin-top: 24px;
     display: flex;
     flex-wrap: wrap;
 
@@ -419,6 +370,10 @@ const reviews = computed(() =>
     width: 100%;
     max-height: 56px;
     margin-bottom: 14px;
+  }
+  .add-gym-btn {
+    width: 40%;
+    margin: 20px 0;
   }
   .black-box {
     background-color: var(--main-color);
@@ -491,7 +446,7 @@ const reviews = computed(() =>
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-top: 200px;
+  margin: 50px 0 80px 0;
 
   .name {
     font: 500 24px/1 var(--ion-font-family);
@@ -518,4 +473,8 @@ const reviews = computed(() =>
 .review-spinner {
   margin: 20px auto;
 }
+.photo {
+    width: 94px;
+    height: 94px;
+  }
 </style>
