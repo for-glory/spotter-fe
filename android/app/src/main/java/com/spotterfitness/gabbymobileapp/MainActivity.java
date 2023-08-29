@@ -1,4 +1,4 @@
-package com.spotterfitness.gabbysoftware;
+package com.spotterfitness.gabbymobileapp;
 import android.os.Bundle;
 
 import com.getcapacitor.BridgeActivity;

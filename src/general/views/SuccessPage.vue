@@ -74,7 +74,7 @@ gotMyStripeConnect(async (response) => {
 			return;
 		}
 		if(Capacitor.isNativePlatform()) {
-			router.push({ name: EntitiesEnum.Profile });
+			router.push({ name: EntitiesEnum.Overview });
 			return;
 		}
 		router.push({ name: EntitiesEnum.DashboardOverview });

@@ -1,16 +1,16 @@
 <template>
-	<ion-modal id="modal" :is-open="isVisible" :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :is-open="isVisible"  :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Cancel Membership Plan</ion-title>
+				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="handleCancel">
-						<ion-icon src="assets/icon/red-close.svg" class="close" />
+						<ion-icon src="assets/icon/close.svg" class="close" />
 					</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
-		<div class="ion-padding">
+		<div v-if="!Capacitor.isNativePlatform()" class="ion-padding">
       <ion-row>
         <ion-col size="6">
           <div class="plan">
@@ -100,6 +100,77 @@
 				<ion-button class="cancel" @click="handleCancel">Back</ion-button>
 			</div>
 		</div>
+    <div v-else class="ion-padding">
+      <div class="current-plan">
+        <ion-text>Current Plan</ion-text>
+        <div class="paragraph">
+          <ion-text>{{currentPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text
+            >${{currentPlan?.prices[0].price / 100}}</ion-text
+          >
+          <span class="location">/{{currentPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              src="assets/icon/medal.svg"
+              class="grade-image"
+              :class="currentPlan?.tier === 'GOLD' ? 'gold' : currentPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
+            />
+          </div>
+          <div>
+            <ul>
+              <li v-for="(benefit, id) in currentPlan?.benefits" :key="id" class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>{{benefit.description}}</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <div class="split" />
+      </div>
+      <div class="new-plan">
+        <ion-text class="text-golden">New Plan</ion-text>
+        <div class="paragraph">
+          <ion-text class="text-golden">{{newPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="text-golden"
+            >${{newPlan?.prices[0].price / 100}}</ion-text
+          >
+          <span class="location">/{{newPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
+        </div>
+        <div class="flex-container">
+          <div>
+            <ion-icon
+              src="assets/icon/medal.svg"
+              class="grade-image"
+              :class="newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
+            />
+          </div>
+          <div>
+            <ul>
+              <li v-for="(benefit, id) in newPlan?.benefits" :key="id" class="accessibility">
+                <div>
+                  <ion-icon src="assets/icon/accessibility.svg" />
+                </div>
+                <div>
+                  <ion-text>{{benefit.description}}</ion-text>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="buttons d-flex align-items-center justify-content-between">
+        <ion-button id="confirm" @click="handleConfirm"
+          >Confirm change</ion-button
+        >
+        <ion-button id="cancel" @click="handleCancel">Cancel</ion-button>
+      </div>
+    </div>
 	</ion-modal>
 </template>
 
@@ -117,6 +188,7 @@ import {
 	IonCol
 } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 withDefaults(
   defineProps<{
@@ -145,17 +217,24 @@ const handleCancel = () => {
 <style scoped lang="scss">
 .flex-container {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  gap: 17px;
+  width: 100%;
   ion-text {
     font-size: 0.8rem;
   }
-  ion-icon.gold {
-    color: rgb(141, 112, 15);
+}
+.current-plan {
+  color: var(--grey-text);
+}
+.new-plan {
+  .text-golden {
+    color: var(--gold);
   }
 }
 .grade-image {
-  width: 2rem;
-  height: 2rem;
+  width: 70px;
+  height: 70px;
   padding: 1.2rem;
   border-radius: 10px;
   align-items: center;
@@ -167,18 +246,25 @@ const handleCancel = () => {
   color: var(--silver);
 }
 .gold {
-  color: var(--gold);
+  color: #DBB582;
+}
+.bronze {
+  color: var(--bronze);
 }
 .ion-padding {
-  padding: 0.5rem 1rem;
+  padding: 29px 23px 25px;
   border: 2px solid grey;
+}
+.split {
+  background-color: #DBB582;
+  width: 77px;
+  height: 1px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 .paragraph {
   padding-top: 1.2rem;
   padding-bottom: 0.8rem;
-  span {
-    font-size: 0.7rem;
-  }
 }
 .color {
   color: grey;
@@ -197,35 +283,43 @@ ul {
         font-size: 6px;
       }
       ion-text {
-        font-size: 0.7rem;
+        font-size: 12px;
       }
     }
   }
 }
-.gold-location {
-  color: var(--silver);
+.location {
+  color: var(--grey-text);
+  font: 12px/1 var(--ion-font-family);
 }
 .buttons {
-  text-align: center;
-  margin-top: 0.5rem;
-}
-.confirm {
-  width: 10rem;
-  color: var(--gold);
-  margin-right: 1.5rem;
-  --background: rgb(43, 42, 42);
-  height: 45px;
-}
-.cancel {
-  width: 10rem;
-  color: rgb(31, 30, 30);
-  --background: grey;
-  height: 45px;
+  margin-top: 30px;
+
+  ion-button#confirm {
+    --background: #DBB582;
+    font: bold 16px/1 var(--ion-font-family);
+    width: 144px;
+    height: 41px;
+  }
+  ion-button#cancel {
+    --background: grey;
+    font: bold 16px/1 var(--ion-font-family);
+    width: 144px;
+    height: 41px;
+  }
 }
 ion-modal#modal {
   --height: rem;
-  --width: 41rem;
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.6);
+  --width: 378px;
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.8);
+  padding: 24px;
+}
+ion-header {
+  background-color: var(--gray-700);
+  
+  ion-toolbar {
+    --background: var(--gray-700);
+  }
 }
 .title {
   border-top: 2px solid grey;
@@ -233,6 +327,10 @@ ion-modal#modal {
   border-right: 2px solid grey;
   padding-right: 1rem;
   padding-left: 0.4rem;
+
+  ion-title {
+    --color: white;
+  }
 }
 .close {
   width: 1rem;

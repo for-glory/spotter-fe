@@ -77,16 +77,29 @@ export const profileMenu: ProfileMenu = {
       isTrusted: true,
     },
     {
-      name: EntitiesEnum.ProfileMembership,
+      name: EntitiesEnum.ManagersOverview,
+      label: "Managers",
+      icon: "working",
+      isTrusted: true,
+    },
+    {
+      name: EntitiesEnum.Membership,
       label: "Membership",
       icon: "membership",
       isTrusted: true,
     },
     {
-      name: EntitiesEnum.ProfilePaymentMethods,
-      label: "Payment methods",
+      name: EntitiesEnum.ProfileScan,
+      label: "Scan",
+      icon: "qr-code",
+      isTrusted: true,
+    },
+    {
+      name: EntitiesEnum.DashboardGettingPaid,
+      label: "Getting Paid",
       icon: "payment",
       isTrusted: true,
     },
+
   ],
 };

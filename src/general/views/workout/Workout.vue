@@ -1,7 +1,48 @@
 <template>
   <base-auth-layout hideHeader>
     <template  #left-section>
-      <div class="content ion-padding-horizontal">
+      <div v-if="Capacitor.isNativePlatform()">
+				<div class="d-flex justify-content-between align-items-center">
+          <ion-icon src="assets/icon/arrow-back.svg" class="back-button" @click="goToCreateEvent"/>
+				</div>
+        <ion-title class="title" color="primary">
+          Create your workout plan
+        </ion-title>
+        <workout-form 
+          ref="workoutForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <ion-title class="title-mini" color="primary">
+          Upload Exercise
+        </ion-title>
+        <exercise-form 
+          ref="exerciseForm"
+          @submit="handleSubmit"
+          @onSkip="onBack"
+			    @open-picker="(e) => openPicker(e)"
+          skipText="Exit"
+        />
+        <div class="holder-button">
+          <ion-button
+            expand="block"
+            class="secondary"
+            @click="onBack"
+          >
+            Exit
+          </ion-button>
+          <ion-button
+            @click="handleSubmit"
+            expand="block"
+            :disabled="!isValidForm"
+          >
+            Upload & Finish
+          </ion-button>
+        </div>
+      </div>
+      <div v-else class="content ion-padding-horizontal">
 				<div class="d-flex justify-content-between align-items-center">
 					<router-link
 						to="/"
@@ -144,6 +185,9 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
 import { clearAuthItems } from "@/router/middleware/auth";
+import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
+import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
+import { Capacitor } from '@capacitor/core';
 
 const percentLoaded = ref(0);
 
@@ -198,6 +242,8 @@ const emitter: Emitter<Record<EventType, unknown>> | undefined =
 const openPicker = (name: string): void => {
   emitter?.emit("open-picker", name);
 };
+const workoutForm = ref<typeof WorkoutForm | null>(null);
+const exerciseForm = ref<typeof ExerciseForm | null>(null);
 
 onMounted(() => {
   if (store.workoutTitle) {
@@ -235,10 +281,17 @@ const isValidForm = computed(
 
 const handleSubmit = () => {
   if (isValidForm.value) {
-    router.push({
-      name: EntitiesEnum.CreateExercise,
-      params: { id: uuidv4() },
-    });
+    if(Capacitor.isNativePlatform()) {
+      router.push({
+        name: EntitiesEnum.Profile
+      });
+    }
+    else {
+      router.push({
+        name: EntitiesEnum.CreateExercise,
+        params: { id: uuidv4() },
+      });
+    }
   }
 };
 
@@ -329,6 +382,10 @@ const onLogout = () => {
 </script>
 
 <style lang="scss" scoped>
+.back-button {
+  width: 24px;
+  height: 24px;
+}
 .content {
   padding: 24px 24px calc(12px + var(--ion-safe-area-bottom));
 }
@@ -346,8 +403,17 @@ const onLogout = () => {
   font-size: 28px;
   line-height: 1.3;
   font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin-bottom: 64px;
+  margin-top: 44px;
+  text-align: center;
+}
+.title-mini {
+  padding: 0;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 400;
+  margin-bottom: 24px;
+  margin-top: 24px;
   text-align: center;
 }
 .top-buttons {
@@ -356,5 +422,13 @@ const onLogout = () => {
 }
 .dashboard-btn {
   margin-top: 10px;
+}
+.holder-button {
+  display: flex;
+  gap: 16px;
+
+  .button {
+    margin: 0;
+  }
 }
 </style>

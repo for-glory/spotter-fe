@@ -37,6 +37,12 @@
 
     <div class="form-row">
       <ion-label class="label"> Choose your gym location </ion-label>
+      <choose-block
+        title="Location"
+        class="form-row__control"
+        @handle-click="onChooseLocation"
+        :value="selectedState?.name + ', ' + selectedCity?.name"
+      />
       <!-- <choose-block
         title="State"
         class="form-row__control"
@@ -61,7 +67,7 @@
             : ''
         "
       /> -->
-      <div class="address-container">
+      <!-- <div class="address-container">
         <ion-text class="address-content">
           Address
         </ion-text>
@@ -79,7 +85,7 @@
           }"
           @place_changed="setPlace"
         >
-      </GMapAutocomplete>
+      </GMapAutocomplete> -->
     </div>
 
     <div class="form-row">
@@ -237,6 +243,13 @@ const onChooseAmenities = () => {
     ),
   });
 };
+
+const onChooseLocation = () => {
+  router.push({
+    name: EntitiesEnum.ChooseLocation, 
+    params: { type: 'facility' }
+  });
+}
 
 const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 
