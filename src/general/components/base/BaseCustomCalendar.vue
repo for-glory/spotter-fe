@@ -4,8 +4,9 @@
     v-model="date"
     is-expanded
     @update:from-page="dateChanged"
-    :rows="2"
-    is-dark
+    :rows="12"
+    transparent
+    borderless
   ></v-calendar>
 </template>
 
@@ -41,7 +42,7 @@ const emits = defineEmits<{
   (e: "month-changed", selected: any): void;
 }>();
 
-const date = ref(Date.now());
+const date = ref(new Date(new Date().getFullYear(), 0, 1));
 
 const dateChanged = (event: any) => {
   emits("month-changed", event);
@@ -49,31 +50,32 @@ const dateChanged = (event: any) => {
 </script>
 
 <style lang="scss">
-.vc-container {
-  border: none !important;
-  border-radius: 0 !important;
+.week {
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
-.vc-container.vc-is-dark {
-  background-color: transparent !important;
-}
-
 .spotter-calendar {
-  .vc-weeks {
-    padding: 10px !important;
-    gap: 15px !important;
-  }
-
+  width: 100%;
   .vc-day {
-    min-height: 45px !important;
+    color: white;
   }
-
-  .vc-weekday {
-    color: var(--gray-500);
-    font-weight: lighter;
-  }
-
   .vc-title {
-    color: var(--ion-color-primary);
+    background: none;
+    color: #dbb582;
   }
+  .vc-weekday {
+    display: none;
+  }
+  .vc-arrow {
+    display: none;
+  }
+}
+.vc-highlight-content-solid {
+  color: black;
+  background-color: #dbb582;
+}
+.vc-popover-content-wrapper {
+  display: none !important;
 }
 </style>
