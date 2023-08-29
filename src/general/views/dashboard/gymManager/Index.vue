@@ -34,7 +34,7 @@
                   <ion-text>E-mail</ion-text>
                 </th>
                 <th class="table-th">
-                  <ion-text>Availability</ion-text>
+                  <ion-text>Phone no</ion-text>
                 </th>
                 <th class="table-th top-right">
                   <ion-text>Edit</ion-text>
@@ -53,7 +53,7 @@
                   <ion-text>${{ manager.email }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text :class="manager?.availability === 'available' ? 'available' : 'unavailable'">{{ manager.availability }}</ion-text>
+                  <ion-text>{{ manager.phone }}</ion-text>
                 </td>
                 <td class="table-td edit-btn">
                   <ion-button expand="block" fill="outline" @click="handleEdit(manager.id)" class="edit-button">

@@ -3,81 +3,48 @@
     <ion-grid class="event-table">
       <ion-row class="table-header">
         <ion-col class="table-th">
-          <ion-text>Members</ion-text>
+          <ion-text>Customer</ion-text>
         </ion-col>
         <ion-col class="table-th">
-          <ion-text>Pass type</ion-text>
+          <ion-text>No of day(s)</ion-text>
         </ion-col>
         <ion-col class="table-th">
           <ion-text>E-mail</ion-text>
         </ion-col>
         <ion-col class="table-th">
-          <ion-text>Start date</ion-text>
-        </ion-col>
-        <ion-col class="table-th">
-          <ion-text>End date</ion-text>
+          <ion-text>Booking date</ion-text>
         </ion-col>
         <ion-col class="table-th">
           <ion-text>Status</ion-text>
         </ion-col>
       </ion-row>
-      <ion-row class="table-row ion-align-items-center">
+      <ion-row class="table-row ion-align-items-center" v-for="dropin in dropins" :key="dropin.id">
         <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
+          <ion-text>{{ `${dropin.user?.first_name} ${dropin.user?.last_name}` }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
+          <ion-text>{{ dropin.facilityItem?.duration }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
+          <ion-text>{{ dropin.user?.email }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
+          <ion-text>{{ dropin.created_at?dayjs(dropin.created_at).format("MM/DD/YY"):"-" }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
           <ion-button
             size="small"
-            color="warning"
+            :color="pass.is_active_pass?'success':'danger'"
             class="button-rounded"
             fill="outline"
           >
-            Pending renewal
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="table-row ion-align-items-center">
-        <ion-col size="2" class="table-td">
-          <ion-text>Nick Fox</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>Basic</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>nickfox@gmail.com</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/07/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-text>11/08/2023</ion-text>
-        </ion-col>
-        <ion-col size="2" class="table-td">
-          <ion-button
-            size="small"
-            color="success"
-            class="button-rounded"
-            fill="outline"
-          >
-            Active
+            {{ pass.is_active_pass?'Active':'Expired' }}
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
 
-    <ion-grid>
+    <!-- <ion-grid>
       <ion-row class="pagination-bar ion-align-items-center">
         <ion-col size="2">
           <ion-button
@@ -122,14 +89,25 @@
           ></ion-button>
         </ion-col>
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon } from "@ionic/vue";
+import { IonButton, IonIcon, IonGrid, IonRow, IonCol, IonText } from "@ionic/vue";
 import { chevronForwardOutline } from "ionicons/icons";
 import { chevronBackOutline } from "ionicons/icons";
+import dayjs from "dayjs";
+import { defineProps, withDefaults } from "vue";
+
+withDefaults(
+  defineProps<{
+    dropins: any;
+  }>(),
+  {
+		dropins:[]
+  }
+);
 </script>
 
 <style scoped lang="scss">

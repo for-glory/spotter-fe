@@ -22,7 +22,7 @@
 
   <div class="form-body">
     <ion-grid fixed>
-      <ion-row>
+      <!-- <ion-row>
         <ion-col size="12">
           <div class="form-row">
             <div class="label">Upload gym logo</div>
@@ -32,11 +32,11 @@
             <photo-loader />
           </div>
         </ion-col>
-      </ion-row>
+      </ion-row> -->
       <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
-            <ion-label class="label"> Title of plan </ion-label>
+            <ion-label class="label"> Title of pass </ion-label>
             <input
               class="input-text-field"
               type="text"

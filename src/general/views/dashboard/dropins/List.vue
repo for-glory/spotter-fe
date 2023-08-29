@@ -5,27 +5,24 @@
         <div class="pass-list ion-margin-top">
           <div class="d-flex justify-content-between pass-list__top">
             <div class="ion-padding-vertical">
-              <ion-button class="button-rounded ion-margin-end" fill="solid"
-                >All</ion-button
-              >
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Active</ion-button
-              >
+                :fill="filter==='all'?'solid':'outline'"
+                @click="handleFilter('all')">
+                All
+              </ion-button>
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Renewal</ion-button
-              >
+                :fill="filter==='active'?'solid':'outline'"
+                @click="handleFilter('active')">
+                Active
+              </ion-button>
               <ion-button
-                color="medium"
                 class="button-rounded ion-margin-end"
-                fill="outline"
-                >Expired</ion-button
-              >
+                :fill="filter==='expired'?'solid':'outline'"
+                @click="handleFilter('expired')">
+                Expired
+              </ion-button>
             </div>
             <div class="ion-padding-vertical">
               <ion-button
@@ -38,12 +35,12 @@
           </div>
         </div>
         <ion-spinner
-          v-if="loadingFacilityPass"
+          v-if="loadingFacilityDropin"
           name="lines"
           class="spinner"
         />
         <div v-else>
-          <pass-dropin-data-table/>
+          <pass-dropin-data-table :dropins="dropins"/>
         </div>
       </ion-col>
     </ion-row>
@@ -63,43 +60,50 @@ import {
   IonCol
 } from "@ionic/vue";
 import {
-  PaymentGatewayRefundDocument,
-  Query,
-  SettingsCodeEnum,
-  TrainingDocument,
-  TrainingStatesEnum,
-  FacilityItemsByFacilityIdAndTypeDocument,
+  GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
-const activeTab = ref("subscribers");
+const filter = ref<string>("all");
 const currentFacility = useFacilityStore();
 
-const changeSegment = (segment: string) => {
-  activeTab.value = segment;
-  console.log("segment: " + segment);
-};
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
 
 const {
-  result: facilityItemPassResult,
-  loading: loadingFacilityPass,
-  onResult: gotFacility,
-} = useQuery<Pick<Query, "facilityItemPass">>(FacilityItemsByFacilityIdAndTypeDocument, {
+  result: dropinResult,
+  loading: loadingFacilityDropin,
+  onResult
+} = useQuery(GetCustomersByFacilityItemsDocument, {
   facility_id: currentFacility.facility.id,
-  item_type: "PASS"
+  item_type: "DROPIN"
 });
-console.log(facilityItemPassResult)
+
+const dropins = computed(() => {
+  return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
+    if (filter.value === "all") {
+      return true;
+    }
+    else if (filter.value === "active") {
+      return item.is_active_pass;
+    }
+    else if (filter.value === "expired") {
+      return !item.is_active_pass;
+    }
+  })
+});
+const handleFilter = (filterStr: string) => {
+  filter.value = filterStr;
+}
 </script>
 
 <style scoped lang="scss">
