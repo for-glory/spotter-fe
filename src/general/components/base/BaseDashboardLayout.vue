@@ -25,15 +25,18 @@ import useId from "@/hooks/useId";
 import { useProfileStore } from "../../stores/profile";
 import {
   ref,
+	watch
 } from "vue";
 import {
   Query,
   UserDocument,
 } from "@/generated/graphql";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const isLoading = ref(true);
 const facilities = ref();
 const store = useProfileStore();
+const facilityStore = useFacilityStore();
 
 const setIsLoading = () => {
 	isLoading.value = false;
@@ -56,6 +59,13 @@ gotUser(({ data }) => {
 	facilities.value = result.value?.user?.owned_facilities;
   setIsLoading();
 });
+
+watch(
+  () => facilityStore.facility.id,
+  () => {
+    refetch()
+  }
+)
 </script>
 <style scoped lang="scss">
 .dashboard-container {

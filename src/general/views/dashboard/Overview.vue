@@ -79,54 +79,6 @@
     </div>
     <ion-row>
       <ion-col size="12" size-lg="12" size-xl="7" class="col-gap">
-        <!-- <div class="block">
-          <ion-row>
-            <ion-col size="12" size-sm="12" size-md="5">
-              <div class="title white-text match">Equipment Status</div>
-              <div>
-                <div class="flex-container">
-                  <ion-text class="status">Repairs</ion-text>
-                  <ion-text class="status">30</ion-text>
-                </div>
-                <div class="flex-container">
-                  <ion-text class="status">Damaged</ion-text>
-                  <ion-text class="status">100</ion-text>
-                </div>
-                <div class="flex-container">
-                  <ion-text class="status">Pending maintenance</ion-text>
-                  <ion-text class="status">60</ion-text>
-                </div>
-              </div>
-            </ion-col>
-            <ion-col size="12" size-sm="12" size-md="2"></ion-col>
-            <ion-col size="12" size-sm="12" size-md="5" class="status-above">
-              <div>
-                <div class="flex-container">
-                  <ion-text class="status">Total equipments</ion-text>
-                  <ion-text class="status">500</ion-text>
-                </div>
-                <div class="flex-container">
-                  <ion-text class="status">Available equipments</ion-text>
-                  <ion-text class="status">350</ion-text>
-                </div>
-              </div>
-              <div class="space">
-                <div class="flex-container">
-                  <ion-text class="status">Inspected</ion-text>
-                  <ion-text class="status">30</ion-text>
-                </div>
-                <div class="flex-container">
-                  <ion-text class="status">Dirty</ion-text>
-                  <ion-text class="status">19</ion-text>
-                </div>
-                <div class="flex-container">
-                  <ion-text class="status">Inspected</ion-text>
-                  <ion-text class="status">30</ion-text>
-                </div>
-              </div>
-            </ion-col>
-          </ion-row>
-        </div> -->
         <div class="block row-gap">
           <div class="flex-container">
             <div class="title white-text">Attendance Trend</div>
@@ -190,7 +142,7 @@
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonSpinner } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, watch, ref } from "vue";
 import {
   EventsDocument,
   EventsQueryVariables,
@@ -203,7 +155,11 @@ import {
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { EntitiesEnum } from "@/const/entities";
+import { useRouter } from "vue-router";
+import { getFacilitySubscription } from "@/router/middleware/gymOwner";
 
+const router = useRouter();
 const selected = "February";
 const currentFacility = useFacilityStore();
 
@@ -217,7 +173,7 @@ const handleWee = () => {
   console.log("Wee");
 };
 
-const { result: dashboardWidgetResult, loading } = useQuery(
+const { result: dashboardWidgetResult, loading, refetch } = useQuery(
   FacilityDashboardWidgetDocument,
   {
     id: currentFacility.facility.id,
@@ -267,6 +223,7 @@ const eventsParams: EventsQueryVariables = {
 const {
   result: eventRes,
   loading: eventsLoading,
+  refetch: eventsRefetch
 } = useQuery<EventsQuery>(EventsDocument, eventsParams, {
   fetchPolicy: "no-cache",
 });
@@ -274,6 +231,32 @@ const {
 const events = computed(() => {
   return eventRes.value?.events?.data;
 });
+
+watch(
+  () => currentFacility.facility.id,
+  async () => {
+    if (localStorage.getItem("selectedGym")) {
+      await getFacilitySubscription()
+        .then((data) => {
+          if(!data) {
+            return router.push({ name: EntitiesEnum.DashboardStartMembership });
+          }
+          else{
+            refetch({
+              id: currentFacility.facility.id,
+            })
+            eventsRefetch({
+              ...eventsParams,
+              ...idFilter.value
+            })
+          }
+        })
+        .catch(() => {
+          return router.push({ name: EntitiesEnum.DashboardStartMembership });
+        });
+    }
+  }
+)
 </script>
 
 <style scoped lang="scss">
