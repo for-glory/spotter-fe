@@ -1,44 +1,11 @@
 <template>
-  <base-auth-layout hideHeader>
-    <template  #left-section>
-      <div class="content">
-        <div class="head">
-          <div class="d-flex justify-content-between align-items-center">
-            <router-link
-              to="/"
-            >
-              <ion-img
-                src="assets/icon/logo-complete.png"
-                class="logo"
-                alt="logo"
-              />
-            </router-link>
-            <ion-button
-              class="login-btn"
-              type="button"
-              fill="clear"
-              @click="onLogout"
-            >
-              Log out
-            </ion-button>
-          </div>
-          <ion-title class="title" color="primary">
-            Let’s create your gym profile!
-          </ion-title>
-          <ion-text color="secondary">
-            To give you a better experience we need to know more about your gym
-          </ion-text>
-        </div>
-        <gym-form
-          ref="gymForm"
-          button-text="Next"
-          save-and-exit-button
-          @submit="createNewFacility"
-        />
-      </div>
-    </template>
-  </base-auth-layout>
-
+  <div class="content">
+    <gym-form
+      ref="gymForm"
+      button-text="Create"
+      @submit="createNewFacility"
+    />
+  </div>
   <discard-changes
     :is-open="isConfirmedModalOpen"
     @close="discardModalClosed"
@@ -51,7 +18,6 @@
 
 <script setup lang="ts">
 import { IonText, IonTitle, IonButton } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -65,7 +31,6 @@ import { EntitiesEnum } from "@/const/entities";
 import { setSettings } from "@/hooks/useSettings";
 import useId from "@/hooks/useId";
 import { ProfileSettings } from "@/ts/enums/user";
-import { clearAuthItems } from "@/router/middleware/auth";
 import { ref } from "vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
@@ -175,44 +140,11 @@ settingsUpdated(() => {
   //   name: EntitiesEnum.Profile,
   // });
 });
-
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
-};
 </script>
 
 <style lang="scss" scoped>
-.header {
-  top: 0;
-  left: 0;
-  right: 0;
-  position: fixed;
-}
-
 .content {
   padding: calc(var(--ion-safe-area-top)) 24px
     calc(16px + var(--ion-safe-area-bottom));
-}
-
-.head {
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.5;
-  text-align: center;
-  margin: 0 auto 32px;
-}
-.logo {
-  width: 220px;
-  min-width: 60px;
-}
-
-.title {
-  padding: 0;
-  font-size: 28px;
-  line-height: 1.3;
-  font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
 }
 </style>

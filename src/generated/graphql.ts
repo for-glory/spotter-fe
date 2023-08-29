@@ -327,6 +327,44 @@ export type CreateFacilityInput = {
   registration_code?: InputMaybe<Scalars['String']>;
 };
 
+/** TrainerTypeEnum Variants */
+export enum FacilityItemTypeEnum {
+  /** Pass */
+  Pass = 'PASS',
+  /** Drop in */
+  DropIn = 'DROPIN',
+}
+
+export type CreateFacilityItemInput = {
+  facility_id: Scalars['ID'];
+  title: Scalars['String'];
+  front_price?: Scalars['String'];
+  price: Scalars['Int'];
+  // product_id: Scalars['String'];
+  qr_code_lifetime_enum?: Scalars['String'];
+  qr_code_lifetime_value?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
+  item_type?: Maybe<FacilityItemTypeEnum>;
+};
+
+export type UpdateFacilityItemInput = {
+  title?: Scalars['String'];
+  front_price?: Scalars['String'];
+  price?: Scalars['Int'];
+  qr_code_lifetime_enum?: Scalars['String'];
+  qr_code_lifetime_value?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
+};
+
+export type FacilityDashboardWidget = {
+  event_count?: Scalars['Int'],
+  message_count?: Scalars['Int'],
+  expiring_membership_count?: Scalars['Int'],
+  today_earn?: Scalars['Int'],
+  earn_last_thirty_days?: Scalars['Int'],
+  year_earn?: Scalars['Int']
+};
+
 export type CreateQuizzAnswerInput = {
   quizz_id: Scalars['ID'];
   value: Scalars['StringOrUpload'];
@@ -701,6 +739,7 @@ export type Mutation = {
   createDeviceToken: DeviceToken;
   createEvent?: Maybe<Event>;
   createFacility: Facility;
+  createFacilityItem: FacilityItem;
   createQuizzAnswer: QuizzAnswer;
   createTrainerWorkout: Workout;
   createGymWorkout: Workout;
@@ -814,6 +853,9 @@ export type MutationCreateFacilityArgs = {
   input: CreateFacilityInput;
 };
 
+export type MutationCreateFacilityItemArgs = {
+  input: CreateFacilityItemInput;
+};
 
 export type MutationCreateQuizzAnswerArgs = {
   input: CreateQuizzAnswerInput;
@@ -996,6 +1038,11 @@ export type MutationUpdatePasswordArgs = {
 export type MutationUpdateTrainerWorkoutArgs = {
   id: Scalars['ID'];
   input?: InputMaybe<UpdateTrainerWorkoutInput>;
+};
+
+export type MutationUpdateGymWorkoutArgs = {
+  id: Scalars['ID'];
+  input?: InputMaybe<UpdateGymWorkoutInput>;
 };
 
 
@@ -1351,6 +1398,7 @@ export type Query = {
   workoutTypes?: Maybe<WorkoutTypePaginator>;
   /** Get list of workouts for the auth trainer. */
   workouts?: Maybe<WorkoutPaginator>;
+  facilityDashboardWidget?: Maybe<FacilityDashboardWidget>;
 };
 
 
@@ -2143,6 +2191,14 @@ export enum RoleEnum {
   User = 'USER'
 }
 
+/** Employment Type Variants */
+export enum EmploymentTypeEnum {
+  /** PART_TIME */
+  PartTime = 'PART_TIME',
+  /** FULL_TIME */
+  FullTime = 'FULL_TIME'
+}
+
 /** The available SQL operators that are used to filter query results. */
 export enum SqlOperator {
   /** Whether a value is within a range of values (`BETWEEN`) */
@@ -2724,6 +2780,17 @@ export type UpdateTrainerWorkoutInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateGymWorkoutInput = {
+  body_parts?: InputMaybe<Array<Scalars['ID']>>;
+  description?: InputMaybe<Scalars['String']>;
+  duration?: InputMaybe<Scalars['Int']>;
+  level?: InputMaybe<Scalars['ID']>;
+  media?: InputMaybe<Array<WorkoutVideosInput>>;
+  preview?: InputMaybe<Scalars['StringOrUpload']>;
+  price?: InputMaybe<Scalars['Float']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateUserInput = {
   address?: InputMaybe<AddressInput>;
   avatar?: InputMaybe<Scalars['StringOrUpload']>;
@@ -2739,6 +2806,20 @@ export type UpdateUserInput = {
   settings?: InputMaybe<Array<SetSettingInput>>;
   trainer_type?: InputMaybe<TrainerTypeEnum>;
   weiver_and_labilities?: InputMaybe<Array<DocumentUploadInput>>;
+};
+
+export type CreateManagerInput = {
+  address?: InputMaybe<AddressInput>;
+  avatar?: InputMaybe<Scalars['StringOrUpload']>;
+  email?: InputMaybe<Scalars['String']>;
+  facility_id?: InputMaybe<Scalars['ID']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<RoleEnum>;
+  employment_type?: InputMaybe<EmploymentTypeEnum>;
+  tax_id?: InputMaybe<Scalars['String']>;
+  postal?: InputMaybe<Scalars['String']>;
+  birth?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type User = {
@@ -2937,6 +3018,10 @@ export type AttachToFacilityMutation = { __typename?: 'Mutation', attachToFacili
 
 export type CreateFacilityMutationVariables = Exact<{
   input: CreateFacilityInput;
+}>;
+
+export type CreateFacilityItemMutationVariables = Exact<{
+  input: CreateFacilityItemInput;
 }>;
 
 
@@ -3314,6 +3399,9 @@ export type DashboardWidgetQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DashboardWidgetQuery = { __typename?: 'Query', me: { __typename?: 'User', completed_trainings_count?: number | null, checkins_count: number, reviews_count?: number | null, positive_reviews_count?: number | null, negative_reviews_count?: number | null, recommended_count?: number | null, left_reviews_count?: number | null, trainings_count: number, trainer_dashboard_stats?: { __typename?: 'TrainerDashboardStats', total_earn?: number | null, earn_last_thirty_days?: number | null, total_bookings?: number | null } | null } };
+
+export type FacilityDashboardWidgetQueryVariables = Exact<{ [key: string]: never; }>;
+export type FacilityDashboardWidgetQuery = { __typename?: 'Query', facilityDashboardWidget: { __typename?: 'dashboard', event_count?: number | null, message_count?: number | null, expiring_membership_count?: number | null, today_earn?: number | null, earn_last_thirty_days?: number | null, year_earn?: number | null} };
 
 export type EquipmentsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4166,6 +4254,24 @@ export const PaymentIntentDocument = gql`
   }
 }
     `;
+export const PayoutDocument = gql`
+    mutation stripePayout($id: ID) {
+  stripePayout(id: $id) {
+    message
+    success
+  }
+}
+    `;
+
+export const getRevenuesDocument = gql`
+    query facilityDashboardWidget($id:ID!) {
+  facilityDashboardWidget(id: $id) {
+      today_earn
+      earn_last_thirty_days
+      year_earn
+    }
+  }
+    `;
 export const CreateSubscriptionIntentDocument = gql`
     mutation CreateSubscriptionIntent($product_id: ID!, $fees_percent: Int!, $facility_id: ID) {
     createSubscriptionIntent(
@@ -4188,6 +4294,15 @@ export const CancelSubscriptionDocument = gql`
     unique_identifier,
     verified,
     facility_id
+  }
+}
+    `;
+  export const UpdateSubscriptionDocument = gql`
+    mutation UpdateSubscription($unique_identifier: String!, $new_product_id: String!, $fees_percent: Int!, $facility_id: ID) {
+    updateSubscription(
+    input: {unique_identifier: $unique_identifier, new_product_id: $new_product_id, fees_percent: $fees_percent, facility_id: $facility_id}
+  ) {
+    session
   }
 }
     `;
@@ -5504,6 +5619,10 @@ export const UserDocument = gql`
   user(id: $id) {
     id
     email
+    employment_type
+    birth
+    postal
+    tax_id
     first_name
     last_name
     avatar
@@ -5918,6 +6037,15 @@ export const CreateGymWorkoutDocument = gql`
   }
 }
     `;
+
+export const UpdateGymWorkoutDocument = gql`
+    mutation updateGymWorkout($id: ID!, $input: UpdateGymWorkoutInput!) {
+  updateGymWorkout(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+
 export const FilePreloadDocument = gql`
     mutation filePreload($file: Upload!) {
   filePreload(file: $file) {
@@ -6103,6 +6231,197 @@ export const MyFacilityItemPassesDocument = gql`
     }
     paginatorInfo {
       total
+    }
+  }
+}
+    `;
+export const FacilityDashboardWidgetDocument = gql`
+query facilityDashboardWidget($id:ID!) {
+  facilityDashboardWidget(id: $id) {
+    event_count
+    dropin_count
+    pass_count
+    daily_count
+    message_count
+    expiring_membership_count
+    today_earn
+    earn_last_thirty_days
+    year_earn
+    checkin_data
+    {
+      value
+      month
+    }
+  }
+}
+    `;
+export const CreateFacilityItemDocument = gql`
+    mutation createFacilityItem($input: CreateFacilityItemInput!) {
+  createFacilityItem(input: $input) {
+    id
+    title
+    price
+    facility
+    {
+      id
+    }
+    product_id
+    duration
+    item_type
+  }
+}
+    `;
+
+    
+export const UpdateFacilityItemDocument = gql`
+    mutation updateFacilityItem($id: ID!, $input: UpdateFacilityItemInput!) {
+  updateFacilityItem(id: $id, input: $input) {
+    id
+  }
+}
+`;
+
+export const DeleteFacilityItemDocument = gql`
+    mutation deleteFacilityItem($id: ID!) {
+  deleteFacilityItem(id: $id) {
+    id
+  }
+}
+`;
+
+export const FacilityItemDocument = gql`
+    query facilityItemById($id: ID!) {
+  facilityItemById(id: $id) {
+    id
+    title
+    price
+    facility_id
+    product_id
+    duration
+    item_type
+  }
+}
+`;
+
+export const FacilityItemsByFacilityIdAndTypeDocument = gql`
+    query facilityItemsByFacilityIdAndType($facility_id: ID!, $item_type: FacilityItemTypeEnum) {
+  facilityItemsByFacilityIdAndType(facility_id: $facility_id, item_type: $item_type) {
+    data {
+      id
+      title
+      price
+      facility
+      {
+        id
+      }
+      product_id
+      duration
+      item_type
+    }
+  }
+}
+    `;
+
+export const GetCustomersByFacilityItemsDocument = gql`
+    query getCustomersByFacilityItems($facility_id: ID!, $item_type: FacilityItemTypeEnum) {
+  getCustomersByFacilityItems(facility_id: $facility_id, item_type: $item_type) {
+    data {
+      id
+      start_date
+      end_date
+      is_active_pass
+      created_at
+      user {
+        id
+        email
+        first_name
+        last_name
+        avatarUrl
+      }
+      facilityItem {
+        title
+        qr_code_lifetime_value
+        duration
+        facility {
+          id
+          name
+          media {
+            pathUrl
+          }
+          address {
+            street
+          }
+        }
+      }
+    }
+    paginatorInfo {
+      total
+    }
+  }
+}
+    `;
+
+export const CreateManagerDocument = gql`
+    mutation createManager($input: CreateManagerInput!) {
+  createManager(input: $input) {
+    id
+  }
+}
+    `;
+
+export const DeleteManagerDocument = gql`
+    mutation deleteManager($id: ID!) {
+  deleteManager(id: $id) {
+    id
+  }
+}
+`;
+
+export const GetManagersByFacilityDocument = gql`
+    query managers($role: RoleEnum, $first: Int, $page: Int, $facilities: [ID]) {
+  managers(
+    role: $role
+    facilities: $facilities
+    first: $first
+    page: $page
+  ) {
+    data {
+      id
+      email
+      employment_type
+      score
+      first_name
+      last_name
+      avatarUrl
+      is_followed
+      trainer_type
+      address {
+        lat
+        lng
+        street
+      }
+      facilities {
+        id
+        name
+        address {
+          lat
+          lng
+          street
+        }
+      }
+      media {
+        pathUrl
+      }
+      settings {
+        setting {
+          code
+        }
+        value
+      }
+    }
+    paginatorInfo {
+      total
+      firstItem
     }
   }
 }

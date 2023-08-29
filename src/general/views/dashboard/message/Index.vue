@@ -7,20 +7,53 @@
             <ion-searchbar class="search"></ion-searchbar>
             <div>
               <div class="tabs">
-                <div :class="allStatus ? 'all' : 'unread'" @click="handleAll">
-                  All
+                <div
+                  :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
+                  @click="handleTab(RoomType.Chat)">
+                  Chats
                 </div>
                 <div
-                  :class="!allStatus ? 'all' : 'unread'"
-                  @click="handleUnRead"
+                  :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'"
+                  @click="handleTab(RoomType.Request)"
                 >
-                  Unread
+                Requests
                 </div>
               </div>
-              <template v-if="allStatus"> </template>
-              <template v-else>
+              <template v-if="activeTab === RoomType.Chat">
                 <div class="listRoom">
-                  <chat-list
+                  <ion-spinner
+                    v-if="loading"
+                    name="lines"
+                    class="spinner"
+                  />
+                  <div class="rooms__container" v-else>
+                    <list-empty
+                      v-if="!data.chats.length"
+                      :title="currenTab"
+                      :chats="false"
+                    />
+                    <template v-else>
+                      <transition-group name="list" tag="ion-item-sliding">
+                        <template v-for="room in data.chats" :key="room.key">
+                          <room
+                            :last-message="room.lastMessage"
+                            :room-id="room.roomId"
+                            :room-name="room.roomName"
+                            :avatar-url="room.avatar"
+                            :time="room.lastTime"
+                            :is-online="isOnline(room.participantId)"
+                            :type="room.type"
+                            @open="onOpen($event, room)"
+                            @delete="onDelete($event, room.roomId)"
+                            :symbols="room.symbols"
+                            :unread="room.unread"
+                            class="room-item__container"
+                          />
+                        </template>
+                      </transition-group>
+                    </template>
+                  </div>
+                  <!-- <chat-list
                     name="Alice James"
                     avatar="assets/backgrounds/avatar1.png"
                     content="Whukiuulrecises"
@@ -50,27 +83,23 @@
                     content="What about other exercises"
                     time="30 min"
                     :status="true"
-                  />
+                  /> -->
                 </div>
+              </template>
+              <template v-if="activeTab === RoomType.Request">
               </template>
             </div>
           </ion-col>
           <ion-col size-md="8" size-lg="8" size="8" class="chatRoom">
-            <div class="box">
+            <div class="box" v-if="selectedRoom.id">
               <div class="header">
-                <img class="chatImage" src="assets/backgrounds/avatar1.png" />
-                <span class="username">Alice James</span>
-                <img class="ellipse" src="assets/Ellipse.svg" />
+                <img class="chatImage" :src="selectedRoom.avatar" />
+                <span class="username">{{ selectedRoom.roomName }}</span>
+                <img class="ellipse" src="assets/Ellipse.svg" v-if="selectedRoom.participantId ? isOnline(selectedRoom.participantId) : false" />
               </div>
               <div class="chat">
-                <chat-message
-                  content="your idea for this application is nice!"
-                  avatar="assets/backgrounds/avatar1.png"
-                  name="Alice James"
-                  time="11:12"
-                  :opp="true"
-                />
-                <chat-message
+                <personal :id="roomId"/>
+                <!-- <chat-message
                   content="your what do youe ant is nice!"
                   avatar="assets/backgrounds/avatar1.png"
                   name="You"
@@ -97,16 +126,16 @@
                   name="You"
                   time="11:16"
                   :opp="false"
-                />
-                <div class="chatBox">
+                /> -->
+                <!-- <div class="chatBox">
                   <div class="info">
                     <img class="avatar" src="assets/backgrounds/avatar1.png" />
                     <span class="user">Alice James</span>
                     <time class="time">Typing a message...</time>
                   </div>
-                </div>
+                </div> -->
               </div>
-              <div class="typing">
+              <!-- <div class="typing">
                 <div class="inputbox">
                   <input
                     class="chatinput"
@@ -119,7 +148,7 @@
                   <img src="assets/icon/add-file.svg" />
                   <img src="assets/icon/emoji.svg" />
                 </div>
-              </div>
+              </div> -->
             </div>
           </ion-col>
         </ion-row>
@@ -129,19 +158,166 @@
 </template>
 
 <script setup lang="ts">
-import { IonGrid, IonCol, IonRow, IonSearchbar } from "@ionic/vue";
+import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner } from "@ionic/vue";
 import ChatList from "@/general/components/dashboard/chat/list.vue";
-import ChatMessage from "@/general/components/dashboard/chat/message.vue";
-import { ref, computed } from "vue";
+import ChatFooter from "@/general/components/dashboard/chat/list.vue";
+import Message from "@/general/components/dashboard/chat/message.vue";
+import Personal from "@/general/views/dashboard/message/Personal.vue"
+import Room from "@/general/components/blocks/chat/Room.vue";
+import { useRouter, useRoute } from "vue-router";
+import { RoleEnum, DeleteChatDocument } from "@/generated/graphql";
+import { EntitiesEnum } from "@/const/entities";
+import { computed, onMounted, reactive, ref, onBeforeMount, watch } from "vue";
+import ListEmpty from "@/general/components/blocks/chat/ListEmpty.vue";
+import useRoles from "@/hooks/useRole";
+import PageTabs from "@/general/components/PageTabs.vue";
+import { RoomType } from "@/ts/enums/chat";
+import { chatsRef, activeUsersRef, requestsRef } from "@/firebase/db";
+import { onValue } from "firebase/database";
+import useId from "@/hooks/useId";
+import { mapChats, mapRequests } from "@/helpers/chats/chatroom";
+import { useMutation } from "@vue/apollo-composable";
 
-const allStatus = ref<boolean>(false);
+const { id } = useId();
 
-const handleAll = () => {
-  allStatus.value = true;
+const router = useRouter();
+const route = useRoute();
+const { role } = useRoles();
+
+const tabs = [
+  {
+    name: RoomType.Chat,
+    label: "Chats",
+  },
+  {
+    name: RoomType.Request,
+    label: "Requests",
+  },
+];
+
+const loading = ref(false);
+const roomId = ref('');
+const selectedRoom = ref({
+  avatar: "",
+  roomName: "",
+});
+const data = reactive({
+  chats: [],
+  activeUsers: [],
+});
+
+const activeTab = ref<RoomType | string>("CHAT");
+
+const { mutate } = useMutation(DeleteChatDocument);
+
+const currenTab = computed(() =>
+  activeTab.value === RoomType.Chat ? "chats" : "requests"
+);
+
+const handleTab = (tab: RoomType) => {
+  activeTab.value = tab;
+}
+
+const requests = computed(
+  () => currenTab.value === RoomType.Request.toLocaleLowerCase()
+);
+
+watch(
+  () => requests.value,
+  () => {
+    fetchChats();
+  }
+);
+
+
+const isOnline = (id: number) => {
+  return !!data.activeUsers.find((user) => user === id);
 };
-const handleUnRead = () => {
-  allStatus.value = false;
+
+const onOpen = (event: CustomEvent, room: any) => {
+  selectedRoom.value = room;
 };
+
+const onDelete = (e: CustomEvent, roomId: string) => {
+  mutate({
+    id: roomId,
+  })
+    .then(() => {
+      fetchChats();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getChats = (snapshot) => {
+  return Object.values(snapshot).reduce((acc, chat) => {
+    if (chat?.participants?.length) {
+      chat.participants.forEach(async (user: { user_id: any }) => {
+        if (Number(user.user_id) === Number(id)) {
+          acc.push({
+            ...chat,
+            message: Object.values(chat.messages).pop(),
+            participant: chat.participants.filter(
+              (i) => Number(i.user_id) === Number(id)
+            )[0],
+          });
+        }
+      });
+    }
+    acc.sort((a, b) => Number(b.message.id) - Number(a.message.id));
+    return acc;
+  }, []);
+};
+
+const fetchChats = () => {
+  loading.value = true;
+  console.log("---", requests.value)
+
+  onValue(requests.value ? requestsRef : chatsRef, (snapshot) => {
+    console.log("---", snapshot)
+    if (data.chats.length) data.chats = [];
+    if (requests.value) {
+      snapshot.forEach((childSnapshot) => {
+        if (childSnapshot.key === id) {
+          const mappedValues = mapRequests(childSnapshot.val(), id);
+          data.chats.push(...mappedValues);
+        }
+      });
+    } else {
+      const chats = getChats(snapshot.val());
+
+      chats.forEach(async (chat: any) => {
+        const mappedValues = await mapChats(chat, id);
+        if (!mappedValues.locked) {
+          data.chats.push(mappedValues);
+        }
+      });
+    }
+    loading.value = false;
+  });
+};
+
+const fetchActiveUsers = () => {
+  onValue(activeUsersRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      data.activeUsers = [...data.activeUsers, childSnapshot.val()];
+    });
+  });
+};
+
+onBeforeMount(() => {
+  if (route.query.type === RoomType.Request.toLocaleLowerCase()) {
+    activeTab.value = RoomType.Request;
+  } else {
+    activeTab.value = RoomType.Chat;
+  }
+});
+
+onMounted(() => {
+  fetchActiveUsers();
+  fetchChats();
+});
 </script>
 
 <style scoped lang="scss">
@@ -203,6 +379,7 @@ const handleUnRead = () => {
 .border {
   border-right: 1px solid var(--gold);
   padding-left: 15px;
+  height: calc(100vh - 120px);
 }
 .chatRoom {
   padding: 25px 10px 36px 36px;
@@ -222,22 +399,20 @@ const handleUnRead = () => {
   flex-direction: row;
   align-items: center;
 }
-.all {
+.tab-item {
   width: 30%;
   text-align: center;
-  color: 2px solid #e1dbc5;
-  border-bottom: 2px solid #e1dbc5;
   font-size: 16px;
-  cursor: pointer;
-}
-.unread {
-  font-size: 16px;
-  text-align: center;
-  width: 30%;
   border-bottom: 1px solid #efefef;
   color: #efefef;
   opacity: 0.4;
   cursor: pointer;
+
+  &__active {
+    color: 2px solid #e1dbc5;
+    border-bottom: 2px solid #e1dbc5;
+    opacity: 1;
+  }
 }
 .search {
   color: #efefef;
@@ -281,5 +456,10 @@ const handleUnRead = () => {
   width: 6px;
   height: 6px;
   margin-left: 30px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

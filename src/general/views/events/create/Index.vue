@@ -57,7 +57,7 @@ import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
 import { toastController } from "@ionic/vue";
 import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
@@ -66,6 +66,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
+const route = useRoute();
 const goToDashboard = () => {
   // isConfirmedModalOpen.value = true;
   eventForm.value?.clearStore();
@@ -89,12 +90,15 @@ const {
 } = useMutation(CreateEventDocument);
 
 const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input });
+  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
 };
 
 const goToWorkout = () => {
   eventForm.value?.clearStore();
-  router.push({ name: EntitiesEnum.CreateWorkout });
+  router.push({
+    name: EntitiesEnum.CreateWorkout,
+    params: { facility_id: route.params.facility_id }
+  });
 };
 
 const eventForm = ref<typeof EventForm | null>(null);
@@ -105,6 +109,7 @@ eventCreated(() => {
   // router.go(-1);
   router.push({
       name: EntitiesEnum.CreateWorkout,
+      params: { facility_id: route.params.facility_id }
     });
 });
 

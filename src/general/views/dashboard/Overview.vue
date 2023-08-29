@@ -1,32 +1,37 @@
 <template>
-  <div class="overview">
+  <ion-spinner
+    v-if="loading || eventsLoading"
+    name="lines"
+    class="spinner"
+  />
+  <div class="overview" v-else>
     <div class="block">
       <div class="title white-text">Fitness Center Overview</div>
       <div class="flex-container">
         <div>
           <div class="time">Today's</div>
           <ion-text class="content">Event counts</ion-text>
-          <span class="count">23</span>
+          <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
         <div>
           <div class="time">Today's</div>
           <ion-text class="content">Message counts</ion-text>
-          <span class="count">13</span>
+          <span class="count">{{ widgetInfo?.message_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Active</ion-text>
-          <span class="count">60</span>
+          <ion-text class="content">Drop-ins</ion-text>
+          <span class="count">{{ widgetInfo?.dropin_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">New Sign-ups</ion-text>
-          <span class="count">14</span>
+          <ion-text class="content">Gym pass</ion-text>
+          <span class="count">{{ widgetInfo?.pass_count }}</span>
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Expiring memberships</ion-text>
-          <span class="count">24</span>
+          <ion-text class="content">Dailys</ion-text>
+          <span class="count">{{ widgetInfo?.daily_count }}</span>
         </div>
       </div>
     </div>
@@ -42,7 +47,7 @@
                 0.8%
                 <ion-icon class="arrow" src="assets/icon/call_made.svg" />
               </div>
-              <div class="chain">$3,689,076</div>
+              <div class="chain">${{ widgetInfo?.today_earn }}</div>
             </div>
           </ion-col>
           <ion-col size="12" size-xl="4">
@@ -51,7 +56,9 @@
                 <div class="type">Quarterly revenue</div>
                 <div class="period">Earned</div>
                 <div class="percent">70%</div>
-                <div class="chain">$1068<span class="period">/ day</span></div>
+                <div class="chain">${{ widgetInfo?.earn_last_thirty_days }}
+                  <!-- <span class="period">/ day</span> -->
+                </div>
               </div>
               <ion-icon class="vector" src="assets/icon/chat/Vector.svg" />
             </div>
@@ -64,7 +71,7 @@
                 0.8%
                 <ion-icon class="arrow" src="assets/icon/call_made.svg" />
               </div>
-              <div class="chain">$689,076</div>
+              <div class="chain">${{ widgetInfo?.year_earn }}</div>
             </div>
           </ion-col>
         </ion-row>
@@ -72,7 +79,7 @@
     </div>
     <ion-row>
       <ion-col size="12" size-lg="12" size-xl="7" class="col-gap">
-        <div class="block">
+        <!-- <div class="block">
           <ion-row>
             <ion-col size="12" size-sm="12" size-md="5">
               <div class="title white-text match">Equipment Status</div>
@@ -119,13 +126,12 @@
               </div>
             </ion-col>
           </ion-row>
-        </div>
+        </div> -->
         <div class="block row-gap">
           <div class="flex-container">
             <div class="title white-text">Attendance Trend</div>
             <div class="dropdown">
               <div class="date">
-                <ion-img class="calendar" src="assets/icon/calendar.png" />
                 Monthly
               </div>
               <div class="dropdown-content">
@@ -144,7 +150,6 @@
             <div class="title white-text">Event Status</div>
             <div class="dropdown">
               <div class="date">
-                <ion-img class="calendar" src="assets/icon/calendar.png" />
                 Monthly
               </div>
               <div class="dropdown-content">
@@ -156,11 +161,7 @@
           </div>
           <div class="event-ring">
             <div>
-              <ion-img
-                class="ring"
-                src="assets/icon/chat/Ring.svg"
-                alt="ring"
-              />
+              <!-- event chart -->
             </div>
           </div>
           <div class="perform">
@@ -168,14 +169,14 @@
               <div class="title white-text">Completed</div>
               <div class="view">View All</div>
             </div>
+            <div v-if="!events?.length" class="no-events">
+              <ion-text>No Closed Events</ion-text>
+            </div>
             <event-item
-              title="Swimming & Cycling1111"
-              dateTime="Saturday, April 14 | 08:00 AM"
-              status="Closed"
-            />
-            <event-item
-              title="Swimming & Cycling"
-              dateTime="Saturday, April 14 | 08:00 AM"
+              v-for="event in events"
+              :key="event.id"
+              :title="event.title"
+              :dateTime="dayjs(event.end_date).format('dddd D MMMM | HH:mm')"
               status="Closed"
             />
           </div>
@@ -186,23 +187,25 @@
 </template>
 
 <script setup lang="ts">
-import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon } from "@ionic/vue";
+import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonSpinner } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+import { computed, onMounted, ref } from "vue";
+import {
+  EventsDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  RoleEnum,
+  EventsQuery,
+  SortOrder,
+  FacilityDashboardWidgetDocument,
+} from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
+import dayjs from "dayjs";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
-const chartData = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  datasets: [
-    {
-      label: 'Data One',
-      backgroundColor: '#2ED47A',
-      data: [1.33, 2.33, 2.5, 2.33, 4, 4.66],
-      barThickness: 8,
-      borderRadius: 10
-    }
-  ]
-};
 const selected = "February";
+const currentFacility = useFacilityStore();
 
 const handleDay = () => {
   console.log("Day");
@@ -213,6 +216,64 @@ const handleMon = () => {
 const handleWee = () => {
   console.log("Wee");
 };
+
+const { result: dashboardWidgetResult, loading } = useQuery(
+  FacilityDashboardWidgetDocument,
+  {
+    id: currentFacility.facility.id,
+  }
+);
+console.log(dashboardWidgetResult)
+const widgetInfo = computed(() => dashboardWidgetResult?.value?.facilityDashboardWidget);
+
+const chartData = computed(() => {
+  const datasets = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+  widgetInfo?.value?.checkin_data.map(data => {
+    datasets[parseInt(data.month) - 1] = data.value
+  })
+  return {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: 'Data One',
+        backgroundColor: '#2ED47A',
+        data: datasets,
+        barThickness: 8,
+        borderRadius: 10
+      }
+    ]
+  }
+});
+
+const idFilter = computed(() => {
+  return { created_by_facility: currentFacility.facility?.id }
+});
+
+const eventsParams: EventsQueryVariables = {
+  first: 4,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  end_date: {
+    from: dayjs().add(-1, 'y').format("YYYY-MM-DD HH:mm:ss"),
+    to: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+  },
+  ...idFilter.value,
+};
+const {
+  result: eventRes,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  fetchPolicy: "no-cache",
+});
+
+const events = computed(() => {
+  return eventRes.value?.events?.data;
+});
 </script>
 
 <style scoped lang="scss">
@@ -382,6 +443,15 @@ const handleWee = () => {
 .view {
   padding-right: 2.5rem;
   color: var(--gold);
+}
+.no-events {
+  padding: 30px 12px;
+  text-align: center;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 @media (max-width: 1220px) {
   .flex-container {

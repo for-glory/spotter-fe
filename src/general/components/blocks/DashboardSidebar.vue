@@ -12,16 +12,32 @@
 					/>
 				</router-link>
 			</div>
-			<div class="facility">
-				<ion-avatar class="photo">
-					<ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
-					<template v-else>
-						{{ facilityName?.charAt(0) }}
-					</template>
-				</ion-avatar>
-				<div>
-					<ion-title class="name">{{ facilityName }}</ion-title>
-					<ion-text class="address">{{ facilityAddress }}</ion-text>
+			<div class="facility-list">
+				<div class="facility" @click="openFacilityDropdown">
+					<ion-avatar class="photo">
+						<ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
+						<template v-else>
+							{{ facilityName?.charAt(0) }}
+						</template>
+					</ion-avatar>
+					<div>
+						<ion-title class="name">{{ facilityName }}</ion-title>
+						<ion-text class="address">{{ facilityAddress }}</ion-text>
+					</div>
+				</div>
+				<div class="facility-list__dropdown" v-if="facilities.length > 1 && isOpenFacilityDropdown">
+					<div class="facility" v-for="facilityItem in facilities" :key="facilityItem.id" @click="selectFacility(facilityItem.id)">
+						<ion-avatar class="photo">
+							<ion-img v-if="facilityItem.media[0]?.pathUrl" :src="facilityItem.media[0]?.pathUrl"></ion-img>
+							<template v-else>
+								{{ facilityItem.name?.charAt(0) }}
+							</template>
+						</ion-avatar>
+						<div>
+							<ion-title class="name">{{ facilityItem.name }}</ion-title>
+							<ion-text class="address">{{ facilityItem.address?.street }}</ion-text>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="main-menu">
@@ -34,16 +50,20 @@
 					<ion-text>Events</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardPassList)">
-					<ion-icon src="assets/icon/Pass.svg" />
+					<ion-icon src="assets/icon/gym-user-icon.svg" />
 					<ion-text>Gym pass</ion-text>
 				</div>
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
-					<ion-icon src="assets/icon/Rate.svg" />
-					<ion-text>Membership</ion-text>
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardDropinList)">
+					<ion-icon src="assets/icon/dropin.svg" />
+					<ion-text>Drop-ins</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
-					<ion-icon src="assets/icon/gym-user-icon.svg" />
-					<ion-text>Workout plans</ion-text>
+					<ion-icon src="assets/icon/daily.svg" />
+					<ion-text>Dailys</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+					<ion-icon src="assets/icon/add-user.svg" />
+					<ion-text>Membership</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
@@ -53,11 +73,11 @@
 			<div class="setting-menu">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
-					<ion-text>Gyms</ion-text>
+					<ion-text>Manage Gyms</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGymManager)" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
-					<ion-text>Managers</ion-text>
+					<ion-text>Gym Managers</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
 					<ion-icon src="assets/icon/Card.svg" />
@@ -112,6 +132,7 @@ const facilityStore = useFacilityStore();
 
 const router = useRouter();
 const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
+const isOpenFacilityDropdown = ref<boolean>(false);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
 facilityStore.setFacility(props.facilities[0]);
@@ -123,6 +144,21 @@ facilityStore.setFacility(props.facilities[0]);
 const facilities = computed(() => {
   return props.facilities;
 });
+
+const openFacilityDropdown = () => {
+	isOpenFacilityDropdown.value = !isOpenFacilityDropdown.value;
+}
+
+const selectFacility = (id) => {
+	activeFacilityId.value = id;
+	facilityStore.setFacility(props.facilities.find(
+		(facility) => facility?.id === id
+	));
+	isOpenFacilityDropdown.value = false;
+	router.push({
+		name: EntitiesEnum.DashboardOverview
+	})
+}
 
 const avatarUrl = computed(() => {
 	const facility = facilities.value?.find(
@@ -211,26 +247,45 @@ const getMenuItemClass = (name: string) => {
 		padding: 24px;
 	}
 
-	.facility {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		padding: 0 24px;
+	.facility-list {
+		position: relative;
+		.facility {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			padding: 8px 24px;
+			cursor: pointer;
 
-		.photo {
-			width: 46px;
-			height: 46px;
+			&:hover {
+				background-color: var(--gray-800);
+			}
+	
+			.photo {
+				width: 46px;
+				height: 46px;
+			}
+			.name {
+				padding: 0;
+			}
+			.address {
+				color: var(--gray-400);
+				font-family: Yantramanav;
+				font-size: 14px;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 150%; /* 21px */
+			}
 		}
-		.name {
-			padding: 0;
-		}
-		.address {
-			color: var(--gray-400);
-			font-family: Yantramanav;
-			font-size: 14px;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 150%; /* 21px */
+
+		&__dropdown {
+			position: absolute;
+			z-index: 9999;
+			top: 100%;
+			left: 8px;
+			padding: 12px 0;
+			background-color: var(--main-color);
+			border-end-end-radius: 8px;
+			border-end-start-radius: 8px;
 		}
 	}
 

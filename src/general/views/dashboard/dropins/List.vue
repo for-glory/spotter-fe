@@ -26,21 +26,21 @@
             </div>
             <div class="ion-padding-vertical">
               <ion-button
-                @click="navigate(EntitiesEnum.DashboardPassCreate)"
-                class="ion-margin-end"
-                fill="solid">
-                Create Gym pass
-              </ion-button>
+                @click="navigate(EntitiesEnum.DashboardDropinCreate)"
+                class=""
+                fill="solid"
+                >Create Drop ins</ion-button
+              >
             </div>
           </div>
         </div>
         <ion-spinner
-          v-if="loadingFacilityPass"
+          v-if="loadingFacilityDropin"
           name="lines"
           class="spinner"
         />
         <div v-else>
-          <pass-subscriber-data-table :passes="passes" />
+          <pass-dropin-data-table :dropins="dropins"/>
         </div>
       </ion-col>
     </ion-row>
@@ -50,42 +50,46 @@
 <script setup lang="ts">
 import {
   IonButton,
+  IonIcon,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
   IonSpinner,
   IonGrid,
   IonRow,
   IonCol
 } from "@ionic/vue";
 import {
-  Query,
   GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
+import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
 import { useQuery } from "@vue/apollo-composable";
+import { chevronBackOutline } from "ionicons/icons";
 import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
-const currentFacility = useFacilityStore();
 const filter = ref<string>("all");
+const currentFacility = useFacilityStore();
 
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
 
 const {
-  result: facilityItemPassResult,
-  loading: loadingFacilityPass,
-  onResult: gotFacility,
+  result: dropinResult,
+  loading: loadingFacilityDropin,
+  onResult
 } = useQuery(GetCustomersByFacilityItemsDocument, {
   facility_id: currentFacility.facility.id,
-  item_type: "PASS"
+  item_type: "DROPIN"
 });
-console.log(facilityItemPassResult)
 
-const passes = computed(() => {
-  return facilityItemPassResult.value?.getCustomersByFacilityItems?.data.filter(item => {
+const dropins = computed(() => {
+  return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
     if (filter.value === "all") {
       return true;
     }

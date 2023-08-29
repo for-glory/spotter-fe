@@ -38,7 +38,7 @@
 					<ion-text>{{ event.end_date }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
-					<ion-text>ongoing</ion-text>
+					<ion-text>{{ event.status ? "Ongoing": "Finished" }}</ion-text>
 				</ion-col>
 			</ion-row>
 		</ion-grid>
