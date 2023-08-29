@@ -6426,3 +6426,13 @@ export const GetManagersByFacilityDocument = gql`
   }
 }
     `;
+
+export const GetFacilitySubscriptionDocument = gql`
+    query facilitySubscription($facility_id: ID) {
+  facilitySubscription(
+    facility_id: $facility_id
+  ) {
+    subscription
+  }
+}
+    `;

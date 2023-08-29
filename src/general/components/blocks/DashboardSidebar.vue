@@ -111,11 +111,12 @@ import { IonText, IonImg, IonIcon, IonAvatar, IonTitle } from '@ionic/vue';
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
-import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
+import { ref, computed, watch, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { Capacitor } from '@capacitor/core';
+import {setSelectedGym } from "@/router/middleware/gymOwner";
 
 const props = withDefaults(
   defineProps<{
@@ -135,7 +136,10 @@ const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const isOpenFacilityDropdown = ref<boolean>(false);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
-facilityStore.setFacility(props.facilities[0]);
+if (!facilityStore.facility?.id && props.facilities.length){
+	facilityStore.setFacility(props.facilities[0]);
+	setSelectedGym(props.facilities[0]?.id)
+}
 
 // onMounted(() => {
 // 	localStorage.setItem('currentFacility', JSON.stringify(props.facilities[0]));
@@ -150,15 +154,20 @@ const openFacilityDropdown = () => {
 }
 
 const selectFacility = (id) => {
-	activeFacilityId.value = id;
 	facilityStore.setFacility(props.facilities.find(
 		(facility) => facility?.id === id
 	));
+	setSelectedGym(id);
 	isOpenFacilityDropdown.value = false;
-	router.push({
-		name: EntitiesEnum.DashboardOverview
-	})
+	router.push({ path: '/dashboard/' });
 }
+
+watch(
+  () => facilityStore.facility.id,
+  () => {
+    activeFacilityId.value = facilityStore.facility.id;
+  }
+)
 
 const avatarUrl = computed(() => {
 	const facility = facilities.value?.find(
@@ -278,6 +287,7 @@ const getMenuItemClass = (name: string) => {
 		}
 
 		&__dropdown {
+			width: 240px;
 			position: absolute;
 			z-index: 9999;
 			top: 100%;
