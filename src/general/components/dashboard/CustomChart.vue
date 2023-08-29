@@ -41,40 +41,47 @@ import { Bar } from 'vue-chartjs'
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const props = defineProps<{
-  chartData?: any;
-}>();
-
-const chartData = computed(() => props.chartData);
-const chartOptions = { 
-  responsive: true,
-  scales: {
-    y: {
-      ticks: {
-        display: false, 
+  chartData?: {
+    type: any;
+    required: true;
+  };
+  chartOptions?: {
+    type: any;
+    required: false;
+    default: {
+      responsive: true,
+      scales: {
+        y: {
+          ticks: {
+            display: false, 
+          },
+          grid: {
+            display: false
+          }
+        },
+        x: {
+          ticks: {
+            angle: 45, 
+          },
+          grid: {
+            display: false
+          }
+        },
       },
-      grid: {
-        display: false
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          xAlign: "center",
+          yAlign: "top",
+        }
       }
-    },
-    x: {
-      ticks: {
-        angle: 45, 
-      },
-      grid: {
-        display: false
-      }
-    },
-  },
-  plugins: {
-    legend: {
-      display: false
-    },
-    tooltip: {
-      xAlign: "center",
-      yAlign: "top",
     }
-  }
-};
+  };
+}>();
+const chartData = computed(() => props.chartData);
+const chartOptions = computed(() => props.chartOptions);
 
 </script>
 

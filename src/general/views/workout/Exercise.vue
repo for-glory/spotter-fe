@@ -1,5 +1,5 @@
 <template>
-  <base-auth-layout hideHeader>
+  <base-auth-layout v-if="!Capacitor.isNativePlatform()" hideHeader>
     <template  #left-section>
       <div class="exercise-form-content">
         <div class="d-flex justify-content-between align-items-center">
@@ -109,11 +109,28 @@
       </div>
     </template>
   </base-auth-layout>
+  <base-layout>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Create workout plan" />
+    </template>
+    <template #content>
+      <div class="content">
+        <exercise-form 
+          ref="exerciseForm"
+          :workoutId="workoutId"
+          hasSubmitButton
+          submitButtonText="Add next exercise"
+          hadFinishButton
+          @open-picker="(e) => openPicker(e)"
+        />
+      </div>
+    </template>
+  </base-layout>
   <discard-changes :is-open="isConfirmationOpen" @close="discardModalClosed" />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, inject } from "vue";
 import { IonLabel, IonButton, IonIcon, IonTitle, IonNote } from "@ionic/vue";
 import { useField } from "vee-validate";
 import { useRouter, useRoute } from "vue-router";
@@ -135,6 +152,9 @@ import BaseInput from "@/general/components/base/BaseInput.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import { Capacitor } from '@capacitor/core';
+import { Emitter, EventType } from "mitt";
+import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -153,6 +173,8 @@ const path = ref<string>("");
 const videoPath = ref<string>("");
 const percentLoaded = ref<number | undefined>();
 const videoInfo = ref<{ name: string; size: string }>({ name: "", size: "" });
+
+const exerciseForm = ref<typeof ExerciseForm | null>(null);
 
 watch(
   () => route.params.id,
@@ -391,6 +413,13 @@ const updateExercise = () => {
   });
 };
 
+const emitter: Emitter<Record<EventType, unknown>> | undefined =
+  inject("emitter"); // Inject `emitter`
+
+const openPicker = (name: string): void => {
+  emitter?.emit("open-picker", name);
+};
+
 const onLogout = () => {
   clearAuthItems();
   router.push({ name: EntitiesEnum.Login });
@@ -430,5 +459,9 @@ const onLogout = () => {
 .logo {
   width: 220px;
   min-width: 60px;
+}
+
+.content {
+  padding: 0 40px 26px;
 }
 </style>

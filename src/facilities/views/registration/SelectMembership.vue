@@ -38,10 +38,10 @@
 				/>
 				<div class="content" v-else>
 					<div class="plan">
-						<ion-title class="font-20" color="primary">
+						<ion-title :class="!Capacitor.isNativePlatform() ? 'font-20' : 'font-20 white-text'" color="primary">
 							Start with 30 days free trial
 						</ion-title>
-						<ion-title class="font-40 white-text" color="primary">
+						<ion-title :class="!Capacitor.isNativePlatform() ? 'font-40 white-text' : 'font-40'" color="primary">
 							Choose your plan
 						</ion-title>
 						<div class="plan-features">
@@ -60,8 +60,8 @@
 						</div>
 					</div>
 					<div class="membership w-100">
-						<ion-radio-group class="plans">
-							<!-- <ion-item
+						<ion-radio-group v-if="!Capacitor.isNativePlatform()" class="plans plan-tablet" v-model="selectedPlanId">
+							<ion-item
 								lines="none"
 								class="radiobutton"
 								v-for="plan in plans"
@@ -111,235 +111,60 @@
 									</div>
 								</div>
 								<ion-radio :value="plan.id" slot="end"></ion-radio>
-							</ion-item> -->
-							<ion-item
-								lines="none"
-								class="radiobutton"
-								@click="selectMembership(4)"
-							>
-								<div class="radiobutton__block">
-									<div class="radiobutton__icon">
-										<ion-icon src="assets/icon/medal.svg" :class="'bronze'" />
-									</div>
-									<div class="radiobutton__description">
-										<ion-label class="radiobutton__label">
-											Bronze Membership
-										</ion-label>
-	
-										<ion-text class="radiobutton__cost"
-											>$99.99
-											<span>
-												/per location
-											</span>
-										</ion-text>
-										<ul>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Searchable profile on our Network (with the ability to list up to 10 offerings)</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Custom drop-in program featuring rates and bundles</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Custom waiver and liability upload</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>20% flat fee for each transaction</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Spotter Dashboard</ion-text>
-												</div>
-											</li>
-										</ul>
-									</div>
-								</div>
-								<ion-radio :value="4" slot="end"></ion-radio>
 							</ion-item>
-							<ion-item
-								lines="none"
-								class="radiobutton"
-								@click="selectMembership(6)"
+						</ion-radio-group>
+						<ion-radio-group v-else class="plans" v-model="selectedPlanId">
+							<ion-slides 
+								ref="slide"
 							>
-								<div class="radiobutton__block">
-									<div class="radiobutton__icon">
-										<ion-icon src="assets/icon/medal.svg" :class="'gold'" />
-									</div>
-									<div class="radiobutton__description">
-										<ion-label class="radiobutton__label">
-											Gold Membership
-										</ion-label>
-	
-										<ion-text class="radiobutton__cost"
-											>$199.99
-											<span>
-												/per location
-											</span>
-										</ion-text>
-										<ul>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>All Bronze & Silver features +</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Reporting features on Spotter Dashboard</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Marketing/branding consultation</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Reduced flat booking fee</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Create and post local events </ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>10% flat fee for each transaction</ion-text>
-												</div>
-											</li>
-										</ul>
-									</div>
-								</div>
-								<ion-radio :value="6" slot="end"></ion-radio>
-							</ion-item>
-							<ion-item
-								lines="none"
-								class="radiobutton"
-								@click="selectMembership(5)"
-							>
-								<div class="radiobutton__block">
-									<div class="radiobutton__icon">
-										<ion-icon src="assets/icon/medal.svg" :class="'silver'" />
-									</div>
-									<div class="radiobutton__description">
-										<ion-label class="radiobutton__label">
-											Silver Membership
-										</ion-label>
-	
-										<ion-text class="radiobutton__cost"
-											>$149.99
-											<span>
-												/per location
-											</span>
-										</ion-text>
-										<ul>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>All Bronze features +</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>List unlimited offerings on the Network profile</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>Reduced flat booking fee</ion-text>
-												</div>
-											</li>
-											<li
-												class="accessibility"
-											>
-												<div>
-													<ion-icon src="assets/icon/accessibility.svg" />
-												</div>
-												<div>
-													<ion-text>15% flat fee for each transaction</ion-text>
-												</div>
-											</li>
-										</ul>
-									</div>
-								</div>
-								<ion-radio :value="5" slot="end"></ion-radio>
-							</ion-item>
+								<ion-slide
+									v-for="plan in plans"
+									:key="plan.id"
+								>
+									<ion-item
+										lines="none"
+										class="radiobutton"
+										@click="selectMembership(plan.id)"
+									>
+										<div class="radiobutton__block">
+											<div class="radiobutton__icon">
+												<ion-icon src="assets/icon/medal.svg" 
+													:class="plan.tier === 'BRONZE' ? 'bronze' : plan.tier === 'SILVER' ? 'silver' : 'gold'" 
+												/>
+											</div>
+											<div class="radiobutton__description">
+												<ion-label class="radiobutton__label">
+													{{ plan.title }}
+												</ion-label>
+			
+												<ion-text class="radiobutton__cost"
+													>${{ plan.prices[0].price / 100 }}
+													<span>
+														/{{ plan.tier === 'GOLD' ? 'for first location' : 'per location'}}
+													</span>
+												</ion-text>
+												<ul>
+													<li
+														class="accessibility"
+														v-for="(benefit, idx) in plan?.benefits"
+														:key="idx"
+													>
+														<div>
+															<ion-icon src="assets/icon/accessibility.svg" />
+														</div>
+														<div>
+															<ion-text>{{ benefit?.description }}</ion-text>
+														</div>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<ion-radio :value="plan.id" slot="end"></ion-radio>
+									</ion-item>
+								</ion-slide>
+							</ion-slides>
+							<ion-icon class="prev" src="assets/icon/arrow-back.svg" @click="prev"></ion-icon>
+							<ion-icon class="next" src="assets/icon/arrow-next.svg" @click="next"></ion-icon>
 						</ion-radio-group>
 					</div>
 					<div class="checkbox">
@@ -376,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonTitle, IonText, IonCheckbox, IonLabel, IonImg, IonButton, IonIcon, IonGrid, IonRadioGroup, IonItem, IonRadio, IonSpinner } from "@ionic/vue";
+import { IonSlides, IonSlide, IonTitle, IonText, IonCheckbox, IonLabel, IonImg, IonButton, IonIcon, IonGrid, IonRadioGroup, IonItem, IonRadio, IonSpinner, isPlatform } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { ref, onMounted } from "vue";
@@ -393,6 +218,8 @@ import {
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
 } from "@/generated/graphql";
+import { InAppPurchase2, IAPProduct } from "@ionic-native/in-app-purchase-2";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 
@@ -411,7 +238,14 @@ const errorMessage = ref("");
 const products = ref<any[]>([]);
 const isAgreed = ref<boolean>(false);
 const selectedProductId = ref<string | number | boolean | undefined>(undefined);
+const slide = ref<typeof IonSlides | null>();
 
+const prev = () => {
+	slide.value?.$el.slidePrev();
+}
+const next = () => {
+	slide.value?.$el.slideNext();
+}
 
 const backendStripe = new BackendStripe(
   process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
@@ -436,7 +270,7 @@ onMounted(async () => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
         const subscriptionPlan = cur.subscriptionPlans.filter(
-          (i: any) => i.provider === SubscriptionProvidersEnum.Web
+          (i: any) => i.provider === getPlatform()
         );
         acc.push({
           ...cur,
@@ -455,6 +289,20 @@ onMounted(async () => {
 const registerProducts = async () => {
   // plans.value.forEach((plan) => {
   // });
+};
+
+const getPlatform = () => {
+  if (Capacitor.isNativePlatform()) {
+    if (isPlatform("android")) {
+      return SubscriptionProvidersEnum.Google;
+    }
+    if (isPlatform("ios")) {
+      return SubscriptionProvidersEnum.Apple;
+    }
+  } else {
+    return SubscriptionProvidersEnum.Web;
+  }
+  
 };
 
 const handleContinue = () => {
@@ -574,6 +422,7 @@ const onLogout = () => {
 	justify-content: center;
 	gap: 1rem;
 	margin-top: 1rem;
+	position: relative;
 	.radiobutton {
 		max-width: 340px;
 		--min-height: 100%;
@@ -746,12 +595,17 @@ const onLogout = () => {
 	}
 	
 	@media (max-width: 992px) {
-		flex-direction: column;
-		align-items: center;
 		.radiobutton {
 			width: 80%;
 			max-width: unset;
 		}
+	}
+}
+
+.plan-tablet {
+	@media (max-width: 992px) {
+		flex-direction: column;
+		align-items: center;
 	}
 }
 
@@ -800,6 +654,23 @@ const onLogout = () => {
     margin: 0;
     white-space: normal;
   }
+}
+
+.prev {
+	position: absolute;
+	left: 0;
+	top: calc(50% - 12px);
+	width: 24px;
+	height: 24px;
+	z-index: 10;
+}
+.next {
+	position: absolute;
+	right: 0;
+	top: calc(50% - 12px);
+	width: 24px;
+	height: 24px;
+	z-index: 10;
 }
 </style>
  

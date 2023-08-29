@@ -108,6 +108,22 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.Membership,
+    path: "/facilities/membership",
+    component: () => import("@/facilities/views/Membership.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.ChangeMembership,
+    path: "/facilities/change-membership",
+    component: () => import("@/facilities/views/ChangeMembership.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileGymLocation,
     path: "/profile/gym-location",
     component: () => import("@/facilities/views/GymLocation.vue"),
@@ -130,5 +146,45 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       middleware: [auth],
     },
+  },
+  {
+    name: EntitiesEnum.FacilityPassList,
+    path: "/facilities/pass/list",
+    component: () => import("@/facilities/views/pass/List.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityDropins,
+    path: "/facilities/dropins/list",
+    component: () => import("@/facilities/views/dropins/List.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityWorkout,
+    path: "/facilities/dailys/list",
+    component: () => import("@/facilities/views/workout/index.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityCreateWorkout,
+    path: "/facilities/dailys/create",
+    component: () => import("@/facilities/views/workout/CreateWorkout.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityCreateEvent,
+    path: "/facilities/events/create",
+    component: () => import("@/facilities/views/CreateEvent.vue"),
+  },
+  {
+    name: EntitiesEnum.ManagersOverview,
+    path: "/facilities/managers",
+    component: () => import("@/facilities/views/managers/index.vue"),
+  },
+  {
+    name: EntitiesEnum.AddManager,
+    path: "/facilities/managers/add-new-manager",
+    component: () => import("@/facilities/views/managers/AddManager.vue"),
+  },
+  {
+    name: EntitiesEnum.ManagerProfile,
+    path: "/facilities/managers/profile/:id",
+    component: () => import("@/facilities/views/managers/ManagerProfile.vue"),
   },
 ];

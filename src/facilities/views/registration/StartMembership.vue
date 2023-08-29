@@ -16,15 +16,22 @@
 		<ion-grid :fixed="true">
 			<div class="content">
 				<div>
-					<ion-title class="title" color="primary">
+					<ion-title class="title" color="primary" v-if="!Capacitor.isNativePlatform()">
 						Start Membership
+					</ion-title>
+					<ion-title class="font-20 white-text" color="primary" v-else>
+						Start with 30 days free trial
 					</ion-title>
 				</div>
 				<div class="plan">
-					<ion-title class="font-20" color="primary">
+					<ion-title class="font-20" color="primary" v-if="!Capacitor.isNativePlatform()">
 						Start with 30 days free trial
 					</ion-title>
-					<ion-title class="font-40 white-text" color="primary">
+					<ion-title 
+						class="font-40" 
+						:class="!Capacitor.isNativePlatform() ? 'white-text' : ''" 
+						color="primary"
+					>
 						Choose your plan
 					</ion-title>
 					<div class="plan-features">
@@ -45,7 +52,10 @@
 						Enjoy full feature with the right plan
 					</ion-text>
 				</div>
-				<ion-text class="font-20 grey-text">
+				<ion-text 
+					class="font-20 grey-text"
+					:class="!Capacitor.isNativePlatform() ? '' : 'py-16'"
+				>
 					You currently do not have an active plan, click next to get started
 				</ion-text>
 				<div class="buttons">
@@ -65,6 +75,7 @@
 import { IonTitle, IonText, IonImg, IonButton, IonIcon, IonGrid } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 
@@ -143,5 +154,10 @@ const handleContinue = () => {
       margin-top: 16px;
     }
   }
+}
+
+.py-16 {
+	padding-top: 64px;
+	padding-bottom: 64px;
 }
 </style>
