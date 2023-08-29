@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.spotterfitness.gabbysoftware",
+  "applicationId": "com.spotterfitness.gabbymobileapp",
   "variantName": "debug",
   "elements": [
     {
