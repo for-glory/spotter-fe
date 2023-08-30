@@ -5,15 +5,18 @@
     </template>
     <template #content>
       <div class="content">
-        <ion-text>
+        <ion-text class="title">
           To give you a better experience we need to know more about your gym
         </ion-text>
-        <gym-form
-          ref="gymForm"
-          button-text="Next"
-          save-and-exit-button
-          @submit="createNewFacility"
-        />
+        <div class="gym-form">
+          <gym-form
+            ref="gymForm"
+            save-button-text="Save and Exit"
+            next-button-text="Next"
+            next-button
+            @submit="createNewFacility"
+          />
+        </div>
       </div>
     </template>
   </base-layout>
@@ -170,7 +173,7 @@ const onLogout = () => {
 }
 
 .content {
-  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  padding: 53px 24px calc(20px + var(--ion-safe-area-bottom));
 }
 
 .head {
@@ -186,11 +189,10 @@ const onLogout = () => {
 }
 
 .title {
-  padding: 0;
-  font-size: 28px;
-  line-height: 1.3;
-  font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  color: #AFAFAF;
+  font: 18px/1 Lato;
+}
+.gym-form {
+  padding-top: 16px;
 }
 </style>
