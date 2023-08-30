@@ -421,9 +421,9 @@ const onLogout = () => {
 
 .buttons {
 	margin-top: 1rem;
-	width: 70%;
+	width: 80%;
 	ion-button {
-		font: 700 18px/1 Yantramanav;
+		font: 700 16px/1 Yantramanav;
 		width: 100%;
 		height: 40px;
 		--border-radius: 12px;

@@ -1,34 +1,13 @@
 <template>
-  <base-auth-layout hideHeader>
-    <template  #left-section>
+  <base-layout>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Create your gym profile" />
+    </template>
+    <template #content>
       <div class="content">
-        <div class="head">
-          <div class="d-flex justify-content-between align-items-center">
-            <router-link
-              to="/"
-            >
-              <ion-img
-                src="assets/icon/logo-complete.png"
-                class="logo"
-                alt="logo"
-              />
-            </router-link>
-            <ion-button
-              class="login-btn"
-              type="button"
-              fill="clear"
-              @click="onLogout"
-            >
-              Log out
-            </ion-button>
-          </div>
-          <ion-title class="title" color="primary">
-            Let’s create your gym profile!
-          </ion-title>
-          <ion-text color="secondary">
-            To give you a better experience we need to know more about your gym
-          </ion-text>
-        </div>
+        <ion-text>
+          To give you a better experience we need to know more about your gym
+        </ion-text>
         <gym-form
           ref="gymForm"
           button-text="Next"
@@ -37,7 +16,7 @@
         />
       </div>
     </template>
-  </base-auth-layout>
+  </base-layout>
 
   <discard-changes
     :is-open="isConfirmedModalOpen"
@@ -51,7 +30,7 @@
 
 <script setup lang="ts">
 import { IonText, IonTitle, IonButton } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -191,8 +170,7 @@ const onLogout = () => {
 }
 
 .content {
-  padding: calc(var(--ion-safe-area-top)) 24px
-    calc(16px + var(--ion-safe-area-bottom));
+  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
 }
 
 .head {
