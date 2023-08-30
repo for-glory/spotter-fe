@@ -441,5 +441,12 @@ const onLogout = () => {
 .font-mini {
 	font: 500 12px/1 Lato;
 }
+.status-text {
+  color: var(--gray-700);
+  background-color: #E1DBC5;
+  border-radius: 20px;
+  font: 500 12px/1 Lato;
+  padding: 2px 9px 2px 9px;
+}
 </style>
  
