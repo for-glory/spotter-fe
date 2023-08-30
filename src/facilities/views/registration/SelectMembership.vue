@@ -1,35 +1,6 @@
 <template>
 	<div class="scrolled-page">
-		<div class="header">
-			<ion-grid :fixed="true">
-				<div class="d-flex justify-content-between align-items-center">
-            <router-link
-              to="/"
-            >
-              <ion-img
-                src="assets/icon/logo-complete.png"
-                class="logo"
-                alt="logo"
-              />
-            </router-link>
-            <ion-button
-              class="login-btn"
-              type="button"
-              fill="clear"
-              @click="onLogout"
-            >
-              Log out
-            </ion-button>
-          </div>
-			</ion-grid>
-		</div>
 		<ion-grid :fixed="true">
-			<div>
-				<ion-icon src="assets/icon/arrow-back.svg" color="primary" />
-				<ion-text class="back" color="primary" @click="onBack">
-					Back
-				</ion-text>
-			</div>
 			<div>
 				<ion-spinner
 					v-if="plansLoading"
