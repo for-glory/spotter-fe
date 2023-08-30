@@ -37,7 +37,7 @@
 								class="radiobutton"
 								v-for="plan in plans"
 								:key="plan.id"
-								@click="selectProduct(plan)"
+								@click="selectMembership(plan.id)"
 								:class="{
 									'item-radio-checked':
 										plan.owned && dayjs(plan.expiryDate).isAfter(dayjs()),
@@ -89,7 +89,7 @@
 						<ion-button
 							expand="block"
 							@click="handleContinue"
-							:disabled="!isAgreed || isLoading || !selectedProductId"
+							:disabled="isLoading || !selectedProductId"
 						>
 							Next
 						</ion-button>
@@ -174,15 +174,8 @@ onMounted(async () => {
       }
       return acc;
     }, []);
-    // await registerProducts();
   });
 });
-// Get the real product information
-const registerProducts = async () => {
-  // plans.value.forEach((plan) => {
-  // });
-};
-
 const getPlatform = () => {
   if (Capacitor.isNativePlatform()) {
     if (isPlatform("android")) {
@@ -214,6 +207,7 @@ const handleContinue = () => {
     fees_percent: selectedPlan.value.fee,
   })
     .then((data) => {
+      console.log("data==>", data)
       let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
       backendStripe.redirectToCheckout(intent.id);
     })
@@ -221,12 +215,6 @@ const handleContinue = () => {
       errorMessage.value = err;
       throw new Error(err);
     });
-};
-
-const selectProduct = (plan: any) => {
-	console.log('plan.subscriptionPlan', plan);
-	selectedItem.value = plan.subscriptionPlan
-	selectedProductId.value = plan.subscriptionPlan.product_id
 };
 const selectMembership = (id: any) => {
 	plans.value.forEach((plan: any) => {
@@ -237,14 +225,6 @@ const selectMembership = (id: any) => {
 			selectedProductId.value = plan.subscriptionPlan.product_id
 		}
 	})
-}
-
-const onCardCreation = async () => {
-  const { onResult } = backendStripe.createSetupIntent();
-  onResult((setupIntentResult) => {
-    let intent = JSON.parse(setupIntentResult?.data?.setupIntent?.session);
-    backendStripe.redirectToCardSaving(intent.id, intent.url);
-  });
 };
 
 const onLogout = () => {
