@@ -17,7 +17,7 @@
       </div>
       <div v-else class="content">
         <div class="form-row" id="video">
-          <video :src="videoPath" controls autoplay muted style="max-width: 100%;"></video>
+          <video :src="videoPath" controls muted style="max-width: 100%; width: 100%;"></video>
         </div>
         <div class="form-row">
           <base-input

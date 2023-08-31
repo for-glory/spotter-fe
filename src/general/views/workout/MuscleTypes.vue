@@ -1,40 +1,26 @@
 <template>
-  <base-auth-layout hideHeader>
-    <template  #left-section>
-      <div class="d-flex justify-content-between align-items-center">
-        <router-link
-          to="/"
-        >
-          <ion-img
-            src="assets/icon/logo-complete.png"
-            class="logo"
-            alt="logo"
-          />
-        </router-link>
-        <ion-button
-          class="login-btn"
-          type="button"
-          fill="clear"
-          @click="onLogout"
-        >
-          Log out
-        </ion-button>
-      </div>
-      <div class="top-buttons">
-        <ion-button class="dashboard-btn" @click="onBack" fill="clear">
-          <ion-icon src="assets/icon/arrow-back.svg" />
-          Back
-        </ion-button>
-      </div>
-      <ion-spinner v-if="loading" name="lines" class="spinner" />
-      <checkbox-group
-        class="content"
-        v-else
-        @change="onChange"
-        :options="bodyParts"
-      />
+  <base-layout hideNavigationMenu>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Select Tags" />
     </template>
-  </base-auth-layout>
+    <template #content>
+      <ion-spinner v-if="loading" name="lines" class="spinner" />
+      <div v-else class="content">
+        <checkbox-group
+          @change="onChange"
+          :options="bodyParts"
+        />
+        <div class="button">
+          <ion-button
+            expand="block"
+            @click="submit"
+          >
+            Save
+          </ion-button>
+        </div>
+      </div>
+    </template>
+  </base-layout>
 </template>
 
 <script setup lang="ts">
@@ -47,7 +33,7 @@ import { useRouter } from "vue-router";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { EntitiesEnum } from "@/const/entities";
 import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import { useDailysStore } from "@/general/stores/create-dailys";
 
@@ -78,6 +64,10 @@ const onChange = (value: string[], option: CheckboxValueType) => {
   store.setMuscleTypes(value, option);
 };
 
+const submit = () => {
+  router.go(-1);
+}
+
 const onBack = () => {
   router.go(-1);
 };
@@ -87,18 +77,18 @@ const onLogout = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .spinner {
   display: block;
   pointer-events: none;
   margin: calc(50% - 60px) auto 0;
 }
 .content {
-  padding: 0 24px;
-  margin-top: 30px;
-}
-.logo {
-  width: 220px;
-  min-width: 60px;
+  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  position: relative;
+
+  ion-button {
+    width: 100%;
+  }
 }
 </style>
