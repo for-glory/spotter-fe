@@ -87,7 +87,7 @@ import { EntitiesEnum } from "@/const/entities";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
 import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
-import { useNewFacilityStore } from "../../facilities/store/new-facility";
+import { useNewFacilityStore } from "@/facilities/store/new-facility";
 import { useNewEventStore } from "@/general/stores/new-event";
 
 const router = useRouter();
@@ -98,11 +98,13 @@ const states = ref<IState[]>(State.getStatesOfCountry(countryCode));
 const cities = ref<ICity[]>();
 
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
+const description = ref("");
+console.log(route.params.type);
+const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
-const description = ref("");
-const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
+console.log({ store });
 
 const onBack = () => {
   store.setAddress(selectedState, selectedCity, selectedAddress);

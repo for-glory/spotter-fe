@@ -1,154 +1,7 @@
 <template>
-  <div class="create-event" v-if="Capacitor.isNativePlatform()">
+  <div class="create-event">
     <div class="form-row">
-      <ion-label class="label"> Choose photos for event </ion-label>
-      <photos-loader
-        @upload="uploadPhoto"
-        @delete="deletePhoto"
-        @change="uploadPhoto"
-        :circle-shape="false"
-        :photos="eventPhotos"
-        :loading="photoOnLoad"
-        :progress="percentPhotoLoaded"
-        :disabled="mediaDeleting || loading"
-      />
-    </div>
-
-    <div class="form-row">
-      <base-input
-        required
-        :disabled="loading"
-        @change="eventTitleChange"
-        v-model:value="eventTitle"
-        label="Event name"
-        placeholder="Enter event name"
-      />
-    </div>
-
-    <div class="form-row">
-      <base-input
-        type="number"
-        :disabled="loading"
-        @change="eventPriceChange"
-        v-model:value="eventPrice"
-        label="Entry fee"
-        placeholder="Set entry fee"
-      />
-    </div>
-
-    <div class="form-row">
-      <ion-label class="label"> Choose equioment and amenitites </ion-label>
-      <choose-block
-        :disabled="loading"
-        title="Equipment and amenities"
-        @handle-click="onChooseAmenities"
-        :value="
-          eventEquipments.length + eventAmenities.length > 0
-            ? String(eventEquipments.length + eventAmenities.length)
-            : ''
-        "
-      />
-    </div>
-
-    <template v-if="!edit">
-      <div class="form-row">
-        <ion-label class="label"> Venue </ion-label>
-        <choose-block
-          title="Location"
-          :disabled="loading"
-          class="form-row__control"
-          @handle-click="onChooseLocation"
-          :value="selectedState?.name + ', ' + selectedCity?.country?.name"
-        />
-      </div>
-    </template>
-
-    <div class="form-row">
-      <base-input
-        :rows="3"
-        :maxlength="150"
-        :disabled="loading"
-        label="Event description"
-        @change="eventDescriptionChange"
-        v-model:value="eventDescription"
-        placeholder="Enter a description"
-      />
-    </div>
-
-    <template v-if="!edit">
-      <div class="form-row">
-        <base-input
-          type="number"
-          :disabled="loading"
-          @change="eventMaxParticipantsChange"
-          v-model:value="eventMaxParticipants"
-          placeholder="Capacity"
-          label="Set the max participants for event"
-        />
-      </div>
-
-      <div class="form-row">
-        <base-input
-          type="number"
-          :disabled="loading"
-          label="Discount"
-          placeholder="Enter discount value"
-        />
-      </div>
-
-      <div class="form-row">
-        <ion-label class="label"> Start date </ion-label>
-        <choose-block
-          title="Start date"
-          :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
-          @handle-click="
-            showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
-              title: 'Start date',
-            })
-          "
-          :disabled="loading"
-        />
-      </div>
-
-      <div class="form-row">
-        <ion-label class="label"> End date </ion-label>
-        <choose-block
-          title="End date"
-          :disabled="!eventStartDate || loading"
-          :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
-          @handle-click="
-            showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
-              min: eventStartDate ?? undefined,
-              title: 'End date',
-            })
-          "
-        />
-      </div>
-    </template>
-
-    <div class="holder-button">
-      <ion-button
-        expand="block"
-        class="secondary"
-        v-if="hasSkipButton"
-        @click="onSkip"
-      >
-        {{ skipText }}
-      </ion-button>
-      <ion-button
-        class="button"
-        expand="block"
-        @click="submitEvent"
-        :disabled="loading || invalid || mediaDeleting"
-      >
-        <template v-if="!loading">{{ submitButtonText }}</template>
-        <ion-spinner v-else name="lines" />
-      </ion-button>
-    </div>
-  </div>
-  <div class="create-event" v-else>
-    <div class="form-row">
-      <ion-label class="label"> Choose cover for Event </ion-label>
+      <ion-label class="label"> Choose cover for event </ion-label>
       <photos-loader
         @upload="uploadPhoto"
         @delete="deletePhoto"
@@ -199,13 +52,15 @@
 
     <template v-if="!edit">
       <div class="form-row">
-        <ion-label class="label"> Venue </ion-label>
         <choose-block
-          title="Location"
-          :disabled="loading"
+          title="Venue"
           class="form-row__control"
           @handle-click="onChooseLocation"
-          :value="selectedState?.name + ', ' + selectedCity?.name"
+          :value="
+            selectedAddress
+              ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
+              : ''
+          "
         />
       </div>
     </template>
@@ -224,6 +79,7 @@
 
       <div class="form-row">
         <base-input
+          type="number"
           :disabled="loading"
           label="Discount"
           placeholder="Enter discount value"
@@ -245,10 +101,24 @@
       </div>
 
       <div class="form-row">
+        <ion-label class="label"> Choose time of event </ion-label>
+        <wheel-picker :options="startTimeOptions" name="startTime">
+          <template #button>
+            <choose-block
+              title="Start time"
+              :value="eventStartTime"
+              :disabled="!eventStartDate || loading"
+              @handle-click="openPicker('startTime')"
+            />
+          </template>
+        </wheel-picker>
+      </div>
+
+      <div class="form-row">
         <ion-label class="label"> End date </ion-label>
         <choose-block
           title="End date"
-          :disabled="!eventStartDate || loading"
+          :disabled="!eventStartDate || !eventStartTime || loading"
           :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
           @handle-click="
             showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
@@ -260,8 +130,22 @@
       </div>
 
       <div class="form-row">
+        <ion-label class="label"> Choose time of event </ion-label>
+        <wheel-picker :options="endTimeOptions" name="endTime">
+          <template #button>
+            <choose-block
+              title="End time"
+              :value="eventEndTime"
+              :disabled="!eventEndDate || loading"
+              @handle-click="openPicker('endTime')"
+            />
+          </template>
+        </wheel-picker>
+      </div>
+
+      <div class="form-row">
         <base-input
-          :rows="4"
+          :rows="3"
           :maxlength="150"
           :disabled="loading"
           label="Event description"
@@ -272,27 +156,33 @@
       </div>
     </template>
 
-    <div class="holder-button">
+    <div
+      class="actions-wrapper"
+      :class="{ 'actions-wrapper--fixed': footerFixed }"
+    >
       <ion-button
         expand="block"
         class="secondary"
-        v-if="hasSkipButton"
-        @click="onSkip"
+        @click="submitEvent('exit')"
+        fill="outline"
+        :disabled="
+          !eventTitle?.length || !eventPhotos?.length || !selectedAddress
+        "
       >
-        {{ skipText }}
+        {{ saveButtonText }}
       </ion-button>
       <ion-button
-        class="button"
         expand="block"
-        @click="submitEvent"
-        :disabled="loading || invalid || mediaDeleting"
+        @click="submitEvent('next')"
+        v-if="nextButton"
+        :disabled="
+          !eventTitle?.length || !eventPhotos?.length || !selectedAddress
+        "
       >
-        <template v-if="!loading">{{ submitButtonText }}</template>
-        <ion-spinner v-else name="lines" />
+        {{ nextButtonText }}
       </ion-button>
     </div>
   </div>
-
   <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
   <equipment-and-amenities
@@ -359,8 +249,7 @@ enum DateFieldsEnum {
 }
 
 const emits = defineEmits<{
-  (e: "submit", data?: any): void;
-  (e: "onSkip", params?: any): void;
+  (e: "submit", data?: any, type?: string): void;
 }>();
 
 const props = withDefaults(
@@ -368,13 +257,11 @@ const props = withDefaults(
     edit?: boolean;
     loading?: boolean;
     data?: CreateEventInput | any;
-    submitButtonText?: string;
-    skipText?: string;
-    hasSkipButton?: boolean;
-  }>(),
-  {
-    submitButtonText: "Create",
-  }
+    saveButtonText?: string;
+    nextButtonText?: string;
+    nextButton?: boolean;
+    footerFixed?: boolean;
+  }>(), {}
 );
 
 watch(
@@ -511,116 +398,6 @@ const onChooseLocation = () => {
     params: { type: 'event' }
   });
 }
-
-const chooseState = () => {
-  chooseAddressModal.value?.present({
-    type: EntitiesEnum.State,
-    title: "Select state",
-    selected: selectedState.value?.id,
-  });
-};
-
-const chooseCity = () => {
-  chooseAddressModal.value?.present({
-    type: EntitiesEnum.City,
-    title: "Select city",
-    selected: selectedCity.value?.id,
-    state: selectedState.value,
-  });
-};
-
-const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
-  let street_number =''
-  let route =''
-  const address:NativeGeocoderResult = {
-    latitude: gmObj.geometry.location.lat().toString(),
-    longitude: gmObj.geometry.location.lng().toString(),
-    countryCode: '',
-    countryName: '',
-    postalCode: '',
-    administrativeArea: '',
-    subAdministrativeArea: '',
-    locality: '',
-    subLocality: '',
-    thoroughfare: '',
-    subThoroughfare: '',
-    areasOfInterest: []
-  }
-  for (let i=0; i < gmObj.address_components.length; i++)
-  {
-    if(gmObj.address_components[i].types.includes("postal_code"))
-    {
-      address.postalCode = gmObj.address_components[i].long_name;
-    }
-    if(gmObj.address_components[i].types.includes("locality"))
-    {
-      address.locality = gmObj.address_components[i].long_name;
-    }
-    if(gmObj.address_components[i].types.includes("subLocality"))
-    {
-      address.subLocality = gmObj.address_components[i].long_name;
-    }
-    if(gmObj.address_components[i].types.includes("country"))
-    {
-      address.countryName = gmObj.address_components[i].long_name;
-      address.countryCode = gmObj.address_components[i].short_name;
-    }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
-    {
-      address.administrativeArea = gmObj.address_components[i].short_name;
-    }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
-    {
-      address.subAdministrativeArea = gmObj.address_components[i].long_name;
-    }
-    if(gmObj.address_components[i].types.includes("street_number"))
-    {
-      street_number = gmObj.address_components[i].long_name;
-    }
-    if(gmObj.address_components[i].types.includes("route"))
-    {
-      route = gmObj.address_components[i].long_name;
-    }
-  }
-  address.thoroughfare = street_number + " " + route
-  return address;
-}
-const setPlace = (place: any) => {
-  if (place) {
-    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
-    const address = gmapObjToNativeGeocoderResultObject(place)
-    if (address.locality) {
-      getCityByName({
-        first: 15,
-        name: address.locality,
-        state_code: address.administrativeArea,
-      })?.then(async (res) => {
-        const res_city = res.data.cities.data[0];
-        console.log("selected city", res_city)
-        store.setAddress(res_city.state, res_city, address);
-      })
-    }
-  }
-}
-
-const chooseAddress = () => {
-  chooseAddressModal.value?.present({
-    type: EntitiesEnum.Address,
-    title: "Choose your address",
-    selected: selectedAddress.value?.latitude
-      ? {
-          lat: Number(selectedAddress.value?.latitude),
-          lng: Number(selectedAddress.value?.longitude),
-        }
-      : null,
-    state: selectedState.value,
-    city: selectedCity.value,
-  });
-};
-
-const addressSelected = (selected: ChooseAddresModalResult) => {
-  store.setAddress(selected.state, selected.city, selected.address);
-};
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 
@@ -761,7 +538,7 @@ const invalid = computed<boolean>(
         !eventMaxParticipants.value))
 );
 
-const submitEvent = async () => {
+const submitEvent = async (type: string) => {
   if (
     !props.edit &&
     formatTime(eventStartDate.value as number, eventStartTime.value) >=
@@ -830,11 +607,42 @@ const submitEvent = async () => {
           .filter((photo) => photo.file),
       };
 
-  emits("submit", data);
+  emits("submit", {
+        title: eventTitle.value,
+        description: eventDescription.value,
+        start_date: formatTime(
+          eventStartDate.value as number,
+          eventStartTime.value
+        ),
+        end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
+        price: Number(store.price),
+        address: {
+          lat: selectedAddress.value?.address?.latitude
+            ? Number(selectedAddress.value?.address.latitude)
+          : 34.034744,
+        lng: selectedAddress.value?.address?.longitude
+          ? Number(selectedAddress.value?.address.longitude)
+          : -118.2381,
+        street: `${
+          selectedAddress.value?.address?.thoroughfare
+            ? selectedAddress.value?.address?.thoroughfare + ", "
+            : ""
+        }${selectedAddress.value?.address?.subThoroughfare || ""}`,
+        city_id: selectedCity.value?.id,
+      },
+      max_participants: store.max_participants,
+      equipments: eventEquipments.value.map((equipment) => equipment.id),
+      amenities: eventAmenities.value.map((amenity) => amenity.id),
+      media: eventPhotos.value?.map((photo, index) => {
+        return {
+          title: `${eventTitle.value
+            .replace(/\s/g, "")
+            .toLowerCase()}-${index}`,
+          file: photo.path,
+        };
+      }),
+  }, type);
 };
-const onSkip = () => {
-  emits("onSkip");
-}
 
 const formatTime = (date: number, time: string): string => {
   return dayjs(date)
@@ -873,49 +681,23 @@ defineExpose({
     margin: 0;
   }
 }
-
-.search-form {
-  position: relative;
-  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
-  justify-content: flex-end;
-  transition: background-color 0.35s ease;
-
-  &--on-focus {
-    background-color: var(--gray-800);
-  }
-
-  &__control {
-    border: 1px solid;
-    margin-top: 10px;
-    padding: 0;
-    width: 100%;
-    z-index: 15;
-    transition: right 0.35s ease;
-    padding: 15px 20px 12px 20px;
-    background: var(--gray-800);
-    border-radius: var(--border-radius);
-    --border-radius: 8px;
-    --color: var(--ion-color-white);
-    --placeholder-opacity: 1;
-    --background: var(--gray-700);
-    --placeholder-font-weight: 300;
-    --placeholder-color: var(--gray-500);
-    --box-shadow: inset 0 0 0 0.8px var(--gray-600);
-  }
-}
-.address-container {
+.actions-wrapper {
   display: flex;
-  min-height: 48px;
-  flex-direction: row;
-  border-radius: 8px;
-  align-items: center;
-  padding: 8px 16px 8px;
-  background: var(--gray-700);
-  justify-content: space-between;
-}
-.address-content {
-  font-weight: 300;
-  font-size: 14px;
-  color: var(--ion-color-white);
+  flex-direction: column;
+  margin: 0 -8px;
+  gap: 16px;
+
+  &--fixed {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    position: fixed;
+    padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
+  }
+
+  ion-button {
+    width: 100%;
+  }
 }
 </style>

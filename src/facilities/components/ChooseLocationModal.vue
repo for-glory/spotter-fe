@@ -80,13 +80,18 @@ import {
 import { useLazyQuery } from "@vue/apollo-composable";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { useNewFacilityStore } from "../store/new-facility";
+import { useNewEventStore } from "@/general/stores/new-event";
+import { useRoute, useRouter } from "vue-router";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+
+const router = useRouter();
+const route = useRoute();
 
 const chooseModal = ref<typeof IonModal | null>(null);
 const selectedState = ref<State | null>(null);
 const selectedCity = ref<City | null>(null);
 const selectedAddress = ref<NativeGeocoderResult | null>(null);
-const store = useNewFacilityStore();
+const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 
 const emits = defineEmits<{
   (e: "cancel"): void;

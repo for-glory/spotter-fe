@@ -1,46 +1,20 @@
 <template>
-  <base-auth-layout hide-header>
-    <template  #left-section>
+  <base-layout hideNavigationMenu>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Create Events" />
+    </template>
+    <template #content>
       <div class="content">
-        <div class="d-flex justify-content-between align-items-center">
-          <router-link
-            to="/"
-          >
-            <ion-img
-              src="assets/icon/logo-complete.png"
-              class="logo"
-              alt="logo"
-            />
-          </router-link>
-          <ion-button
-            class="login-btn"
-            type="button"
-            fill="clear"
-            @click="onLogout"
-          >
-            Log out
-          </ion-button>
-        </div>
-        <div class="top-buttons">
-          <ion-button class="dashboard-btn" @click="goToDashboard" fill="clear">
-            Go to Dashboard
-            <ion-icon src="assets/icon/arrow-next.svg" />
-          </ion-button>
-        </div>
-        <ion-title class="title" color="primary">
-          Create your first event
-        </ion-title>
         <event-form
           ref="eventForm"
-          has-skip-button
+          save-button-text="Save and Exit"
+          next-button-text="Next"
+          next-button
           @submit="createEvent"
-          @onSkip="goToWorkout"
-			    skipText="Skip"
-          :loading="eventOnCreation"
         />
       </div>
     </template>
-  </base-auth-layout>
+  </base-layout>
   <discard-changes
     :is-open="isConfirmedModalOpen"
     @close="discardModalClosed"
@@ -53,7 +27,7 @@ import {
   IonIcon,
   IonTitle,
 } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useRouter, useRoute } from "vue-router";
