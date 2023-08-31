@@ -15,14 +15,14 @@
           Create first Dailys
         </ion-button>
       </div>
-      <div v-else>
+      <div v-else class="content">
         <div class="form-row" id="video">
           <span class="video__metadata">
             {{ videoPath }}
             <ion-text color="medium">({{ videoSize }})</ion-text>
           </span>
         </div>
-        <!-- <div class="form-row">
+        <div class="form-row">
           <base-input
             v-model:value="titleValue"
             :error-message="titleError"
@@ -73,10 +73,10 @@
             label="Create instruction tip for video"
             :rows="3"
           />
-        </div> -->
+        </div>
       </div>
       <div class="upload-video-progress" v-if="videoOnLoading">
-        <circle-progress :percent="loadingPercent" />
+        <circle-progress :percent="percentLoaded" />
       </div>
     </template>
   </base-layout>
@@ -97,7 +97,7 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useRouter, useRoute } from "vue-router";
-import { ref } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { toastController } from "@ionic/vue";
 import { CreateEventDocument, CreateEventInput, FilePreloadDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
@@ -119,6 +119,7 @@ import { dataURItoFile } from "@/utils/fileUtils";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime";
 import { dataURItoVideo } from "@/utils/videoUtils";
+import { useDailysStore } from "@/general/stores/create-dailys";
 import UploadVideo from "@/general/components/UploadVideo.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
@@ -128,11 +129,45 @@ const router = useRouter();
 const route = useRoute();
 const percentLoaded = ref<number | undefined>();
 const log = ref<any[]>([]);
-const step = ref<string>('upload');
+const step = computed(() => route.params.step);
 let abort: any;
 
+const store = useDailysStore();
 
-// video uploading
+const titleValue = ref<string>("");
+const priceValue = ref<string>("");
+const muscleTypesValue = computed(() =>
+  store.workoutMuscleTypes?.length > 1
+    ? store.workoutMuscleTypes?.length
+    : store.workoutMuscleTypes[0]?.label || ""
+);
+const workoutType = computed(() => store.workoutType?.name || "");
+const exerciseDescription = computed(() => store.exercises.description);
+
+onMounted(() => {
+  console.log(step.value)
+  if (store.workoutTitle) {
+    titleValue.value = store.workoutTitle;
+  }
+  if (store.workoutPrice) {
+    priceValue.value = store.workoutPrice.toString();
+  }
+});
+
+watch(
+  () => priceValue.value,
+  (newVal: string) => {
+    store.setValue("workoutPrice", newVal);
+  }
+);
+watch(
+  () => titleValue.value,
+  (newVal: string) => {
+    store.setValue("workoutTitle", newVal);
+  }
+);
+
+// <----video uploading
 const videoOptions: VideoOptions = {
   duration: 60,
   highquality: true,
@@ -149,8 +184,8 @@ const path = ref<string>("");
 const videoOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
-const videoPath = ref<string>("");
-const videoInfo = ref<{ name: string; size: string }>({ name: "", size: "" });
+const videoPath = store.exercises?.videoPath;
+const videoInfo = { name: store.exercises?.videoName, size: store.exercises?.videoSize };
 const previewOnLoading = ref<boolean>(false);
 
 const bytesToSize = (bytes: number): string => {
@@ -181,6 +216,10 @@ const getVideoDuration = async (file: File): Promise<number> => {
 };
 
 const uploadVideo = async () => {
+  router.push({
+    name: router?.currentRoute?.value?.name,
+    params: { step: 'create' },
+  });
   try {
     log.value.push('isCapacitor:  ', isPlatform('capacitor'));
     const input: HTMLInputElement = document.createElement("input");
@@ -209,25 +248,25 @@ const uploadVideo = async () => {
       await filePreload({ file })
         .then((res) => {
           path.value = res?.data.filePreload.path;
-          videoPath.value = `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`;
           videoOnLoading.value = false;
           percentLoaded.value = undefined;
-          videoInfo.value.size = fileSize;
-          videoInfo.value.name = fileName;
-          log.value.push({videoPath});
-          log.value.push({videoInfo});
-          step.value = 'create';
+          store.setExercise({
+            description: exerciseDescription.value,
+            videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
+            // previewUrl: previewUrl.value,
+            // previewPath: previewPath.value,
+            id: uuidv4(),
+            videoSize: fileSize,
+            videoName: fileName,
+          });
         })
         .catch((error) => {
           abort();
           console.error(error);
           log.value.push(error);
           path.value = "";
-          videoPath.value = "";
           videoOnLoading.value = false;
           percentLoaded.value = undefined;
-          videoInfo.value.size = "";
-          videoInfo.value.name = "";
         });
       input.remove();
     };
@@ -251,11 +290,19 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   },
 });
 
+// video uploading ----->
+const onHandleSelect = (pathName: string) => {
+  router.push({ name: pathName });
+};
+
 const onBack = () => {
   if (step.value === 'upload') {
     router.go(-1);
   } else {
-    step.value = 'upload';
+    router.push({
+      name: router?.currentRoute?.value?.name,
+      params: { step: 'upload' },
+    });
   }
 };
 </script>
@@ -308,5 +355,12 @@ const onBack = () => {
   flex-direction: column;
   justify-content: center;
   background: rgba(#262626, 0.8);
+}
+.form-row {
+  &__control {
+    &:not(:first-child) {
+      margin-top: 16px;
+    }
+  }
 }
 </style>

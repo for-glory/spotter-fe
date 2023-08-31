@@ -75,7 +75,7 @@ eventCreated(() => {
   showSuccessToast();
   eventForm.value?.clearStore();
   if(exitType.value === 'next') {
-    router.push({ name: EntitiesEnum.CreateDailys });
+    router.push({ name: EntitiesEnum.CreateDailys, params: { step: 'upload' } });
   } else {
     router.push({
       name: EntitiesEnum.CreateFacilitySuccess,

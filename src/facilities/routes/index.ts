@@ -93,7 +93,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.CreateDailys,
-    path: "/register/create-dailys",
+    path: "/register/create-dailys/:step",
     component: () =>
       import("@/facilities/views/registration/CreateDailys.vue"),
     meta: {
