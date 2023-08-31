@@ -219,6 +219,7 @@ const photoSelected = async (value: string): Promise<void> => {
   const file = dataURItoFile(value, uuidv4());
   previewOnLoading.value = true;
   percentLoaded.value = 0;
+  console.log({value});
   await filePreload({ file })
     .then((res) => {
       previewPath.value = res?.data.filePreload.path;
@@ -241,6 +242,7 @@ const videoSelected = async (
 ): Promise<void> => {
   videoOnLoading.value = true;
   percentLoaded.value = 0;
+  console.log({file});
   await filePreload({ file })
     .then((res) => {
       path.value = res?.data.filePreload.path;

@@ -9,7 +9,7 @@
           ref="workoutForm"
           @open-picker="(e) => openPicker(e)"
         />
-        <ion-title v-if="isValidForm" class="sub-title" color="primary">
+        <ion-title class="sub-title" color="primary">
           Upload Exercise
         </ion-title>
         <exercise-form 
@@ -17,7 +17,6 @@
           hasSubmitButton
           submitButtonText="Add next exercise"
           @open-picker="(e) => openPicker(e)"
-          v-if="isValidForm"
         />
         <div class="holder-button">
           <ion-button :disabled="!isValidForm" fill="outline">Finish workout</ion-button>
