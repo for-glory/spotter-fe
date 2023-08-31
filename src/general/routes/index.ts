@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import auth from "@/router/middleware/auth";
-import gymOwner from "@/router/middleware/gymOwner";
+import gymOwnerSubscription from "@/router/middleware/gymOwnerSubscription";
+import gymOwnerRole from "@/router/middleware/gymOwnerRole";
 import { EntitiesEnum } from "@/const/entities";
 import guest from "@/router/middleware/guest";
 
@@ -44,6 +45,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/general/views/UpdateEmail.vue"),
       },
     ],
+  },
+  {
+    name: EntitiesEnum.ManagerPasswordSet,
+    path: "/manager-password/:email",
+    component: () => import("@/general/views/ManagerPasswordSet.vue"),
+    meta: { mode: EntitiesEnum.CheckEmail }
   },
   {
     name: EntitiesEnum.PasswordReset,
@@ -389,7 +396,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "overview",
         component: () => import("@/general/views/dashboard/Overview.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -397,7 +404,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "event",
         component: () => import("@/general/views/dashboard/events/Index.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -405,7 +412,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "create-event",
         component: () => import("@/general/views/dashboard/events/CreateEvent.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -428,7 +435,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout",
         component: () => import("@/general/views/dashboard/workout/Index.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -436,7 +443,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create",
         component: () => import("@/general/views/dashboard/workout/CreateWorkout.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -444,7 +451,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create/type",
         component: () => import("@/general/views/dashboard/workout/Types.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -452,7 +459,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create/muscle-type",
         component: () => import("@/general/views/dashboard/workout/MuscleTypes.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -460,7 +467,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "workout/create/exercise",
         component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -468,7 +475,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/workout/exercise-list/:id?",
         component: () => import("@/general/views/dashboard/workout/ExercisesList.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -476,7 +483,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "getting-paid",
         component: () => import("@/general/views/dashboard/GettingPaid.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription, gymOwnerRole],
         }
       },
       {
@@ -484,7 +491,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription, gymOwnerRole],
         }
       },
       {
@@ -492,7 +499,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "pass/list",
         component: () => import("@/general/views/dashboard/pass/List.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -500,7 +507,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "pass/create-pass",
         component: () => import("@/general/views/dashboard/pass/CreatePass.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -508,7 +515,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "pass/profile",
         component: () => import("@/general/views/dashboard/pass/Profile.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -516,7 +523,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "dropin/list",
         component: () => import("@/general/views/dashboard/dropins/List.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -524,7 +531,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "dropin/create-drop-in",
         component: () => import("@/general/views/dashboard/dropins/CreateDropin.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -532,7 +539,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "pass/profile",
         component: () => import("@/general/views/dashboard/pass/Profile.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -540,7 +547,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "message",
         component: () => import("@/general/views/dashboard/message/Index.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription],
         }
       },
       {
@@ -548,7 +555,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "gym-manager",
         component: () => import("@/general/views/dashboard/gymManager/Index.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription, gymOwnerRole],
         }
       },
       {
@@ -556,18 +563,24 @@ export const routes: Array<RouteRecordRaw> = [
         path: "manager-profile/:id(\\d+)",
         component: () => import("@/general/views/dashboard/gymManager/ManagerProfile.vue"),
         meta: {
-          middleware: [gymOwner],
+          middleware: [gymOwnerSubscription, gymOwnerRole],
         }
       },
       {
         name: EntitiesEnum.DashboardManageGyms,
         path: "gyms",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.DashboardGymCreate,
         path: "gyms/create-new-gym",
         component: () => import("@/general/views/dashboard/gyms/CreateFacility.vue"),
+        meta: {
+          middleware: [gymOwnerRole],
+        }
       },
     ]
   },

@@ -157,7 +157,7 @@ import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { getFacilitySubscription } from "@/router/middleware/gymOwner";
+import { getFacilitySubscription } from "@/router/middleware/gymOwnerSubscription";
 
 const router = useRouter();
 const selected = "February";

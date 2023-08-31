@@ -778,6 +778,7 @@ export type Mutation = {
   updateFacility?: Maybe<Facility>;
   updateForgottenPassword: ForgotPasswordResponse;
   updatePassword: UpdatePasswordResponse;
+  managerPasswordSet: ManagerPasswordResponse;
   updateTrainerWorkout: Workout;
   updateUser: User;
   verifyEmail: AuthPayload;
@@ -1032,6 +1033,10 @@ export type MutationUpdateForgottenPasswordArgs = {
 
 export type MutationUpdatePasswordArgs = {
   input: UpdatePassword;
+};
+
+export type MutationManagerPasswordArgs = {
+  input: ManagerPassword;
 };
 
 
@@ -2769,6 +2774,18 @@ export type UpdatePasswordResponse = {
   status: Scalars['String'];
 };
 
+export type ManagerPassword = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+};
+
+export type ManagerPasswordResponse = {
+  __typename?: 'ManagerPasswordResponse';
+  message?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+};
+
 export type UpdateTrainerWorkoutInput = {
   body_parts?: InputMaybe<Array<Scalars['ID']>>;
   description?: InputMaybe<Scalars['String']>;
@@ -4395,6 +4412,14 @@ export const UpdatePasswordDocument = gql`
   }
 }
     `;
+export const ManagerPasswordSetDocument = gql`
+    mutation managerPasswordSet($input: ManagerPassword!) {
+  managerPasswordSet(input: $input) {
+    status
+    message
+  }
+}
+    `;
 export const UpdateUserDocument = gql`
     mutation updateUser($id: ID!, $input: UpdateUserInput!) {
   updateUser(id: $id, input: $input) {
@@ -5623,6 +5648,7 @@ export const UserDocument = gql`
     birth
     postal
     tax_id
+    role
     first_name
     last_name
     avatar

@@ -33,6 +33,7 @@ export enum EntitiesEnum {
   ForgotPasswordCheckEmail = "FORGOT_PASSWORD_CHECK_EMAIL",
   UpdateEmail = "UPDATE_EMAIL",
   PasswordReset = "PASSWORD_RESET",
+  ManagerPasswordSet = "MANAGER_PASSWORD_SET",
   Quizz = "QUIZZ",
   Facilities = "FACILITIES",
   Facility = "FACILITY",

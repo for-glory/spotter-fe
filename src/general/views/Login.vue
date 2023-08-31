@@ -27,6 +27,7 @@ import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
 import useVerified from "@/hooks/useVerified";
 import { Capacitor } from '@capacitor/core';
+import { setSettings } from "@/hooks/useSettings";
 
 let {
   mutate: login,
@@ -49,6 +50,9 @@ onDone(({ data, errors }) => {
   }
   
   setAuthItems(data.login);
+  if (data.login.user.role === "MANAGER") {
+    setSettings([{ isRoleSelected: true }]);
+  }
 
   const { verified } = useVerified();
   if (!verified) {
