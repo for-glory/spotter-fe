@@ -4,8 +4,12 @@
       <page-header back-btn @back="onBack" title="Create your Dailys" />
     </template>
     <template #content>
-      <div class="content">
-        
+      <div class="content d-flex align-items-center justify-content-center">
+        <ion-button
+          expand="block"
+        >
+          Create first Dailys
+        </ion-button>
       </div>
     </template>
   </base-layout>
@@ -34,72 +38,7 @@ import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
 const route = useRoute();
-const goToDashboard = () => {
-  // isConfirmedModalOpen.value = true;
-  eventForm.value?.clearStore();
-  router.push({ name: EntitiesEnum.DashboardOverview });
-};
 
-const isConfirmedModalOpen = ref(false);
-
-const discardModalClosed = (approved: boolean) => {
-  isConfirmedModalOpen.value = false;
-  if (approved) {
-    eventForm.value?.clearStore();
-    // router.push({ name: EntitiesEnum.Dashboard });
-  }
-};
-
-const {
-  mutate: createEventMutate,
-  loading: eventOnCreation,
-  onDone: eventCreated,
-} = useMutation(CreateEventDocument);
-
-const createEvent = (input: CreateEventInput, type: string) => {
-  console.log({ input });
-  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } })
-  .then(() => {
-    eventForm.value?.clearStore();
-    if(type === 'next') {
-      router.push({ name: EntitiesEnum.CreateWorkout });
-    } else {
-      router.push({
-        name: EntitiesEnum.CreateFacilitySuccess,
-      });
-    }
-  });
-};
-
-const goToWorkout = () => {
-  eventForm.value?.clearStore();
-  router.push({ name: EntitiesEnum.CreateWorkout });
-};
-
-const eventForm = ref<typeof EventForm | null>(null);
-
-eventCreated(() => {
-  showSuccessToast();
-  eventForm.value?.clearStore();
-  // router.go(-1);
-  router.push({
-      name: EntitiesEnum.CreateWorkout,
-    });
-});
-
-const showSuccessToast = async () => {
-  const toast = await toastController.create({
-    message: "Succesfully created the event",
-    duration: 2000,
-    icon: "assets/icon/success.svg",
-    cssClass: "success-toast",
-  });
-  return toast.present();
-};
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
-};
 </script>
 
 <style scoped lang="scss">
@@ -118,6 +57,17 @@ const onLogout = () => {
 }
 .content {
   padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  width: 100%;
+  height: 100%;
+
+  ion-button {
+    color: #262626;
+    font: 600 16px/1 Lato;
+    height: 40px;
+    
+    --border-radius: 8px;
+    width: 70%;
+  }
 }
 
 .top-buttons {
