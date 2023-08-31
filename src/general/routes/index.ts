@@ -400,6 +400,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.CreateFacilitySuccess,
+    path: "/facility-profile-success",
+    component: () => import("@/general/views/SuccessFacilityProfile.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     path: "/dashboard/",
     component: () => import("@/general/views/dashboard/Index.vue"),
     meta: {

@@ -197,5 +197,6 @@ export enum EntitiesEnum {
   ManagersOverview = "MANAGERS_OVERVIEW",
   AddManager = "ADD_MANAGER",
   ManagerProfile = "MANAGER_PROFILE",
-  CreateItem = "CREATE_ITEM"
+  CreateItem = "CREATE_ITEM",
+  CreateFacilitySuccess = "CREATE_FACILITY_SUCCESS",
 }

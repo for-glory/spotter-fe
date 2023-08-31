@@ -1,5 +1,5 @@
 <template>
-  <base-layout>
+  <base-layout hideNavigationMenu>
     <template #header>
       <page-header back-btn @back="onBack" title="Create your gym profile" />
     </template>
@@ -14,7 +14,7 @@
             save-button-text="Save and Exit"
             next-button-text="Next"
             next-button
-            @submit="createNewFacility"
+            @submit="onSubmit"
           />
         </div>
       </div>
@@ -78,11 +78,12 @@ const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
 );
 
-const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
+const onSubmit = (data: newFacilityStoreTypes, mode: string) => {
   const { registration_code } = JSON.parse(
     localStorage.getItem("organization") || "{}"
   );
   actionAfterSiubmit.value = mode;
+  console.log(data.address);
   createFacility({
     input: {
       name: data.title,
@@ -124,7 +125,7 @@ updatedSubscription(() => {
   updateSettings();
   if (actionAfterSiubmit.value === "exit") {
     router.push({
-      name: EntitiesEnum.DashboardOverview,
+      name: EntitiesEnum.CreateFacilitySuccess,
     });
   }
   else if(actionAfterSiubmit.value === "create_event") {
