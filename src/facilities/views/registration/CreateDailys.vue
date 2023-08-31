@@ -88,6 +88,10 @@
   <discard-changes
     :is-open="isConfirmedModalOpen"
     @close="discardModalClosed"
+    title="Do you want to discard changes?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Discard changes"
   />
 </template>
 
@@ -104,7 +108,12 @@ import DiscardChanges from "@/general/components/modals/confirmations/DiscardCha
 import { useRouter, useRoute } from "vue-router";
 import { ref, computed, onMounted, watch } from "vue";
 import { toastController } from "@ionic/vue";
-import { CreateEventDocument, CreateEventInput, FilePreloadDocument } from "@/generated/graphql";
+import {
+  FilePreloadDocument,
+  CreateGymWorkoutDocument,
+  CreateGymWorkoutInput,
+  WorkoutVideosInput,
+} from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
@@ -147,6 +156,8 @@ const muscleTypesValue = computed(() =>
 );
 const workoutType = computed(() => store.workoutType?.name || "");
 const exerciseDescription = ref<string>("");
+
+const isConfirmedModalOpen = ref(false);
 
 onMounted(() => {
   console.log(step.value)
@@ -303,6 +314,9 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   },
 });
 
+const { mutate: createWorkout, loading: createWorkoutLoading } =
+  useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
+
 // video uploading ----->
 const onHandleSelect = (pathName: string) => {
   router.push({ name: pathName });
@@ -310,18 +324,27 @@ const onHandleSelect = (pathName: string) => {
 
 const onSave = () => {
   console.log("save");
+  router.push({ name: EntitiesEnum.CreateFacilitySuccess });
 }
 
 const onBack = () => {
   if (step.value === 'upload') {
     router.go(-1);
   } else {
+    isConfirmedModalOpen.value = true;
+  }
+};
+
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
     router.push({
       name: router?.currentRoute?.value?.name,
       params: { step: 'upload' },
     });
   }
 };
+
 </script>
 
 <style scoped lang="scss">
