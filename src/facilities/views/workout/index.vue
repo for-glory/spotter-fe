@@ -10,31 +10,22 @@
           <img src="assets/backgrounds/Banner_3.png" alt="">
         </div>
       </div>
-      <div class="workout-list" v-if="!(recommendedLoading ||
-            recommendedByTypeLoading ||
-            recommendedByBodyLoading) && recommendedWorkouts.length">
-        <div class="d-flex justify-content-between workout-list__top">
-          <div class="filter-tabs d-flex align-items-center justify-content-between">
+      <div class="workout-list" v-if="viewMode === 'list'">
+        <div class="d-flex justify-content-around workout-list__top">
+          <div class="filter-tabs d-flex align-items-center justify-content-center">
             <ion-button 
-              :fill="filter === 'all' ? 'solid' : 'outline'"
-              :color="filter === 'all' ? '' : 'medium'"
-              @click="handleWorkoutFilter('all')"
+              :fill="tab === 'analytics' ? 'solid' : 'outline'"
+              :color="tab === 'analytics' ? '' : 'medium'"
+              @click="setTab('analytics')"
             >
-              All
+              Analytics
             </ion-button>
             <ion-button
-              :fill="filter === 'most' ? 'solid' : 'outline'"
-              :color="filter === 'most' ? '' : 'medium'"
-              @click="handleWorkoutFilter('most')"
+              :fill="tab === 'dailys' ? 'solid' : 'outline'"
+              :color="tab === 'dailys' ? '' : 'medium'"
+              @click="setTab('dailys')"
             >
-              Most puchased
-            </ion-button>
-            <ion-button
-              :fill="filter === 'level' ? 'solid' : 'outline'"
-              :color="filter === 'level' ? '' : 'medium'"
-              @click="handleWorkoutFilter('level')"
-            >
-              Workout Level
+              Dailys
             </ion-button>
           </div>
         </div>
@@ -44,18 +35,14 @@
       <div
         class="ion-padding-horizontal height-100"
       >
-        <ion-spinner
-          v-if="
-            recommendedLoading ||
-            recommendedByTypeLoading ||
-            recommendedByBodyLoading
-          "
+        <!-- <ion-spinner
+          v-if=""
           name="lines"
           class="spinner"
-        />
+        /> -->
         <div
           class="empty-section"
-          v-else-if="!recommendedWorkouts.length"
+          v-if="viewMode === 'create'"
         >
           <empty-block
             title="Library Empty"
@@ -66,48 +53,11 @@
           />
         </div>
         <div class="" v-else>
-          <div v-if="filter === 'all'">
-            <ion-spinner
-              v-if="
-                recommendedLoading ||
-                recommendedByTypeLoading ||
-                recommendedByBodyLoading
-              "
-              name="lines"
-              class="spinner"
-            />
-            <ion-grid v-else>
-              <ion-row>
-                <ion-col size="12" size-md="4">
-                  <workouts-swiper
-                    title="Popular"
-                    :workouts="recommendedWorkouts"
-                    queryType="recommended"
-                  />
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12" size-md="4">
-                  <workouts-swiper
-                    title="Workout level"
-                    :workouts="recommendedWorkoutsByType"
-                    queryType="recommendedByType"
-                  />
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12" size-md="4">
-                  <workouts-swiper
-                    title="Muscle group"
-                    :workouts="recommendedWorkoutsByBody"
-                    queryType="recommendedByBodyParts"
-                  />
-                </ion-col>
-              </ion-row>
-            </ion-grid>
+          <div v-if="tab === 'analytics'">
+
           </div>
-          <div v-else-if="filter === 'most'">
-            <ion-grid>
+          <div v-else>
+            <!-- <ion-grid>
               <ion-row>
                 <ion-col size="12" size-md="4" v-for="workout in recommendedWorkouts" :key="workout.id">
                   <workout-item
@@ -126,29 +76,8 @@
                 </ion-col>
               </ion-row>
             </ion-grid>
+            <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create Dailys</ion-button> -->
           </div>
-          <div v-else>
-            <ion-grid>
-              <ion-row>
-                <ion-col size="12" size-md="4" v-for="workout in recommendedWorkoutsByType" :key="workout.id">
-                  <workout-item
-                    :duration="workout.duration"
-                    :title="workout.title || ''"
-                    :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
-                    :type="workout.type?.name || ''"
-                    :trainer="
-                      `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
-                      ''
-                    "
-                    :share="true"
-                    :hide="true"
-                    :hidden="false"
-                  />
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </div>
-          <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create workout plan</ion-button>
         </div>
       </div>
     </template>
@@ -183,8 +112,11 @@ import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 
+// remove this after connecting api
+const viewMode = 'list';
+
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
-const filter = ref<string>('all');
+const tab = ref<string>('analytics');
 
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
@@ -192,72 +124,10 @@ const currentFacility = useFacilityStore();
 
 const router = useRouter();
 
-const handleWorkoutFilter = (workoutT: string) => {
-		filter.value = workoutT;
+const setTab = (workoutT: string) => {
+		tab.value = workoutT;
 }
 
-
-//////////////////////////////////////////////////////
-const { result: recommendedResult, loading: recommendedLoading } = useQuery(
-  RecommendedWorkoutsDocument,
-  {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const recommendedWorkouts = computed(
-  () => 
-    recommendedResult.value?.recommendedWorkouts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
-
-const {
-  result: recommendedByBodyPartsResult,
-  loading: recommendedByBodyLoading,
-} = useQuery(
-  RecommendedWorkoutsByBodyPartsDocument,
-  {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const recommendedWorkoutsByBody = computed(
-  () =>
-    recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
-
-const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
-  useQuery(
-    RecommendedWorkoutsByTypeDocument,
-    {
-      page: 1,
-      first: 1000,
-      facility_id: currentFacility.facility?.id,
-    },
-    {
-      fetchPolicy: "no-cache",
-    }
-  );
-
-const recommendedWorkoutsByType = computed(
-  () =>
-    recommendedByTypeResult.value?.recommendedWorkoutsByType?.data.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
 </script>
 
 <style scoped lang="scss">
@@ -289,10 +159,12 @@ const recommendedWorkoutsByType = computed(
 }
 .workout-list {
 	background-color: var(--gray-700);
+  border-radius: 8px;
+  margin-top: 16px;
 
   &__top {
     margin-bottom: 16px;
-    padding: 8px 24px;
+    padding: 8px 48px;
   }
 }
 .banner {
@@ -332,6 +204,7 @@ const recommendedWorkoutsByType = computed(
 }
 .filter-tabs {
   width: 100%;
+  gap: 12px;
   
   ion-button {
     --border-radius: 100px;
