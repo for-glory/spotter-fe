@@ -82,16 +82,16 @@ export const navigationMenu: NavigationMenu = {
       category: "/overview",
     },
     {
+      name: EntitiesEnum.FacilityWorkout,
+      label: "Dailys",
+      icon: "assets/icon/daily.svg",
+      category: "/dailys",
+    },
+    {
       name: EntitiesEnum.FacilitiesEvents,
       label: "Events",
       icon: "assets/icon/events.svg",
       category: "/events",
-    },
-    {
-      name: EntitiesEnum.FacilityPassList,
-      label: "Gym Pass",
-      icon: "assets/icon/Pass.svg",
-      category: "/facilities/pass",
     },
     {
       name: EntitiesEnum.FacilityDropins,
@@ -100,16 +100,16 @@ export const navigationMenu: NavigationMenu = {
       category: "/facilities/dropins",
     },
     {
-      name: EntitiesEnum.FacilityWorkout,
-      label: "Dailys",
+      name: EntitiesEnum.FacilityPassList,
+      label: "Gym Pass",
       icon: "assets/icon/gym-user-icon.svg",
-      category: "/dailys",
+      category: "/facilities/pass",
     },
-    {
-      name: EntitiesEnum.Profile,
-      label: "Profile",
-      icon: "assets/icon/Setting.svg",
-      category: "/profile",
-    },
+    // {
+    //   name: EntitiesEnum.Profile,
+    //   label: "Profile",
+    //   icon: "assets/icon/Setting.svg",
+    //   category: "/profile",
+    // },
   ],
 };

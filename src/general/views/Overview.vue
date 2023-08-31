@@ -3,7 +3,7 @@
     <template #header>
       <page-header title="Overview">
         <template #avatar-field>
-          <ion-avatar v-if="!loadingUser || !loadingDashboarData" class="header__photo" @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()">
+          <ion-avatar v-if="!loadingUser || !loadingDashboarData" class="header__photo" @click="openSettings">
             <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
             <template v-else>
               {{ facilityName?.charAt(0) }}
@@ -287,6 +287,12 @@ const {
 const onDeleteProfileConfirmed = () => {
   deleteProfile();
   hideDeleteConfirmationModal();
+};
+
+const openSettings = () => {
+  router.push({
+    name: EntitiesEnum.Profile,
+  });
 };
 
 profileDeleted(() => {
