@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Create workout plan" />
+      <page-header back-btn @back="onBack" title="Post Dailys" />
     </template>
     <template #content>
       <div class="content">
