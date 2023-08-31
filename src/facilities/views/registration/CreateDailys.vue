@@ -17,10 +17,7 @@
       </div>
       <div v-else class="content">
         <div class="form-row" id="video">
-          <span class="video__metadata">
-            {{ videoPath }}
-            <ion-text color="medium">({{ videoSize }})</ion-text>
-          </span>
+          <video :src="videoPath" controls autoplay muted style="max-width: 100%;"></video>
         </div>
         <div class="form-row">
           <base-input
@@ -142,7 +139,7 @@ const muscleTypesValue = computed(() =>
     : store.workoutMuscleTypes[0]?.label || ""
 );
 const workoutType = computed(() => store.workoutType?.name || "");
-const exerciseDescription = computed(() => store.exercises.description);
+const exerciseDescription = ref<string>("");
 
 onMounted(() => {
   console.log(step.value)
@@ -151,6 +148,9 @@ onMounted(() => {
   }
   if (store.workoutPrice) {
     priceValue.value = store.workoutPrice.toString();
+  }
+  if(store.exercises?.description) {
+    exerciseDescription.value = store.exercises?.description;
   }
 });
 
@@ -164,6 +164,15 @@ watch(
   () => titleValue.value,
   (newVal: string) => {
     store.setValue("workoutTitle", newVal);
+  }
+);
+watch(
+  () => exerciseDescription.value,
+  (newVal: string) => {
+    store.setExercise({
+      ... store.exercises,
+      description: newVal,
+    });
   }
 );
 
@@ -187,6 +196,7 @@ const previewPath = ref<string>("");
 const videoPath = store.exercises?.videoPath;
 const videoInfo = { name: store.exercises?.videoName, size: store.exercises?.videoSize };
 const previewOnLoading = ref<boolean>(false);
+const videoName = store.exercises?.videoName;
 
 const bytesToSize = (bytes: number): string => {
   if (bytes == 0) return "0 Bytes";
@@ -216,10 +226,6 @@ const getVideoDuration = async (file: File): Promise<number> => {
 };
 
 const uploadVideo = async () => {
-  router.push({
-    name: router?.currentRoute?.value?.name,
-    params: { step: 'create' },
-  });
   try {
     log.value.push('isCapacitor:  ', isPlatform('capacitor'));
     const input: HTMLInputElement = document.createElement("input");
@@ -245,6 +251,10 @@ const uploadVideo = async () => {
       log.value.push({fileName});
       log.value.push({fileSize});
       videoOnLoading.value = true;
+      router.push({
+        name: router?.currentRoute?.value?.name,
+        params: { step: 'create' },
+      });
       await filePreload({ file })
         .then((res) => {
           path.value = res?.data.filePreload.path;

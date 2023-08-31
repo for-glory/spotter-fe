@@ -54,10 +54,11 @@ import RadioGroup from "@/general/components/blocks/RadioGroup.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { EntitiesEnum } from "@/const/entities";
+import { useDailysStore } from "@/general/stores/create-dailys";
 
 const router = useRouter();
 
-const store = useWorkoutsStore();
+const store = useDailysStore();
 const { workoutType } = store;
 
 const { result, loading } = useQuery<WorkoutTypesQuery>(WorkoutTypesDocument, {

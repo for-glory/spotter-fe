@@ -4,7 +4,7 @@ import { ExerciseType, workoutsStoreTypes } from "@/ts/types/store";
 import { defineStore } from "pinia";
 
 export const useDailysStore = defineStore("dailys", {
-  state: (): workoutsStoreTypes => {
+  state: (): any => {
     return {
       workoutTitle: "",
       workoutType: null,
@@ -34,15 +34,11 @@ export const useDailysStore = defineStore("dailys", {
     setExercise(payload: any) {
       this.exercises = { ...payload };
     },
-    editExercise(id: string, payload: ExerciseType) {
-      this.exercises[id] = payload;
+    editExercise(payload: any) {
+      this.exercises = payload;
     },
     setMedia() {
       this.media = Object.values(this.exercises);
-    },
-    removeExercise(id: string) {
-      this.media = this.media.filter((item) => item.id !== id);
-      delete this.exercises[id];
     },
     clearState() {
       this.workoutTitle = "";

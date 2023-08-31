@@ -49,10 +49,11 @@ import { EntitiesEnum } from "@/const/entities";
 import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
 import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
+import { useDailysStore } from "@/general/stores/create-dailys";
 
 const router = useRouter();
 
-const store = useWorkoutsStore();
+const store = useDailysStore();
 
 const { result, loading } = useQuery<BodyPartsQuery>(BodyPartsDocument, {
   first: 100,
