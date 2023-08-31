@@ -1,13 +1,6 @@
 <template>
   <div class="empty-block">
     <div>
-      <div class="empty-block__img">
-        <ion-icon :src="icon" />
-      </div>
-      <ion-title class="empty-block__title">{{ title }}</ion-title>
-      <ion-text color="medium" class="empty-block__text">
-        {{ text }}
-      </ion-text>
       <ion-button
         class="button"
         expand="block"
@@ -17,6 +10,13 @@
       >
         {{ buttonText }}
       </ion-button>
+      <div class="empty-block__img">
+        <ion-icon :src="icon" />
+      </div>
+      <ion-title class="empty-block__title">{{ title }}</ion-title>
+      <ion-text color="medium" class="empty-block__text">
+        {{ text }}
+      </ion-text>
     </div>
   </div>
 </template>
@@ -33,12 +33,13 @@ withDefaults(
   defineProps<{
     title: string;
     text: string;
-    buttonText?: string;
+    buttonText: string;
     hideButton?: boolean;
     icon?: string;
   }>(),
   {
     icon: "assets/icon/shore-run.svg",
+    buttonText: "Create"
   }
 );
 </script>
@@ -59,6 +60,7 @@ withDefaults(
     font-size: 48px;
     text-align: center;
     margin-bottom: 24px;
+    margin-top: 32px;
     color: var(--gray-600);
   }
 
@@ -73,7 +75,6 @@ withDefaults(
   &__text {
     display: block;
     color: var(--ion-color-medium);
-    margin-bottom: 45px;
     font-weight: 300;
     font-size: 14px;
   }

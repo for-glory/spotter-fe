@@ -42,7 +42,7 @@
     </template>
     <template #content>
       <div
-        class="ion-padding-horizontal"
+        class="ion-padding-horizontal height-100"
       >
         <ion-spinner
           v-if="
@@ -60,6 +60,8 @@
           <empty-block
             title="Library Empty"
             text="You have not uploaded any videos yet..."
+            buttonText="Create Dailys"
+            icon="assets/icon/daily.svg"
             @button-click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })"
           />
         </div>
@@ -279,7 +281,11 @@ const recommendedWorkoutsByType = computed(
 }
 
 .empty-section {
-	margin-top: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 .workout-list {
 	background-color: var(--gray-700);
@@ -338,6 +344,10 @@ const recommendedWorkoutsByType = computed(
     color: var(--grey-text);
   }
 }
+.height-100 {
+  height: 100%;
+}
+
 ion-button#create {
   width: 100%;
   font: 500 16px/1 Yantramanav;
