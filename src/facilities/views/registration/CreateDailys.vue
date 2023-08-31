@@ -4,9 +4,6 @@
       <page-header back-btn @back="onBack" :title="step === 'upload' ? 'Create your Dailys' : 'Post Dailys'" />
     </template>
     <template #content>
-      {{
-        log
-      }}
       <div v-if="step === 'upload'" class="content d-flex align-items-center justify-content-center">
         <ion-button
         @click="uploadVideo"
@@ -17,25 +14,16 @@
       </div>
       <div v-else class="content">
         <div class="form-row" id="video">
-          <video :src="videoPath" controls muted style="max-width: 100%; width: 100%;"></video>
+          <video :src="videoPath" controls autoplay muted style="max-width: 100%; width: 100%;"></video>
         </div>
         <div class="form-row">
           <base-input
             v-model:value="titleValue"
             :error-message="titleError"
-            placeholder="Enter title"
+            placeholder=""
             name="workoutTitle"
-            label="Title of workout"
+            label="Choose a name for daily"
             required
-          />
-        </div>
-
-        <div class="form-row">
-          <ion-label class="label"> Choose muscle group </ion-label>
-          <choose-block
-            title="Select muscle group"
-            :value="muscleTypesValue"
-            @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
           />
         </div>
 
@@ -46,7 +34,7 @@
             placeholder="Enter price"
             type="number"
             name="price"
-            label="Set the price for workout (USD $)"
+            label="Set price (USD $)"
             required
           />
         </div>
@@ -61,6 +49,15 @@
         </div>
 
         <div class="form-row">
+          <ion-label class="label"> Select fitness tags </ion-label>
+          <choose-block
+            title="Select tags"
+            :value="muscleTypesValue"
+            @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
+          />
+        </div>
+
+        <div class="form-row">
           <base-input
             auto-grow
             v-model:value="exerciseDescription"
@@ -70,6 +67,17 @@
             label="Create instruction tip for video"
             :rows="3"
           />
+        </div>
+        <div
+          class="actions-wrapper"
+          :class="{ 'actions-wrapper--fixed': footerFixed }"
+        >
+          <ion-button
+            expand="block"
+            @click="onSave"
+          >
+            Save and Exit
+          </ion-button>
         </div>
       </div>
       <div class="upload-video-progress" v-if="videoOnLoading">
@@ -125,7 +133,6 @@ import CircleProgress from "@/general/components/CircleProgress.vue";
 const router = useRouter();
 const route = useRoute();
 const percentLoaded = ref<number | undefined>();
-const log = ref<any[]>([]);
 const step = computed(() => route.params.step);
 let abort: any;
 
@@ -227,7 +234,6 @@ const getVideoDuration = async (file: File): Promise<number> => {
 
 const uploadVideo = async () => {
   try {
-    log.value.push('isCapacitor:  ', isPlatform('capacitor'));
     const input: HTMLInputElement = document.createElement("input");
     input.type = "file";
     input.accept = "video/mp4,video/x-m4v,video/*";
@@ -248,8 +254,6 @@ const uploadVideo = async () => {
 
       const fileSize = bytesToSize(file.size);
       const fileName = file.name;
-      log.value.push({fileName});
-      log.value.push({fileSize});
       videoOnLoading.value = true;
       router.push({
         name: router?.currentRoute?.value?.name,
@@ -273,7 +277,6 @@ const uploadVideo = async () => {
         .catch((error) => {
           abort();
           console.error(error);
-          log.value.push(error);
           path.value = "";
           videoOnLoading.value = false;
           percentLoaded.value = undefined;
@@ -305,6 +308,10 @@ const onHandleSelect = (pathName: string) => {
   router.push({ name: pathName });
 };
 
+const onSave = () => {
+  console.log("save");
+}
+
 const onBack = () => {
   if (step.value === 'upload') {
     router.go(-1);
@@ -318,10 +325,6 @@ const onBack = () => {
 </script>
 
 <style scoped lang="scss">
-.logo {
-  width: 220px;
-  min-width: 60px;
-}
 .title {
   padding: 0;
   font-size: 28px;
@@ -332,18 +335,9 @@ const onBack = () => {
   text-align: center;
 }
 .content {
-  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  padding: 24px 24px;
   width: 100%;
   height: 100%;
-
-  ion-button {
-    color: #262626;
-    font: 600 16px/1 Lato;
-    height: 40px;
-    
-    --border-radius: 8px;
-    width: 70%;
-  }
 }
 
 .top-buttons {
@@ -371,6 +365,25 @@ const onBack = () => {
     &:not(:first-child) {
       margin-top: 16px;
     }
+  }
+}
+.actions-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 36px;
+  gap: 16px;
+
+  &--fixed {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    position: fixed;
+    padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
+  }
+
+  ion-button {
+    width: 100%;
   }
 }
 </style>
