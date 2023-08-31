@@ -1,92 +1,83 @@
 <template>
   <div>
-    <div class="form-row">
-      <ion-label class="label"> Choose cover for workout </ion-label>
-      <photo-loader
-        :photo="store.workoutPreview"
-        @change="photoSelected"
-        :loading="filePreloadLoading"
-        :progress="percentLoaded"
-      />
-    </div>
+    <div class="content">
+      <div class="form-row">
+        <ion-label class="label">
+          Choose video
+        </ion-label>
+        <upload-video
+          :video="videoPath"
+          @delete="removeVideo"
+          @change="videoSelected"
+          :loading="videoOnLoading"
+          :video-size="videoSize"
+          :video-name="videoName"
+          :video-path="videoPath"
+          button-text="Upload or record a video"
+          :loadingPercent="percentLoaded"
+        />
+      </div>
+      <div class="form-row">
+        <base-input
+          v-model:value="titleValue"
+          :error-message="titleError"
+          placeholder=""
+          name="workoutTitle"
+          label="Choose a name for daily"
+          required
+        />
+      </div>
 
-    <div class="form-row">
-      <base-input
-        v-model:value="titleValue"
-        :error-message="titleError"
-        placeholder="Enter title"
-        name="workoutTitle"
-        label="Title of workout"
-        required
-      />
-    </div>
+      <div class="form-row">
+        <base-input
+          v-model:value="priceValue"
+          :error-message="priceError"
+          placeholder="Enter price"
+          type="number"
+          name="price"
+          label="Set price (USD $)"
+          required
+        />
+      </div>
 
-    <div class="form-row">
-      <ion-label class="label"> Choose muscle group </ion-label>
-      <choose-block
-        title="Select muscle group"
-        :value="muscleTypesValue"
-        @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
-      />
-    </div>
+      <div class="form-row">
+        <ion-label class="label"> Choose intensity level </ion-label>
+        <choose-block
+          title="Workout type"
+          :value="workoutType"
+          @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
+        />
+      </div>
 
-    <div class="form-row">
-      <base-input
-        v-model:value="priceValue"
-        :error-message="priceError"
-        placeholder="Enter price"
-        type="number"
-        name="price"
-        label="Set the price for workout (USD $)"
-        required
-      />
-    </div>
+      <div class="form-row">
+        <ion-label class="label"> Select fitness tags </ion-label>
+        <choose-block
+          title="Select tags"
+          :value="muscleTypesValue"
+          @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
+        />
+      </div>
 
-    <div class="form-row">
-      <ion-label class="label">
-        Choose the duration for the whole workout
-      </ion-label>
-      <wheel-picker
-        :options="durationOptions"
-        name="duration"
-        :values="[duration, 'min']"
-      >
-        <template #button>
-          <choose-block
-            title="Duration"
-            :value="duration ? `${duration} min` : ''"
-            @handle-click="() => $emit('openPicker', 'duration')"
-          />
-        </template>
-      </wheel-picker>
-    </div>
-
-    <div class="form-row">
-      <ion-label class="label"> Choose intensity level </ion-label>
-      <choose-block
-        title="Workout type"
-        :value="workoutType"
-        @handle-click="onHandleSelect(EntitiesEnum.WorkoutTypes)"
-      />
+      <div class="form-row">
+        <base-input
+          auto-grow
+          v-model:value="exerciseDescription"
+          :error-message="titleError"
+          placeholder="Enter instruction tips"
+          name="exerciseTitle"
+          label="Create instruction tip for video"
+          :rows="3"
+        />
+      </div>
     </div>
 
     <div class="holder-button">
       <ion-button
         expand="block"
-        class="secondary"
-        v-if="hasSkipButton"
-        @click="() => $emit('onSkip')"
-      >
-        {{ skipText }}
-      </ion-button>
-      <ion-button
-        @click="() => $emit('submit')"
-        type="submit"
-        expand="block"
+        @click="submit('finish')"
         :disabled="!isValidForm"
-        v-if="hasSubmitButton"
       >
-        {{submitButtonText}}
+        {{ exitButtonText }}
       </ion-button>
     </div>
   </div>
@@ -115,18 +106,37 @@ import { useMutation } from "@vue/apollo-composable";
 import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
+import UploadVideo from "@/general/components/UploadVideo.vue"; 
 import { clearAuthItems } from "@/router/middleware/auth";
-
-const percentLoaded = ref(0);
+import { useDailysStore } from "@/general/stores/create-dailys";
 
 const router = useRouter();
 
-const store = useWorkoutsStore();
+const store = useDailysStore();
+
+const videoPath = computed(() => store.exercises?.videoPath);
+const videoName = computed(() => store.exercises?.videoName);
+const videoSize = computed(() => store.exercises?.videoSize);
+const videoOnLoading = ref<boolean>(false);
+const path = ref<string>("");
+const percentLoaded = ref<number | undefined>();
 
 const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
   requiredFieldSchema
 );
+const { value: priceValue, errorMessage: priceError } = useField<string>(
+  "workoutPrice",
+  requiredFieldSchema
+);
+
+const workoutType = computed(() => store.workoutType?.name || "");
+const muscleTypesValue = computed(() =>
+  store.workoutMuscleTypes?.length > 1
+    ? store.workoutMuscleTypes?.length
+    : store.workoutMuscleTypes[0]?.label || ""
+);
+const exerciseDescription = ref<string>("");
 
 let abort: any;
 
@@ -147,41 +157,19 @@ const { mutate: filePreload, loading: filePreloadLoading } = useMutation(
   }
 );
 
-const duration = computed(() =>
-  store.workoutDuration ? store.workoutDuration : ""
-);
-
-const { value: priceValue, errorMessage: priceError } = useField<string>(
-  "workoutPrice",
-  requiredFieldSchema
-);
-
-const workoutType = computed(() => store.workoutType?.name || "");
-
-const muscleTypesValue = computed(() =>
-  store.workoutMuscleTypes?.length > 1
-    ? store.workoutMuscleTypes?.length
-    : store.workoutMuscleTypes[0]?.label || ""
-);
-
 const props = withDefaults(
   defineProps<{
     edit?: boolean;
     loading?: boolean;
-    submitButtonText?: string;
-    skipText?: string;
-    hasSkipButton?: boolean;
-    hasSubmitButton?: boolean;
+    exitButtonText?: string
   }>(),
   {
-    submitButtonText: "Upload & Finish",
+    exitButtonText: "Finish",
   }
 );
 
 const emits = defineEmits<{
   (e: "submit"): void;
-  (e: "onSkip"): void;
-  (e: "openPicker", name?: string): void;
 }>();
 
 onMounted(() => {
@@ -190,6 +178,9 @@ onMounted(() => {
   }
   if (store.workoutPrice) {
     priceValue.value = store.workoutPrice.toString();
+  }
+  if(store.exercises?.description) {
+    exerciseDescription.value = store.exercises?.description;
   }
 });
 
@@ -205,6 +196,15 @@ watch(
     store.setValue("workoutTitle", newVal);
   }
 );
+watch(
+  () => exerciseDescription.value,
+  (newVal: string) => {
+    store.setExercise({
+      ... store.exercises,
+      description: newVal,
+    });
+  }
+);
 
 const isValidForm = computed(
   () =>
@@ -213,8 +213,6 @@ const isValidForm = computed(
     !priceError.value &&
     priceValue.value &&
     store.workoutMuscleTypesIds?.length &&
-    store.workoutDuration &&
-    store.workoutPreview &&
     store.workoutType
 );
 
@@ -222,66 +220,51 @@ const onHandleSelect = (pathName: string) => {
   router.push({ name: pathName });
 };
 
-const photoSelected = (value: string) => {
-  if (!value?.length) {
-    removePhoto();
-    return;
-  }
-  const file = dataURItoFile(value, uuidv4());
-
-  filePreload({ file })
-    .then((res) => {
-      store.setValue(
-        "workoutPreview",
-        `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`
-      );
-      store.setValue("workoutPath", res?.data.filePreload.path);
-    })
-    .catch((error) => {
-      abort();
-      console.error(error);
-    });
-};
-
-const removePhoto = () => {
-  store.setValue("workoutPreview", "");
-  store.setValue("workoutPath", "");
-};
-
 const resetWorkout = () => {
   store.clearState();
 };
 
-const options = minutesDuration(10, 240, 10);
-const durationOptions: PickerOptions = {
-  columns: [
-    {
-      name: "duration",
-      options,
-    },
-    {
-      name: "minutes",
-      options: [
-        {
-          text: "MIN",
-          value: "min",
-        },
-      ],
-    },
-  ],
-  buttons: [
-    {
-      text: "Cancel",
-      role: "cancel",
-    },
-    {
-      text: "Choose duration",
-      handler: (value: PickerColumnOption) => {
-        store.setValue("workoutDuration", value?.duration?.value);
-      },
-    },
-  ],
+const videoSelected = async (
+  file: File,
+  size: string,
+  name: string
+): Promise<void> => {
+  videoOnLoading.value = true;
+  percentLoaded.value = 0;
+  console.log({file});
+  await filePreload({ file })
+    .then((res) => {
+      path.value = res?.data.filePreload.path;
+      videoOnLoading.value = false;
+      percentLoaded.value = undefined;
+      store.setExercise({
+        description: exerciseDescription.value,
+        videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
+        // previewUrl: previewUrl.value,
+        // previewPath: previewPath.value,
+        id: uuidv4(),
+        videoSize: size,
+        videoName: name,
+      });
+    })
+    .catch((error) => {
+      abort();
+      console.error(error);
+      path.value = "";
+      path.value = "";
+      videoOnLoading.value = false;
+      percentLoaded.value = undefined;
+    });
 };
+
+const removeVideo = () => {
+  store.setExercise({});
+}
+
+const submit = (type: string) => {
+  emits('submit');
+}
+
 </script>
 
 <style lang="scss">
@@ -297,8 +280,8 @@ const durationOptions: PickerOptions = {
   display: flex;
   gap: 16px;
 
-  .button {
-    margin: 0;
+  ion-button {
+    width: 100%;
   }
 }
 

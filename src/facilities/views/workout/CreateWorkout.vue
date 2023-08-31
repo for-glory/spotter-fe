@@ -7,20 +7,9 @@
       <div class="content">
         <workout-form 
           ref="workoutForm"
-          @open-picker="(e) => openPicker(e)"
+          exit-button-text="Finish"
+          @submit="createDailys"
         />
-        <ion-title class="sub-title" color="primary">
-          Upload Exercise
-        </ion-title>
-        <exercise-form 
-          ref="exerciseForm"
-          hasSubmitButton
-          submitButtonText="Add next exercise"
-          @open-picker="(e) => openPicker(e)"
-        />
-        <div class="holder-button">
-          <ion-button :disabled="!isValidForm" fill="outline">Finish workout</ion-button>
-        </div>
       </div>
     </template>
   </base-layout>
@@ -55,12 +44,13 @@ import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { useDailysStore } from "@/general/stores/create-dailys";
 
 const percentLoaded = ref(0);
 
 const router = useRouter();
 
-const store = useWorkoutsStore();
+const store = useDailysStore();
 const isConfirmationOpen = ref<boolean>(false);
 
 const { value: titleValue, errorMessage: titleError } = useField<string>(
@@ -152,11 +142,8 @@ const isValidForm = computed(
     store.workoutType
 );
 
-const handleSubmit = () => {
-  if (isValidForm.value) {
-    store.setMedia();
-    console.log({store});
-  }
+const createDailys = () => {
+  console.log("create dailys");
 };
 
 const onHandleSelect = (pathName: string) => {
@@ -170,22 +157,20 @@ const resetWorkout = () => {
 const discardModalClosed = (approved: boolean) => {
   isConfirmationOpen.value = false;
   if (approved) {
+    store.clearState();
     router.go(-1);
   }
 };
 
 const onBack = () => {
-  if (!titleError.value ||
-    titleValue.value ||
-    !priceError.value ||
-    priceValue.value ||
+  if (store.workoutTitle ||
+    store.workoutPrice ||
     store.workoutMuscleTypesIds?.length ||
-    store.workoutDuration ||
-    store.workoutPreview ||
     store.workoutType
   ) {
     isConfirmationOpen.value = true;
   } else {
+    store.clearState();
     router.go(-1);
   }
 };

@@ -52,7 +52,7 @@ export const useDailysStore = defineStore("dailys", {
       this.exercises = {};
       this.workoutMuscleTypes = [];
     },
-    setWorkout(payload: Workout) {
+    setWorkout(payload: any) {
       this.exercises = {};
       this.workoutTitle = payload.title || "";
       if (payload.type) this.workoutType = payload.type;
@@ -62,19 +62,15 @@ export const useDailysStore = defineStore("dailys", {
       if (payload.price) this.workoutPrice = payload.price;
       this.workoutPreview = payload.preview || "";
       this.workoutPath = payload.previewUrl || "";
-      payload.exercises?.forEach((exercise) =>
-        this.setExercise({
-          title: exercise?.title,
-          description: exercise?.description || "",
-          previewUrl: exercise?.previewUrl || "",
-          previewPath: exercise?.previewUrl || "",
-          id: exercise.id,
-          videoPath: exercise?.pathUrl,
-          path: exercise?.pathUrl,
-          videoSize: "",
-          videoName: "",
-        })
-      );
+      this.setExercise({
+        title: payload.exercises?.title,
+        description: payload.exercises?.description || "",
+        id: payload.exercises.id,
+        videoPath: payload.exercises?.pathUrl,
+        path: payload.exercises?.pathUrl,
+        videoSize: "",
+        videoName: "",
+      });
       this.setMedia();
     },
   },

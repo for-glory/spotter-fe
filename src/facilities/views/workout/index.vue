@@ -2,17 +2,17 @@
   <base-layout>
     <template #header>
       <div class="banner">
-        <ion-text class="banner__title">All workout videos are stored here</ion-text>
+        <ion-title class="banner__title">All dailys are stored here</ion-title>
         <ion-text class="banner__text">
           A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
         </ion-text>
         <div class="banner__background-image">
-          <img src="assets/backgrounds/training.png" alt="">
+          <img src="assets/backgrounds/Banner_3.png" alt="">
         </div>
       </div>
       <div class="workout-list" v-if="!(recommendedLoading ||
             recommendedByTypeLoading ||
-            recommendedByBodyLoading) || !recommendedWorkouts.length">
+            recommendedByBodyLoading) && recommendedWorkouts.length">
         <div class="d-flex justify-content-between workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-between">
             <ion-button 
@@ -299,9 +299,10 @@ const recommendedWorkoutsByType = computed(
   padding: 32px;
   min-height: 160px;
   width: 100%;
-  background: #19191B8a;
+  background: #19191B9a;
   position: relative;
   overflow: hidden;
+  border-radius: 12px;
 
   &__background-image {
     position: absolute;
@@ -317,6 +318,7 @@ const recommendedWorkoutsByType = computed(
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    margin-bottom: 12px;
   }
   &__text {
     color: #FFF;
