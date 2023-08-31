@@ -1,20 +1,11 @@
-import { SubscriptionUserDocument } from "@/generated/graphql";
+import { SubscriptionUserDocument, RoleEnum } from "@/generated/graphql";
 import { Middleware } from "@/ts/types/router";
 
 import initializeApollo from "@/apollo";
-import dayjs from "dayjs";
 import { EntitiesEnum } from "@/const/entities";
+import useRoles from "@/hooks/useRole";
 
-export const getToken = () => {
-  const accessToken = localStorage.getItem("access_token");
-  const expiresIn = localStorage.getItem("expires_in");
-
-  if (accessToken && dayjs().isBefore(expiresIn)) {
-    return accessToken;
-  }
-
-  return "";
-};
+const { role } = useRoles();
 
 export const getFacilitySubscription = () => {
   const apolloClient = initializeApollo();
@@ -37,8 +28,8 @@ export const setSelectedGym = (id: number) => {
   localStorage.setItem('selectedGym', id.toString());
 };
 
-const gymOwner: Middleware = async ({ next, router }) => {
-  if (localStorage.getItem("selectedGym")) {
+const gymOwnerSubscription: Middleware = async ({ next, router }) => {
+  if (localStorage.getItem("selectedGym") && role !== RoleEnum.Manager) {
     await getFacilitySubscription()
       .then((data) => {
 				console.log("data--->", data);
@@ -55,4 +46,4 @@ const gymOwner: Middleware = async ({ next, router }) => {
   return next();
 };
 
-export default gymOwner;
+export default gymOwnerSubscription;

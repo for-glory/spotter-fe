@@ -29,6 +29,7 @@ import {
 } from "vue";
 import {
   Query,
+  RoleEnum,
   UserDocument,
 } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
@@ -56,7 +57,13 @@ gotUser(({ data }) => {
 		store.setValue("email", data.user?.email??"");
 		store.setValue("avatarUrl", data.user?.avatarUrl??"");
 	}
-	facilities.value = result.value?.user?.owned_facilities;
+	console.log(data.user)
+	console.log(data.user?.role === RoleEnum.Manager)
+	if(data.user?.role === RoleEnum.Manager) {
+		facilities.value = result.value?.user?.facilities;
+	}
+	else facilities.value = result.value?.user?.owned_facilities;
+
   setIsLoading();
 });
 

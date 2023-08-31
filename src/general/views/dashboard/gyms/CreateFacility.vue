@@ -28,7 +28,7 @@ import {
 import { EntitiesEnum } from "@/const/entities";
 import { ref } from "vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import {setSelectedGym } from "@/router/middleware/gymOwner";
+import {setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const router = useRouter();

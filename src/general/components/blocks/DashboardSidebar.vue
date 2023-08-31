@@ -61,7 +61,7 @@
 					<ion-icon src="assets/icon/daily.svg" />
 					<ion-text>Dailys</ion-text>
 				</div>
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+				<div v-if="role === RoleEnum.FacilityOwner" :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
 					<ion-icon src="assets/icon/add-user.svg" />
 					<ion-text>Membership</ion-text>
 				</div>
@@ -70,7 +70,7 @@
 					<ion-text>Message</ion-text>
 				</div>
 			</div>
-			<div class="setting-menu">
+			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
 					<ion-text>Manage Gyms</ion-text>
@@ -116,7 +116,11 @@ import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { Capacitor } from '@capacitor/core';
-import {setSelectedGym } from "@/router/middleware/gymOwner";
+import {setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
+import useRoles from "@/hooks/useRole";
+import {
+  RoleEnum,
+} from "@/generated/graphql";
 
 const props = withDefaults(
   defineProps<{
@@ -127,6 +131,7 @@ const props = withDefaults(
   }
 );
 
+const { role } = useRoles();
 let isNative = Capacitor.isNativePlatform();
 
 const facilityStore = useFacilityStore();
