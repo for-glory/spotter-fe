@@ -62,8 +62,19 @@ const {
   onDone: eventCreated,
 } = useMutation(CreateEventDocument);
 
-const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
+const createEvent = (input: CreateEventInput, type: string) => {
+  console.log({ input });
+  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } })
+  .then(() => {
+    eventForm.value?.clearStore();
+    if(type === 'next') {
+      router.push({ name: EntitiesEnum.CreateWorkout });
+    } else {
+      router.push({
+        name: EntitiesEnum.CreateFacilitySuccess,
+      });
+    }
+  });
 };
 
 const goToWorkout = () => {
