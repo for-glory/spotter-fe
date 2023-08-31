@@ -1,17 +1,11 @@
 <template>
   <base-layout hideNavigationMenu>
     <template #header>
-      <page-header back-btn @back="onBack" title="Create Events" />
+      <page-header back-btn @back="onBack" title="Create your Dailys" />
     </template>
     <template #content>
       <div class="content">
-        <event-form
-          ref="eventForm"
-          save-button-text="Save and Exit"
-          next-button-text="Next"
-          next-button
-          @submit="createEvent"
-        />
+        
       </div>
     </template>
   </base-layout>
@@ -40,7 +34,6 @@ import { clearAuthItems } from "@/router/middleware/auth";
 
 const router = useRouter();
 const route = useRoute();
-const exitType = ref<string>('next');
 const goToDashboard = () => {
   // isConfirmedModalOpen.value = true;
   eventForm.value?.clearStore();
@@ -65,8 +58,22 @@ const {
 
 const createEvent = (input: CreateEventInput, type: string) => {
   console.log({ input });
-  exitType.value = type;
-  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
+  createEventMutate({ input: { ...input, facility_id: route.params.facility_id } })
+  .then(() => {
+    eventForm.value?.clearStore();
+    if(type === 'next') {
+      router.push({ name: EntitiesEnum.CreateWorkout });
+    } else {
+      router.push({
+        name: EntitiesEnum.CreateFacilitySuccess,
+      });
+    }
+  });
+};
+
+const goToWorkout = () => {
+  eventForm.value?.clearStore();
+  router.push({ name: EntitiesEnum.CreateWorkout });
 };
 
 const eventForm = ref<typeof EventForm | null>(null);
@@ -74,13 +81,10 @@ const eventForm = ref<typeof EventForm | null>(null);
 eventCreated(() => {
   showSuccessToast();
   eventForm.value?.clearStore();
-  if(exitType.value === 'next') {
-    router.push({ name: EntitiesEnum.CreateDailys });
-  } else {
-    router.push({
-      name: EntitiesEnum.CreateFacilitySuccess,
+  // router.go(-1);
+  router.push({
+      name: EntitiesEnum.CreateWorkout,
     });
-  }
 });
 
 const showSuccessToast = async () => {

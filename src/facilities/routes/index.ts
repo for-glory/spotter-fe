@@ -92,6 +92,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.CreateDailys,
+    path: "/register/create-dailys",
+    component: () =>
+      import("@/facilities/views/registration/CreateDailys.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileEditGym,
     path: "/profile/edit-gym",
     component: () => import("@/facilities/views/EditGym.vue"),
