@@ -7,6 +7,16 @@
       <template #content>
         <div class="page">
           <choose-block
+            title="Choose your gym location"
+            class="form-row__control"
+            @handle-click="chooseGymLocation"
+            :value="
+              selectedAddress
+                ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
+                : ''
+            "
+          />
+          <!-- <choose-block
             title="State"
             class="page__control"
             @handle-click="chooseState"
@@ -39,7 +49,7 @@
               maxlength="150"
               rows="3"
             />
-          </ion-item>
+          </ion-item> -->
         </div>
       </template>
       <template #footer>
@@ -72,7 +82,7 @@ import {
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
@@ -88,9 +98,9 @@ const states = ref<IState[]>(State.getStatesOfCountry(countryCode));
 const cities = ref<ICity[]>();
 
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
-const selectedState = ref<any>();
-const selectedCity = ref<any>();
-const selectedAddress = ref<NativeGeocoderResult>();
+const selectedState = computed(() => store.address.state);
+const selectedCity = computed(() => store.address.city);
+const selectedAddress = computed(() => store.address.address);
 const description = ref("");
 const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 
@@ -99,126 +109,12 @@ const onBack = () => {
   router.go(-1);
 };
 
-const chooseState = () => {
+const chooseGymLocation = () => {
   chooseLocationModal.value?.present({
-    type: EntitiesEnum.State,
-    title: "Select state",
-    selected: selectedState.value?.isoCode,
-    options: states.value.map((state) => {
-      return {
-        id: state.isoCode,
-        label: state.name,
-      };
-    }),
+    title: "Address",
   });
-};
+}
 
-const chooseCity = () => {
-  chooseLocationModal.value?.present({
-    type: EntitiesEnum.City,
-    title: "Select city",
-    selected: selectedCity.value?.name,
-    options: cities.value?.map((state) => {
-      return {
-        id: state.name,
-        label: state.name,
-      };
-    }),
-    state: selectedState.value
-  });
-};
-
-const chooseAddress = () => {
-  chooseLocationModal.value?.present({
-    type: EntitiesEnum.Address,
-    title: "Choose your address",
-    selected: selectedAddress.value?.latitude
-      ? {
-          lat: Number(selectedAddress.value?.latitude),
-          lng: Number(selectedAddress.value?.longitude),
-        }
-      : null,
-    state: selectedState.value,
-    city: selectedCity.value,
-  });
-};
-
-const addressSelected = async (
-  selected?: any | NativeGeocoderResult,
-  type?: EntitiesEnum
-) => {
-  if (!selected) return;
-  console.log(selected);
-  switch (type) {
-    case EntitiesEnum.State:
-      selectedState.value = { ...states.value?.find(
-        (state) => state.isoCode === selected.state.code
-      ), id: selected.state.id };
-      cities.value = City.getCitiesOfState(countryCode, selected.state.code);
-      if (selectedCity.value?.stateCode !== selectedState.value?.isoCode) {
-        selectedCity.value = undefined;
-      }
-      if (
-        selectedAddress.value?.administrativeArea !==
-        selectedState.value?.isoCode
-      ) {
-        selectedAddress.value = undefined;
-      }
-      break;
-
-    case EntitiesEnum.City:
-      selectedCity.value = { ...cities.value?.find(
-        (city) => city.name === selected.city.name
-      ), id: selected.city.id };
-      if (selectedCity.value?.name !== selectedAddress.value?.locality) {
-        selectedAddress.value = undefined;
-      }
-      break;
-
-    case EntitiesEnum.Address:
-      if ((selected as NativeGeocoderResult).countryCode === countryCode) {
-        selectedAddress.value = selected as NativeGeocoderResult;
-        if (
-          selectedAddress.value.administrativeArea !==
-          selectedState.value?.isoCode
-        ) {
-          addressSelected(
-            selectedAddress.value.administrativeArea,
-            EntitiesEnum.State
-          );
-          const toast = await toastController.create({
-            message: "The city and state have been changed",
-            duration: 2000,
-            icon: "assets/icon/info.svg",
-            cssClass: "warning-toast",
-          });
-          toast.present();
-        }
-
-        if (selectedAddress.value.locality !== selectedCity.value?.name) {
-          addressSelected(selectedAddress.value.locality, EntitiesEnum.City);
-          const toast = await toastController.create({
-            message: "The city has been changed",
-            duration: 2000,
-            icon: "assets/icon/info.svg",
-            cssClass: "warning-toast",
-          });
-          toast.present();
-        }
-      } else {
-        selectedAddress.value = undefined;
-        const toast = await toastController.create({
-          message:
-            "Selected address outside the United States. Make sure the address is correct.",
-          duration: 2000,
-          icon: "assets/icon/info.svg",
-          cssClass: "danger-toast",
-        });
-        toast.present();
-      }
-      break;
-  }
-};
 </script>
 
 <style scoped lang="scss">

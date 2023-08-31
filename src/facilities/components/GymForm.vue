@@ -42,7 +42,6 @@
         title="Choose your gym location"
         class="form-row__control"
         @handle-click="onChooseLocation"
-        :disabled="!selectedCity"
         :value="
           selectedAddress
             ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
