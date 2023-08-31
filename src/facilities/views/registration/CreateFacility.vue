@@ -117,7 +117,8 @@ facilityCreated((res) => {
       },
     });
   }
-  localStorage.setItem("first_facility", res?.data?.createFacility.id)
+  localStorage.setItem("first_facility", res?.data?.createFacility.id);
+  localStorage.setItem("selected_facility", res?.data?.createFacility.id);
 });
 
 updatedSubscription(() => {

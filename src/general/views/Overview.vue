@@ -86,7 +86,8 @@ import {
   UserDocument,
   DeleteProfileDocument,
   SubscriptionsTypeEnum,
-  FacilityDashboardWidgetDocument
+  FacilityDashboardWidgetDocument,
+  Facility
 } from "@/generated/graphql";
 import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
@@ -205,7 +206,14 @@ gotUser(({ data }) => {
       ? facilities.value[0].id
       : null;
 
-  facilityStore.setFacility(facilities.value[0]);
+  if(!localStorage.getItem("selected_facility")) {
+    facilityStore.setFacility(facilities.value?.at(0));
+    localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
+  } else {
+    activeFacilityId.value = localStorage.getItem("selected_facility");
+    console.log(activeFacilityId.value);
+    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
+  }
   refetch( { id: facilityStore.facility.id } );
 
   userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);

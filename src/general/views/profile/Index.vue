@@ -232,9 +232,10 @@ const facilities = computed(() => {
 const activeFacilityId = ref<string | null>(null);
 
 watch(
-  () => currentFacility.facility?.id,
+  () => activeFacilityId.value,
   (newVal) => {
-    activeFacilityId.value = currentFacility.facility?.id;
+    currentFacility.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
+    localStorage.setItem("selected_facility", activeFacilityId.value as string);
     router.push({
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
