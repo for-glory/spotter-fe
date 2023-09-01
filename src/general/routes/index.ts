@@ -301,6 +301,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.WorkoutView,
+    path: "/dailys/:id",
+    component: () => import("@/general/views/workout/View.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
     name: EntitiesEnum.CreateWorkout,
     path: "/dailys/create-workout",
     component: () => import("@/general/views/workout/CreateWorkout.vue"),

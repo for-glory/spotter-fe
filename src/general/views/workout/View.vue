@@ -1,101 +1,19 @@
 <template>
   <base-layout>
     <template #header>
-      <div class="banner">
-        <ion-title class="banner__title">All dailys are stored here</ion-title>
-        <ion-text class="banner__text">
-          A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
-        </ion-text>
-        <div class="banner__background-image">
-          <img src="assets/backgrounds/Banner_3.png" alt="">
-        </div>
-      </div>
-      <div class="workout-list" v-if="!(recentLoading) && recentDailys.length">
-        <div class="d-flex justify-content-around workout-list__top">
-          <div class="filter-tabs d-flex align-items-center justify-content-center">
-            <ion-button 
-              :fill="tab === 'analytics' ? 'solid' : 'outline'"
-              :color="tab === 'analytics' ? '' : 'medium'"
-              @click="setTab('analytics')"
-            >
-              Analytics
-            </ion-button>
-            <ion-button
-              :fill="tab === 'dailys' ? 'solid' : 'outline'"
-              :color="tab === 'dailys' ? '' : 'medium'"
-              @click="setTab('dailys')"
-            >
-              Dailys
-            </ion-button>
-          </div>
-        </div>
-      </div>
+      <page-header back-btn @back="onBack">
+        <template #custom-btn>
+          <ion-button @click="handleCreate" class="header-btn">
+            <ion-icon src="assets/icon/three-dot.svg" />
+          </ion-button>
+        </template>
+      </page-header>
     </template>
     <template #content>
-      <div
-        class="ion-padding-horizontal height-100 main-content"
-      >
-        <ion-spinner
-          v-if="recentLoading"
-          name="lines"
-          class="spinner"
-        />
-        <div
-          class="empty-section"
-          v-else-if="!recentDailys.length"
-        >
-          <empty-block
-            title="Library Empty"
-            text="You have not uploaded any videos yet..."
-            buttonText="Create Dailys"
-            icon="assets/icon/daily.svg"
-            @button-click="router.push({ name: EntitiesEnum.CreateWorkout })"
-          />
-        </div>
-        <div class="" v-else>
-          <div v-if="tab === 'analytics'">
-            <dailys-analytics />
-            <dailys-summary />
-            <dailys-performance />
-            <dailys-top />
-          </div>
-          <div v-else>
-            <div>
-              <swiper 
-                v-if="recentDailys.length"
-                free-mode
-                slidesPerView="auto"
-                :spaceBetween="16"
-                :slidesOffsetAfter="16"
-                :slidesOffsetBefore="16"
-                :modules="[FreeMode]"
-              >
-                <swiper-slide 
-                  v-for="daily in recentDailys" 
-                  :key="daily.id"
-                >
-                  <workout-item
-                    :duration="daily.duration"
-                    :title="daily.title || ''"
-                    :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
-                    :type="daily.type?.name || ''"
-                    :trainer="
-                      `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
-                      ''
-                    "
-                    :id="daily.id"
-                    :share="true"
-                    :hide="true"
-                    :hidden="false"
-                    @hide="hideDailysItem(daily.id)"
-                    @show="showDailysItem(daily.id)"
-                  />
-                </swiper-slide>
-              </swiper>
-            </div>
-            <ion-button id="create" @click="router.push({ name: EntitiesEnum.CreateWorkout })">Create Dailys</ion-button>
-          </div>
-        </div>
+      <div>
+        {{
+          dailysItemStore.workoutTitle
+        }}
       </div>
     </template>
   </base-layout>
@@ -128,14 +46,9 @@ import { FreeMode } from "swiper";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
-import WorkoutItem from "@/users/components/Workout.vue";
+import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
-import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
-import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
-import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
-import DailysTop from "@/general/components/dailys/DailysTop.vue";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('analytics');
@@ -143,92 +56,12 @@ const tab = ref<string>('analytics');
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-
+const dailysItemStore = useDailysItemStore();
 const router = useRouter();
 
-const setTab = (workoutT: string) => {
-		tab.value = workoutT;
-}
-
-const { result: recentResult, loading: recentLoading, refetch: refetchRecentDailys, onResult: gotRecentData } = useQuery(
-  WorkoutsByFacilityDocument,
-  {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-    orderByColumn: 'CREATED_AT',
-    order: 'ASC'
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-gotRecentData(({ data }) => {
-  console.log(data.facilityWorkouts.data);
-  console.log(recentResult.value?.facilityWorkouts?.data);
-});
-
-const recentDailys = computed(
-  () => recentResult.value?.facilityWorkouts?.data
-);
-
-const {
-  result: recommendedByBodyPartsResult,
-  loading: recommendedByBodyLoading,
-} = useQuery(
-  RecommendedWorkoutsByBodyPartsDocument,
-  {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const recommendedWorkoutsByBody = computed(
-  () =>
-    recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
-
-const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
-  useQuery(
-    RecommendedWorkoutsByTypeDocument,
-    {
-      page: 1,
-      first: 1000,
-      facility_id: currentFacility.facility?.id,
-    },
-    {
-      fetchPolicy: "no-cache",
-    }
-  );
-
-const recommendedWorkoutsByType = computed(
-  () =>
-    recommendedByTypeResult.value?.recommendedWorkoutsByType?.data.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
-
-const { mutate: showDailys, loading: dailysShowLoading } =
-  useMutation(ShowWorkoutDocument);
-const { mutate: hidedailys, loading: dailysHideLoading } =
-  useMutation(HideWorkoutDocument);
-const hideDailysItem = (id: number) => {
-  hidedailys({ id }).then(() => {
-    refetchRecentDailys();
-  });
-}
-const showDailysItem = (id: number) => {
-  showDailys({ id }).then(() => {
-    refetchRecentDailys();
-  });
-}
+const onBack = () => {
+  router.go(-1);
+};
 </script>
 
 <style scoped lang="scss">

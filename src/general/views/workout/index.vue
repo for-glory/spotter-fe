@@ -89,6 +89,7 @@
                     :hidden="false"
                     @hide="hideDailysItem(daily.id)"
                     @show="showDailysItem(daily.id)"
+                    @click="watchDailys(daily)"
                   />
                 </swiper-slide>
               </swiper>
@@ -128,6 +129,7 @@ import { FreeMode } from "swiper";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
 import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
@@ -143,6 +145,7 @@ const tab = ref<string>('analytics');
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
+const dailysItemStore = useDailysItemStore();
 
 const router = useRouter();
 
@@ -228,6 +231,22 @@ const showDailysItem = (id: number) => {
   showDailys({ id }).then(() => {
     refetchRecentDailys();
   });
+}
+
+const watchDailys = (daily: any) => {
+  console.log('********', {daily});
+  dailysItemStore.setWorkout({
+    title: daily.title,
+    type: daily.type,
+    duration: daily.duration,
+    preview: daily.preview,
+    previewUrl: daily.previewUrl,
+    trainer: {
+      first_name: daily.trainer.first_name,
+      last_name: daily.trainer.last_name,
+    },
+  });
+  router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 </script>
 
