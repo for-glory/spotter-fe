@@ -10,7 +10,7 @@
           <img src="assets/backgrounds/Banner_3.png" alt="">
         </div>
       </div>
-      <div class="workout-list" v-if="viewMode === 'list'">
+      <div class="workout-list" v-if="!(recentLoading) && recentDailys.length">
         <div class="d-flex justify-content-around workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-center">
             <ion-button 
@@ -33,16 +33,16 @@
     </template>
     <template #content>
       <div
-        class="ion-padding-horizontal height-100 content"
+        class="ion-padding-horizontal height-100 main-content"
       >
-        <!-- <ion-spinner
-          v-if=""
+        <ion-spinner
+          v-if="recentLoading"
           name="lines"
           class="spinner"
-        /> -->
+        />
         <div
           class="empty-section"
-          v-if="viewMode === 'create'"
+          v-else-if="!recentDailys.length"
         >
           <empty-block
             title="Library Empty"
@@ -60,26 +60,38 @@
             <dailys-top />
           </div>
           <div v-else>
-            <!-- <ion-grid>
-              <ion-row>
-                <ion-col size="12" size-md="4" v-for="workout in recommendedWorkouts" :key="workout.id">
+            <div>
+              <swiper 
+                v-if="recentDailys.length"
+                free-mode
+                slidesPerView="auto"
+                :spaceBetween="16"
+                :slidesOffsetAfter="16"
+                :slidesOffsetBefore="16"
+                :modules="[FreeMode]"
+              >
+                <swiper-slide 
+                  v-for="daily in recentDailys" 
+                  :key="daily.id"
+                >
                   <workout-item
-                    :duration="workout.duration"
-                    :title="workout.title || ''"
-                    :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
-                    :type="workout.type?.name || ''"
+                    :duration="daily.duration"
+                    :title="daily.title || ''"
+                    :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
+                    :type="daily.type?.name || ''"
                     :trainer="
-                      `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
+                      `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
                       ''
                     "
+                    :id="daily.id"
                     :share="true"
                     :hide="true"
                     :hidden="false"
                   />
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create Dailys</ion-button> -->
+                </swiper-slide>
+              </swiper>
+            </div>
+            <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create Dailys</ion-button>
           </div>
         </div>
       </div>
@@ -97,7 +109,7 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  RecommendedWorkoutsDocument,
+  WorkoutsByFacilityDocument,
   RecommendedWorkoutsByBodyPartsDocument,
   RecommendedWorkoutsByTypeDocument,
   WorkoutDocument,
@@ -107,6 +119,8 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { FreeMode } from "swiper";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
@@ -118,8 +132,6 @@ import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
 import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
 import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
 import DailysTop from "@/general/components/dailys/DailysTop.vue";
-// remove this after connecting api
-const viewMode = 'list';
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('analytics');
@@ -134,10 +146,75 @@ const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
 
+const { result: recentResult, loading: recentLoading, onResult: gotRecentData } = useQuery(
+  WorkoutsByFacilityDocument,
+  {
+    page: 1,
+    first: 1000,
+    facility_id: currentFacility.facility?.id,
+    orderByColumn: 'CREATED_AT',
+    order: 'ASC'
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+gotRecentData(({ data }) => {
+  console.log(data.facilityWorkouts.data);
+  console.log(recentResult.value?.facilityWorkouts?.data);
+});
+
+const recentDailys = computed(
+  () => recentResult.value?.facilityWorkouts?.data
+);
+
+const {
+  result: recommendedByBodyPartsResult,
+  loading: recommendedByBodyLoading,
+} = useQuery(
+  RecommendedWorkoutsByBodyPartsDocument,
+  {
+    page: 1,
+    first: 1000,
+    facility_id: currentFacility.facility?.id,
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+const recommendedWorkoutsByBody = computed(
+  () =>
+    recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data?.filter(
+      (workout: Workout) => !workout?.was_ordered_by_me
+    ) || []
+);
+
+const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
+  useQuery(
+    RecommendedWorkoutsByTypeDocument,
+    {
+      page: 1,
+      first: 1000,
+      facility_id: currentFacility.facility?.id,
+    },
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
+
+const recommendedWorkoutsByType = computed(
+  () =>
+    recommendedByTypeResult.value?.recommendedWorkoutsByType?.data.filter(
+      (workout: Workout) => !workout?.was_ordered_by_me
+    ) || []
+);
+
 </script>
 
 <style scoped lang="scss">
-.content {
+.main-content {
   overflow-y: scroll;
 }
 
@@ -231,6 +308,10 @@ const setTab = (workoutT: string) => {
 }
 .height-100 {
   height: 100%;
+}
+
+.item-list {
+  overflow-x: scroll;
 }
 
 ion-button#create {

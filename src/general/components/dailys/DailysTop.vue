@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content">
+  <div class="common container">
     <ion-title class="title font-bold font-20 color-white">Top 10 dailys</ion-title>
     <div>
       <div class="color-gray font-medium font-14 color-gray d-flex align-items-center">
@@ -100,9 +100,11 @@ const getWidth = (value: number) => {
   margin-bottom: 8px;
 }
 
-.main-content {
+.container {
   padding: 24px 0;
-  
+}
+
+.common {
   .w-70 {
     width: 70%;
   }

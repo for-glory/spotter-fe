@@ -5,7 +5,7 @@
     @click="emits('click')"
   >
     <div class="workout-item__photo">
-      <ion-img :src="pathUrl"></ion-img>
+      <!-- <ion-img :src="pathUrl"></ion-img> -->
     </div>
 
     <div class="workout-item__inner">
@@ -128,7 +128,8 @@ const onHideConfirmed = () => {
   emits("hide");
 };
 
-const shareWorkout = async () => {
+const shareWorkout = async (event: any) => {
+  event.preventDefault();
   await Share.share({
     title: props.title,
     url: `https://${process.env.VUE_APP_URL}/users/workouts/${props.id}`,
