@@ -200,4 +200,5 @@ export enum EntitiesEnum {
   CreateItem = "CREATE_ITEM",
   CreateFacilitySuccess = "CREATE_FACILITY_SUCCESS",
   CreateDailys = "CREATE_DAILYS",
+  WorkoutList = "WORKOUT_LIST",
 }

@@ -49,7 +49,7 @@
             text="You have not uploaded any videos yet..."
             buttonText="Create Dailys"
             icon="assets/icon/daily.svg"
-            @button-click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })"
+            @button-click="router.push({ name: EntitiesEnum.CreateWorkout })"
           />
         </div>
         <div class="" v-else>
@@ -93,7 +93,7 @@
                 </swiper-slide>
               </swiper>
             </div>
-            <ion-button id="create" @click="router.push({ name: EntitiesEnum.FacilityCreateWorkout })">Create Dailys</ion-button>
+            <ion-button id="create" @click="router.push({ name: EntitiesEnum.CreateWorkout })">Create Dailys</ion-button>
           </div>
         </div>
       </div>

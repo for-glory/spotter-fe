@@ -82,7 +82,7 @@ export const navigationMenu: NavigationMenu = {
       category: "/overview",
     },
     {
-      name: EntitiesEnum.FacilityWorkout,
+      name: EntitiesEnum.WorkoutList,
       label: "Dailys",
       icon: "assets/icon/daily.svg",
       category: "/dailys",
