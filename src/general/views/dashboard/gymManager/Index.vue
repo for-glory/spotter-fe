@@ -107,7 +107,7 @@ const { result, loading } = useQuery(GetManagersByFacilityDocument, {
 });
 
 const managers = computed(() => {
-  return result.value?.managers.data;
+  return result.value?.managers.data.filter(item => item.email_verified_at);
 });
 
 const router = useRouter();

@@ -584,7 +584,9 @@ export enum FeedbackEntityEnum {
   /** Facility */
   Facility = 'facility',
   /** User */
-  User = 'user'
+  User = 'user',
+  /** Workout */
+  Workout = 'workout'
 }
 
 export type FilePreloadResponse = {
@@ -5512,6 +5514,8 @@ export const RecommendedWorkoutsByTypeDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -6415,6 +6419,7 @@ export const GetManagersByFacilityDocument = gql`
       id
       email
       employment_type
+      email_verified_at
       score
       first_name
       last_name
