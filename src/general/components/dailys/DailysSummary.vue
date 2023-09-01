@@ -1,8 +1,47 @@
 <template>
   <div class="content">
     <ion-title class="title font-bold font-20 color-white">Dailys Summary</ion-title>
-    <div>
-
+    <div class="d-flex justify-content-between">
+      <div class="d-flex-col gap-24">
+        <div class="d-flex-col gap-4">
+          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+            Views
+            <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
+          </ion-text>
+          <ion-text class="font-semibold font-18 color-white">
+            {{ "2,231" }}
+          </ion-text>
+        </div>
+        <div class="d-flex-col gap-4">
+          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+            Subscribers
+            <ion-icon src="assets/icon/add-user.svg" class="normal-icon"></ion-icon>
+          </ion-text>
+          <ion-text class="font-semibold font-18 color-white">
+            {{ 389 }}
+          </ion-text>
+        </div>
+      </div>
+      <div class="d-flex-col gap-24">
+        <div class="d-flex-col gap-4">
+          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+            Views per daily
+            <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
+          </ion-text>
+          <ion-text class="font-semibold font-18 color-white">
+            {{ 300 }}
+          </ion-text>
+        </div>
+        <div class="d-flex-col gap-4">
+          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+            Total Revenue 
+            <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
+          </ion-text>
+          <ion-text class="font-semibold font-18 color-white">
+            {{ "389,234.98" }}
+          </ion-text>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +64,12 @@ const props = defineProps<{
   padding: 0;
   margin-bottom: 8px;
 }
+.normal-icon {
+  width: 24px;
+  height: 24px;
+  color: #E1DBC5;
+}
+
 .content {
   margin: 24px 0;
 
