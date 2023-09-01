@@ -108,7 +108,7 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import UploadVideo from "@/general/components/UploadVideo.vue"; 
 import { clearAuthItems } from "@/router/middleware/auth";
-import { useDailysStore } from "@/general/stores/create-dailys";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 
 const router = useRouter();
 

@@ -37,7 +37,7 @@ import RadioGroup from "@/general/components/blocks/RadioGroup.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { EntitiesEnum } from "@/const/entities";
-import { useDailysStore } from "@/general/stores/create-dailys";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 
 const router = useRouter();
 

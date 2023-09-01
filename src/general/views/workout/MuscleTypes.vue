@@ -35,7 +35,7 @@ import { EntitiesEnum } from "@/const/entities";
 import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
-import { useDailysStore } from "@/general/stores/create-dailys";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 
 const router = useRouter();
 

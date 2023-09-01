@@ -44,7 +44,7 @@ import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
-import { useDailysStore } from "@/general/stores/create-dailys";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 
 const percentLoaded = ref(0);
 

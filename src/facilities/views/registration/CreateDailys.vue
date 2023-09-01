@@ -133,7 +133,7 @@ import { dataURItoFile } from "@/utils/fileUtils";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime";
 import { dataURItoVideo } from "@/utils/videoUtils";
-import { useDailysStore } from "@/general/stores/create-dailys";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 import UploadVideo from "@/general/components/UploadVideo.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
