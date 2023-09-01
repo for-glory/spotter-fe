@@ -55,6 +55,8 @@
         <div class="" v-else>
           <div v-if="tab === 'analytics'">
             <dailys-analytics />
+            <dailys-summary />
+            <dailys-performance />
           </div>
           <div v-else>
             <!-- <ion-grid>
@@ -112,6 +114,8 @@ import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
+import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
+import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
 
 // remove this after connecting api
 const viewMode = 'list';
