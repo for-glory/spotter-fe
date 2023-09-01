@@ -4,9 +4,9 @@
 		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
 	>
     <div class="banner">
-      <ion-title class="banner__title">Manage events for your Gym facility here</ion-title>
+      <ion-title class="banner__title">Create events for clients and trainers</ion-title>
       <ion-text class="banner__text">
-        Create, Edit, Manage Status, Reservations and Entry fees
+        Your hub for creating memorable gatherings. Effortlessly set up events, and easily track registrations to ensure a seamless experience.
       </ion-text>
       <div class="banner__background-image">
         <img src="assets/backgrounds/banner1.jpeg" alt="">
@@ -15,10 +15,13 @@
 		<div class="event-list">
 			<div class="d-flex justify-content-between event-list__top">
 				<div>
-					<ion-button class="button-rounded" :fill="isOngoing?'solid':'outline'" @click="handleEventType('ongoing')">
+					<ion-button class="button-rounded filter-btn" :fill="filter === 'all' ? 'solid':'outline'" @click="handleEventType('all')">
+						All
+					</ion-button>
+					<ion-button class="button-rounded filter-btn" :fill="filter === 'ongoing' ? 'solid':'outline'" @click="handleEventType('ongoing')">
 						Ongoing
 					</ion-button>
-					<ion-button class="button-rounded" :fill="!isOngoing?'solid':'outline'" @click="handleEventType('finished')">
+					<ion-button class="button-rounded filter-btn" :fill="filter === 'finished' ? 'solid':'outline'" @click="handleEventType('finished')">
 						Finished
 					</ion-button>
 				</div>
@@ -105,7 +108,7 @@ import useRoles from "@/hooks/useRole";
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
-const isOngoing = ref<boolean>(true);
+const filter = ref<string>('all');
 
 const { id: myId } = useId();
 const currentFacility = useFacilityStore();
@@ -145,7 +148,10 @@ const {
 
 const allEvents = ref([]);
 const events = computed(() => {
-  return allEvents.value.filter(ev => ev.status === isOngoing.value);
+  return allEvents.value.filter(ev => {
+    if(filter.value === 'all') return true;
+    return ev.status === filter.value
+  });
 });
 
 gotEvents((response) => {
@@ -153,7 +159,7 @@ gotEvents((response) => {
   response.data?.events?.data.map(item => {
     allEvents.value.push({
       ...item,
-      status: dayjs().isBefore(item.end_date)
+      status: dayjs().isBefore(item.end_date) ? 'ongoing' : 'finished'
     })
   });
 });
@@ -215,14 +221,7 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
 };
 
 const handleEventType = (evT: string) => {
-	if(evT === 'ongoing') {
-		isOngoing.value = true;
-    // events.value = allEvents.value.filter(ev => ev.status);
-	}
-	else if (evT === 'finished') {
-		isOngoing.value = false;
-    // events.value = allEvents.value.filter(ev => !ev.status);
-	}
+  filter.value = evT;
 }
 </script>
 
@@ -289,5 +288,9 @@ const handleEventType = (evT: string) => {
     line-height: 150%;
     letter-spacing: 0.1px;
   }
+}
+.filter-btn {
+  height: 36px;
+  margin: 0 8px;
 }
 </style>
