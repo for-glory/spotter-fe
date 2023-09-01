@@ -33,7 +33,7 @@
     </template>
     <template #content>
       <div
-        class="ion-padding-horizontal height-100"
+        class="ion-padding-horizontal height-100 content"
       >
         <!-- <ion-spinner
           v-if=""
@@ -136,6 +136,10 @@ const setTab = (workoutT: string) => {
 </script>
 
 <style scoped lang="scss">
+.content {
+  overflow-y: scroll;
+}
+
 .holder-content {
   padding-bottom: 16px;
 
