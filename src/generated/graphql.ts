@@ -5412,6 +5412,8 @@ export const RecommendedWorkoutsDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -5466,6 +5468,8 @@ export const RecommendedWorkoutsByBodyPartsDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -5931,7 +5935,7 @@ export const WorkoutsDocument = gql`
 }
     `;
 export const WorkoutsByFacilityDocument = gql`
-    query facilityWorkouts($dynamic_search: String!, $facility_id: ID, $first: Int, $page: Int, $type_id: ID, $has_body_parts: [ID!], $order: SortOrder!, $orderByColumn: QueryFacilityWorkoutsOrderByColumn!) {
+    query facilityWorkouts($dynamic_search: String, $facility_id: ID, $first: Int, $page: Int, $type_id: ID, $has_body_parts: [ID!], $order: SortOrder!, $orderByColumn: QueryFacilityWorkoutsOrderByColumn!) {
   facilityWorkouts(
     dynamic_search: $dynamic_search
     facility_id: $facility_id
@@ -5944,6 +5948,8 @@ export const WorkoutsByFacilityDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
