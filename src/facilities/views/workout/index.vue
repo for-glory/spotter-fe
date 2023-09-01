@@ -57,6 +57,7 @@
             <dailys-analytics />
             <dailys-summary />
             <dailys-performance />
+            <dailys-top />
           </div>
           <div v-else>
             <!-- <ion-grid>
@@ -116,7 +117,7 @@ import useRoles from "@/hooks/useRole";
 import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
 import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
 import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
-
+import DailysTop from "@/general/components/dailys/DailysTop.vue";
 // remove this after connecting api
 const viewMode = 'list';
 
