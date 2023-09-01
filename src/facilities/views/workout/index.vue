@@ -87,6 +87,8 @@
                     :share="true"
                     :hide="true"
                     :hidden="false"
+                    @hide="hideDailysItem(daily.id)"
+                    @show="showDailysItem(daily.id)"
                   />
                 </swiper-slide>
               </swiper>
@@ -114,6 +116,8 @@ import {
   RecommendedWorkoutsByTypeDocument,
   WorkoutDocument,
   Workout,
+  HideWorkoutDocument,
+  ShowWorkoutDocument,
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -146,7 +150,7 @@ const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
 
-const { result: recentResult, loading: recentLoading, onResult: gotRecentData } = useQuery(
+const { result: recentResult, loading: recentLoading, refetch: refetchRecentDailys, onResult: gotRecentData } = useQuery(
   WorkoutsByFacilityDocument,
   {
     page: 1,
@@ -211,6 +215,20 @@ const recommendedWorkoutsByType = computed(
     ) || []
 );
 
+const { mutate: showDailys, loading: dailysShowLoading } =
+  useMutation(ShowWorkoutDocument);
+const { mutate: hidedailys, loading: dailysHideLoading } =
+  useMutation(HideWorkoutDocument);
+const hideDailysItem = (id: number) => {
+  hidedailys({ id }).then(() => {
+    refetchRecentDailys();
+  });
+}
+const showDailysItem = (id: number) => {
+  showDailys({ id }).then(() => {
+    refetchRecentDailys();
+  });
+}
 </script>
 
 <style scoped lang="scss">
