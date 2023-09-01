@@ -237,14 +237,11 @@ const watchDailys = (daily: any) => {
   console.log('********', {daily});
   dailysItemStore.setWorkout({
     title: daily.title,
-    type: daily.type,
+    type: daily.type.name,
     duration: daily.duration,
     preview: daily.preview,
-    previewUrl: daily.previewUrl,
-    trainer: {
-      first_name: daily.trainer.first_name,
-      last_name: daily.trainer.last_name,
-    },
+    previewUrl: `${VUE_APP_CDN.value}${daily.preview}` || '',
+    trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
   });
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }

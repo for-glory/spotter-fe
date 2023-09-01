@@ -293,7 +293,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.WorkoutList,
-    path: "/dailys/create-workout",
+    path: "/dailys/list",
     component: () => import("@/general/views/workout/index.vue"),
     meta: {
       middleware: [auth],

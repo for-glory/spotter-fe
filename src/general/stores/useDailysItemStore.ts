@@ -10,10 +10,11 @@ export const useDailysItemStore = defineStore("dailys-item", {
       workoutDuration: "",
       workoutPreview: "",
       workoutPath: "",
+      workoutType: "",
       media: [],
       exercises: {},
       workoutMuscleTypes: [],
-      trainer: {},
+      trainer: '',
     };
   },
   actions: {
@@ -42,6 +43,7 @@ export const useDailysItemStore = defineStore("dailys-item", {
       this.workoutPreview = payload.preview || "";
       this.workoutPath = payload.previewUrl || "";
       this.trainer = payload.trainer;
+      this.workoutType = payload.type;
       // this.setExercise({
       //   title: payload.exercises?.title,
       //   description: payload.exercises?.description || "",

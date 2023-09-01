@@ -10,10 +10,65 @@
       </page-header>
     </template>
     <template #content>
-      <div>
-        {{
-          dailysItemStore.workoutTitle
-        }}
+      <div
+        class="workout-item common-style"
+        :class="{ 'workout-item--hidden': hidden }"
+      >
+        <div class="workout-item__photo">
+          <ion-img :src="pathUrl"></ion-img>
+          
+        </div>
+        <div class="d-flex justify-content-between workout-item__inner">
+          <div class="d-flex-col justify-content-between align-items-start">
+            <ion-button
+              v-if="share && !hidden"
+              class="workout-item__btn"
+              fill="clear"
+              color="light"
+              @click.stop="shareWorkout"
+              :disabled="disabled"
+            >
+              <ion-icon icon="assets/icon/share.svg" />
+            </ion-button>
+            <div>
+              <div class="workout-item__head">
+                <ion-label class="workout-item__title"> {{ title }}</ion-label>
+              </div>
+              <ion-text class="workout-item__info">
+                <ion-icon icon="assets/icon/time.svg" />
+                <span>
+                  <template v-if="duration">
+                    {{ timeConvertToHuman(duration) }}
+                    <ion-text color="light" class="workout-item__info-dot"
+                      >&nbsp;&#183;&nbsp;</ion-text
+                    >
+                  </template>
+                  {{ type }}
+                  <ion-text color="light" class="workout-item__info-dot">
+                    &nbsp;&#183;&nbsp;
+                  </ion-text>
+                  {{ trainer }}
+                </span>
+              </ion-text>
+            </div>
+          </div>
+          <div class="d-flex-col justify-content-end align-items-end ">
+            <div class="d-flex-col gap-6">
+              <div class="d-flex align-items-center">
+                <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
+                <ion-text class="font-light font-18 color-fitness-white">{{ 3832 }}</ion-text>
+              </div>
+              <div class="d-flex align-items-center">
+                <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+                <ion-text class="font-light font-18 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
+              </div>
+              <div class="d-flex align-items-center">
+                <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+                <ion-text class="font-light font-18 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
   </base-layout>
@@ -39,14 +94,12 @@ import {
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import { useRouter } from "vue-router";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { FreeMode } from "swiper";
+import { useRouter, useRoute } from "vue-router";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
+import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 
@@ -56,8 +109,17 @@ const tab = ref<string>('analytics');
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-const dailysItemStore = useDailysItemStore();
+const store = useDailysItemStore();
 const router = useRouter();
+const route = useRoute();
+
+const id = computed(() => route.params.id);
+const pathUrl = computed(() => store.workoutPath);
+const title = computed(() => store.workoutTitle);
+const trainer = computed(() => store.trainer);
+const type = computed(() => store.workoutType);
+const duration = computed(() => store.workoutDuration);
+const share = true;
 
 const onBack = () => {
   router.go(-1);
@@ -65,109 +127,220 @@ const onBack = () => {
 </script>
 
 <style scoped lang="scss">
-.main-content {
-  overflow-y: scroll;
-}
-
-.holder-content {
-  padding-bottom: 16px;
-
-  .toolbar-content {
-    padding-top: 0;
-  }
-}
-
-.spinner {
-  display: block;
-  pointer-events: none;
-  margin: calc(30vh - 60px) auto 0;
-}
-
-.infinite-scroll {
-  margin-top: 16px;
-  margin-bottom: -24px;
-}
-
-.empty-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.workout-item {
+  position: relative;
   width: 100%;
   height: 100%;
-}
-.workout-list {
-	background-color: var(--gray-700);
-  border-radius: 8px;
-  margin-top: 16px;
+  padding: 12px;
 
-  &__top {
-    margin-bottom: 16px;
-    padding: 8px 48px;
+  &:not(:first-child) {
+    margin-top: 16px;
   }
-}
-.banner {
-  padding: 32px;
-  min-height: 160px;
-  width: 100%;
-  background: #19191B9a;
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
 
-  &__background-image {
+  &__inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__btn {
+    height: 32px;
+    margin: 0 -4px;
+    font-size: 24px;
+    display: block;
+    min-width: 32px;
+    --border-radius: 4px;
+    --icon-font-size: 24px;
+    --padding-bottom: 0;
+    --padding-end: 0;
+    --padding-start: 0;
+    --padding-top: 0;
+    --icon-padding-bottom: 0;
+    --icon-padding-end: 0;
+    --icon-padding-start: 0;
+    --icon-padding-top: 0;
+    --min-height: 32px;
+    --min-width: 32px;
+
+    &--hide {
+      margin-left: auto;
+    }
+
+    ion-icon {
+      font-size: 1em;
+      filter: drop-shadow(0px 2px 8px rgba(0, 0, 0, 0.24));
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  &__photo {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -5;
     position: absolute;
-    inset: 0;
-    z-index: -1;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 68px;
+    color: var(--gray-700);
+
+    .workout-item--hidden & {
+      filter: grayscale(1);
+    }
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    &:before {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "";
+      position: absolute;
+      background: linear-gradient(
+        180deg,
+        rgba(17, 17, 18, 0) 0%,
+        rgba(17, 17, 18, 0.88) 100%,
+        rgba(17, 17, 18, 0.88) 100%
+      );
+    }
+  }
+
+  &__head {
+    display: flex;
+    margin-bottom: 4px;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   &__title {
-    padding: 0;
-    color: #FFF;
-    font-family: Lato;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    margin-bottom: 12px;
-  }
-  &__text {
-    color: #FFF;
-    font-family: Lato;
-    font-size: 12px;
-    font-style: normal;
+    display: block;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 150%;
-    letter-spacing: 0.1px;
-  }
-}
-.filter-tabs {
-  width: 100%;
-  gap: 12px;
-  
-  ion-button {
-    --border-radius: 100px;
-    font: 500 14px/1 Lato;
-    height: 36px;
-  }
-  
-  .selected {
-    color: var(--main-color);
-  }
-  .normal {
-    color: var(--grey-text);
-  }
-}
-.height-100 {
-  height: 100%;
-}
+    line-height: 1.5;
+    margin-right: 12px;
+    color: var(--ion-color-white);
 
-.item-list {
-  overflow-x: scroll;
-}
+    .workout-item--hidden & {
+      color: var(--ion-color-medium);
+    }
+  }
 
-ion-button#create {
-  width: 100%;
-  font: 500 16px/1 Yantramanav;
-  margin-top: 28px;
+  &__info {
+    display: flex;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 24px;
+    align-items: center;
+    justify-content: flex-start;
+
+    ion-icon {
+      line-height: 1;
+      font-size: 24px;
+      margin-right: 4px;
+      color: var(--ion-color-primary);
+    }
+
+    .workout-item--hidden & {
+      color: var(--ion-color-medium);
+
+      ion-icon {
+        color: inherit;
+      }
+    }
+  }
+  &__info-dot {
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+.common-style {
+  .w-24 {
+    width: 24px;
+  }
+  .h-24 {
+    height: 24px;
+  }
+
+  .d-flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .gap-24 {
+    gap: 24px;
+  }
+  .gap-12 {
+    gap: 12px;
+  }
+  .gap-6 {
+    gap: 6px;
+  }
+  .gap-4 {
+    gap: 4px;
+  }
+
+
+  .font-bold {
+    font-weight: 700;
+  }
+  .font-semibold {
+    font-weight: 600;
+  }
+  .font-medium {
+    font-weight: 500;
+  }
+  .font-light {
+    font-weight: 300;
+  }
+
+  .font-12 {
+    font-size: 12px;
+  }
+  .font-14 {
+    font-size: 14px;
+  }
+  .font-16 {
+    font-size: 16px;
+  }
+  .font-18 {
+    font-size: 18px;
+  }
+  .font-20 {
+    font-size: 20px;
+  }
+  .font-24 {
+    font-size: 24px;
+  }
+
+  .color-gray {
+    color: #afafaf;
+  }
+  .color-gold {
+    color: #E1DBC5;
+  }
+  .color-gray-400 {
+    color: var(--gray-400);
+  }
+  .color-white {
+    color: white;
+  }
+  .color-fitness-white{
+    color: #EFEFEF;
+  }
 }
 </style>
