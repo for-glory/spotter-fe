@@ -19,53 +19,51 @@
           
         </div>
         <div class="d-flex justify-content-between workout-item__inner">
-          <div class="d-flex-col justify-content-between align-items-start">
-            <ion-button
-              v-if="share && !hidden"
-              class="workout-item__btn"
-              fill="clear"
-              color="light"
-              @click.stop="shareWorkout"
-              :disabled="disabled"
-            >
-              <ion-icon icon="assets/icon/share.svg" />
-            </ion-button>
-            <div>
-              <div class="workout-item__head">
-                <ion-label class="workout-item__title"> {{ title }}</ion-label>
-              </div>
-              <ion-text class="workout-item__info">
-                <ion-icon icon="assets/icon/time.svg" />
-                <span>
-                  <template v-if="duration">
-                    {{ timeConvertToHuman(duration) }}
-                    <ion-text color="light" class="workout-item__info-dot"
-                      >&nbsp;&#183;&nbsp;</ion-text
-                    >
-                  </template>
-                  {{ type }}
-                  <ion-text color="light" class="workout-item__info-dot">
-                    &nbsp;&#183;&nbsp;
-                  </ion-text>
-                  {{ trainer }}
-                </span>
-              </ion-text>
+          <div class="d-flex-col justify-content-end align-items-start">
+            <div class="workout-item__head">
+              <ion-label class="workout-item__title"> {{ title }}</ion-label>
             </div>
+            <ion-text class="workout-item__info">
+              <ion-icon icon="assets/icon/time.svg" />
+              <span>
+                <template v-if="duration">
+                  {{ timeConvertToHuman(duration) }}
+                  <ion-text color="light" class="workout-item__info-dot"
+                    >&nbsp;&#183;&nbsp;</ion-text
+                  >
+                </template>
+                {{ type }}
+                <ion-text color="light" class="workout-item__info-dot">
+                  &nbsp;&#183;&nbsp;
+                </ion-text>
+                {{ trainer }}
+              </span>
+            </ion-text>
           </div>
-          <div class="d-flex-col justify-content-end align-items-end ">
-            <div class="d-flex-col gap-6">
-              <div class="d-flex align-items-center">
+          <div class="d-flex-col justify-content-end align-items-end gap-24">
+            <div class="d-flex-col gap-8">
+              <div class="d-flex align-items-center gap-12">
+                <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
+                <ion-text class="font-light font-16 color-fitness-white">{{ 2.45 }}{{ 'k' }}</ion-text>
+              </div>
+              <div class="d-flex align-items-center gap-12">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-18 color-fitness-white">{{ 3832 }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ 3832 }}</ion-text>
               </div>
-              <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center gap-12">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-18 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
               </div>
-              <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center gap-12">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                <ion-text class="font-light font-18 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
               </div>
+            </div>
+            <div class="d-flex align-items-center gap-12 justify-content-end">
+              <ion-icon 
+                @click.stop="shareWorkout"
+                icon="assets/icon/share.svg" class="w-24 h-24 color-gold" 
+              />
             </div>
           </div>
         </div>
@@ -102,6 +100,7 @@ import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import { Share } from "@capacitor/share";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('analytics');
@@ -124,6 +123,16 @@ const share = true;
 const onBack = () => {
   router.go(-1);
 };
+
+const shareWorkout = async (event: any) => {
+  event.preventDefault();
+  await Share.share({
+    title: title.value,
+    url: `${process.env.VUE_APP_URL}/users/workouts/${id.value}`,
+    dialogTitle: "Share",
+  });
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -230,11 +239,11 @@ const onBack = () => {
 
   &__title {
     display: block;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     line-height: 1.5;
     margin-right: 12px;
-    color: var(--ion-color-white);
+    color: white;
 
     .workout-item--hidden & {
       color: var(--ion-color-medium);
@@ -286,6 +295,9 @@ const onBack = () => {
   }
   .gap-12 {
     gap: 12px;
+  }
+  .gap-8 {
+    gap: 8px;
   }
   .gap-6 {
     gap: 6px;
