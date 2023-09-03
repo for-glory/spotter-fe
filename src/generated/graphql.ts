@@ -584,7 +584,9 @@ export enum FeedbackEntityEnum {
   /** Facility */
   Facility = 'facility',
   /** User */
-  User = 'user'
+  User = 'user',
+  /** Workout */
+  Workout = 'workout'
 }
 
 export type FilePreloadResponse = {
@@ -778,6 +780,7 @@ export type Mutation = {
   updateFacility?: Maybe<Facility>;
   updateForgottenPassword: ForgotPasswordResponse;
   updatePassword: UpdatePasswordResponse;
+  managerPasswordSet: ManagerPasswordResponse;
   updateTrainerWorkout: Workout;
   updateUser: User;
   verifyEmail: AuthPayload;
@@ -1032,6 +1035,10 @@ export type MutationUpdateForgottenPasswordArgs = {
 
 export type MutationUpdatePasswordArgs = {
   input: UpdatePassword;
+};
+
+export type MutationManagerPasswordArgs = {
+  input: ManagerPassword;
 };
 
 
@@ -2769,6 +2776,18 @@ export type UpdatePasswordResponse = {
   status: Scalars['String'];
 };
 
+export type ManagerPassword = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+};
+
+export type ManagerPasswordResponse = {
+  __typename?: 'ManagerPasswordResponse';
+  message?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+};
+
 export type UpdateTrainerWorkoutInput = {
   body_parts?: InputMaybe<Array<Scalars['ID']>>;
   description?: InputMaybe<Scalars['String']>;
@@ -4004,49 +4023,9 @@ export const CreateEventDocument = gql`
     mutation createEvent($input: CreateEventInput!) {
   createEvent(input: $input) {
     id
-    title
-    description
-    start_date
-    end_date
-    price
-    address {
-      city {
-        id
-        name
-        state {
-          name
-        }
-      }
-      lat
-      lng
-      street
-    }
-    max_participants
-    equipments
-     {
-       icon
-       iconUrl
-       name
-     }
-    amenities
-     {
-       icon
-       iconUrl
-       name
-     }
-    media {
-      title
-    }
   }
 }
     `;
-export const DeleteFacilityItemDocument = gql`
-    mutation deleteFacilityItem($id: ID!) {
-  deleteFacilityItem(id: $id) {
-    id
-  }
-}
-`;
 export const DeleteChatDocument = gql`
     mutation deleteChat($id: ID!) {
   deleteChat(id: $id) {
@@ -4407,39 +4386,6 @@ export const UpdateEventDocument = gql`
     mutation updateEvent($id: ID!, $input: UpdateEventInput!) {
   updateEvent(id: $id, input: $input) {
     id
-    title
-    description
-    start_date
-    end_date
-    price
-    address {
-      city {
-        id
-        name
-        state {
-          name
-        }
-      }
-      lat
-      lng
-      street
-    }
-    max_participants
-    equipments
-     {
-       icon
-       iconUrl
-       name
-     }
-    amenities
-     {
-       icon
-       iconUrl
-       name
-     }
-    media {
-      title
-    }
   }
 }
     `;
@@ -4463,6 +4409,14 @@ export const UpdateForgottenPasswordDocument = gql`
 export const UpdatePasswordDocument = gql`
     mutation updatePassword($input: UpdatePassword!) {
   updatePassword(input: $input) {
+    status
+    message
+  }
+}
+    `;
+export const ManagerPasswordSetDocument = gql`
+    mutation managerPasswordSet($input: ManagerPassword!) {
+  managerPasswordSet(input: $input) {
     status
     message
   }
@@ -5458,6 +5412,8 @@ export const RecommendedWorkoutsDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -5512,6 +5468,8 @@ export const RecommendedWorkoutsByBodyPartsDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -5560,6 +5518,8 @@ export const RecommendedWorkoutsByTypeDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -5696,6 +5656,7 @@ export const UserDocument = gql`
     birth
     postal
     tax_id
+    role
     first_name
     last_name
     avatar
@@ -5987,6 +5948,8 @@ export const WorkoutsByFacilityDocument = gql`
     data {
       id
       preview
+      reviews_count
+      recommended_count
       type {
         id
         name
@@ -6354,6 +6317,14 @@ export const UpdateFacilityItemDocument = gql`
 }
 `;
 
+export const DeleteFacilityItemDocument = gql`
+    mutation deleteFacilityItem($id: ID!) {
+  deleteFacilityItem(id: $id) {
+    id
+  }
+}
+`;
+
 export const FacilityItemDocument = gql`
     query facilityItemById($id: ID!) {
   facilityItemById(id: $id) {
@@ -6454,6 +6425,7 @@ export const GetManagersByFacilityDocument = gql`
       id
       email
       employment_type
+      email_verified_at
       score
       first_name
       last_name
@@ -6488,6 +6460,16 @@ export const GetManagersByFacilityDocument = gql`
       total
       firstItem
     }
+  }
+}
+    `;
+
+export const GetFacilitySubscriptionDocument = gql`
+    query facilitySubscription($facility_id: ID) {
+  facilitySubscription(
+    facility_id: $facility_id
+  ) {
+    subscription
   }
 }
     `;
