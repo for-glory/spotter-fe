@@ -4,7 +4,7 @@
     :class="{ 'workout-item--hidden': hidden }"
     @click="emits('click')"
   >
-    <div class="workout-item__photo">
+  <div class="workout-item__photo">
       <ion-img :src="pathUrl"></ion-img>
     </div>
 

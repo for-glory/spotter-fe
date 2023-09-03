@@ -46,15 +46,15 @@
                 <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ 2.45 }}{{ 'k' }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12">
+              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ 3832 }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12">
+              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('likes')">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12">
+              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('views')">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
               </div>
@@ -70,6 +70,7 @@
       </div>
     </template>
   </base-layout>
+  <workout-modal ref="workoutModal" />
 </template>
 
 <script setup lang="ts">
@@ -100,6 +101,7 @@ import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import WorkoutModal from "@/general/components/modals/workout/WorkoutModal.vue";
 import { Share } from "@capacitor/share";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
@@ -120,6 +122,8 @@ const type = computed(() => store.workoutType);
 const duration = computed(() => store.workoutDuration);
 const share = true;
 
+const workoutModal = ref<typeof WorkoutModal | null>(null);
+
 const onBack = () => {
   router.go(-1);
 };
@@ -132,6 +136,32 @@ const shareWorkout = async (event: any) => {
     dialogTitle: "Share",
   });
 };
+
+const showWorkoutModal = (type: string) => {
+  switch(type) {
+    case 'views' :
+      workoutModal.value?.present({ 
+        title: 'Views',
+        description: `Viewd by ${3309234} people`
+      });
+      break;
+    
+    case 'purchases' :
+      workoutModal.value?.present({ 
+        title: 'Purchases',
+        description: `Total purchases made ${3309234}`
+      });
+      break;
+
+    case 'likes' :
+      workoutModal.value?.present({ 
+        title: 'Views',
+        description: `Liked by ${3309234} people`
+      });
+      break;
+  }
+  
+}
 
 </script>
 
