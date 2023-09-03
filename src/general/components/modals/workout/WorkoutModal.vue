@@ -21,37 +21,38 @@
         <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
         <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
       </div>
-      <ion-modal
-        ref="modal"
-        :is-open="isReviewDescriptionModalOpen"
-        class="review-descrition-modal common-style"
-        @willDismiss="isReviewDescriptionModalOpen = false"
-      >
-        <div class="d-flex-col gap-12">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center gap-8">
-              <ion-img id="reviewerAvatar" :src="reviewDescription.reviewerAvatar" class="w-68 h-68" />
-              <div class="d-flex-col gap-2">
-                <ion-text class="font-medium font-16 color-white">
-                  {{ reviewDescription.reviewerName }}
-                </ion-text>
-                <ion-text class="font-medium font-12 color-gray">
-                  {{ reviewDescription.reviewerEmail }}
-                </ion-text>
-              </div>
-            </div>
-            <div>
-              {{ reviewDescription.date }}
-            </div>
-          </div>
-          <div>
-            <ion-text class="font-light font-14 color-gray-400">{{ reviewDescription.reviewMessage }}</ion-text>
-          </div>
-          <div class="d-flex align-items-center justify-content-center">
-            <ion-button class="w-60">Close</ion-button>
+      <div v-if="isReviewDescriptionModalOpen" class="backdrop" />
+    </div>
+  </ion-modal>
+  <ion-modal
+    ref="modal"
+    :is-open="isReviewDescriptionModalOpen"
+    class="review-descrition-modal common-style"
+    @willDismiss="isReviewDescriptionModalOpen = false"
+  >
+    <div class="d-flex-col gap-12">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-8">
+          <ion-img id="reviewerAvatar" :src="reviewDescription.reviewerAvatar" class="w-68 h-68" />
+          <div class="d-flex-col gap-2">
+            <ion-text class="font-medium font-16 color-white">
+              {{ reviewDescription.reviewerName }}
+            </ion-text>
+            <ion-text class="font-medium font-12 color-gray">
+              {{ reviewDescription.reviewerEmail }}
+            </ion-text>
           </div>
         </div>
-      </ion-modal>
+        <div>
+          {{ reviewDescription.date }}
+        </div>
+      </div>
+      <div>
+        <ion-text class="font-light font-14 color-gray-400">{{ reviewDescription.reviewMessage }}</ion-text>
+      </div>
+      <div class="d-flex align-items-center justify-content-center w-full">
+        <ion-button class="w-60">Close</ion-button>
+      </div>
     </div>
   </ion-modal>
 </template>
@@ -118,11 +119,20 @@ defineExpose({
   --ion-backdrop-opacity: 0.6;
   --ion-backdrop-color: var(--ion-color-black);
 
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #0000006a;
+  }
+
   &__content {
     background: var(--gray-800);
     border-radius: 18px 18px 0 0;
     min-height: 60%;
     padding: 30px 0;
+    position: relative;
   }
 
   &__closed {

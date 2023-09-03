@@ -232,7 +232,7 @@ gotUser(({ data }) => {
 });
 
 gotData(({ data }) => {
-  overviewData.value = data.facilityDashboardWidget;
+  overviewData.value = data?.facilityDashboardWidget;
 })
 
 const fetchChats = () => {
