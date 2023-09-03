@@ -16,13 +16,13 @@
             <ion-text>0 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Poor</ion-text>
           </div>
           <div class="fair">
-            <ion-text>25 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Fair</ion-text>
+            <ion-text>25 - 50%</ion-text>&nbsp;&nbsp;<ion-text>Fair</ion-text>
           </div>
           <div class="good">
-            <ion-text>50 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Good</ion-text>
+            <ion-text>50 - 75%</ion-text>&nbsp;&nbsp;<ion-text>Good</ion-text>
           </div>
           <div class="excellent">
-            <ion-text>75 - 25%</ion-text>&nbsp;&nbsp;<ion-text>Excellent</ion-text>
+            <ion-text>75 - 100%</ion-text>&nbsp;&nbsp;<ion-text>Excellent</ion-text>
           </div>
         </div>
         <div class="warning-box">
@@ -83,12 +83,12 @@ watch(
   () => checkinData.value,
   (newVal: any) => {
     newVal.map((val: any) => {
-      attendanceDatas.value[val.month] = val.value;
+      attendanceDatas.value[val.month] = val.value * 100;
     });
   }
 );
 
-const attendanceBackgroundColors = ['#F7685B', '#FFB946', '#2F9BFF', '#2ED47A'];
+const attendanceBackgroundColors = ['#2ED47A', '#2F9BFF', '#FFB946', '#F7685B'];
 const attendanceChartData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   datasets: [
