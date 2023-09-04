@@ -328,6 +328,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.WorkoutReviews,
+    path: "/workout/reviews/:id",
+    component: () => import("@/general/views/workout/Reviews.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
     name: EntitiesEnum.MuscleTypes,
     path: "/workout/muscle-types",
     component: () => import("@/general/views/workout/MuscleTypes.vue"),
