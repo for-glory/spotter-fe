@@ -1,5 +1,5 @@
 <template>
-	<ion-menu side="end" content-id="main-content">
+	<ion-menu side="end" content-id="main-content" class="add-manager-panel">
     <ion-header>
       <ion-toolbar class="title">
         <ion-menu-toggle class="back-btn" :auto-hide="false">
@@ -9,16 +9,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <div class="tile">
-        <photo-loader
-            circle-shape
-            type="avatar"
-            :progress="percentLoaded"
-            :loading="previewOnLoading"
-            :photo="previewUrl"
-            @change="photoSelected"
-          />
-      </div>
       <div class="tile">
         <base-input
           label="First name"
@@ -426,7 +416,9 @@ getCities();
 </script>
 
 <style scoped lang="scss">
-
+.add-manager-panel {
+  --width: 375px;
+}
 
 .title {
   position: relative;
@@ -449,7 +441,7 @@ getCities();
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 .image-upload {
   background-color: var(--main-color);

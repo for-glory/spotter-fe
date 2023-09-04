@@ -13,6 +13,10 @@
 - trainer@spotterfitness.com - Trainer User
 - admin@spotterfitness.com - Admin User
 
+Mobile testing
+
+Testflight and Anddroid internal testing
+
 
 #### versions:
 ```

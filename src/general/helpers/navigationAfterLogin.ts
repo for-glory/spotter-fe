@@ -69,6 +69,8 @@ const navigationAfterAuth = (user: User) => {
       break;
     }
     case RoleEnum.Manager:
+      router.push({ name: EntitiesEnum.DashboardOverview });
+      break;
     case RoleEnum.FacilityOwner: {
       const { type: subscriptionType } = useSubscription();
       const { stripeAccountState } = useStripeConnect();

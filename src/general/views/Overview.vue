@@ -214,7 +214,7 @@ gotUser(({ data }) => {
     console.log(activeFacilityId.value);
     facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
   }
-  refetch( { id: facilityStore.facility.id } );
+  refetch( { id: facilityStore?.facility?.id } );
 
   userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
   userStore.setEmail(result.value?.user?.email);

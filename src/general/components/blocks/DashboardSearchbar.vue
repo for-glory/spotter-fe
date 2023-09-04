@@ -1,6 +1,21 @@
 <template>
 	<div class="searchbar">
 		<div class="search-section">
+			<ion-searchbar
+				ref="searchBar"
+				@ion-change="search"
+				@ion-focus="focusHandle"
+				show-clear-button="never"
+				class="search-section__control"
+				search-icon="assets/icon/search.svg"
+				placeholder="Search"
+				:class="{
+					// 'search-form__control--on-focus': isFocused,
+					// 'search-form__control--with-back-btn': backBtn,
+					// 'search-form__control--with-cancel-btn': !hiddenCancel,
+				}"
+			>
+			</ion-searchbar>
 		</div>
 		<div class="notification">
 			<div>
@@ -11,22 +26,33 @@
 </template>
 
 <script lang="ts" setup>
-import { IonText, IonImg, IonIcon, IonButton } from '@ionic/vue';
+import {
+	IonIcon,
+  IonSearchbar,
+  SearchbarCustomEvent,
+} from '@ionic/vue';
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
+import debounce from "lodash/debounce";
 
 const router = useRouter();
 
-const onHandleClickMenu = (pathName: string) => {
-	console.log(pathName)
-  router.push({ name: pathName });
+const focusHandle = () => {
+  // isFocused.value = true;
+  // emits("handle-focus");
 };
 
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
-};
+const search = debounce((event?: SearchbarCustomEvent) => {
+  // if (props.hideResults) {
+  //   emits("search", event?.detail?.value);
+  //   return;
+  // }
+  // searchQuery.value = event?.detail?.value || "";
+  // props.type === EntitiesEnum.ActivitiesNearby;
+  // activityRefetch({ first: 100, search: searchQuery.value });
+}, 1000);
+
 </script>
 <style scoped lang="scss">
 .searchbar {
@@ -35,7 +61,29 @@ const onLogout = () => {
 	display: flex;
 	justify-content: space-between;
 	padding: 30px 32px;
+	align-items: center;
 
+	.search-section {
+		width: 80%;
+		color: var(--gold);
+		&__control {
+			padding: 0;
+			width: 100%;
+			z-index: 15;
+			transition: right 0.35s ease;
+			--border: none;
+			--color: var(--ion-color-white);
+			--placeholder-opacity: 1;
+			--icon-color: var(--gray-500);
+			--placeholder-font-weight: 300;
+			--placeholder-color: var(--gold);
+			--box-shadow: none;
+	
+			&--with-back-btn {
+				width: calc(100% - 56px);
+			}
+		}
+	}
 	.notification {
 		ion-icon {
 			font-size: 32px;

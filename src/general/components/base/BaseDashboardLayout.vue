@@ -25,15 +25,19 @@ import useId from "@/hooks/useId";
 import { useProfileStore } from "../../stores/profile";
 import {
   ref,
+	watch
 } from "vue";
 import {
   Query,
+  RoleEnum,
   UserDocument,
 } from "@/generated/graphql";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const isLoading = ref(true);
 const facilities = ref();
 const store = useProfileStore();
+const facilityStore = useFacilityStore();
 
 const setIsLoading = () => {
 	isLoading.value = false;
@@ -53,9 +57,22 @@ gotUser(({ data }) => {
 		store.setValue("email", data.user?.email??"");
 		store.setValue("avatarUrl", data.user?.avatarUrl??"");
 	}
-	facilities.value = result.value?.user?.owned_facilities;
+	console.log(data.user)
+	console.log(data.user?.role === RoleEnum.Manager)
+	if(data.user?.role === RoleEnum.Manager) {
+		facilities.value = result.value?.user?.facilities;
+	}
+	else facilities.value = result.value?.user?.owned_facilities;
+
   setIsLoading();
 });
+
+watch(
+  () => facilityStore.facility.id,
+  () => {
+    refetch()
+  }
+)
 </script>
 <style scoped lang="scss">
 .dashboard-container {

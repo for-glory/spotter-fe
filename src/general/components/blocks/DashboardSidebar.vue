@@ -61,7 +61,7 @@
 					<ion-icon src="assets/icon/daily.svg" />
 					<ion-text>Dailys</ion-text>
 				</div>
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+				<div v-if="role === RoleEnum.FacilityOwner" :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
 					<ion-icon src="assets/icon/add-user.svg" />
 					<ion-text>Membership</ion-text>
 				</div>
@@ -70,7 +70,7 @@
 					<ion-text>Message</ion-text>
 				</div>
 			</div>
-			<div class="setting-menu">
+			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
 					<ion-text>Manage Gyms</ion-text>
@@ -111,10 +111,16 @@ import { IonText, IonImg, IonIcon, IonAvatar, IonTitle } from '@ionic/vue';
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { clearAuthItems } from "@/router/middleware/auth";
-import { ref, computed, onMounted, defineProps, withDefaults } from "vue";
+import { ref, computed, watch, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { Capacitor } from '@capacitor/core';
+import {setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
+import useRoles from "@/hooks/useRole";
+import {
+  RoleEnum,
+} from "@/generated/graphql";
 
 const props = withDefaults(
   defineProps<{
@@ -125,6 +131,9 @@ const props = withDefaults(
   }
 );
 
+const { role } = useRoles();
+let isNative = Capacitor.isNativePlatform();
+
 const facilityStore = useFacilityStore();
 
 const router = useRouter();
@@ -132,7 +141,10 @@ const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const isOpenFacilityDropdown = ref<boolean>(false);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
-facilityStore.setFacility(props.facilities[0]);
+if (!facilityStore.facility?.id && props.facilities.length){
+	facilityStore.setFacility(props.facilities[0]);
+	setSelectedGym(props.facilities[0]?.id)
+}
 
 // onMounted(() => {
 // 	localStorage.setItem('currentFacility', JSON.stringify(props.facilities[0]));
@@ -147,15 +159,20 @@ const openFacilityDropdown = () => {
 }
 
 const selectFacility = (id) => {
-	activeFacilityId.value = id;
 	facilityStore.setFacility(props.facilities.find(
 		(facility) => facility?.id === id
 	));
+	setSelectedGym(id);
 	isOpenFacilityDropdown.value = false;
-	router.push({
-		name: EntitiesEnum.DashboardOverview
-	})
+	router.push({ path: '/dashboard/' });
 }
+
+watch(
+  () => facilityStore.facility.id,
+  () => {
+    activeFacilityId.value = facilityStore.facility.id;
+  }
+)
 
 const avatarUrl = computed(() => {
 	const facility = facilities.value?.find(
@@ -275,6 +292,7 @@ const getMenuItemClass = (name: string) => {
 		}
 
 		&__dropdown {
+			width: 240px;
 			position: absolute;
 			z-index: 9999;
 			top: 100%;

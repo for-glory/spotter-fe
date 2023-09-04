@@ -206,10 +206,10 @@ const isTrusted = computed(() =>
 );
 
 onMounted(() => {
-  activeFacilityId.value = currentFacility.facility?.id;
+  console.log('on mounted currentfacilityid: ', currentFacility.facility?.id);
   router.push({
     name: router?.currentRoute?.value?.name,
-    query: { facilityId: activeFacilityId.value },
+    query: { facilityId: currentFacility.facility?.id },
   });
   refetch();
 });
@@ -234,7 +234,14 @@ const activeFacilityId = ref<string | null>(null);
 watch(
   () => activeFacilityId.value,
   (newVal) => {
+    console.log('********watch*********');
+    console.log('activeFacilityId: ', activeFacilityId.value);
+    console.log('currentFacilityId: ', currentFacility.facility?.id);
+    console.log('facilities: ', facilities.value);
+    console.log('search result: ', facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
     currentFacility.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
+    console.log('*****after selection****');
+    console.log(currentFacility.facility?.id);
     localStorage.setItem("selected_facility", activeFacilityId.value as string);
     router.push({
       name: router?.currentRoute?.value?.name,
@@ -304,7 +311,7 @@ gotUser(({ data }) => {
         : null;
   }
 
-  console.log(facilities);
+  activeFacilityId.value = currentFacility.facility?.id;
   progress.value = data?.user?.settings?.find(
     (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser
   )?.value

@@ -24,20 +24,18 @@ import { newFacilityStoreTypes } from "@/ts/types/store";
 import { useMutation } from "@vue/apollo-composable";
 import {
   CreateFacilityDocument,
-  UpdateFirstSubscriptionDocument,
-  UpdateUserSettingsDocument,
 } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
-import { setSettings } from "@/hooks/useSettings";
-import useId from "@/hooks/useId";
-import { ProfileSettings } from "@/ts/enums/user";
 import { ref } from "vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import {setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const router = useRouter();
 
 const isConfirmedModalOpen = ref(false);
-const actionAfterSiubmit = ref("exit");
+
+const facilityStore = useFacilityStore();
 
 const onBack = () => {
   isConfirmedModalOpen.value = true;
@@ -53,10 +51,6 @@ const discardModalClosed = (approved: boolean) => {
 
 const gymForm = ref<typeof GymForm | null>(null);
 
-const { mutate: updateFirstSubscription, onDone: updatedSubscription } = useMutation(
-  UpdateFirstSubscriptionDocument
-);
-
 const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
 );
@@ -65,7 +59,6 @@ const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
   const { registration_code } = JSON.parse(
     localStorage.getItem("organization") || "{}"
   );
-  actionAfterSiubmit.value = mode;
   createFacility({
     input: {
       name: data.title,
@@ -92,53 +85,12 @@ const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
 };
 
 facilityCreated((res) => {
-  if (res?.data?.createFacility) {
-    updateFirstSubscription({
-      input: {
-        facility_id: res?.data?.createFacility.id
-      },
-    });
-  }
-  localStorage.setItem("first_facility", res?.data?.createFacility.id)
-});
-
-updatedSubscription(() => {
   gymForm.value?.clearStore();
-  updateSettings();
-  if (actionAfterSiubmit.value === "exit") {
-    router.push({
-      name: EntitiesEnum.DashboardOverview,
-    });
-  }
-  else if(actionAfterSiubmit.value === "create_event") {
-    router.push({
-      name: EntitiesEnum.RegisterCreateEvent,
-      params: { facility_id: localStorage.getItem("first_facility") },
-    });
-  }
-});
-
-const { mutate: updateUserSettings, onDone: settingsUpdated } = useMutation(
-  UpdateUserSettingsDocument
-);
-
-const updateSettings = () => {
-  setSettings([{ isFacilitySetUp: true }]);
-  const { id } = useId();
-
-  const front_settings = localStorage.getItem(ProfileSettings.UserSettings);
-
-  updateUserSettings({
-    id,
-    front_settings,
+  facilityStore.setFacility(res.data?.createFacility);
+	setSelectedGym(res.data?.createFacility?.id);
+  router.push({
+    name: EntitiesEnum.DashboardOverview,
   });
-};
-
-settingsUpdated(() => {
-  localStorage.removeItem("organization");
-  // router.push({
-  //   name: EntitiesEnum.Profile,
-  // });
 });
 </script>
 

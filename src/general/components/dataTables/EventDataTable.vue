@@ -32,10 +32,10 @@
 					<ion-text>${{ event.price?event.price/100:0 }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
-					<ion-text>{{ event.start_date }}</ion-text>
+					<ion-text>{{ dayjs(event.start_date).format("DD/MM/YYYY") }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
-					<ion-text>{{ event.end_date }}</ion-text>
+					<ion-text>{{ dayjs(event.end_date).format("DD/MM/YYYY") }}</ion-text>
 				</ion-col>
 				<ion-col size="2" class="table-td">
 					<ion-text>{{ event.status ? "Ongoing": "Finished" }}</ion-text>
@@ -48,6 +48,7 @@
 <script setup lang="ts">
 import { IonItem, IonRadio, IonText, IonGrid, IonRow, IonCol } from "@ionic/vue";
 import { defineProps, withDefaults } from "vue";
+import dayjs from "dayjs";
 
 withDefaults(
   defineProps<{

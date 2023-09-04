@@ -173,7 +173,7 @@ onMounted(async () => {
         );
         acc.push({
           ...cur,
-					owned: currentStripeSubscription.value.plan_id === cur.id,
+					owned: currentStripeSubscription.value?.plan_id === cur.id,
           subscriptionPlan:
             subscriptionPlan.length && subscriptionPlan[0]?.is_active
               ? subscriptionPlan[0]

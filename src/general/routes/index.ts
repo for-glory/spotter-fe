@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import auth from "@/router/middleware/auth";
+import gymOwnerSubscription from "@/router/middleware/gymOwnerSubscription";
+import gymOwnerRole from "@/router/middleware/gymOwnerRole";
 import { EntitiesEnum } from "@/const/entities";
 import guest from "@/router/middleware/guest";
 
@@ -43,6 +45,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/general/views/UpdateEmail.vue"),
       },
     ],
+  },
+  {
+    name: EntitiesEnum.ManagerPasswordSet,
+    path: "/manager-password/:email",
+    component: () => import("@/general/views/ManagerPasswordSet.vue"),
+    meta: { mode: EntitiesEnum.CheckEmail }
   },
   {
     name: EntitiesEnum.PasswordReset,
@@ -446,6 +454,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/dashboard/",
     component: () => import("@/general/views/dashboard/Index.vue"),
+    redirect: { name: EntitiesEnum.DashboardOverview },
     meta: {
       middleware: [auth],
     },
@@ -454,16 +463,25 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardOverview,
         path: "overview",
         component: () => import("@/general/views/dashboard/Overview.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardEvent,
         path: "event",
         component: () => import("@/general/views/dashboard/events/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardCreateEvent,
         path: "create-event",
         component: () => import("@/general/views/dashboard/events/CreateEvent.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardMembership,
@@ -484,91 +502,145 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardWorkout,
         path: "workout",
         component: () => import("@/general/views/dashboard/workout/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardCreateWorkout,
         path: "workout/create",
         component: () => import("@/general/views/dashboard/workout/CreateWorkout.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardWorkoutTypes,
         path: "workout/create/type",
         component: () => import("@/general/views/dashboard/workout/Types.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardMuscleTypes,
         path: "workout/create/muscle-type",
         component: () => import("@/general/views/dashboard/workout/MuscleTypes.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardCreateExercise,
         path: "workout/create/exercise",
         component: () => import("@/general/views/dashboard/workout/Exercise.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardExerciseList,
         path: "/workout/exercise-list/:id?",
         component: () => import("@/general/views/dashboard/workout/ExercisesList.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardGettingPaid,
         path: "getting-paid",
         component: () => import("@/general/views/dashboard/GettingPaid.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.DashboardSettings,
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.DashboardPassList,
         path: "pass/list",
         component: () => import("@/general/views/dashboard/pass/List.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardPassCreate,
         path: "pass/create-pass",
         component: () => import("@/general/views/dashboard/pass/CreatePass.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardPassProfile,
         path: "pass/profile",
         component: () => import("@/general/views/dashboard/pass/Profile.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardDropinList,
         path: "dropin/list",
         component: () => import("@/general/views/dashboard/dropins/List.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardDropinCreate,
         path: "dropin/create-drop-in",
         component: () => import("@/general/views/dashboard/dropins/CreateDropin.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardDropinProfile,
         path: "pass/profile",
         component: () => import("@/general/views/dashboard/pass/Profile.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardMessage,
         path: "message",
         component: () => import("@/general/views/dashboard/message/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        }
       },
       {
         name: EntitiesEnum.DashboardGymManager,
         path: "gym-manager",
         component: () => import("@/general/views/dashboard/gymManager/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.DashboardGymManagerProfile,
         path: "manager-profile/:id(\\d+)",
         component: () => import("@/general/views/dashboard/gymManager/ManagerProfile.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.DashboardManageGyms,
         path: "gyms",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        }
       },
       {
         name: EntitiesEnum.CreateItem,
@@ -579,6 +651,9 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardGymCreate,
         path: "gyms/create-new-gym",
         component: () => import("@/general/views/dashboard/gyms/CreateFacility.vue"),
+        meta: {
+          middleware: [gymOwnerRole],
+        }
       },
     ]
   },
