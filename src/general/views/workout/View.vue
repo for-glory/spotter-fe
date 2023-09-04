@@ -42,8 +42,8 @@
           </div>
           <div class="d-flex-col justify-content-end align-items-end gap-24">
             <div class="d-flex-col gap-8">
-              <div class="d-flex align-items-center gap-12">
-                <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold" @click="showReviews"></ion-icon>
+              <div class="d-flex align-items-center gap-12" @click="showReviews">
+                <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(24567) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
