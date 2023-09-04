@@ -382,11 +382,11 @@ export type CreateTrainerWorkoutInput = {
 };
 
 
-export type CreateGymWorkoutInput = {
+export type CreateDailyInput = {
   body_parts: Array<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
-  duration: Scalars['Int'];
-  exercises?: InputMaybe<Array<WorkoutVideosInput>>;
+  duration?: Scalars['Int'];
+  video?: InputMaybe<Scalars['StringOrUpload']>;
   preview?: InputMaybe<Scalars['StringOrUpload']>;
   price: Scalars['Float'];
   title: Scalars['String'];
@@ -870,8 +870,8 @@ export type MutationCreateTrainerWorkoutArgs = {
 };
 
 
-export type MutationCreateGymWorkoutArgs = {
-  input?: InputMaybe<CreateGymWorkoutInput>;
+export type MutationCreateDailyArgs = {
+  input?: InputMaybe<CreateDailyInput>;
 };
 
 
@@ -1047,9 +1047,9 @@ export type MutationUpdateTrainerWorkoutArgs = {
   input?: InputMaybe<UpdateTrainerWorkoutInput>;
 };
 
-export type MutationUpdateGymWorkoutArgs = {
+export type MutationUpdateDailyArgs = {
   id: Scalars['ID'];
-  input?: InputMaybe<UpdateGymWorkoutInput>;
+  input?: InputMaybe<UpdateDailyInput>;
 };
 
 
@@ -2799,13 +2799,13 @@ export type UpdateTrainerWorkoutInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateGymWorkoutInput = {
+export type UpdateDailyInput = {
   body_parts?: InputMaybe<Array<Scalars['ID']>>;
   description?: InputMaybe<Scalars['String']>;
   duration?: InputMaybe<Scalars['Int']>;
   level?: InputMaybe<Scalars['ID']>;
-  media?: InputMaybe<Array<WorkoutVideosInput>>;
   preview?: InputMaybe<Scalars['StringOrUpload']>;
+  video?: InputMaybe<Scalars['StringOrUpload']>;
   price?: InputMaybe<Scalars['Float']>;
   title?: InputMaybe<Scalars['String']>;
 };
@@ -5950,6 +5950,9 @@ export const WorkoutsByFacilityDocument = gql`
       preview
       reviews_count
       recommended_count
+      total_revenue
+      video
+      videoUrl
       type {
         id
         name
@@ -6036,10 +6039,10 @@ export const CreateTrainerWorkoutDocument = gql`
   }
 }
     `;
-export const CreateGymWorkoutDocument = gql`
-    mutation createGymWorkout($body_parts: [ID!]!, $facility_id: ID, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int!, $preview: StringOrUpload, $exercises: [WorkoutVideosInput!]) {
-  createGymWorkout(
-    input: {body_parts: $body_parts, facility_id: $facility_id, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, exercises: $exercises, preview: $preview}
+export const CreateDailyDocument = gql`
+    mutation createDaily($body_parts: [ID!], $facility_id: ID, $type_id: ID, $title: String!, $description: String, $price: Float!, $duration: Int, $preview: StringOrUpload, $video: StringOrUpload) {
+  createDaily(
+    input: {body_parts: $body_parts, facility_id: $facility_id, type_id: $type_id, title: $title, description: $description, price: $price, duration: $duration, video: $video, preview: $preview}
   ) {
     id
     type {
@@ -6047,24 +6050,14 @@ export const CreateGymWorkoutDocument = gql`
       name
       icon
     }
-    trainer {
-      id
-      first_name
-      last_name
-    }
     title
     description
     price
     duration
     preview
     previewUrl
-    exercises {
-      id
-      title
-      description
-      path
-      pathUrl
-    }
+    video
+    videoUrl
     bodyParts {
       id
       name
@@ -6074,9 +6067,18 @@ export const CreateGymWorkoutDocument = gql`
 }
     `;
 
-export const UpdateGymWorkoutDocument = gql`
-    mutation updateGymWorkout($id: ID!, $input: UpdateGymWorkoutInput!) {
-  updateGymWorkout(id: $id, input: $input) {
+export const UpdateDailyDocument = gql`
+    mutation updateDaily($id: ID!, $input: UpdateDailyInput!) {
+  updateDaily(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+
+
+export const DeleteDailyDocument = gql`
+    mutation deleteDaily($id: ID!) {
+  deleteDaily(id: $id) {
     id
   }
 }
