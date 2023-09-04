@@ -319,6 +319,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.EditWorkout,
+    path: "/dailys/edit-workout/:id",
+    component: () => import("@/general/views/workout/EditWorkout.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
     name: EntitiesEnum.WorkoutTypes,
     path: "/workout/types",
     component: () => import("@/general/views/workout/Types.vue"),

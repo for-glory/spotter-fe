@@ -224,6 +224,8 @@ const onDelete = () => {
 
 const handleEdit = () => {
   console.log("edit");
+  isSettingModalOpen.value = false;
+  router.push({ name: EntitiesEnum.EditWorkout, params: { id: id.value } });
 }
 
 const showReviews = () => {
