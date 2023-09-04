@@ -3,7 +3,7 @@
     <template #header>
       <page-header back-btn @back="onBack">
         <template #custom-btn>
-          <ion-button @click="handleCreate" class="header-btn">
+          <ion-button @click="showSettingsModal" class="header-btn">
             <ion-icon src="assets/icon/three-dot.svg" />
           </ion-button>
         </template>
@@ -71,6 +71,45 @@
     </template>
   </base-layout>
   <workout-modal ref="workoutModal" />
+  <ion-modal
+    ref="modal"
+    :is-open="isSettingModalOpen"
+    class="settings-modal"
+    @willDismiss="isSettingModalOpen = false"
+  >
+    <div class="main-buttons">
+      <ion-button
+        id="delete"
+        @click="handleDelete"
+        expand="block"
+      >
+        Delete Dailys
+      </ion-button>
+      <div class="split"/>
+      <ion-button
+        id="create"
+        @click="handleEdit"
+        expand="block"
+      >
+        Edit Dailys
+      </ion-button>
+    </div>
+    <ion-button
+      id="cancel"
+      @click="isSettingModalOpen = false"
+      expand="block"
+    >
+      Cancel
+    </ion-button>
+  </ion-modal>
+  <confirmation
+    :is-visible="showConfirmationModal"
+    :title="'Do you want to delete' + (type === 'PASS' ? ' Gym pass' : ' drop-in?') + '?'"
+    :description="(type === 'PASS' ? 'Gym Pass' : 'Drop-in') + ' will be deleted'"
+    button-text="Delete"
+    @discard="onDelete"
+    @decline="hideModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -102,6 +141,8 @@ import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import WorkoutModal from "@/general/components/modals/workout/WorkoutModal.vue";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { Share } from "@capacitor/share";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
@@ -123,6 +164,12 @@ const duration = computed(() => store.workoutDuration);
 const share = true;
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);
+
+const {
+  showConfirmationModal,
+  hideModal,
+  showModal: showModal,
+} = useConfirmationModal();
 
 const onBack = () => {
   router.go(-1);
@@ -161,6 +208,22 @@ const showWorkoutModal = (type: string) => {
       break;
   }
   
+}
+
+const isSettingModalOpen = ref<boolean>(false);
+const showSettingsModal = (id: number) => {
+  isSettingModalOpen.value = true;
+};
+const handleDelete = () => {
+  isSettingModalOpen.value = false;
+  showModal();
+}
+const onDelete = () => {
+  hideModal();
+}
+
+const handleEdit = () => {
+  console.log("edit");
 }
 
 const showReviews = () => {
@@ -398,5 +461,49 @@ const formatNumber = (num: number) => {
   .color-fitness-white{
     color: #EFEFEF;
   }
+}
+.settings-modal {
+  --height: auto;
+  align-items: flex-end;
+  --backdrop-opacity: 0.6;
+  --background: none;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  &::part(content) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border-radius: 20px 20px 0 0;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 24px calc(16px + var(--ion-safe-area-bottom));
+    max-height: calc(
+      100vh - 136px - var(--ion-safe-area-top) - var(--ion-safe-area-bottom)
+    );
+  }
+}
+.main-buttons {
+  border-radius: 8px;
+  background: #262626;
+
+  ion-button#create {
+    --color: #EFEFEF;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+  ion-button#delete {
+    --color: #EB4336;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+}
+ion-button#cancel {
+  --color: #FFFFFF6a;
+  --background: #262626;
+  font: 500 16px/1 Lato;
+  margin-top: 16px;
+}
+.split {
+  height: 1px;
+  background-color: #3D3D3D;
 }
 </style>
