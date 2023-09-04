@@ -10,7 +10,7 @@
           <img src="assets/backgrounds/Banner_3.png" alt="">
         </div>
       </div>
-      <div class="workout-list" v-if="!(recentLoading) && recentDailys.length">
+      <div class="workout-list" v-if="!(dailysLoading) && dailysData.length">
         <div class="d-flex justify-content-around workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-center">
             <ion-button 
@@ -36,13 +36,13 @@
         class="ion-padding-horizontal height-100 main-content"
       >
         <ion-spinner
-          v-if="recentLoading"
+          v-if="dailysLoading"
           name="lines"
           class="spinner"
         />
         <div
           class="empty-section"
-          v-else-if="!recentDailys.length"
+          v-else-if="!dailysData.length"
         >
           <empty-block
             title="Library Empty"
@@ -62,7 +62,7 @@
           <div v-else>
             <div>
               <swiper 
-                v-if="recentDailys.length"
+                v-if="dailysData.length"
                 free-mode
                 slidesPerView="auto"
                 :spaceBetween="16"
@@ -71,7 +71,7 @@
                 :modules="[FreeMode]"
               >
                 <swiper-slide 
-                  v-for="daily in recentDailys" 
+                  v-for="daily in dailysData" 
                   :key="daily.id"
                 >
                   <workout-item
@@ -113,8 +113,8 @@ import {
 import { EntitiesEnum } from "@/const/entities";
 import {
   WorkoutsByFacilityDocument,
-  RecommendedWorkoutsByBodyPartsDocument,
-  RecommendedWorkoutsByTypeDocument,
+  QueryFacilityWorkoutsOrderByColumn,
+  SortOrder,
   WorkoutDocument,
   Workout,
   HideWorkoutDocument,
@@ -153,69 +153,27 @@ const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
 
-const { result: recentResult, loading: recentLoading, refetch: refetchRecentDailys, onResult: gotRecentData } = useQuery(
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
   WorkoutsByFacilityDocument,
   {
     page: 1,
     first: 1000,
     facility_id: currentFacility.facility?.id,
-    orderByColumn: 'CREATED_AT',
-    order: 'ASC'
+    orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Desc,
   },
   {
     fetchPolicy: "no-cache",
   }
 );
 
-gotRecentData(({ data }) => {
+gotDailysData(({ data }) => {
   console.log(data.facilityWorkouts.data);
-  console.log(recentResult.value?.facilityWorkouts?.data);
+  console.log(dailysResult.value?.facilityWorkouts?.data);
 });
 
-const recentDailys = computed(
-  () => recentResult.value?.facilityWorkouts?.data
-);
-
-const {
-  result: recommendedByBodyPartsResult,
-  loading: recommendedByBodyLoading,
-} = useQuery(
-  RecommendedWorkoutsByBodyPartsDocument,
-  {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const recommendedWorkoutsByBody = computed(
-  () =>
-    recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
-
-const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
-  useQuery(
-    RecommendedWorkoutsByTypeDocument,
-    {
-      page: 1,
-      first: 1000,
-      facility_id: currentFacility.facility?.id,
-    },
-    {
-      fetchPolicy: "no-cache",
-    }
-  );
-
-const recommendedWorkoutsByType = computed(
-  () =>
-    recommendedByTypeResult.value?.recommendedWorkoutsByType?.data.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
+const dailysData = computed(
+  () => dailysResult.value?.facilityWorkouts?.data
 );
 
 const { mutate: showDailys, loading: dailysShowLoading } =
@@ -224,12 +182,12 @@ const { mutate: hidedailys, loading: dailysHideLoading } =
   useMutation(HideWorkoutDocument);
 const hideDailysItem = (id: number) => {
   hidedailys({ id }).then(() => {
-    refetchRecentDailys();
+    refetchDailys();
   });
 }
 const showDailysItem = (id: number) => {
   showDailys({ id }).then(() => {
-    refetchRecentDailys();
+    refetchDailys();
   });
 }
 

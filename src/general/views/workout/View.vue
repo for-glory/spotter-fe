@@ -44,19 +44,19 @@
             <div class="d-flex-col gap-8">
               <div class="d-flex align-items-center gap-12">
                 <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ 2.45 }}{{ 'k' }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(24567) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ 3832 }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(3832) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('likes')">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(3300000) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('views')">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(12345678) }}</ion-text>
               </div>
             </div>
             <div class="d-flex align-items-center gap-12 justify-content-end">
@@ -161,6 +161,16 @@ const showWorkoutModal = (type: string) => {
       break;
   }
   
+}
+
+const formatNumber = (num: number) => {
+  if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e4) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
 }
 
 </script>

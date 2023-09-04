@@ -51,7 +51,7 @@
         <ion-text class="font-light font-14 color-gray-400">{{ reviewDescription.reviewMessage }}</ion-text>
       </div>
       <div class="d-flex align-items-center justify-content-center w-full">
-        <ion-button class="w-60">Close</ion-button>
+        <ion-button class="w-60" @click="() => isReviewDescriptionModalOpen = false">Close</ion-button>
       </div>
     </div>
   </ion-modal>
