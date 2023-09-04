@@ -26,9 +26,10 @@ import {
   PickerOptions,
 	IonGrid,
 	IonRow,
-	IonCol
+	IonCol,
+  toastController,
 } from "@ionic/vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
 import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
@@ -49,6 +50,7 @@ import { useDailysStore } from "@/general/stores/useDailysStore";
 const percentLoaded = ref(0);
 
 const router = useRouter();
+const route = useRoute();
 
 const store = useDailysStore();
 const isConfirmationOpen = ref<boolean>(false);
@@ -61,8 +63,37 @@ const { mutate: updateWorkout, loading: updatingWorkout } = useMutation(
 
 const updateDailys = () => {
   console.log("update dailys");
-  // updateWorkout()
-  router.push({ name: EntitiesEnum.WorkoutList });
+  updateWorkout({
+    id: route.params.id,
+    input: {
+      title: store.workoutTitle,
+      description: store.description,
+      price: store.workoutPrice,
+      level: store.workoutType,
+      media: store.media,
+      body_parts: store.workoutMuscleTypesIds,
+    }
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Updated successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      router.push({ name: EntitiesEnum.WorkoutList });
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+
+      throw new Error(error);
+    });
 };
 
 const resetWorkout = () => {
