@@ -292,7 +292,7 @@ const videoSelected = async (
 ): Promise<void> => {
   videoOnLoading.value = true;
   percentLoaded.value = 0;
-  await filePreload({ file })
+  await filePreload({ file, upload_dir: 'workout' })
     .then((res) => {
       path.value = res?.data.filePreload.path;
       videoOnLoading.value = false;
@@ -300,8 +300,6 @@ const videoSelected = async (
       store.setExercise({
         description: exerciseDescription.value,
         videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
-        // previewUrl: previewUrl.value,
-        // previewPath: previewPath.value,
         id: uuidv4(),
         videoSize: size,
         videoName: name,
