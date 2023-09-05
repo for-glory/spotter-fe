@@ -50,7 +50,7 @@
       <div>
         <ion-text class="font-light font-14 color-gray-400">{{ reviewDescription.reviewMessage }}</ion-text>
       </div>
-      <div class="d-flex align-items-center justify-content-center w-full">
+      <div class="d-flex align-items-center justify-content-center w-100">
         <ion-button class="w-60" @click="() => isReviewDescriptionModalOpen = false">Close</ion-button>
       </div>
     </div>
@@ -173,51 +173,11 @@ defineExpose({
   padding: 0 12px;
 }
 .common-style {
-  .w-full {
-    width: 100%;
-  }
-  .w-60 {
-    width: 60%;
-  }
   .w-68 {
     width: 68px;
   }
   .h-68 {
     height: 68px;
-  }
-
-  .d-flex-col {
-    display: flex;
-    flex-direction: column;
-  }
-  .gap-24 {
-    gap: 24px;
-  }
-  .gap-12 {
-    gap: 12px;
-  }
-  .gap-8 {
-    gap: 8px;
-  }
-  .gap-6 {
-    gap: 6px;
-  }
-  .gap-4 {
-    gap: 4px;
-  }
-
-
-  .font-bold {
-    font-weight: 700;
-  }
-  .font-semibold {
-    font-weight: 600;
-  }
-  .font-medium {
-    font-weight: 500;
-  }
-  .font-light {
-    font-weight: 300;
   }
 
   .font-12 {
@@ -229,30 +189,8 @@ defineExpose({
   .font-16 {
     font-size: 16px;
   }
-  .font-18 {
-    font-size: 18px;
-  }
   .font-20 {
     font-size: 20px;
-  }
-  .font-24 {
-    font-size: 24px;
-  }
-
-  .color-gray {
-    color: #afafaf;
-  }
-  .color-gold {
-    color: #E1DBC5;
-  }
-  .color-gray-400 {
-    color: var(--gray-400);
-  }
-  .color-white {
-    color: white;
-  }
-  .color-fitness-white{
-    color: #EFEFEF;
   }
 }
 .review-descrition-modal {

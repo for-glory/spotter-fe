@@ -62,43 +62,6 @@ const openDescriptionModal = () => {
     height: 68px;
   }
 
-  .d-flex-col {
-    display: flex;
-    flex-direction: column;
-  }
-  .gap-24 {
-    gap: 24px;
-  }
-  .gap-12 {
-    gap: 12px;
-  }
-  .gap-8 {
-    gap: 8px;
-  }
-  .gap-6 {
-    gap: 6px;
-  }
-  .gap-4 {
-    gap: 4px;
-  }
-  .gap-2 {
-    gap: 4px;
-  }
-
-
-  .font-bold {
-    font-weight: 700;
-  }
-  .font-semibold {
-    font-weight: 600;
-  }
-  .font-medium {
-    font-weight: 500;
-  }
-  .font-light {
-    font-weight: 300;
-  }
-
   .font-12 {
     font-size: 12px;
   }
@@ -116,22 +79,6 @@ const openDescriptionModal = () => {
   }
   .font-24 {
     font-size: 24px;
-  }
-
-  .color-gray {
-    color: #afafaf;
-  }
-  .color-gold {
-    color: #E1DBC5;
-  }
-  .color-gray-400 {
-    color: var(--gray-400);
-  }
-  .color-white {
-    color: white;
-  }
-  .color-fitness-white{
-    color: #EFEFEF;
   }
 }
 ion-img{
