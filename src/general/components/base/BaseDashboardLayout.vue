@@ -23,10 +23,7 @@ import { IonSpinner, IonMenu } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import useId from "@/hooks/useId";
 import { useProfileStore } from "../../stores/profile";
-import {
-  ref,
-	watch
-} from "vue";
+import { ref, watch } from "vue";
 import {
   Query,
   RoleEnum,
@@ -62,7 +59,9 @@ gotUser(({ data }) => {
 	if(data.user?.role === RoleEnum.Manager) {
 		facilities.value = result.value?.user?.facilities;
 	}
-	else facilities.value = result.value?.user?.owned_facilities;
+	else {
+		facilities.value = result.value?.user?.owned_facilities;
+	}
 
   setIsLoading();
 });
