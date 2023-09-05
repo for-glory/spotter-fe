@@ -3,7 +3,7 @@
     <ion-text class="font-medium font-16 color-white">{{ name }}</ion-text>
     <div class="d-flex align-items-center gap-16">
       <div class="chart" :style="{ width: `${props.width}%` }" />
-      <ion-text class="font-14 color-white">${{ value }}</ion-text>
+      <ion-text class="font-14 color-white">${{ formatNumber(value) }}</ion-text>
     </div>
   </div>
 </template>
@@ -18,6 +18,18 @@ const props = defineProps<{
   value: number;
   width: number;
 }>(); 
+
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
 
 </script>
 

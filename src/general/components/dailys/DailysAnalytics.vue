@@ -4,16 +4,16 @@
       <div class="d-flex-col gap-16 color-white w-70">
         <ion-text class="font-light font-12">Latest daily. {{ "10 Aug 2023" }}</ion-text>
         <ion-text class="font-light font-12">
-          <span class="font-bold font-24">{{ 300 }}</span>
+          <span class="font-bold font-24">{{ daily?.total_revenue }}</span>
           Purchases
         </ion-text>
         <div class="d-flex-col gap-4">
           <ion-text class="font-medium font-16">
-            {{ "Full body stretching" }}
+            {{ daily?.title }}
           </ion-text>
           <ion-text class="font-light font-14 color-gray-400 d-flex justify-content-center">
             <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
-            {{ 10 }} min • {{ "Intermediate" }} • {{ "Tamara Dae" }}
+            {{ daily?.duration }} min • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
           </ion-text>
         </div>
       </div>
@@ -22,7 +22,7 @@
           Revenue
           <ion-icon src="assets/icon/dollar-circle.svg" class="dollar-icon"></ion-icon>
         </div>
-        {{ '3,3389' }}
+        {{ daily?.total_revenue * daily?.price / 100 }}
       </div>
     </div>
   </div>
@@ -33,8 +33,8 @@ import { defineProps, computed } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
 
-const props = defineProps<{
-  workout: Workout;
+defineProps<{
+  daily: any;
 }>(); 
 
 

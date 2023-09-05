@@ -33,7 +33,7 @@ withDefaults(
   {
     name: 'Amina Sally',
     email: 'aminasaliat@gmail.com',
-    reviewMessage: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
+    reviewMessage: '',
     avatarUrl: 'assets/mock/profile.jpeg',
   }
 );

@@ -60,14 +60,9 @@ export const useDailysStore = defineStore("dailys", {
         this.workoutMuscleTypesIds = payload.bodyParts as unknown as string[];
       this.workoutDuration = payload?.duration?.toString() || "";
       if (payload.price) this.workoutPrice = payload.price;
-      this.workoutPreview = payload.preview || "";
-      this.workoutPath = payload.previewUrl || "";
       this.setExercise({
-        title: payload.exercises?.title,
         description: payload.exercises?.description || "",
-        id: payload.exercises.id,
         videoPath: payload.exercises?.pathUrl,
-        path: payload.exercises?.pathUrl,
         videoSize: "",
         videoName: "",
       });

@@ -25,7 +25,7 @@ import { IonItem, IonLabel } from "@ionic/vue";
 import RankingChart from "@/general/components/RankingChart.vue";
 
 const props = defineProps<{
-  workout: Workout;
+  summaryData: any;
 }>(); 
 const graphDuration = ref<string>('7');
 
@@ -33,48 +33,9 @@ const handleSetDuration = ( value: string ) => {
   graphDuration.value = value;
 }
 
-const topData = ref<any[]>([
-  {
-    name: 'Leg Stretching',
-    value: 9334,
-  },
-  {
-    name: 'Full Body Workout',
-    value: 3532,
-  },
-  {
-    name: 'Yoga stretching',
-    value: 2341,
-  },
-  {
-    name: 'Leg Stretching',
-    value: 1984,
-  },
-  {
-    name: 'Leg Stretching',
-    value: 600,
-  },
-  {
-    name: 'Full Body Workout',
-    value: 234,
-  },
-  {
-    name: 'Back & ABS challenge video',
-    value: 190,
-  },
-  {
-    name: 'Armstring pull-up',
-    value: 187,
-  },
-  {
-    name: 'Squats',
-    value: 70,
-  },
-  {
-    name: 'Cardio reset',
-    value: 18,
-  },
-]);
+const topData = computed(() => props.summaryData?.topDailys.map((daily: any) => { 
+  return { name: daily.title, value: daily.total_revenue };
+}));
 const maxValue = computed(() => {
   let max = 0;
   topData.value.forEach((data) => {
@@ -85,7 +46,11 @@ const maxValue = computed(() => {
   return max;
 });
 const getWidth = (value: number) => {
-  return value / maxValue.value * 90;
+  if(maxValue.value === 0) {
+    return 90;
+  } else {
+    return value / maxValue.value * 90;
+  }
 }
 </script>
 

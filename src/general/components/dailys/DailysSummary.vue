@@ -9,7 +9,7 @@
             <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
           </ion-text>
           <ion-text class="font-semibold font-18 color-white">
-            {{ "2,231" }}
+            {{ formatNumber(summaryData?.totalViews) }}
           </ion-text>
         </div>
         <div class="d-flex-col gap-4">
@@ -18,7 +18,7 @@
             <ion-icon src="assets/icon/add-user.svg" class="normal-icon"></ion-icon>
           </ion-text>
           <ion-text class="font-semibold font-18 color-white">
-            {{ 389 }}
+            {{ formatNumber(summaryData?.subscribers) }}
           </ion-text>
         </div>
       </div>
@@ -29,7 +29,7 @@
             <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
           </ion-text>
           <ion-text class="font-semibold font-18 color-white">
-            {{ 300 }}
+            {{ formatNumber(summaryData?.viewsPerDaily) }}
           </ion-text>
         </div>
         <div class="d-flex-col gap-4">
@@ -38,7 +38,7 @@
             <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
           </ion-text>
           <ion-text class="font-semibold font-18 color-white">
-            {{ "389,234.98" }}
+            {{ formatNumber(summaryData?.totalRevenue) }}
           </ion-text>
         </div>
       </div>
@@ -51,10 +51,21 @@ import { defineProps, computed } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonTitle } from "@ionic/vue";
 
-const props = defineProps<{
-  workout: Workout;
+defineProps<{
+  summaryData: any;
 }>(); 
 
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
 
 </script>
 

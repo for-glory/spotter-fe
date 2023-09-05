@@ -15,6 +15,9 @@ export const useDailysItemStore = defineStore("dailys-item", {
       exercises: {},
       workoutMuscleTypes: [],
       trainer: '',
+      total_revenue: 0,
+      recommended_count: 0,
+      reviews_count: 0,
     };
   },
   actions: {
@@ -44,16 +47,9 @@ export const useDailysItemStore = defineStore("dailys-item", {
       this.workoutPath = payload.previewUrl || "";
       this.trainer = payload.trainer;
       this.workoutType = payload.type;
-      // this.setExercise({
-      //   title: payload.exercises?.title,
-      //   description: payload.exercises?.description || "",
-      //   id: payload.exercises.id,
-      //   videoPath: payload.exercises?.pathUrl,
-      //   path: payload.exercises?.pathUrl,
-      //   videoSize: "",
-      //   videoName: "",
-      // });
-      // this.setMedia();
+      this.total_revenue = payload.total_revenue;
+      this.recommended_count = payload.recommended_count,
+      this.reviews_count = payload.reviews_count
     },
   },
 });

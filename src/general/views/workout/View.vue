@@ -43,19 +43,19 @@
             <div class="d-flex-col gap-8">
               <div class="d-flex align-items-center gap-12" @click="showReviews">
                 <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(24567) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(3832) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(total_revenue ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('likes')">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(3300000) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('views')">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(12345678) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
               </div>
             </div>
             <div class="d-flex align-items-center gap-12 justify-content-end">
@@ -151,6 +151,9 @@ const title = computed(() => store.workoutTitle);
 const trainer = computed(() => store.trainer);
 const type = computed(() => store.workoutType);
 const duration = computed(() => store.workoutDuration);
+const recommended_count = computed(() => store.recommended_count);
+const total_revenue = computed(() => store.total_revenue);
+const reviews_count = computed(() => store.reviews_count);
 const share = true;
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);
@@ -185,21 +188,24 @@ const showWorkoutModal = (type: string) => {
     case 'views' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Viewd by ${3309234} people`
+        description: `Viewd by ${reviews_count.value} people`,
+        total_count: reviews_count.value
       });
       break;
     
     case 'purchases' :
       workoutModal.value?.present({ 
         title: 'Purchases',
-        description: `Total purchases made ${3309234}`
+        description: `Total purchases made ${total_revenue.value}`,
+        total_count: total_revenue.value
       });
       break;
 
     case 'likes' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Liked by ${3309234} people`
+        description: `Liked by ${recommended_count.value} people`,
+        total_count: recommended_count.value
       });
       break;
   }
@@ -216,7 +222,7 @@ const handleDelete = () => {
 }
 const onDelete = () => {
   hideModal();
-  deleteDailys({ id })
+  deleteDailys({ id: id.value })
     .then(async () => {
       const toast = await toastController.create({
         message: "Deleted successfully",
@@ -249,9 +255,11 @@ const showReviews = () => {
 }
 
 const formatNumber = (num: number) => {
-  if (num >= 1e6) {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
     return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e4) {
+  } else if (num >= 1e5) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
     return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);

@@ -10,16 +10,11 @@
       <div class="description-field">
         <ion-text class="font-medium font-14">{{ viewDescription }}</ion-text>
       </div>
-      <div class="customer-list">
+      <div v-if="total_count" class="customer-list">
         <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
+      </div>
+      <div v-else class="d-flex align-items-center justify-content-center w-100 h-100">
+        <ion-text class="font-medium font-20 color-white">No customers</ion-text>
       </div>
       <div v-if="isReviewDescriptionModalOpen" class="backdrop" />
     </div>
@@ -89,10 +84,12 @@ const workoutModal = ref<typeof IonModal | null>(null);
 const viewTitle = ref<string>("");
 const viewDescription = ref<string>("");
 const reviewDescription = ref<any>({});
+const total_count = ref<number>(0);
 
 const present = ( props: any ) => {
   viewTitle.value = props.title;
   viewDescription.value = props.description;
+  total_count.value = props.total_count;
   workoutModal?.value?.$el.present();
 };
 
@@ -102,7 +99,7 @@ const showReviewDescriptionModal = (id: any) => {
     reviewerName: 'Amina Sally',
     reviewerAvatar: 'assets/mock/profile.jpeg',
     reviewerEmail: 'aminasaliat@gmail.com',
-    reviewMessage: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
+    reviewMessage: '',
     date: '6 June, 2022'
   }
   isReviewDescriptionModalOpen.value = true;

@@ -33,20 +33,22 @@
               :value="activeTab"
               @change="tabsChanged"
             />
-            <div class="content ion-padding-horizontal">
-              <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
-              <div v-else>
-                <review-item
-                  v-for="review in reviews"
-                  :key="review.id"
-                  class="review-item"
-                  :avatar-url="review.avatarUrl"
-                  :full-name="review.fullName"
-                  :date="review.date"
-                  :rating="review.rating"
-                  :text="review.text"
-                />
-              </div>
+          </div>
+          <div class="content ion-padding-horizontal">
+            <div v-if="!totalReviewsCount" class="d-flex align-items-center justify-content-center">
+              <ion-text class="font-bold font-20 color-white">No reviews</ion-text>
+            </div>
+            <div v-else>
+              <review-item
+                v-for="review in reviews"
+                :key="review.id"
+                class="review-item"
+                :avatar-url="review.avatarUrl"
+                :full-name="review.fullName"
+                :date="review.date"
+                :rating="review.rating"
+                :text="review.text"
+              />
             </div>
           </div>
         </div>
@@ -77,6 +79,7 @@ import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 import { TabItem } from "@/interfaces/TabItem";
+import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
 import useRoles from "@/hooks/useRole";
 import StarRating from "@/users/components/StarRating.vue";
 import LikeRating from "@/users/components/LikeRating.vue";
@@ -85,8 +88,10 @@ const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
 const router = useRouter();
 const route = useRoute();
+const store = useDailysItemStore();
 
 const id = computed(() => route.params.id);
+const totalReviewsCount = computed(() => store.reviews_count);
 
 const tabs: TabItem[] = [
   {

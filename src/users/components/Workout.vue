@@ -58,15 +58,15 @@
         <div class="d-flex-col gap-6">
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white">{{ 3832 }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(total_revenue ?? 0) }}</ion-text>
           </div>
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white" styl>{{ 3.3 }}{{ 'M' }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0) }}</ion-text>
           </div>
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white">{{ 1.6 }}{{ 'M' }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
           </div>
         </div>
       </div>
@@ -106,6 +106,9 @@ const props = withDefaults(
     trainer: string;
     type: string;
     duration?: number;
+    total_revenue?: number;
+    reviews_count?: number;
+    recommended_count?: number;
     share?: boolean;
     hide?: boolean;
     hidden?: boolean;
@@ -151,6 +154,20 @@ const shareWorkout = async (event: any) => {
     dialogTitle: "Share",
   });
 };
+
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
+
+
 </script>
 
 <style lang="scss" scoped>

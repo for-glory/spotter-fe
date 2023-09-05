@@ -54,10 +54,10 @@
         </div>
         <div class="" v-else>
           <div v-if="tab === 'analytics'">
-            <dailys-analytics />
-            <dailys-summary />
-            <dailys-performance />
-            <dailys-top />
+            <dailys-analytics :daily="dailysData[dailysData?.length-1]" />
+            <dailys-summary :summaryData="summaryData"/>
+            <dailys-performance :daily="dailysData[dailysData?.length-1]"/>
+            <dailys-top :summaryData="summaryData"/>
           </div>
           <div v-else>
             <div>
@@ -84,6 +84,9 @@
                       ''
                     "
                     :id="daily.id"
+                    :total_revenue="daily.total_revenue"
+                    :reviews_count="daily.reviews_count"
+                    :recommended_count="daily.recommended_count"
                     :share="true"
                     :hide="true"
                     :hidden="false"
@@ -130,6 +133,7 @@ import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
@@ -146,8 +150,16 @@ const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
 const dailysItemStore = useDailysItemStore();
+const summaryData = ref<any>({
+  totalViews: 0,
+  subscribers: 0,
+  totalRevenue: 0,
+  viewsPerDaily: 0,
+  topDailys: [],
+});
 
 const router = useRouter();
+const store = useDailysStore();
 
 const setTab = (workoutT: string) => {
 		tab.value = workoutT;
@@ -168,8 +180,17 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 );
 
 gotDailysData(({ data }) => {
-  console.log(data.facilityWorkouts.data);
-  console.log(dailysResult.value?.facilityWorkouts?.data);
+  let dailys = data.facilityWorkouts.data;
+  dailys.map((daily: any) => {
+    summaryData.value.totalViews += daily.recommended_count;
+    summaryData.value.subscribers += daily.recommended_count;
+    summaryData.value.totalRevenue += daily.total_revenue;
+    summaryData.value.viewsPerDaily += daily.recommended_count;
+  });
+  dailys.sort((a: any, b: any) => {
+    return a.total_revenue - b.total_revenue;
+  });
+  summaryData.value.topDailys = dailys.slice(0, 10);
 });
 
 const dailysData = computed(
@@ -200,6 +221,16 @@ const watchDailys = (daily: any) => {
     previewUrl: `${VUE_APP_CDN.value}${daily.preview}` || '',
     trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
   });
+  store.setWorkout({
+    title: daily.title,
+    type: daily.type.name,
+    duration: daily.duration,
+    bodyParts: daily.workoutMuscleTypesIds,
+    price: daily.price / 100,
+    exercises: {
+      description: daily.exercises.description
+    }
+  })
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 </script>

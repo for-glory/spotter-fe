@@ -104,6 +104,16 @@ const onBack = () => {
     router.go(-1);
   }
 };
+
+const discardModalClosed = (approved: boolean) => {
+  if(approved) {
+    isConfirmationOpen.value = false;
+    store.clearState();
+    router.go(-1);
+  } else {
+    isConfirmationOpen.value = false;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
