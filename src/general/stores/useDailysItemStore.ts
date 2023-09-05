@@ -48,8 +48,9 @@ export const useDailysItemStore = defineStore("dailys-item", {
       this.trainer = payload.trainer;
       this.workoutType = payload.type;
       this.total_revenue = payload.total_revenue;
-      this.recommended_count = payload.recommended_count,
-      this.reviews_count = payload.reviews_count
+      this.recommended_count = payload.recommended_count;
+      this.reviews_count = payload.reviews_count;
+      this.setExercise(payload.exercise);
     },
   },
 });

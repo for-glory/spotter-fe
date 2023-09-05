@@ -25,7 +25,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
 import { EntitiesEnum } from "@/const/entities";
-import { UpdateGymWorkoutDocument } from "@/generated/graphql";
+import { UpdateDailyDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
@@ -43,7 +43,7 @@ const isConfirmationOpen = ref<boolean>(false);
 const workoutForm = ref<typeof WorkoutForm | null>(null);
 
 const { mutate: updateWorkout, loading: updatingWorkout } = useMutation(
-  UpdateGymWorkoutDocument
+  UpdateDailyDocument
 );
 
 const updateDailys = () => {
@@ -54,7 +54,7 @@ const updateDailys = () => {
       description: store.description,
       duration: parseInt(store.workoutDuration),
       price: parseFloat(store.workoutPrice),
-      level: store.workoutType,
+      level: store.workoutType.id,
       video: store.exercises.videoPath,
       body_parts: store.workoutMuscleTypesIds,
     }
