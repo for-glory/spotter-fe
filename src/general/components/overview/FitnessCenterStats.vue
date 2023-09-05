@@ -90,6 +90,7 @@ const dailyCount = computed(() => props.overviewData?.daily_count);
 <style scoped lang="scss">
 .custom-table {
   border-spacing: 10px;
+  width: 100%;
 }
 .title {
   padding: 8px 0px;
