@@ -305,7 +305,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/workout/index.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.CreateWorkout,
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {
@@ -314,12 +314,12 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/workout/View.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.CreateWorkout,
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {
     name: EntitiesEnum.CreateWorkout,
-    path: "/dailys/create-workout",
+    path: "/dailys/create-dailys",
     component: () => import("@/general/views/workout/CreateWorkout.vue"),
     meta: {
       middleware: [auth],
@@ -332,7 +332,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/workout/EditWorkout.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.CreateWorkout,
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {
@@ -350,7 +350,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/general/views/workout/Reviews.vue"),
     meta: {
       middleware: [auth],
-      mode: EntitiesEnum.CreateWorkout,
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {

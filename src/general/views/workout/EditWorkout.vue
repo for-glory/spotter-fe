@@ -9,6 +9,7 @@
           ref="workoutForm"
           exit-button-text="Finish"
           @submit="updateDailys"
+          @open-picker="openPicker"
         />
       </div>
     </template>
@@ -19,31 +20,15 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, inject } from "vue";
 import {
-	IonTitle,
-  IonButton,
-  IonLabel,
-  PickerColumnOption,
-  PickerOptions,
-	IonGrid,
-	IonRow,
-	IonCol,
   toastController,
 } from "@ionic/vue";
 import { useRouter, useRoute } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
-import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
-import { useWorkoutsStore } from "@/trainers/store/workouts";
-import { requiredFieldSchema } from "@/validations/authValidations";
-import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
-import { v4 as uuidv4 } from "uuid";
 import { UpdateGymWorkoutDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
-import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useDailysStore } from "@/general/stores/useDailysStore";
 
@@ -62,15 +47,15 @@ const { mutate: updateWorkout, loading: updatingWorkout } = useMutation(
 );
 
 const updateDailys = () => {
-  console.log("update dailys");
   updateWorkout({
     id: route.params.id,
     input: {
       title: store.workoutTitle,
       description: store.description,
-      price: store.workoutPrice,
+      duration: parseInt(store.workoutDuration),
+      price: parseFloat(store.workoutPrice),
       level: store.workoutType,
-      media: store.media,
+      video: store.exercises.videoPath,
       body_parts: store.workoutMuscleTypesIds,
     }
   })
@@ -94,6 +79,13 @@ const updateDailys = () => {
 
       throw new Error(error);
     });
+};
+
+const emitter: Emitter<Record<EventType, unknown>> | undefined =
+  inject("emitter"); // Inject `emitter`
+
+const openPicker = (name: string): void => {
+  emitter?.emit("open-picker", name);
 };
 
 const resetWorkout = () => {

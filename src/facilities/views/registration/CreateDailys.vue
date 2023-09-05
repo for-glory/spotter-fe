@@ -58,6 +58,25 @@
         </div>
 
         <div class="form-row">
+          <ion-label class="label">
+            Choose the duration for the whole workout
+          </ion-label>
+          <wheel-picker
+            :options="durationOptions"
+            name="duration"
+            :values="[duration, 'min']"
+          >
+            <template #button>
+              <choose-block
+                title="Duration"
+                :value="duration ? `${duration} min` : ''"
+                @handle-click="openPicker('duration')"
+              />
+            </template>
+          </wheel-picker>
+        </div>
+
+        <div class="form-row">
           <base-input
             auto-grow
             v-model:value="exerciseDescription"
@@ -101,12 +120,14 @@ import {
   IonIcon,
   IonTitle,
   isPlatform,
+  PickerColumnOption,
+  PickerOptions,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useRouter, useRoute } from "vue-router";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, inject } from "vue";
 import { toastController } from "@ionic/vue";
 import {
   FilePreloadDocument,
@@ -134,6 +155,8 @@ import { v4 as uuidv4 } from "uuid";
 import mime from "mime";
 import { dataURItoVideo } from "@/utils/videoUtils";
 import { useDailysStore } from "@/general/stores/useDailysStore";
+import { Emitter, EventType } from "mitt";
+import { minutesDuration } from "@/const/minutes-durations";
 import UploadVideo from "@/general/components/UploadVideo.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
@@ -156,11 +179,13 @@ const muscleTypesValue = computed(() =>
 );
 const workoutType = computed(() => store.workoutType?.name || "");
 const exerciseDescription = ref<string>("");
+const duration = computed(() =>
+  store.workoutDuration ? store.workoutDuration : ""
+);
 
 const isConfirmedModalOpen = ref(false);
 
 onMounted(() => {
-  console.log(step.value)
   if (store.workoutTitle) {
     titleValue.value = store.workoutTitle;
   }
@@ -314,6 +339,44 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   },
 });
 
+const options = minutesDuration(10, 240, 10);
+const durationOptions: PickerOptions = {
+  columns: [
+    {
+      name: "duration",
+      options,
+    },
+    {
+      name: "minutes",
+      options: [
+        {
+          text: "MIN",
+          value: "min",
+        },
+      ],
+    },
+  ],
+  buttons: [
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+    {
+      text: "Choose duration",
+      handler: (value: PickerColumnOption) => {
+        store.setValue("workoutDuration", value?.duration?.value);
+      },
+    },
+  ],
+};
+
+const emitter: Emitter<Record<EventType, unknown>> | undefined =
+  inject("emitter"); // Inject `emitter`
+
+const openPicker = (name: string): void => {
+  emitter?.emit("open-picker", name);
+};
+
 const { mutate: createWorkout, loading: createWorkoutLoading } =
   useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
 
@@ -323,7 +386,6 @@ const onHandleSelect = (pathName: string) => {
 };
 
 const onSave = () => {
-  console.log("save");
   router.push({ name: EntitiesEnum.CreateFacilitySuccess });
 }
 

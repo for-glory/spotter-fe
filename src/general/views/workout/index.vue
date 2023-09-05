@@ -10,7 +10,7 @@
           <img src="assets/backgrounds/Banner_3.png" alt="">
         </div>
       </div>
-      <div class="workout-list" v-if="!(dailysLoading) && dailysData.length">
+      <div class="workout-list" v-if="!(dailysLoading) && dailysData?.length">
         <div class="d-flex justify-content-around workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-center">
             <ion-button 
@@ -42,7 +42,7 @@
         />
         <div
           class="empty-section"
-          v-else-if="!dailysData.length"
+          v-else-if="!dailysData?.length"
         >
           <empty-block
             title="Library Empty"
@@ -62,7 +62,7 @@
           <div v-else>
             <div>
               <swiper 
-                v-if="dailysData.length"
+                v-if="dailysData?.length"
                 free-mode
                 slidesPerView="auto"
                 :spaceBetween="16"
@@ -160,7 +160,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
     first: 1000,
     facility_id: currentFacility.facility?.id,
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
-    order: SortOrder.Desc,
+    order: SortOrder.Asc,
   },
   {
     fetchPolicy: "no-cache",
@@ -192,7 +192,6 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
-  console.log('********', {daily});
   dailysItemStore.setWorkout({
     title: daily.title,
     type: daily.type.name,

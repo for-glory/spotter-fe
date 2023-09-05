@@ -16,7 +16,6 @@
       >
         <div class="workout-item__photo">
           <ion-img :src="pathUrl"></ion-img>
-          
         </div>
         <div class="d-flex justify-content-between workout-item__inner">
           <div class="d-flex-col justify-content-end align-items-start">
@@ -115,20 +114,12 @@
 <script setup lang="ts">
 import {
   IonButton,
-  IonSpinner,
-  IonGrid,
-  IonRow,
-  IonCol,
+  toastController,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  WorkoutsByFacilityDocument,
-  RecommendedWorkoutsByBodyPartsDocument,
-  RecommendedWorkoutsByTypeDocument,
-  WorkoutDocument,
   Workout,
-  HideWorkoutDocument,
-  ShowWorkoutDocument,
+  DeleteDailyDocument 
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -148,7 +139,6 @@ import { Share } from "@capacitor/share";
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('analytics');
 
-const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
 const store = useDailysItemStore();
@@ -164,6 +154,12 @@ const duration = computed(() => store.workoutDuration);
 const share = true;
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);
+
+const {
+  mutate: deleteDailys,
+  loading,
+  onDone: dailysDeleted,
+} = useMutation(DeleteDailyDocument);
 
 const {
   showConfirmationModal,
@@ -220,10 +216,30 @@ const handleDelete = () => {
 }
 const onDelete = () => {
   hideModal();
+  deleteDailys({ id })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      router.push({ name: EntitiesEnum.WorkoutList });
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+
+      throw new Error(error);
+    });
 }
 
 const handleEdit = () => {
-  console.log("edit");
   isSettingModalOpen.value = false;
   router.push({ name: EntitiesEnum.EditWorkout, params: { id: id.value } });
 }

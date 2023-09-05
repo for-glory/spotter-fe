@@ -8,6 +8,7 @@
         <workout-form 
           ref="workoutForm"
           exit-button-text="Finish"
+          @open-picker="openPicker"
           @submit="createDailys"
         />
       </div>
@@ -19,82 +20,38 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, inject } from "vue";
 import {
-	IonTitle,
-  IonButton,
-  IonLabel,
-  PickerColumnOption,
-  PickerOptions,
-	IonGrid,
-	IonRow,
-	IonCol
+  toastController,
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
-import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
-import { useWorkoutsStore } from "@/trainers/store/workouts";
-import { requiredFieldSchema } from "@/validations/authValidations";
-import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
-import { v4 as uuidv4 } from "uuid";
-import { FilePreloadDocument } from "@/generated/graphql";
-import { useMutation } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
+import { 
+  FilePreloadDocument,
+  CreateDailyDocument
+} from "@/generated/graphql";
+import { useDailysStore } from "@/general/stores/useDailysStore";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
-import ExerciseForm from "@/general/components/forms/ExerciseForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
-import { useDailysStore } from "@/general/stores/useDailysStore";
-
-const percentLoaded = ref(0);
 
 const router = useRouter();
-
 const store = useDailysStore();
+const currentFacility = useFacilityStore();
+
 const isConfirmationOpen = ref<boolean>(false);
-
-const { value: titleValue, errorMessage: titleError } = useField<string>(
-  "workoutTitle",
-  requiredFieldSchema
-);
-
 const workoutForm = ref<typeof WorkoutForm | null>(null);
-const exerciseForm = ref<typeof ExerciseForm | null>(null);
+const percentLoaded = ref(0);
 
-let abort: any;
-
-const { mutate: filePreload, loading: filePreloadLoading } = useMutation(
-  FilePreloadDocument,
-  {
-    context: {
-      fetchOptions: {
-        useUpload: true,
-        onProgress: (ev: ProgressEvent) => {
-          percentLoaded.value = (ev.loaded / ev.total) * 100;
-        },
-        onAbortPossible: (abortHandler: any) => {
-          abort = abortHandler;
-        },
-      },
-    },
-  }
-);
+const {
+  mutate,
+  loading: dailysOnCreation,
+  onDone: dailysCreated,
+} = useMutation(CreateDailyDocument);
 
 const duration = computed(() =>
   store.workoutDuration ? store.workoutDuration : ""
-);
-
-const { value: priceValue, errorMessage: priceError } = useField<string>(
-  "workoutPrice",
-  requiredFieldSchema
-);
-
-const workoutType = computed(() => store.workoutType?.name || "");
-
-const muscleTypesValue = computed(() =>
-  store.workoutMuscleTypes?.length > 1
-    ? store.workoutMuscleTypes?.length
-    : store.workoutMuscleTypes[0]?.label || ""
 );
 
 const emitter: Emitter<Record<EventType, unknown>> | undefined =
@@ -104,54 +61,37 @@ const openPicker = (name: string): void => {
   emitter?.emit("open-picker", name);
 };
 
-onMounted(() => {
-  router.push({
-    name: router?.currentRoute?.value?.name,
-    params: { id: uuidv4() },
-  });
-  if (store.workoutTitle) {
-    titleValue.value = store.workoutTitle;
-  }
-  if (store.workoutPrice) {
-    priceValue.value = store.workoutPrice.toString();
-  }
-});
-
-watch(
-  () => priceValue.value,
-  (newVal: string) => {
-    store.setValue("workoutPrice", newVal);
-  }
-);
-watch(
-  () => titleValue.value,
-  (newVal: string) => {
-    store.setValue("workoutTitle", newVal);
-  }
-);
-
-const isValidForm = computed(
-  () =>
-    !titleError.value &&
-    titleValue.value &&
-    !priceError.value &&
-    priceValue.value &&
-    store.workoutMuscleTypesIds?.length &&
-    store.workoutDuration &&
-    store.workoutPreview &&
-    store.workoutType
-);
-
 const createDailys = () => {
-  console.log("create dailys");
-};
+  mutate({ 
+    facility_id: currentFacility.facility?.id,
+    type_id: store.workoutType?.id,
+    title: store.workoutTitle,
+    description: store.exercises?.description,
+    price: parseFloat(store.workoutPrice),
+    duration: parseInt(store.workoutDuration),
+    video: store.exercises?.videoPath,
+    body_parts: store.workoutMuscleTypesIds,
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Updated successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      router.push({ name: EntitiesEnum.WorkoutList });
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
 
-const onHandleSelect = (pathName: string) => {
-  router.push({ name: pathName });
-};
-
-const resetWorkout = () => {
-  store.clearState();
+      throw new Error(error);
+    });
 };
 
 const discardModalClosed = (approved: boolean) => {
