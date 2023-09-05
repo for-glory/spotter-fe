@@ -15,7 +15,12 @@
         :class="{ 'workout-item--hidden': hidden }"
       >
         <div class="workout-item__photo">
-          <ion-img :src="pathUrl"></ion-img>
+          <div v-if="videoPath" class="h-100">
+            <video :src="videoPath" autoplay style="max-width: 100%; width: 100%; max-height: 100%"></video>
+          </div>
+          <div v-else class="w-100 d-flex align-items-center justify-content-center">
+            <ion-text class="color-white font-bold font-20">No video uploaded</ion-text>
+          </div>
         </div>
         <div class="d-flex justify-content-between workout-item__inner">
           <div class="d-flex-col justify-content-end align-items-start">
@@ -154,6 +159,7 @@ const duration = computed(() => store.workoutDuration);
 const recommended_count = computed(() => store.recommended_count);
 const total_revenue = computed(() => store.total_revenue);
 const reviews_count = computed(() => store.reviews_count);
+const videoPath = computed(() => store.exercises.videoPath);
 const share = true;
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);

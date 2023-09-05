@@ -220,6 +220,10 @@ const watchDailys = (daily: any) => {
     preview: daily.preview,
     previewUrl: `${VUE_APP_CDN.value}${daily.preview}` || '',
     trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
+    exercise: {
+      videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
+      description: daily.description
+    }
   });
   store.setWorkout({
     title: daily.title,
@@ -227,8 +231,9 @@ const watchDailys = (daily: any) => {
     duration: daily.duration,
     bodyParts: daily.workoutMuscleTypesIds,
     price: daily.price / 100,
-    exercises: {
-      description: daily.exercises.description
+    exercise: {
+      videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
+      description: daily.description
     }
   })
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
