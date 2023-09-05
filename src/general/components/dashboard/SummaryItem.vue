@@ -16,13 +16,13 @@ const props = withDefaults(
   defineProps<{
     title?: string;
     keyText?: string;
-    value?: string;
+    value?: number;
     type?: string;
   }>(),
   {
     title: "Total",
     keyText: "Default",
-    value: "0",
+    value: 0,
     type: "normal",
   }
 );
@@ -31,6 +31,7 @@ const props = withDefaults(
 .content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 100%;
   gap: 16px;
 }

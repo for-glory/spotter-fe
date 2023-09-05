@@ -9,11 +9,6 @@
 				class="search-section__control"
 				search-icon="assets/icon/search.svg"
 				placeholder="Search"
-				:class="{
-					// 'search-form__control--on-focus': isFocused,
-					// 'search-form__control--with-back-btn': backBtn,
-					// 'search-form__control--with-cancel-btn': !hiddenCancel,
-				}"
 			>
 			</ion-searchbar>
 		</div>

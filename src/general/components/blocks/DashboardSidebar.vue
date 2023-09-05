@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div class="main-menu">
-				<div v-if="!isNative" :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
 				</div>

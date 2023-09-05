@@ -6085,8 +6085,8 @@ export const DeleteDailyDocument = gql`
     `;
 
 export const FilePreloadDocument = gql`
-    mutation filePreload($file: Upload!) {
-  filePreload(file: $file) {
+    mutation filePreload($file: Upload!, $upload_dir: String) {
+  filePreload(file: $file, upload_dir: $upload_dir) {
     path
   }
 }

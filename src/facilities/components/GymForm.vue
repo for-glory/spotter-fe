@@ -21,22 +21,40 @@
         required
         @change="facilityTitleChange"
         v-model:value="facilityTitle"
-        placeholder="Enter title for gym"
+        placeholder="What's the name of your gym"
         label="Gym name"
       />
     </div>
 
     <div class="form-row">
-      <ion-label class="label"> Choose equipment and amenitites </ion-label>
-      <choose-block
-        title="Equipment and amenities"
-        @handle-click="onChooseAmenities"
-        :value="facilityEquipments?.length + facilityAmenities?.length || ''"
+      <base-input
+        :rows="3"
+        :maxlength="150"
+        label="Describe your gym"
+        @change="facilityDescriptionChange"
+        v-model:value="facilityDescription"
+        placeholder="Enter description for gym"
       />
     </div>
 
     <div class="form-row">
-      <ion-label class="label"> Choose your gym location </ion-label>
+      <choose-block
+        title="Choose your gym location"
+        class="form-row__control"
+        @handle-click="onChooseLocation"
+        :value="
+          selectedAddress
+            ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
+            : ''
+        "
+      />
+      <!-- <ion-label class="label"> Choose your gym location </ion-label>
+      <choose-block
+        title="Location"
+        class="form-row__control"
+        @handle-click="onChooseLocation"
+        :value="selectedState?.name + ', ' + selectedCity?.name"
+      /> -->
       <!-- <choose-block
         title="State"
         class="form-row__control"
@@ -61,7 +79,7 @@
             : ''
         "
       /> -->
-      <div class="address-container">
+      <!-- <div class="address-container">
         <ion-text class="address-content">
           Address
         </ion-text>
@@ -79,17 +97,15 @@
           }"
           @place_changed="setPlace"
         >
-      </GMapAutocomplete>
+      </GMapAutocomplete> -->
     </div>
 
     <div class="form-row">
-      <base-input
-        :rows="3"
-        :maxlength="150"
-        label="Describe your gym"
-        @change="facilityDescriptionChange"
-        v-model:value="facilityDescription"
-        placeholder="Enter description for gym"
+      <ion-label class="label"> Choose equipment and amenitites </ion-label>
+      <choose-block
+        title="Equipment and amenities"
+        @handle-click="onChooseAmenities"
+        :value="facilityEquipments?.length + facilityAmenities?.length || ''"
       />
     </div>
 
@@ -100,33 +116,23 @@
       <ion-button
         expand="block"
         class="secondary"
-        @click="onPreview"
-        v-if="previewButton"
-        :disabled="
-          !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
-        "
-      >
-        Preview
-      </ion-button>
-      <ion-button
-        expand="block"
-        class="secondary"
         @click="onSaveAndExit"
-        v-if="saveAndExitButton"
+        fill="outline"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
       >
-        Save & Exit
+        {{ saveButtonText }}
       </ion-button>
       <ion-button
         expand="block"
         @click="onNext"
+        v-if="nextButton"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
       >
-        {{ buttonText }}
+        {{ nextButtonText }}
       </ion-button>
     </div>
   </div>
@@ -177,14 +183,13 @@ getCities();
 
 const props = withDefaults(
   defineProps<{
-    buttonText?: string;
-    previewButton?: boolean;
-    saveAndExitButton?: boolean;
+    saveButtonText?: string;
+    nextButtonText?: string;
+    nextButton?: boolean;
     footerFixed?: boolean;
     edit?: boolean;
-  }>(),
-  {
-    buttonText: "Save",
+  }>(),{
+    edit: false
   }
 );
 
@@ -237,6 +242,13 @@ const onChooseAmenities = () => {
     ),
   });
 };
+
+const onChooseLocation = () => {
+  router.push({
+    name: EntitiesEnum.ChooseLocation, 
+    params: { type: 'facility' }
+  });
+}
 
 const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 
@@ -460,6 +472,7 @@ defineExpose({
 
 .actions-wrapper {
   display: flex;
+  flex-direction: column;
   margin: 0 -8px;
   gap: 16px;
 
@@ -472,6 +485,9 @@ defineExpose({
     padding: 0 24px calc(16px + var(--ion-safe-area-bottom));
   }
 
+  ion-button {
+    width: 100%;
+  }
   // .button {
   //   margin: 0 8px;
   //   flex: 1 1 calc(59% - 16px);

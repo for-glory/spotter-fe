@@ -1,43 +1,25 @@
 <template>
-  <base-auth-layout hideHeader>
-    <template  #left-section>
+  <base-layout hideNavigationMenu>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Create your gym profile" />
+    </template>
+    <template #content>
       <div class="content">
-        <div class="head">
-          <div class="d-flex justify-content-between align-items-center">
-            <router-link
-              to="/"
-            >
-              <ion-img
-                src="assets/icon/logo-complete.png"
-                class="logo"
-                alt="logo"
-              />
-            </router-link>
-            <ion-button
-              class="login-btn"
-              type="button"
-              fill="clear"
-              @click="onLogout"
-            >
-              Log out
-            </ion-button>
-          </div>
-          <ion-title class="title" color="primary">
-            Let’s create your gym profile!
-          </ion-title>
-          <ion-text color="secondary">
-            To give you a better experience we need to know more about your gym
-          </ion-text>
+        <ion-text class="title">
+          To give you a better experience we need to know more about your gym
+        </ion-text>
+        <div class="gym-form">
+          <gym-form
+            ref="gymForm"
+            save-button-text="Save and Exit"
+            next-button-text="Next"
+            next-button
+            @submit="onSubmit"
+          />
         </div>
-        <gym-form
-          ref="gymForm"
-          button-text="Next"
-          save-and-exit-button
-          @submit="createNewFacility"
-        />
       </div>
     </template>
-  </base-auth-layout>
+  </base-layout>
 
   <discard-changes
     :is-open="isConfirmedModalOpen"
@@ -51,7 +33,7 @@
 
 <script setup lang="ts">
 import { IonText, IonTitle, IonButton } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -96,11 +78,12 @@ const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
 );
 
-const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
+const onSubmit = (data: newFacilityStoreTypes, mode: string) => {
   const { registration_code } = JSON.parse(
     localStorage.getItem("organization") || "{}"
   );
   actionAfterSiubmit.value = mode;
+  console.log(data.address);
   createFacility({
     input: {
       name: data.title,
@@ -134,7 +117,8 @@ facilityCreated((res) => {
       },
     });
   }
-  localStorage.setItem("first_facility", res?.data?.createFacility.id)
+  localStorage.setItem("first_facility", res?.data?.createFacility.id);
+  localStorage.setItem("selected_facility", res?.data?.createFacility.id);
 });
 
 updatedSubscription(() => {
@@ -142,7 +126,7 @@ updatedSubscription(() => {
   updateSettings();
   if (actionAfterSiubmit.value === "exit") {
     router.push({
-      name: EntitiesEnum.DashboardOverview,
+      name: EntitiesEnum.CreateFacilitySuccess,
     });
   }
   else if(actionAfterSiubmit.value === "create_event") {
@@ -191,8 +175,7 @@ const onLogout = () => {
 }
 
 .content {
-  padding: calc(var(--ion-safe-area-top)) 24px
-    calc(16px + var(--ion-safe-area-bottom));
+  padding: 53px 24px calc(20px + var(--ion-safe-area-bottom));
 }
 
 .head {
@@ -208,11 +191,10 @@ const onLogout = () => {
 }
 
 .title {
-  padding: 0;
-  font-size: 28px;
-  line-height: 1.3;
-  font-weight: 400;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  color: #AFAFAF;
+  font: 18px/1 Lato;
+}
+.gym-form {
+  padding-top: 16px;
 }
 </style>

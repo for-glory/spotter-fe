@@ -300,12 +300,39 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.WorkoutList,
+    path: "/dailys/list",
+    component: () => import("@/general/views/workout/index.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.WorkoutList,
+    },
+  },
+  {
+    name: EntitiesEnum.WorkoutView,
+    path: "/dailys/:id",
+    component: () => import("@/general/views/workout/View.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.WorkoutList,
+    },
+  },
+  {
     name: EntitiesEnum.CreateWorkout,
-    path: "/workout/create-workout",
-    component: () => import("@/general/views/workout/Workout.vue"),
+    path: "/dailys/create-dailys",
+    component: () => import("@/general/views/workout/CreateWorkout.vue"),
     meta: {
       middleware: [auth],
       mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
+    name: EntitiesEnum.EditWorkout,
+    path: "/dailys/edit-workout/:id",
+    component: () => import("@/general/views/workout/EditWorkout.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {
@@ -315,6 +342,15 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       middleware: [auth],
       mode: EntitiesEnum.CreateWorkout,
+    },
+  },
+  {
+    name: EntitiesEnum.WorkoutReviews,
+    path: "/workout/reviews/:id",
+    component: () => import("@/general/views/workout/Reviews.vue"),
+    meta: {
+      middleware: [auth],
+      mode: EntitiesEnum.WorkoutList,
     },
   },
   {
@@ -381,6 +417,38 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: "FAQs",
       description: "FAQs",
+    },
+  },
+  {
+    name: EntitiesEnum.ChooseLocation,
+    path: "/choose-location/:type",
+    component: () => import("@/general/views/ChooseLocation.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.Overview,
+    path: "/overview",
+    component: () => import("@/general/views/Overview.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.ViewPassAndDropins,
+    path: "/products/:type",
+    component: () => import("@/general/views/ItemsList.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.CreateFacilitySuccess,
+    path: "/facility-profile-success",
+    component: () => import("@/general/views/SuccessFacilityProfile.vue"),
+    meta: {
+      middleware: [auth],
     },
   },
   {
@@ -573,6 +641,11 @@ export const routes: Array<RouteRecordRaw> = [
         meta: {
           middleware: [gymOwnerSubscription, gymOwnerRole],
         }
+      },
+      {
+        name: EntitiesEnum.CreateItem,
+        path: "/products/create/:type",
+        component: () => import("@/general/views/CreateItem.vue"),
       },
       {
         name: EntitiesEnum.DashboardGymCreate,

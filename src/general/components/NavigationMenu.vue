@@ -29,10 +29,20 @@
       "
     >
       <div class="navigation-btn__inner">
-        <div class="navigation-btn__icon">
+        <div class="navigation-btn__icon" :class="{ 
+          'hover-icon': Boolean(
+          route.path.match(item.category ?? '')),
+          'drop-ins hover-icon' : item.name===EntitiesEnum.FacilityDropins&&Boolean(
+          route.path.match(item.category ?? ''))
+         }">
           <ion-icon :src="item.icon"></ion-icon>
         </div>
-        {{ item.label }}
+        <span :class="{
+          'gold-color': Boolean(
+          route.path.match(item.category ?? '')),
+        }">
+          {{ item.label }}
+        </span>
       </div>
     </ion-button>
   </div>
@@ -93,10 +103,6 @@ const navigate = (name: string) => {
   --padding-start: 6px;
   --padding-end: 6px;
 
-  &--active {
-    --color: var(--ion-color-white);
-  }
-
   &.onboarding-active {
     --color: var(--ion-color-white);
   }
@@ -125,6 +131,9 @@ const navigate = (name: string) => {
     align-items: center;
     flex-direction: column;
     justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 100px;
 
     .navigation-btn--main & {
       width: 1.5em;
@@ -135,5 +144,15 @@ const navigate = (name: string) => {
       background: var(--ion-color-primary);
     }
   }
+}
+.drop-ins {
+  stroke: #202020;
+}
+.hover-icon {
+  background-color: #E1DBC5;
+  color: #202020;
+}
+.gold-color {
+  color: #E1DBC5;
 }
 </style>

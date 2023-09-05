@@ -52,6 +52,15 @@
       />
     </template>
   </detail>
+  <confirmation
+    :is-visible="showConfirmationModal"
+    title="Do you want to delete account"
+    :description="eventData?.title + 'will be deleted'"
+    button-text="Delete"
+    cancel-button-text="Cancel"
+    @discard="onDelete"
+    @decline="hideModal"
+  />
 </template>
 
 <script lang="ts">
@@ -72,6 +81,7 @@ import {
   MeDocument,
   Media,
   SettingsCodeEnum,
+  DeleteEventDocument,
 } from "@/generated/graphql";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -82,10 +92,14 @@ import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import { toastController } from "@ionic/core";
 import useId from "@/hooks/useId";
 import { Share } from "@capacitor/share";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
 const route = useRoute();
 const router = useRouter();
 const isTrusted = ref(false);
+
+const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
 
 const { result, loading } = useQuery(
   EventDocument,
@@ -132,6 +146,7 @@ const eventData = computed(() => ({
 }));
 
 const ordered = computed(() => result?.value?.event?.was_ordered_by_me);
+const { mutate } = useMutation(DeleteEventDocument);
 
 const amenityIcon = (icon: string) =>
   icon?.iconUrl || `assets/icon/advantages/gym.svg`;
@@ -170,12 +185,19 @@ const { id } = useId();
 enum actionTypesEnum {
   EditEvent = "EDIT_EVENT",
   ShareEvent = "SHARE_EVENT",
+  DeleteEvent = "DELETE_EVENT",
 }
 
 const onEdit = async () => {
   const actionSheet = await actionSheetController.create({
     mode: "ios",
     buttons: [
+      {
+        text: "Delete event",
+        data: {
+          type: actionTypesEnum.DeleteEvent,
+        },
+      },
       {
         text: "Edit event",
         data: {
@@ -203,6 +225,7 @@ const onEdit = async () => {
   const actions = {
     [actionTypesEnum.EditEvent]: () => editEvent(),
     [actionTypesEnum.ShareEvent]: () => shareEvent(),
+    [actionTypesEnum.DeleteEvent]: () => showModal(),
   };
 
   if (actions[type]) {
@@ -224,6 +247,23 @@ const shareEvent = async () => {
     url: `https://${process.env.VUE_APP_URL}/users/activites/event/${result?.value?.event?.id}`,
     dialogTitle: "Share",
   });
+};
+
+const onDelete = () => {
+  hideModal();
+  mutate({
+    id: eventData.value.id,
+  })
+    .then(() => {
+      onBack();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const onBack = () => {
+  router.go(-1);
 };
 </script>
 

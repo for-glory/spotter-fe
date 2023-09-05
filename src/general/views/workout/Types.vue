@@ -1,42 +1,25 @@
 <template>
-  <base-auth-layout hideHeader>
-    <template  #left-section>
-      <div class="ion-padding-horizontal content">
-        <div class="d-flex justify-content-between align-items-center">
-          <router-link
-            to="/"
-          >
-            <ion-img
-              src="assets/icon/logo-complete.png"
-              class="logo"
-              alt="logo"
-            />
-          </router-link>
-          <ion-button
-            class="login-btn"
-            type="button"
-            fill="clear"
-            @click="onLogout"
-          >
-            Log out
-          </ion-button>
-        </div>
-        <div class="top-buttons">
-          <ion-button class="dashboard-btn" @click="onBack" fill="clear">
-            <ion-icon src="assets/icon/arrow-back.svg" />
-            Back
-          </ion-button>
-        </div>
-        <ion-spinner v-if="loading" name="lines" class="spinner" />
+  <base-layout hideNavigationMenu>
+    <template #header>
+      <page-header back-btn @back="onBack" title="Workout type" />
+    </template>
+    <template #content>
+      <ion-spinner v-if="loading" name="lines" class="spinner" />
+      <div v-else class="content">
         <radio-group
-          v-else
           :value="workoutType"
           @on-change="onChange"
           :options="workoutTypes"
         />
+        <ion-button
+          expand="block"
+          @click="submit"
+        >
+          Save
+        </ion-button>
       </div>
     </template>
-  </base-auth-layout>
+  </base-layout>
 </template>
 
 <script setup lang="ts">
@@ -51,13 +34,14 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import RadioGroup from "@/general/components/blocks/RadioGroup.vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import { EntitiesEnum } from "@/const/entities";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 
 const router = useRouter();
 
-const store = useWorkoutsStore();
+const store = useDailysStore();
 const { workoutType } = store;
 
 const { result, loading } = useQuery<WorkoutTypesQuery>(WorkoutTypesDocument, {
@@ -69,9 +53,10 @@ const workoutTypes = computed(() => result.value?.workoutTypes?.data);
 
 const onChange = (value: WorkoutType) => {
   store.setValue("workoutType", value);
-  router.go(-1);
 };
-
+const submit = () => {
+  router.go(-1);
+}
 const onBack = () => {
   router.go(-1);
 };
@@ -81,7 +66,7 @@ const onLogout = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .spinner {
   display: block;
   pointer-events: none;
@@ -89,11 +74,12 @@ const onLogout = () => {
 }
 
 .content {
-  padding-top: 24px;
-  padding-bottom: calc(32px + var(--ion-safe-area-bottom));
+  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+
+  ion-button {
+    width: 100%;
+    margin-top: 16px;
+  }
 }
-.logo {
-  width: 220px;
-  min-width: 60px;
-}
+
 </style>

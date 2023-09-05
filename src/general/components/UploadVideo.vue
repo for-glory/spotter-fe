@@ -1,29 +1,32 @@
 <template>
   <div class="upload-video">
-    <div class="video" v-if="video">
-      <span class="video__metadata">
-        {{ videoName }}
-        <ion-text color="medium">({{ videoSize }})</ion-text>
-      </span>
-      <div class="video__actions">
-        <ion-button
-          class="video__action"
-          @click="chooseVideo"
-          fill="clear"
-          expand="block"
-          color="medium"
-        >
-          <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
-        </ion-button>
-        <ion-button
-          class="video__action"
-          @click="emits('delete')"
-          fill="clear"
-          expand="block"
-          color="medium"
-        >
-          <ion-icon slot="icon-only" src="assets/icon/trash.svg" />
-        </ion-button>
+    <div v-if="video">
+      <video v-if="videoPath" :src="videoPath" controls autoplay muted style="max-width: 100%; width: 100%;"></video>
+      <div class="video">
+        <span class="video__metadata">
+          {{ videoName }}
+          <ion-text color="medium">({{ videoSize }})</ion-text>
+        </span>
+        <div class="video__actions">
+          <ion-button
+            class="video__action"
+            @click="chooseVideo"
+            fill="clear"
+            expand="block"
+            color="medium"
+          >
+            <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
+          </ion-button>
+          <ion-button
+            class="video__action"
+            @click="emits('delete')"
+            fill="clear"
+            expand="block"
+            color="medium"
+          >
+            <ion-icon slot="icon-only" src="assets/icon/trash.svg" />
+          </ion-button>
+        </div>
       </div>
     </div>
     <ion-button
@@ -33,8 +36,8 @@
       @click="chooseVideo"
       class="upload-video__upload-btn"
     >
-      {{ buttonText }} (max {{ bytesToSize(maxVideoSize) }} and/or
-      {{ maxVideoDuration / 1000 }} sec)
+      <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
+      {{ buttonText }}
     </ion-button>
 
     <div class="upload-video__progress" v-if="loading || preloading">
@@ -81,6 +84,7 @@ defineProps<{
   loadingPercent?: number;
   videoSize?: string;
   videoName?: string;
+  videoPath?: string
 }>();
 
 const emits = defineEmits<{

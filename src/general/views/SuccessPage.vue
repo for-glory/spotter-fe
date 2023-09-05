@@ -14,12 +14,12 @@
 			<div class="message-text">
 				<div class="title">
 					<ion-text color="primary">
-						You have successfully set up a subscription
+						Payment succesfully completed! 
 					</ion-text>
 				</div>
 				<div class="detail">
 					<ion-text>
-						Your 30 days trial is now active, you can cancel anytime before 30 days, you will not be charged until the 30 days expire.
+						Your 30 days trial is now active, you can cancel anytime before 30 days, they will not be charged until the 30 days expire,
 					</ion-text>
 				</div>
 			</div>
@@ -46,6 +46,7 @@ import {
   LinksDocument,
 } from "@/generated/graphql";
 import { onMounted } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 
@@ -70,6 +71,10 @@ gotMyStripeConnect(async (response) => {
 		const { id: myFacilityId } = useFacilityId();
 		if(!myFacilityId) {
 			router.push({ name: EntitiesEnum.SuccessStripeConnect });
+			return;
+		}
+		if(Capacitor.isNativePlatform()) {
+			router.push({ name: EntitiesEnum.Overview });
 			return;
 		}
 		router.push({ name: EntitiesEnum.DashboardOverview });
@@ -156,20 +161,15 @@ goToStripeConnect((res) => {
 
 .buttons {
 	margin-top: 7.5rem;
-	width: 40%;
-  .button {
-    margin: 0;
-    text-align: center;
-    font-family: Lato;
-    font-size: 1.5rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 130%;
-
-    &:not(:first-child) {
-      margin-top: 16px;
-    }
-  }
+	width: 70%;
+	ion-button {
+		font: 700 16px/1 Yantramanav;
+		width: 100%;
+		height: 40px;
+		--border-radius: 12px;
+		--padding-start: 26px;
+		--padding-end: 26px;
+	}
 }
 .spinner {
   display: block;

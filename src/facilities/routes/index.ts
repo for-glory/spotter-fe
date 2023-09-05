@@ -92,6 +92,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.CreateDailys,
+    path: "/register/create-dailys/:step",
+    component: () =>
+      import("@/facilities/views/registration/CreateDailys.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileEditGym,
     path: "/profile/edit-gym",
     component: () => import("@/facilities/views/EditGym.vue"),
@@ -103,6 +112,22 @@ export const routes: Array<RouteRecordRaw> = [
     name: EntitiesEnum.AddNewGym,
     path: "/profile/add-new-gym",
     component: () => import("@/facilities/views/AddNewGym.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.Membership,
+    path: "/facilities/membership",
+    component: () => import("@/facilities/views/Membership.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.ChangeMembership,
+    path: "/facilities/change-membership",
+    component: () => import("@/facilities/views/ChangeMembership.vue"),
     meta: {
       middleware: [auth],
     },
@@ -130,5 +155,35 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       middleware: [auth],
     },
+  },
+  {
+    name: EntitiesEnum.FacilityPassList,
+    path: "/facilities/pass/list",
+    component: () => import("@/facilities/views/pass/List.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityDropins,
+    path: "/facilities/dropins/list",
+    component: () => import("@/facilities/views/dropins/List.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityCreateEvent,
+    path: "/facilities/events/create",
+    component: () => import("@/facilities/views/CreateEvent.vue"),
+  },
+  {
+    name: EntitiesEnum.ManagersOverview,
+    path: "/facilities/managers",
+    component: () => import("@/facilities/views/managers/index.vue"),
+  },
+  {
+    name: EntitiesEnum.AddManager,
+    path: "/facilities/managers/add-new-manager",
+    component: () => import("@/facilities/views/managers/AddManager.vue"),
+  },
+  {
+    name: EntitiesEnum.ManagerProfile,
+    path: "/facilities/managers/profile/:id",
+    component: () => import("@/facilities/views/managers/ManagerProfile.vue"),
   },
 ];

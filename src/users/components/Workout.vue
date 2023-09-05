@@ -1,15 +1,15 @@
 <template>
   <ion-item
-    class="workout-item"
+    class="workout-item common-style"
     :class="{ 'workout-item--hidden': hidden }"
     @click="emits('click')"
   >
-    <div class="workout-item__photo">
+  <div class="workout-item__photo">
       <ion-img :src="pathUrl"></ion-img>
     </div>
 
-    <div class="workout-item__inner">
-      <div class="workout-item__icons">
+    <div class="d-flex justify-content-between workout-item__inner">
+      <div class="d-flex-col justify-content-between align-items-start">
         <ion-button
           v-if="share && !hidden"
           class="workout-item__btn"
@@ -20,6 +20,29 @@
         >
           <ion-icon icon="assets/icon/share.svg" />
         </ion-button>
+        <div>
+          <div class="workout-item__head">
+            <ion-label class="workout-item__title"> {{ title }}</ion-label>
+          </div>
+          <ion-text class="workout-item__info">
+            <ion-icon icon="assets/icon/time.svg" />
+            <span>
+              <template v-if="duration">
+                {{ timeConvertToHuman(duration) }}
+                <ion-text color="light" class="workout-item__info-dot"
+                  >&nbsp;&#183;&nbsp;</ion-text
+                >
+              </template>
+              {{ type }}
+              <ion-text color="light" class="workout-item__info-dot">
+                &nbsp;&#183;&nbsp;
+              </ion-text>
+              {{ trainer }}
+            </span>
+          </ion-text>
+        </div>
+      </div>
+      <div class="d-flex-col justify-content-between align-items-end">
         <ion-button
           v-if="hide && (!hidden || isShowButtonVisible)"
           class="workout-item__btn workout-item__btn--hide"
@@ -32,28 +55,20 @@
             :icon="hidden ? 'assets/icon/eye.svg' : 'assets/icon/media.svg'"
           />
         </ion-button>
-      </div>
-
-      <div>
-        <div class="workout-item__head">
-          <ion-label class="workout-item__title"> {{ title }}</ion-label>
+        <div class="d-flex-col gap-6">
+          <div class="d-flex align-items-center">
+            <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(total_revenue ?? 0) }}</ion-text>
+          </div>
+          <div class="d-flex align-items-center">
+            <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+            <ion-text class="font-light font-18 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0) }}</ion-text>
+          </div>
+          <div class="d-flex align-items-center">
+            <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
+          </div>
         </div>
-        <ion-text class="workout-item__info">
-          <ion-icon icon="assets/icon/time.svg" />
-          <span>
-            <template v-if="duration">
-              {{ timeConvertToHuman(duration) }}
-              <ion-text color="light" class="workout-item__info-dot"
-                >&nbsp;&#183;&nbsp;</ion-text
-              >
-            </template>
-            {{ type }}
-            <ion-text color="light" class="workout-item__info-dot">
-              &nbsp;&#183;&nbsp;
-            </ion-text>
-            {{ trainer }}
-          </span>
-        </ion-text>
       </div>
     </div>
   </ion-item>
@@ -91,6 +106,9 @@ const props = withDefaults(
     trainer: string;
     type: string;
     duration?: number;
+    total_revenue?: number;
+    reviews_count?: number;
+    recommended_count?: number;
     share?: boolean;
     hide?: boolean;
     hidden?: boolean;
@@ -128,13 +146,28 @@ const onHideConfirmed = () => {
   emits("hide");
 };
 
-const shareWorkout = async () => {
+const shareWorkout = async (event: any) => {
+  event.preventDefault();
   await Share.share({
     title: props.title,
     url: `https://${process.env.VUE_APP_URL}/users/workouts/${props.id}`,
     dialogTitle: "Share",
   });
 };
+
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -157,15 +190,7 @@ const shareWorkout = async () => {
 
   &__inner {
     width: 100%;
-    display: flex;
-    min-height: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  &__icons {
-    display: flex;
-    justify-content: space-between;
+    height: 100%;
   }
 
   &__btn {
@@ -295,4 +320,16 @@ const shareWorkout = async () => {
     font-size: 16px;
   }
 }
+.common-style {
+  .w-24 {
+    width: 24px;
+  }
+  .h-24 {
+    height: 24px;
+  }
+  .font-18 {
+    font-size: 18px;
+  }
+}
+
 </style>
