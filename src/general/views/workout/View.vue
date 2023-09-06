@@ -1,20 +1,19 @@
 <template>
-  <base-layout>
-    <template #header>
-      <page-header back-btn @back="onBack">
-        <template #custom-btn>
-          <ion-button @click="showSettingsModal" class="header-btn">
-            <ion-icon src="assets/icon/three-dot.svg" />
-          </ion-button>
-        </template>
-      </page-header>
-    </template>
+  <base-layout hideNavigationMenu>
     <template #content>
       <div
         class="workout-item common-style"
         :class="{ 'workout-item--hidden': hidden }"
         @click="handlePlay"
       >
+        <div class="top-buttons w-100 d-flex justify-content-between">
+          <span @click.stop="onBack">
+            <ion-icon src="assets/icon/arrow-back.svg" class="color-white" />
+          </span>
+          <span @click.stop="showSettingsModal">
+            <ion-icon src="assets/icon/three-dot.svg" />
+          </span>
+        </div>
         <div class="workout-item__photo">
           <div v-if="videoPath" class="h-100 video-content">
             <video 
@@ -23,6 +22,7 @@
               style="max-width: 100%; width: 100%; max-height: 100%"
               autoplay 
             />
+            <div class="video-mask" />
           </div>
           <div v-else class="w-100 d-flex align-items-center justify-content-center">
             <ion-text class="color-white font-bold font-20">No video uploaded</ion-text>
@@ -307,6 +307,7 @@ const handlePlay = () => {
   &__inner {
     width: 100%;
     height: 100%;
+    padding-bottom: 12px;
   }
 
   &__btn {
@@ -509,6 +510,31 @@ ion-button#cancel {
   ion-icon {
     width: 82px;
     height: 82px;
+  }
+}
+.video-mask {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, #00000ca0, #ffffff0a);
+}
+.top-buttons {
+  position: fixed;
+  top: 24px;
+  left: 0px;
+  padding: 12px;
+
+  span {
+    background-color: #0000002a;
+    border-radius: 100px;
+    padding: 4px;
+    max-height: 32px;
+
+    ion-icon {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>

@@ -423,6 +423,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .top-24 {
-  top: 24px;
+  padding-top: 24px;
 }
 </style>
