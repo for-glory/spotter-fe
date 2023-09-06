@@ -48,19 +48,19 @@
             <div class="d-flex-col gap-8">
               <div class="d-flex align-items-center gap-12" @click="showReviews">
                 <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviewsCount ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(total_revenue ?? 0) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(totalRevenue ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('likes')">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(recommendedCount ?? 0) }}</ion-text>
               </div>
               <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('views')">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
+                <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviewsCount ?? 0) }}</ion-text>
               </div>
             </div>
             <div class="d-flex align-items-center gap-12 justify-content-end">
@@ -135,7 +135,7 @@ import { useRouter, useRoute } from "vue-router";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
@@ -149,7 +149,7 @@ const tab = ref<string>('analytics');
 
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-const store = useDailysItemStore();
+const store = useDailysStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -159,9 +159,9 @@ const title = computed(() => store.workoutTitle);
 const trainer = computed(() => store.trainer);
 const type = computed(() => store.workoutType);
 const duration = computed(() => store.workoutDuration);
-const recommended_count = computed(() => store.recommended_count);
-const total_revenue = computed(() => store.total_revenue);
-const reviews_count = computed(() => store.reviews_count);
+const recommendedCount = computed(() => store.recommendedCount);
+const totalRevenue = computed(() => store.totalRevenue);
+const reviewsCount = computed(() => store.reviewsCount);
 const videoPath = computed(() => store.exercises.videoPath);
 const share = true;
 
@@ -200,24 +200,24 @@ const showWorkoutModal = (type: string) => {
     case 'views' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Viewd by ${reviews_count.value} people`,
-        total_count: reviews_count.value
+        description: `Viewd by ${reviewsCount.value} people`,
+        total_count: reviewsCount.value
       });
       break;
     
     case 'purchases' :
       workoutModal.value?.present({ 
         title: 'Purchases',
-        description: `Total purchases made ${total_revenue.value}`,
-        total_count: total_revenue.value
+        description: `Total purchases made ${totalRevenue.value}`,
+        total_count: totalRevenue.value
       });
       break;
 
     case 'likes' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Liked by ${recommended_count.value} people`,
-        total_count: recommended_count.value
+        description: `Liked by ${recommendedCount.value} people`,
+        total_count: recommendedCount.value
       });
       break;
   }

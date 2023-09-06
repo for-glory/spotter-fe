@@ -1,9 +1,6 @@
-import { BodyPart, Workout, WorkoutType } from "@/generated/graphql";
-import { CheckboxValueType } from "@/ts/types/checkbox-value";
-import { ExerciseType, workoutsStoreTypes } from "@/ts/types/store";
 import { defineStore } from "pinia";
 
-export const useDailysItemStore = defineStore("dailys-item", {
+export const useDailysItemsStore = defineStore("dailys-items", {
   state: (): any => {
     return {
       workoutTitle: "",
@@ -15,9 +12,9 @@ export const useDailysItemStore = defineStore("dailys-item", {
       exercises: {},
       workoutMuscleTypes: [],
       trainer: '',
-      total_revenue: 0,
-      recommended_count: 0,
-      reviews_count: 0,
+      totalRevenue: 0,
+      recommendedCount: 0,
+      reviewsCount: 0,
     };
   },
   actions: {

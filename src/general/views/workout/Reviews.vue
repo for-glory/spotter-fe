@@ -77,7 +77,7 @@ import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 import { TabItem } from "@/interfaces/TabItem";
-import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 import useRoles from "@/hooks/useRole";
 import StarRating from "@/users/components/StarRating.vue";
 import LikeRating from "@/users/components/LikeRating.vue";
@@ -87,7 +87,7 @@ const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
 const router = useRouter();
 const route = useRoute();
-const store = useDailysItemStore();
+const store = useDailysStore();
 
 const id = computed(() => route.params.id);
 const totalReviewsCount = computed(() => store.reviews_count);
