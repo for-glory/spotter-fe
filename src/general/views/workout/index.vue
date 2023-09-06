@@ -215,18 +215,6 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
-  // dailysItemStore.setWorkout({
-  //   title: daily.title,
-  //   type: daily.type.name,
-  //   duration: daily.duration,
-  //   preview: daily.preview,
-  //   previewUrl: `${VUE_APP_CDN.value}${daily.preview}` || '',
-  //   trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
-  //   exercise: {
-  //     videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
-  //     description: daily.description
-  //   }
-  // });
   store.setWorkout({
     title: daily.title,
     type: daily.type.name,

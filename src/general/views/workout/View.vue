@@ -13,10 +13,16 @@
       <div
         class="workout-item common-style"
         :class="{ 'workout-item--hidden': hidden }"
+        @click="handlePlay"
       >
         <div class="workout-item__photo">
           <div v-if="videoPath" class="h-100 video-content">
-            <video :src="videoPath" ref="videoRef" style="max-width: 100%; width: 100%; max-height: 100%"></video>
+            <video 
+              :src="videoPath" 
+              ref="videoRef" 
+              style="max-width: 100%; width: 100%; max-height: 100%"
+              autoplay 
+            />
           </div>
           <div v-else class="w-100 d-flex align-items-center justify-content-center">
             <ion-text class="color-white font-bold font-20">No video uploaded</ion-text>
@@ -46,19 +52,19 @@
           </div>
           <div class="d-flex-col justify-content-end align-items-end gap-24">
             <div class="d-flex-col gap-8">
-              <div class="d-flex align-items-center gap-12" @click="showReviews">
+              <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
                 <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviewsCount ?? 0) }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('purchases')">
+              <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases')">
                 <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(totalRevenue ?? 0) }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('likes')">
+              <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes')">
                 <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white" styl>{{ formatNumber(recommendedCount ?? 0) }}</ion-text>
               </div>
-              <div class="d-flex align-items-center gap-12" @click="showWorkoutModal('views')">
+              <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views')">
                 <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
                 <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(reviewsCount ?? 0) }}</ion-text>
               </div>
@@ -70,9 +76,6 @@
               />
             </div>
           </div>
-        </div>
-        <div class="play-button" v-if="videoPath">
-          <ion-icon :src="play ? 'assets/icon/stop.svg' : 'assets/icon/play.svg'" @click="onPlay" />
         </div>
       </div>
     </template>
@@ -136,6 +139,7 @@ import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysStore } from "@/general/stores/useDailysStore";
+import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { timeConvertToHuman } from "@/helpers/date-formater";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
@@ -150,23 +154,24 @@ const tab = ref<string>('analytics');
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
 const store = useDailysStore();
+const dailysItemsStore = useDailysItemsStore();
 const router = useRouter();
 const route = useRoute();
 
 const id = computed(() => route.params.id);
-const pathUrl = computed(() => store.workoutPath);
-const title = computed(() => store.workoutTitle);
-const trainer = computed(() => store.trainer);
-const type = computed(() => store.workoutType);
-const duration = computed(() => store.workoutDuration);
-const recommendedCount = computed(() => store.recommendedCount);
-const totalRevenue = computed(() => store.totalRevenue);
-const reviewsCount = computed(() => store.reviewsCount);
-const videoPath = computed(() => store.exercises.videoPath);
+const dailysItem = computed(() => dailysItemsStore.dailysData.find((item: any) => item.id === id.value));
+const title = computed(() => dailysItem.value?.title);
+const trainer = computed(() => dailysItem.value?.trainer.first_name + ' ' + dailysItem.value?.trainer.last_name);
+const type = computed(() => dailysItem.value?.type.name);
+const duration = computed(() => dailysItem.value?.duration);
+const recommendedCount = computed(() => dailysItem.value?.recommended_count);
+const totalRevenue = computed(() => dailysItem.value?.total_revenue);
+const reviewsCount = computed(() => dailysItem.value?.reviews_count);
+const videoPath = computed(() => `${process.env.VUE_APP_MEDIA_URL}${dailysItem.value?.video}`);
 const share = true;
 
 const videoRef = ref<any>();
-const play = ref<boolean>(false);
+const isPlaying = ref<boolean>(true);
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);
 
@@ -278,14 +283,11 @@ const formatNumber = (num: number) => {
   }
 }
 
-const onPlay = () => {
-  console.log('********');
-  if(play.value) {
-    videoRef.value.pause();
-    play.value = false;
-  } else {
+const handlePlay = () => {
+  if(videoRef.value.paused) {
     videoRef.value.play();
-    play.value = true;
+  } else {
+    videoRef.value.pause();
   }
 }
 
