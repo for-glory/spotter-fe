@@ -217,24 +217,17 @@ const handleCancel = () => {
 <style scoped lang="scss">
 .flex-container {
   display: flex;
-  align-items: center;
-  gap: 17px;
-  width: 100%;
+  flex-direction: row;
   ion-text {
     font-size: 0.8rem;
   }
-}
-.current-plan {
-  color: var(--grey-text);
-}
-.new-plan {
-  .text-golden {
-    color: var(--gold);
+  ion-icon.gold {
+    color: rgb(141, 112, 15);
   }
 }
 .grade-image {
-  width: 70px;
-  height: 70px;
+  width: 2rem;
+  height: 2rem;
   padding: 1.2rem;
   border-radius: 10px;
   align-items: center;
@@ -246,25 +239,18 @@ const handleCancel = () => {
   color: var(--silver);
 }
 .gold {
-  color: #DBB582;
-}
-.bronze {
-  color: var(--bronze);
+  color: var(--gold);
 }
 .ion-padding {
-  padding: 29px 23px 25px;
+  padding: 0.5rem 1rem;
   border: 2px solid grey;
-}
-.split {
-  background-color: #DBB582;
-  width: 77px;
-  height: 1px;
-  margin-top: 32px;
-  margin-bottom: 32px;
 }
 .paragraph {
   padding-top: 1.2rem;
   padding-bottom: 0.8rem;
+  span {
+    font-size: 0.7rem;
+  }
 }
 .color {
   color: grey;
@@ -283,43 +269,35 @@ ul {
         font-size: 6px;
       }
       ion-text {
-        font-size: 12px;
+        font-size: 0.7rem;
       }
     }
   }
 }
-.location {
-  color: var(--grey-text);
-  font: 12px/1 var(--ion-font-family);
+.gold-location {
+  color: var(--silver);
 }
 .buttons {
-  margin-top: 30px;
-
-  ion-button#confirm {
-    --background: #DBB582;
-    font: bold 16px/1 var(--ion-font-family);
-    width: 144px;
-    height: 41px;
-  }
-  ion-button#cancel {
-    --background: grey;
-    font: bold 16px/1 var(--ion-font-family);
-    width: 144px;
-    height: 41px;
-  }
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.confirm {
+  width: 10rem;
+  color: var(--gold);
+  margin-right: 1.5rem;
+  --background: rgb(43, 42, 42);
+  height: 45px;
+}
+.cancel {
+  width: 10rem;
+  color: rgb(31, 30, 30);
+  --background: grey;
+  height: 45px;
 }
 ion-modal#modal {
   --height: rem;
-  --width: 378px;
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.8);
-  padding: 24px;
-}
-ion-header {
-  background-color: var(--gray-700);
-  
-  ion-toolbar {
-    --background: var(--gray-700);
-  }
+  --width: 41rem;
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.6);
 }
 .title {
   border-top: 2px solid grey;
@@ -327,10 +305,6 @@ ion-header {
   border-right: 2px solid grey;
   padding-right: 1rem;
   padding-left: 0.4rem;
-
-  ion-title {
-    --color: white;
-  }
 }
 .close {
   width: 1rem;

@@ -317,7 +317,7 @@ const selectMembership = (id: any) => {
 		--border-color: var(--gray-600);
 	
 		&:not(:last-child) {
-			margin-bottom: 16px;
+			// margin-bottom: 16px;
 		}
 	
 		&.other {
