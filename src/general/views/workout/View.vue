@@ -15,8 +15,8 @@
         :class="{ 'workout-item--hidden': hidden }"
       >
         <div class="workout-item__photo">
-          <div v-if="videoPath" class="h-100">
-            <video :src="videoPath" autoplay style="max-width: 100%; width: 100%; max-height: 100%"></video>
+          <div v-if="videoPath" class="h-100 video-content">
+            <video :src="videoPath" ref="videoRef" style="max-width: 100%; width: 100%; max-height: 100%"></video>
           </div>
           <div v-else class="w-100 d-flex align-items-center justify-content-center">
             <ion-text class="color-white font-bold font-20">No video uploaded</ion-text>
@@ -70,6 +70,9 @@
               />
             </div>
           </div>
+        </div>
+        <div class="play-button" v-if="videoPath">
+          <ion-icon :src="play ? 'assets/icon/stop.svg' : 'assets/icon/play.svg'" @click="onPlay" />
         </div>
       </div>
     </template>
@@ -161,6 +164,9 @@ const total_revenue = computed(() => store.total_revenue);
 const reviews_count = computed(() => store.reviews_count);
 const videoPath = computed(() => store.exercises.videoPath);
 const share = true;
+
+const videoRef = ref<any>();
+const play = ref<boolean>(false);
 
 const workoutModal = ref<typeof WorkoutModal | null>(null);
 
@@ -269,6 +275,17 @@ const formatNumber = (num: number) => {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
     return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
+
+const onPlay = () => {
+  console.log('********');
+  if(play.value) {
+    videoRef.value.pause();
+    play.value = false;
+  } else {
+    videoRef.value.play();
+    play.value = true;
   }
 }
 
@@ -472,5 +489,24 @@ ion-button#cancel {
 .split {
   height: 1px;
   background-color: #3D3D3D;
+}
+.video-content {
+  position: relative;
+}
+.play-button {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 64px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  inset: 0;
+  z-index: 1500;
+
+  ion-icon {
+    width: 82px;
+    height: 82px;
+  }
 }
 </style>

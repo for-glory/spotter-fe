@@ -3,35 +3,25 @@
     <ion-title class="title">Revenue</ion-title>
     <div class="block">
       <div class="revenue">
-        <div class="type">Total revenue</div>
-        <div class="period">Today</div>
-        <div class="percent">
-          0.0%
-          <ion-icon
-            class="vector"
-            src="assets/icon/vector.svg"
-          />
-        </div>
-        <div class="chain">${{ todayEarn }}</div>
-      </div>
-      <div class="revenue">
-        <div>
-          <div class="type">Quarterly revenue</div>
-          <div class="period">Earned</div>
-          <div class="percent">0.0%</div>
-          <div class="chain">
-            ${{ earnLastThirtyDays }}<span class="period">/ day</span>
+        <div class="type font-medium font-16 color-white">Total revenue</div>
+        <div class="d-flex justify-content-between">
+          <div class="d-flex-col">
+            <div class="d-flex align-items-center gap-4">
+              <ion-text class="color-gray font-16">Today</ion-text>
+              <ion-icon src="assets/icon/arrow-down-light.svg" />
+            </div>
+            <ion-text class="percent font-24 font-medium">
+              0.0%
+              <ion-icon
+                class="vector"
+                src="assets/icon/vector.svg"
+              />
+            </ion-text>
+          </div>
+          <div class="d-flex-col justify-content-end font-24 font-medium color-white">
+            <ion-text>${{'3,689,076'}}</ion-text>
           </div>
         </div>
-      </div>
-      <div class="revenue">
-        <div class="type">Earned revenue</div>
-        <div class="period">This year</div>
-        <div class="percent">
-          0.0%
-          <ion-icon class="arrow" src="assets/icon/call_made.svg" />
-        </div>
-        <div class="chain">${{ yearEarn }}</div>
       </div>
     </div>
   </div>
@@ -91,6 +81,18 @@ const todayEarn = computed(() => props.overviewData?.today_earn);
 const earnLastThirtyDays = computed(() => props.overviewData?.earn_last_thirty_days);
 const yearEarn = computed(() => props.overviewData?.year_earn);
 
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
+
 </script>
 <style scoped lang="scss">
 .title {
@@ -102,19 +104,15 @@ const yearEarn = computed(() => props.overviewData?.year_earn);
 }
 .revenue {
   margin: 0.3rem 0.3rem;
-  padding: 1rem 0 1rem 1rem;
+  padding: 1rem;
   border: 1px solid white;
   border-radius: 8px;
 
   .type {
-    font-size: 1rem;
-    color: white;
     padding-bottom: 10px;
   }
   .percent {
-    font-size: 1.625rem;
     color: #2ed47a;
-    padding-bottom: 5px;
   }
   .chain {
     font-size: 1.625rem;
@@ -130,5 +128,17 @@ const yearEarn = computed(() => props.overviewData?.year_earn);
   border-radius: 4px;
   margin-bottom: 1rem;
   padding: 1rem 1rem 1rem 1rem;
+}
+.font-24 {
+  font-size: 24px;
+}
+.font-16 {
+  font-size: 16px;
+}
+.gap-32 {
+  gap: 32px;
+}
+.gap-4 {
+  gap: 4px;
 }
 </style>
