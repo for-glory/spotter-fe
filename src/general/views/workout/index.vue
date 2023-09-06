@@ -149,7 +149,7 @@ const tab = ref<string>('analytics');
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-const dailysItemStore = useDailysItemsStore();
+const dailysItemsStore = useDailysItemsStore();
 const summaryData = ref<any>({
   totalViews: 0,
   subscribers: 0,
@@ -181,6 +181,8 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
+  dailysItemsStore.setData(dailys);
+  console.log(dailysItemsStore.dailysData);
   dailys.map((daily: any) => {
     summaryData.value.totalViews += daily.recommended_count;
     summaryData.value.subscribers += daily.recommended_count;
