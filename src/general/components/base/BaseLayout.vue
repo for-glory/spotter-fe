@@ -28,6 +28,7 @@
       :class="{
         'page-content--full-height': contentFullHeight,
         'page-content--fullscreen': isFullscreenView,
+        'top-24': isPlatform('ios'),
       }"
     >
       <template v-if="draggable">
