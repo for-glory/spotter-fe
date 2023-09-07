@@ -8,7 +8,6 @@
       :src="videoPath" 
       ref="videoRef" 
       style="max-width: 100%; width: 100%; max-height: 100%; height: 100%"
-      autoplay 
     />
   </ion-item>
 </template>
@@ -18,7 +17,7 @@ import {
   IonItem,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
-import { ref, computed, defineProps } from "vue";
+import { ref, computed, defineProps, watch } from "vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 // import dayjs from "dayjs";
 import { Share } from "@capacitor/share";
@@ -31,11 +30,26 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  play: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const videoPath = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.path}`);
-
 const videoRef = ref<any>();
+
+const videoPlay = computed(() => props.play);
+
+watch(() => videoPlay.value,
+(newVal) => {
+  console.log('should play?: ', newVal);
+  if(newVal) {
+    videoRef.value.play();
+  } else {
+    videoRef.value.pause();
+  }
+});
 
 const handlePlay = () => {
   if(videoRef.value.paused) {

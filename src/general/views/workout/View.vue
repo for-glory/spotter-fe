@@ -18,13 +18,14 @@
           @swiper="onSwiper"
         >
           <swiper-slide 
-            v-for="daily in dailysItemsStore.dailysData" 
+            v-for="daily in dailysItems" 
             :key="daily.id"
             style="height: calc(100vh - 40px);"
             class="d-flex align-items-center justify-content-center relative"
           >
             <daily-video-player 
               :path="daily.video"
+              :play="dailysItems[activeIndex].id === daily.id"
             />
             <div class="d-flex-col justify-content-end align-items-start details details__left">
               <div class="workout-item__head">
@@ -161,8 +162,10 @@ const route = useRoute();
 const workoutModal = ref<typeof WorkoutModal | null>(null);
 const id = ref<any>();
 const share = true;
+const dailysItems = computed(() => dailysItemsStore.dailysData);
 
 const swiperRef = ref<Swipeer>();
+const activeIndex = ref<number>(0);
 
 const {
   mutate: deleteDailys,
@@ -182,16 +185,24 @@ const onBack = () => {
 
 onMounted(() => {
   id.value = route.params.id;
-  let currentIndex = dailysItemsStore.dailysData.findIndex((daily: any) => daily.id === id.value);
+  let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
+  activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
 });
 
 const onSwiper = (swiper: any) =>{
   swiperRef.value = swiper;
   id.value = route.params.id;
-  let currentIndex = dailysItemsStore.dailysData.findIndex((daily: any) => daily.id === id.value);
+  let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
+  activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
 }
+
+watch(() => swiperRef.value?.activeIndex,
+(newVal) => {
+  console.log(newVal);
+  activeIndex.value = newVal;
+});
 
 const shareWorkout = async (daily: any) => {
   await Share.share({
@@ -232,10 +243,8 @@ const showWorkoutModal = (type: string, daily: any) => {
 
 const isSettingModalOpen = ref<boolean>(false);
 const showSettingsModal = () => {
-  console.log('index: ', swiperRef.value?.activeIndex);
-  let daily = dailysItemsStore.dailysData[swiperRef.value?.activeIndex ?? 0];
+  let daily = dailysItems.value[activeIndex.value];
   id.value = daily.id;
-  console.log(daily);
   store.setWorkout({
     title: daily.title,
     type: daily.type.name,
