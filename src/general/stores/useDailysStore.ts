@@ -32,6 +32,9 @@ export const useDailysStore = defineStore("dailys", {
           (i) => i.id !== option.id
         );
     },
+    setValue(key: string, value: string | number | WorkoutType | BodyPart) {
+      this[key] = value;
+    },
     setExercise(payload: any) {
       this.exercises = { ...payload };
     },

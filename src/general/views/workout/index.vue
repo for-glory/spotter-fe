@@ -215,18 +215,6 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
-  store.setWorkout({
-    title: daily.title,
-    type: daily.type.name,
-    duration: daily.duration,
-    bodyParts: daily.workoutMuscleTypesIds,
-    price: daily.price / 100,
-    trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
-    exercise: {
-      videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
-      description: daily.description
-    }
-  })
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 </script>
