@@ -9,7 +9,7 @@
   >
     <ion-header
       class="header ion-no-border"
-      :class="{ 'header--fixed': headerFixed }"
+      :class="{ 'header--fixed': headerFixed, 'top-24': isPlatform('ios') }"
     >
       <slot name="header"></slot>
     </ion-header>
@@ -28,6 +28,7 @@
       :class="{
         'page-content--full-height': contentFullHeight,
         'page-content--fullscreen': isFullscreenView,
+        'top-24': isPlatform('ios'),
       }"
     >
       <template v-if="draggable">
@@ -109,6 +110,7 @@ import {
   IonContent,
   IonFooter,
   IonBackdrop,
+  isPlatform
 } from "@ionic/vue";
 import NavigationMenu from "@/general/components/NavigationMenu.vue";
 import useRoles from "@/hooks/useRole";
@@ -419,5 +421,8 @@ onUnmounted(() => {
 
 .backdrop-no-tappable {
   pointer-events: none;
+}
+.top-24 {
+  padding-top: 24px;
 }
 </style>

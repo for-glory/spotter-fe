@@ -132,7 +132,7 @@ import { FreeMode } from "swiper";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useDailysItemStore } from "@/general/stores/useDailysItemStore";
+import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { useDailysStore } from "@/general/stores/useDailysStore";
 import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
@@ -149,7 +149,7 @@ const tab = ref<string>('analytics');
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-const dailysItemStore = useDailysItemStore();
+const dailysItemsStore = useDailysItemsStore();
 const summaryData = ref<any>({
   totalViews: 0,
   subscribers: 0,
@@ -181,6 +181,8 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
+  dailysItemsStore.setData(dailys);
+  console.log(dailysItemsStore.dailysData);
   dailys.map((daily: any) => {
     summaryData.value.totalViews += daily.recommended_count;
     summaryData.value.subscribers += daily.recommended_count;
@@ -213,29 +215,6 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
-  dailysItemStore.setWorkout({
-    title: daily.title,
-    type: daily.type.name,
-    duration: daily.duration,
-    preview: daily.preview,
-    previewUrl: `${VUE_APP_CDN.value}${daily.preview}` || '',
-    trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
-    exercise: {
-      videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
-      description: daily.description
-    }
-  });
-  store.setWorkout({
-    title: daily.title,
-    type: daily.type.name,
-    duration: daily.duration,
-    bodyParts: daily.workoutMuscleTypesIds,
-    price: daily.price / 100,
-    exercise: {
-      videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
-      description: daily.description
-    }
-  })
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 </script>

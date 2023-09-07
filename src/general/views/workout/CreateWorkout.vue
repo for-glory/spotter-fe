@@ -35,6 +35,7 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 
 const router = useRouter();
 const store = useDailysStore();
@@ -63,14 +64,15 @@ const openPicker = (name: string): void => {
 
 const createDailys = () => {
   mutate({ 
+    preview: store.workoutPath,
+    video: store.path,
+    body_parts: store.workoutMuscleTypesIds,
     facility_id: currentFacility.facility?.id,
     type_id: store.workoutType?.id,
     title: store.workoutTitle,
     description: store.exercises?.description,
-    price: parseFloat(store.workoutPrice),
-    duration: parseInt(store.workoutDuration),
-    video: store.exercises?.videoPath,
-    body_parts: store.workoutMuscleTypesIds,
+    price: getSumForPayment(store.workoutPrice as number),
+    duration: Number(store.workoutDuration),
   })
     .then(async () => {
       const toast = await toastController.create({
