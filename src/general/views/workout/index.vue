@@ -36,7 +36,7 @@
         class="ion-padding-horizontal height-100 main-content"
       >
         <ion-spinner
-          v-if="dailysLoading"
+          v-if="dailysLoading && dailysAnalyticsLoading"
           name="lines"
           class="spinner"
         />
@@ -118,10 +118,9 @@ import {
   WorkoutsByFacilityDocument,
   QueryFacilityWorkoutsOrderByColumn,
   SortOrder,
-  WorkoutDocument,
-  Workout,
   HideWorkoutDocument,
   ShowWorkoutDocument,
+  DailyAnalyticsDocument
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -179,21 +178,30 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   }
 );
 
+const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
+  DailyAnalyticsDocument,
+  {
+    facility_id: currentFacility.facility?.id,
+  }
+);
+
+
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
   dailysItemsStore.setData(dailys);
   console.log(dailysItemsStore.dailysData);
-  dailys.map((daily: any) => {
-    summaryData.value.totalViews += daily.recommended_count;
-    summaryData.value.subscribers += daily.recommended_count;
-    summaryData.value.totalRevenue += daily.total_revenue;
-    summaryData.value.viewsPerDaily += daily.recommended_count;
-  });
   dailys.sort((a: any, b: any) => {
     return a.total_revenue - b.total_revenue;
   });
   summaryData.value.topDailys = dailys.slice(0, 10);
 });
+
+gotDailysAnalyticsData(({ data }) => {
+  summaryData.value.totalViews = data.views;
+  summaryData.value.subscribers = data.purchases;
+  summaryData.value.totalRevenue = data.total_revenue;
+  summaryData.value.viewsPerDaily = data.per_daily_views;
+})
 
 const dailysData = computed(
   () => dailysResult.value?.facilityWorkouts?.data
