@@ -37,11 +37,6 @@ import {
   AppleSignInErrorResponse,
   ASAuthorizationAppleIDRequest,
 } from "@awesome-cordova-plugins/sign-in-with-apple";
-import {
-  FacebookLogin,
-  FacebookError,
-  FacebookLoginResponse,
-} from "@capacitor-community/facebook-login";
 import { Capacitor } from "@capacitor/core";
 
 const firebaseConfig = {
@@ -90,7 +85,7 @@ onMounted(async () => {
     console.log("Got to capacitor check");
     GoogleAuth.initialize({
       clientId:
-        "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
+        "212274388127-do3mri75u9m54m0110b551tt3t1mlfci.apps.googleusercontent.com",
       scopes: ["profile", "email"],
       grantOfflineAccess: true,
     });
@@ -133,7 +128,7 @@ const loginWithGoogle = async () => {
               token: res.authentication.accessToken,
               provider: SocialProvidersEnum.Google,
             });
-        }
+          }
         },
         (err) => {
           // debugger;
@@ -148,37 +143,40 @@ const loginWithGoogle = async () => {
 };
 
 const loginWithApple = async () => {
-  const provider = new OAuthProvider("apple.com");
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // Apple credential
-      const credential = OAuthProvider.credentialFromResult(result);
-      login({
-        token: credential.idToken,
-        provider: SocialProvidersEnum.Apple,
-      });
-    })
-    .catch((error) => {
-      console.log("error: ", error);
-    });
-};
-
-const loginWithFB = () => {
-  const FACEBOOK_PERMISSIONS = ["email", "public_profile"];
-  FacebookLogin.login({
-    permissions: FACEBOOK_PERMISSIONS,
-  })
-    .then((response: FacebookLoginResponse) => {
-      if (response.accessToken?.token) {
+  if (!Capacitor.isNativePlatform()) {
+    const provider = new OAuthProvider("apple.com");
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // Apple credential
+        const credential = OAuthProvider.credentialFromResult(result);
         login({
-          token: response.accessToken.token,
-          provider: SocialProvidersEnum.Facebook,
+          token: credential?.idToken,
+          provider: SocialProvidersEnum.Apple,
         });
-      }
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
+  } else {
+    SignInWithApple.signin({
+      requestedScopes: [0, 1],
     })
-    .catch((error: FacebookError) => {
-      console.log("error: ", error);
-    });
+      .then((res) => {
+        // Successful sign-in
+        console.log("Apple Sign-In Success:", JSON.stringify(res));
+
+        if (res.authorizationCode) {
+          login({
+            token: res.authorizationCode,
+            provider: SocialProvidersEnum.Apple,
+          });
+        }
+      })
+      .catch((err) => {
+        // Sign-in failed
+        console.error("Apple Sign-In Error:", err);
+      });
+  }
 };
 
 afterLogin(({ data }) => {
@@ -187,7 +185,7 @@ afterLogin(({ data }) => {
 });
 
 onError((error) => {
-  console.log("error: ", error);
+  console.log("onerror: ", error);
 });
 </script>
 
