@@ -120,7 +120,7 @@ import { useWorkoutsStore } from "../../../trainers/store/workouts";
 import { requiredFieldSchema } from "@/validations/authValidations";
 import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
 import { v4 as uuidv4 } from "uuid";
-import { FilePreloadDocument } from "@/generated/graphql";
+import { VideoPreloadDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
@@ -138,7 +138,6 @@ const videoPath = computed(() => store.exercises?.videoPath);
 const videoName = computed(() => store.exercises?.videoName);
 const videoSize = computed(() => store.exercises?.videoSize);
 const videoOnLoading = ref<boolean>(false);
-const path = ref<string>("");
 const percentLoaded = ref<number | undefined>();
 const duration = computed(() =>
   store.workoutDuration ? store.workoutDuration : ""
@@ -163,8 +162,8 @@ const exerciseDescription = ref<string>("");
 
 let abort: any;
 
-const { mutate: filePreload, loading: filePreloadLoading } = useMutation(
-  FilePreloadDocument,
+const { mutate: videoPreload, loading: videoPreloadLoading } = useMutation(
+  VideoPreloadDocument,
   {
     context: {
       fetchOptions: {
@@ -292,14 +291,19 @@ const videoSelected = async (
 ): Promise<void> => {
   videoOnLoading.value = true;
   percentLoaded.value = 0;
-  await filePreload({ file, upload_dir: 'workout' })
+  await videoPreload({ file })
     .then((res) => {
-      path.value = res?.data.filePreload.path;
       videoOnLoading.value = false;
       percentLoaded.value = undefined;
+      store.setValue("path", res?.data.videoPreload.path);
+      store.setValue(
+        "workoutPreview",
+        `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.thumbnail_path}`
+      );
+      store.setValue("workoutPath", res?.data.videoPreload.thumbnail_path);
       store.setExercise({
         description: exerciseDescription.value,
-        videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
+        videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.path}`,
         id: uuidv4(),
         videoSize: size,
         videoName: name,
@@ -308,8 +312,6 @@ const videoSelected = async (
     .catch((error) => {
       abort();
       console.error(error);
-      path.value = "";
-      path.value = "";
       videoOnLoading.value = false;
       percentLoaded.value = undefined;
     });

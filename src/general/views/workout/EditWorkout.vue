@@ -31,6 +31,7 @@ import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useDailysStore } from "@/general/stores/useDailysStore";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 
 const percentLoaded = ref(0);
 
@@ -52,11 +53,12 @@ const updateDailys = () => {
     input: {
       title: store.workoutTitle,
       description: store.description,
-      duration: parseInt(store.workoutDuration),
-      price: parseFloat(store.workoutPrice),
+      price: getSumForPayment(store.workoutPrice as number),
+      duration: Number(store.workoutDuration),
       level: store.workoutType.id,
-      video: store.exercises.videoPath,
+      video: store.path,
       body_parts: store.workoutMuscleTypesIds,
+      preview: store.workoutPath,
     }
   })
     .then(async () => {

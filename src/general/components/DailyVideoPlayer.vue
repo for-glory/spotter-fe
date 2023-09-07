@@ -1,11 +1,11 @@
 <template>
   <ion-item 
     lines="none" 
-    @click="handlePlay"
     style="z-index: -5"
   >
     <video 
       :src="videoPath" 
+      @click="handlePlay"
       ref="videoRef" 
       style="max-width: 100%; width: 100%; max-height: 100%; height: 100%"
     />
@@ -17,7 +17,7 @@ import {
   IonItem,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
-import { ref, computed, defineProps, watch } from "vue";
+import { ref, computed, defineProps, watch, onMounted } from "vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 // import dayjs from "dayjs";
 import { Share } from "@capacitor/share";
@@ -39,9 +39,13 @@ const props = defineProps({
 const videoPath = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.path}`);
 const videoRef = ref<any>();
 
-const videoPlay = computed(() => props.play);
+const shouldPlay = computed(() => props.play);
 
-watch(() => videoPlay.value,
+onMounted(() => {
+  console.log('mounted: shouldPlay?: ', shouldPlay.value);
+});
+
+watch(() => shouldPlay.value,
 (newVal) => {
   console.log('should play?: ', newVal);
   if(newVal) {
@@ -57,6 +61,7 @@ const handlePlay = () => {
   } else {
     videoRef.value.pause();
   }
+  videoRef.value.blur();
 }
 
 </script>

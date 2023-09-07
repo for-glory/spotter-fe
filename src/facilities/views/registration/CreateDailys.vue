@@ -130,9 +130,7 @@ import { useRouter, useRoute } from "vue-router";
 import { ref, computed, onMounted, watch, inject } from "vue";
 import { toastController } from "@ionic/vue";
 import {
-  FilePreloadDocument,
-  CreateGymWorkoutDocument,
-  CreateGymWorkoutInput,
+  VideoPreloadDocument,
   WorkoutVideosInput,
 } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
@@ -232,7 +230,6 @@ const preloading = ref<boolean>(false);
 const maxVideoSize = ref(Number(process.env.VUE_APP_MAX_VIDEO_SIZE));
 const maxVideoDuration = ref(Number(process.env.VUE_APP_MAX_VIDEO_DURATION));
 const alertModalError = ref<EntitiesEnum | null>();
-const path = ref<string>("");
 const videoOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
@@ -295,16 +292,19 @@ const uploadVideo = async () => {
         name: router?.currentRoute?.value?.name,
         params: { step: 'create' },
       });
-      await filePreload({ file })
+      await videoPreload({ file })
         .then((res) => {
-          path.value = res?.data.filePreload.path;
           videoOnLoading.value = false;
           percentLoaded.value = undefined;
+          store.setValue("path", res?.data.videoPreload.path);
+          store.setValue(
+            "workoutPreview",
+            `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.thumbnail_path}`
+          );
+          store.setValue("workoutPath", res?.data.videoPreload.thumbnail_path);
           store.setExercise({
             description: exerciseDescription.value,
-            videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
-            // previewUrl: previewUrl.value,
-            // previewPath: previewPath.value,
+            videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.path}`,
             id: uuidv4(),
             videoSize: fileSize,
             videoName: fileName,
@@ -313,7 +313,6 @@ const uploadVideo = async () => {
         .catch((error) => {
           abort();
           console.error(error);
-          path.value = "";
           videoOnLoading.value = false;
           percentLoaded.value = undefined;
         });
@@ -325,7 +324,7 @@ const uploadVideo = async () => {
   }
 };
 
-const { mutate: filePreload } = useMutation(FilePreloadDocument, {
+const { mutate: videoPreload } = useMutation(VideoPreloadDocument, {
   context: {
     fetchOptions: {
       useUpload: true,
@@ -376,9 +375,6 @@ const emitter: Emitter<Record<EventType, unknown>> | undefined =
 const openPicker = (name: string): void => {
   emitter?.emit("open-picker", name);
 };
-
-const { mutate: createWorkout, loading: createWorkoutLoading } =
-  useMutation<CreateGymWorkoutInput>(CreateGymWorkoutDocument);
 
 // video uploading ----->
 const onHandleSelect = (pathName: string) => {

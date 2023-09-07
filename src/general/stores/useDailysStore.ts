@@ -11,8 +11,9 @@ export const useDailysStore = defineStore("dailys", {
       workoutMuscleTypesIds: [],
       workoutDuration: "",
       workoutPrice: null,
-      workoutPreview: "",
-      workoutPath: "",
+      workoutPreview: "", //thumbnail path
+      workoutPath: "", //thumbnail path without cdn
+      path: "", //video path without cdn
       media: [],
       exercises: {},
       workoutMuscleTypes: [],
