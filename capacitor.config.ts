@@ -1,9 +1,9 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.spotterfitness.gabbyproducts',
-  appName: 'Spotter',
-  webDir: 'dist',
+  appId: "com.spotterfitness.gabbymobileapp",
+  appName: "Spotter",
+  webDir: "dist",
   bundledWebRuntime: false,
   plugins: {
     SplashScreen: {
@@ -18,9 +18,9 @@ const config: CapacitorConfig = {
       presentationOptions: ["badge", "sound", "alert"],
     },
     GoogleAuth: {
-      scopes: ['profile', 'email'],
-      clientId: '388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com',
-      serverClientId: '869230176984-kctu8juhvoac1ahe16rar7h8pils0gv5.apps.googleusercontent.com',
+      scopes: ["profile", "email"],
+      clientId:
+        "212274388127-do3mri75u9m54m0110b551tt3t1mlfci.apps.googleusercontent.com",
       forceCodeForRefreshToken: true,
     },
   },

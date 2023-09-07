@@ -31,17 +31,6 @@ import { SocialProvidersEnum, SocialLoginDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
-import {
-  SignInWithApple,
-  AppleSignInResponse,
-  AppleSignInErrorResponse,
-  ASAuthorizationAppleIDRequest,
-} from "@awesome-cordova-plugins/sign-in-with-apple";
-import {
-  FacebookLogin,
-  FacebookError,
-  FacebookLoginResponse,
-} from "@capacitor-community/facebook-login";
 import { Capacitor } from "@capacitor/core";
 
 const firebaseConfig = {
@@ -90,7 +79,7 @@ onMounted(async () => {
     console.log("Got to capacitor check");
     GoogleAuth.initialize({
       clientId:
-        "388599372628-1g5qiad0cnjugro0fgcfu6i66jdc0ob0.apps.googleusercontent.com",
+        "212274388127-do3mri75u9m54m0110b551tt3t1mlfci.apps.googleusercontent.com",
       scopes: ["profile", "email"],
       grantOfflineAccess: true,
     });
@@ -133,7 +122,7 @@ const loginWithGoogle = async () => {
               token: res.authentication.accessToken,
               provider: SocialProvidersEnum.Google,
             });
-        }
+          }
         },
         (err) => {
           // debugger;
@@ -154,29 +143,11 @@ const loginWithApple = async () => {
       // Apple credential
       const credential = OAuthProvider.credentialFromResult(result);
       login({
-        token: credential.idToken,
+        token: credential?.idToken,
         provider: SocialProvidersEnum.Apple,
       });
     })
     .catch((error) => {
-      console.log("error: ", error);
-    });
-};
-
-const loginWithFB = () => {
-  const FACEBOOK_PERMISSIONS = ["email", "public_profile"];
-  FacebookLogin.login({
-    permissions: FACEBOOK_PERMISSIONS,
-  })
-    .then((response: FacebookLoginResponse) => {
-      if (response.accessToken?.token) {
-        login({
-          token: response.accessToken.token,
-          provider: SocialProvidersEnum.Facebook,
-        });
-      }
-    })
-    .catch((error: FacebookError) => {
       console.log("error: ", error);
     });
 };
@@ -187,7 +158,7 @@ afterLogin(({ data }) => {
 });
 
 onError((error) => {
-  console.log("error: ", error);
+  console.log("onerror: ", error);
 });
 </script>
 

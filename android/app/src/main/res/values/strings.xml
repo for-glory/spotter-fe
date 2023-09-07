@@ -8,8 +8,7 @@
     <string name="fb_login_protocol_scheme">fb547569913550944</string>
     <string name="facebook_client_token">b7d0dfeffdf64a52e70b2c54fb771228</string>
     <string name="geo_api_key">AIzaSyAvOBOiMTiSrw0Ial-OEAmtD6c-VGG5z9M</string>
-
-    <string name="server_client_id">869230176984-kctu8juhvoac1ahe16rar7h8pils0gv5.apps.googleusercontent.com</string>
+    <string name="server_client_id">212274388127-do3mri75u9m54m0110b551tt3t1mlfci.apps.googleusercontent.com</string>
     <string name="publishable_key">pk_test_51IMAHmHW1O9dPbhoIutisR6WRVzQU94wSrTTUI1fSfsSp7TJuLyAXFnYuBNhuggrA4wkINDKEyH7UNxtko0hyGJJ00Cv1PpFpg</string>
     <bool name="enable_google_pay">true</bool>
     <string name="country_code">US</string>
