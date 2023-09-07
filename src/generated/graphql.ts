@@ -2962,6 +2962,8 @@ export type Workout = {
   media?: Maybe<Array<Maybe<Media>>>;
   preview?: Maybe<Scalars['String']>;
   previewUrl?: Maybe<Scalars['String']>;
+  video?: Maybe<Scalars['String']>;
+  videoUrl?: Maybe<Scalars['String']>;
   price: Scalars['Int'];
   products?: Maybe<Array<PaymentGatewayProduct>>;
   state: WorkoutStatesEnum;
@@ -6091,6 +6093,15 @@ export const FilePreloadDocument = gql`
   }
 }
     `;
+
+export const VideoPreloadDocument = gql`
+    mutation videoPreload($file: Upload!, $upload_dir: String) {
+  videoPreload(file: $file, upload_dir: $upload_dir) {
+    path
+    thumbnail_path
+  }
+}
+  `;
 export const HideWorkoutDocument = gql`
     mutation hideWorkout($id: ID!) {
   hideWorkout(id: $id) {

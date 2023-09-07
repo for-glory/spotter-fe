@@ -25,7 +25,7 @@
         <workout-item
           :duration="workout.duration"
           :title="workout.title || ''"
-          :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
+          :pathUrl="`${workout.previewUrl}` || ''"
           :type="workout.type?.name || ''"
           :trainer="
             `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
