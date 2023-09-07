@@ -11,8 +11,11 @@ export const useWorkoutsStore = defineStore("workouts", {
       workoutMuscleTypesIds: [],
       workoutDuration: "",
       workoutPrice: null,
-      workoutPreview: "",
-      workoutPath: "",
+      workoutPreview: "", //thumbnail path
+      workoutPath: "", //thumbnail path without cdn
+      path: "", //video path without cdn
+      videoPath: "", //video path
+      description: "",
       media: [],
       exercises: {},
       workoutMuscleTypes: [],
@@ -52,6 +55,9 @@ export const useWorkoutsStore = defineStore("workouts", {
       this.workoutPrice = null;
       this.workoutPreview = "";
       this.workoutPath = "";
+      this.path = "";
+      this.videoPath = "";
+      this.description = "";
       this.media = [];
       this.exercises = {};
       this.workoutMuscleTypes = [];
@@ -66,6 +72,9 @@ export const useWorkoutsStore = defineStore("workouts", {
       if (payload.price) this.workoutPrice = payload.price;
       this.workoutPreview = payload.preview || "";
       this.workoutPath = payload.previewUrl || "";
+      this.description = payload.description || "";
+      this.path = payload.videoUrl || "";
+      this.videoPath = payload.video || "";
       payload.exercises?.forEach((exercise) =>
         this.setExercise({
           title: exercise?.title,
