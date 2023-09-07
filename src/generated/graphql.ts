@@ -5416,6 +5416,9 @@ export const RecommendedWorkoutsDocument = gql`
       preview
       reviews_count
       recommended_count
+      video
+      videoUrl
+      purchases
       type {
         id
         name
@@ -5472,6 +5475,9 @@ export const RecommendedWorkoutsByBodyPartsDocument = gql`
       preview
       reviews_count
       recommended_count
+      video
+      videoUrl
+      purchases
       type {
         id
         name
@@ -5522,6 +5528,9 @@ export const RecommendedWorkoutsByTypeDocument = gql`
       preview
       reviews_count
       recommended_count
+      video
+      videoUrl
+      purchases
       type {
         id
         name
@@ -5953,6 +5962,7 @@ export const WorkoutsByFacilityDocument = gql`
       reviews_count
       recommended_count
       total_revenue
+      purchases
       video
       videoUrl
       type {
@@ -6085,7 +6095,16 @@ export const DeleteDailyDocument = gql`
   }
 }
     `;
-
+export const DailyAnalyticsDocument = gql`
+    mutation dailyAnalytics($facility_id: ID!) {
+  dailyAnalytics(facility_id: $facility_id) {
+    total_revenue
+    purchases
+    views
+    per_daily_views
+  }
+}
+    `;
 export const FilePreloadDocument = gql`
     mutation filePreload($file: Upload!, $upload_dir: String) {
   filePreload(file: $file, upload_dir: $upload_dir) {
