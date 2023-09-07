@@ -1,11 +1,6 @@
 <template>
   <div class="socials" :class="isNative && 'ion-padding'">
-    <ion-button
-      v-if="isSafari === 'safari' || isIos"
-      expand="block"
-      class="social-btn"
-      @click="loginWithApple"
-    >
+    <ion-button expand="block" class="social-btn" @click="loginWithApple">
       <ion-icon slot="icon-only" src="assets/icon/apple.svg"></ion-icon>
       Continue with Apple
     </ion-button>
@@ -31,6 +26,12 @@ import { SocialProvidersEnum, SocialLoginDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
+import {
+  SignInWithApple,
+  AppleSignInResponse,
+  AppleSignInErrorResponse,
+  ASAuthorizationAppleIDRequest,
+} from "@awesome-cordova-plugins/sign-in-with-apple";
 import { Capacitor } from "@capacitor/core";
 
 const firebaseConfig = {
@@ -137,19 +138,23 @@ const loginWithGoogle = async () => {
 };
 
 const loginWithApple = async () => {
-  const provider = new OAuthProvider("apple.com");
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // Apple credential
-      const credential = OAuthProvider.credentialFromResult(result);
-      login({
-        token: credential?.idToken,
-        provider: SocialProvidersEnum.Apple,
+  if (!Capacitor.isNativePlatform()) {
+    const provider = new OAuthProvider("apple.com");
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // Apple credential
+        const credential = OAuthProvider.credentialFromResult(result);
+        login({
+          token: credential?.idToken,
+          provider: SocialProvidersEnum.Apple,
+        });
+      })
+      .catch((error) => {
+        console.log("error: ", error);
       });
-    })
-    .catch((error) => {
-      console.log("error: ", error);
-    });
+  } else {
+    console.log("apple login native");
+  }
 };
 
 afterLogin(({ data }) => {
