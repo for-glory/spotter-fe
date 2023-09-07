@@ -5419,6 +5419,7 @@ export const RecommendedWorkoutsDocument = gql`
       video
       videoUrl
       purchases
+      views_count
       type {
         id
         name
@@ -5478,6 +5479,7 @@ export const RecommendedWorkoutsByBodyPartsDocument = gql`
       video
       videoUrl
       purchases
+      views_count
       type {
         id
         name
@@ -5531,6 +5533,7 @@ export const RecommendedWorkoutsByTypeDocument = gql`
       video
       videoUrl
       purchases
+      views_count
       type {
         id
         name
@@ -5962,6 +5965,7 @@ export const WorkoutsByFacilityDocument = gql`
       reviews_count
       recommended_count
       total_revenue
+      views_count
       purchases
       video
       videoUrl
