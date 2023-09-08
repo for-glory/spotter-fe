@@ -145,6 +145,7 @@ import { Share } from "@capacitor/share";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode, Swiper as Swipeer } from "swiper";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 // import dayjs from "dayjs";
 import WorkoutModal from "@/general/components/modals/workout/WorkoutModal.vue";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
@@ -247,10 +248,10 @@ const showSettingsModal = () => {
   id.value = daily.id;
   store.setWorkout({
     title: daily.title,
-    type: daily.type.name,
+    type: daily.type.id,
     duration: daily.duration,
     bodyParts: daily.workoutMuscleTypesIds,
-    price: daily.price / 100,
+    price: getSumForPayment(daily.price, true),
     trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
     exercise: {
       videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,

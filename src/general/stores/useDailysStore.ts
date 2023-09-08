@@ -21,6 +21,7 @@ export const useDailysStore = defineStore("dailys", {
       totalRevenue: 0,
       recommendedCount: 0,
       reviewsCount: 0,
+      updates: {}
     };
   },
   actions: {
