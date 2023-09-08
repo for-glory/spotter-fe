@@ -257,6 +257,8 @@ const showSettingsModal = () => {
       description: daily.description
     }
   });
+  store.setValue('path', daily.video);
+  console.log('store.path: ', store.path);
   isSettingModalOpen.value = true;
 };
 const handleDelete = () => {
