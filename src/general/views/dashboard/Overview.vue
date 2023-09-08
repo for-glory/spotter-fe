@@ -1,6 +1,6 @@
 <template>
   <ion-spinner
-    v-if="loading || eventsLoading"
+    v-if="loading || eventsLoading || upcomingeventsLoading"
     name="lines"
     class="spinner"
   />
@@ -44,20 +44,17 @@
               <div class="type">Total revenue</div>
               <div class="period">Today</div>
               <div class="percent">
-                0.8%
-                <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+                0.8% <span class="chain">${{ widgetInfo?.today_earn }}</span>
+                <!-- <ion-icon class="arrow" src="assets/icon/call_made.svg" /> -->
               </div>
-              <div class="chain">${{ widgetInfo?.today_earn }}</div>
             </div>
           </ion-col>
           <ion-col size="12" size-xl="4">
-            <div class="revenue flex-container">
+            <div class="revenue">
               <div>
                 <div class="type">Quarterly revenue</div>
                 <div class="period">Earned</div>
-                <div class="percent">70%</div>
-                <div class="chain">${{ widgetInfo?.earn_last_thirty_days }}
-                  <!-- <span class="period">/ day</span> -->
+                <div class="percent">70% <span class="chain">${{ widgetInfo?.earn_last_thirty_days }}</span>
                 </div>
               </div>
               <ion-icon class="vector" src="assets/icon/chat/Vector.svg" />
@@ -68,10 +65,9 @@
               <div class="type">Earned revenue</div>
               <div class="period">This year</div>
               <div class="percent">
-                0.8%
-                <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+                0.8%  <span class="chain">${{ widgetInfo?.year_earn }}</span>
+                <!-- <ion-icon class="arrow" src="assets/icon/call_made.svg" /> -->
               </div>
-              <div class="chain">${{ widgetInfo?.year_earn }}</div>
             </div>
           </ion-col>
         </ion-row>
@@ -84,7 +80,7 @@
             <div class="title white-text">Attendance Trend</div>
             <div class="dropdown">
               <div class="date">
-                Monthly
+                This Year
               </div>
               <div class="dropdown-content">
                 <div @click="handleDay">Daily</div>
@@ -102,7 +98,7 @@
             <div class="title white-text">Event Status</div>
             <div class="dropdown">
               <div class="date">
-                Monthly
+                This Month
               </div>
               <div class="dropdown-content">
                 <div @click="handleDay">Daily</div>
@@ -131,9 +127,60 @@
               :dateTime="dayjs(event.end_date).format('dddd D MMMM | HH:mm')"
               status="Closed"
             />
+            <div class="flex-container">
+              <div class="title red-text">Upcoming</div>
+              <div class="view">View All</div>
+            </div>
+             <upcoming-event-item
+             v-for="event in upcomingevents"
+              :key="event.id"
+              :title="event.title"
+              :street="event.address.street"
+              :price ="event.price"
+              :start_date = "event.start_date"
+              :media = "event.media[0].pathUrl"
+             status="Upcoming"
+             />
           </div>
         </div>
       </ion-col>
+       <ion-col size="12" size-lg="12" size-xl="7" class="col-gap test">
+        <div class="block row-gap">
+          <div class="flex-container">
+            <div class="title white-text">Market stats</div>
+            <div class="dropdown">
+              <div class="date">
+                This Month
+              </div>
+              <div class="dropdown-content">
+                <div @click="handleDay">Daily</div>
+                <div @click="handleWee">Weekly</div>
+                <div @click="handleMon">Monthly</div>
+              </div>
+            </div>
+          </div>
+          <custom-chart :chartData="chartData1" :selected="selected" />
+        </div>
+      </ion-col>
+
+       <!-- <ion-col size="12" size-lg="12" size-xl="7" class="col-gap">
+        <div class="block row-gap">
+          <div class="flex-container">
+            <div class="title white-text">pie chart</div>
+            <div class="dropdown">
+              <div class="date">
+                This Month
+              </div>
+              <div class="dropdown-content">
+                <div @click="handleDay">Daily</div>
+                <div @click="handleWee">Weekly</div>
+                <div @click="handleMon">Monthly</div>
+              </div>
+            </div>
+          </div>
+          <pie-chart :chartData="piechartData" :selected="selected" />
+        </div>
+      </ion-col> -->
     </ion-row>
   </div>
 </template>
@@ -141,7 +188,9 @@
 <script setup lang="ts">
 import { IonCol, IonGrid, IonRow, IonText, IonImg, IonIcon, IonSpinner } from "@ionic/vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
+import UpcomingEventItem from "@/general/components/dashboard/UpcomingEventItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
+import PieChart from "@/general/components/dashboard/PieChart.vue";
 import { computed, watch, ref } from "vue";
 import {
   EventsDocument,
@@ -183,24 +232,100 @@ console.log(dashboardWidgetResult)
 const widgetInfo = computed(() => dashboardWidgetResult?.value?.facilityDashboardWidget);
 
 const chartData = computed(() => {
-  const datasets = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+  const datasets = [ 0, 25, 50, 75, 100 ];
   widgetInfo?.value?.checkin_data.map(data => {
     datasets[parseInt(data.month) - 1] = data.value
   })
   return {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec","Jan", "Feb", "Mar", "Apr"],
     datasets: [
       {
-        label: 'Data One',
+        label: 'Poor',
+        backgroundColor: '#F7685B',
+         data: datasets,
+        barThickness: 30,
+        borderRadius: 10,
+        stack: 'stack 1',
+        
+      },
+      {
+        label: 'Fair',
+        backgroundColor: '#FFB946',
+         data: datasets,
+        barThickness: 30,
+        borderRadius: 10,
+        stack: 'stack 1',
+      },
+      {
+        label: 'Good',
+        backgroundColor: '#2F9BFF',
+         data: datasets,
+        barThickness: 30,
+        borderRadius: 10,
+        stack: 'stack 1',
+      },
+      {
+        label: 'Excellent',
         backgroundColor: '#2ED47A',
+         data: datasets,
+        barThickness: 30,
+        borderRadius: 10,
+        stack: 'stack 1',
+      }
+    ]
+  }
+});
+
+const chartData1 = computed(() => {
+  const datasets = [ 0, 20, 40, 60, 80, 100 ];
+  widgetInfo?.value?.checkin_data.map(data => {
+    datasets[parseInt(data.month) - 1] = data.value
+  })
+  return {
+    labels: ["05 Mon", "06 Tue", "07 Wed", "08 Thur", "09 Fri", "10 Sat","11 Sun"],
+    datasets: [
+      {
+        label: 'Dailys',
+        backgroundColor: '#F7685B',
         data: datasets,
+        barThickness: 8,
+        borderRadius: 10
+      },
+      {
+        label: 'Gym pass',
+        backgroundColor: '#FFB946',
+        data: datasets,
+        barThickness: 8,
+        borderRadius: 10
+      },
+      {
+        label: 'Drop-Ins',
+        backgroundColor: '#2F9BFF',
+         data: datasets,
+        barThickness: 8,
+        borderRadius: 10
+      },
+      {
+        label: 'Event pass',
+        backgroundColor: '#2ED47A',
+         data: datasets,
         barThickness: 8,
         borderRadius: 10
       }
     ]
   }
 });
-
+const piechartData = computed(() => {
+  return {
+        labels: ['Label 1', 'Label 2', 'Label 3'],
+        datasets: [
+          {
+            data: [30, 40, 50],
+            backgroundColor: ['red', 'blue', 'green'],
+          },
+        ],
+  }
+});
 const idFilter = computed(() => {
   return { created_by_facility: currentFacility.facility?.id }
 });
@@ -232,6 +357,35 @@ const events = computed(() => {
   return eventRes.value?.events?.data;
 });
 
+const upcomingeventsParams: EventsQueryVariables = {
+  first: 4,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  start_date: {
+    from: dayjs().add(-1, 'y').format("YYYY-MM-DD HH:mm:ss"),
+    to: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+  },
+  ...idFilter.value,
+};
+const {
+  result: upcomingeventRes,
+  loading: upcomingeventsLoading,
+  refetch: upcomingeventsRefetch
+} = useQuery<EventsQuery>(EventsDocument, upcomingeventsParams, {
+  fetchPolicy: "no-cache",
+});
+
+const upcomingevents = computed(() => {
+  return upcomingeventRes.value?.events?.data;
+});
+
+
+
 watch(
   () => currentFacility.facility.id,
   async () => {
@@ -247,6 +401,10 @@ watch(
             })
             eventsRefetch({
               ...eventsParams,
+              ...idFilter.value
+            })
+             upcomingeventsRefetch({
+              ...upcomingeventsParams,
               ...idFilter.value
             })
           }
@@ -310,6 +468,7 @@ watch(
 .chain {
   font-size: 1.625rem;
   color: white;
+  margin-left: 14%;
 }
 .title {
   padding: 0;
@@ -370,7 +529,7 @@ watch(
   padding-left: 0.6rem;
 }
 .date {
-  border: 1px solid grey;
+ // border: 1px solid grey;
   border-radius: 10px;
   padding: 0.6rem;
   display: flex;
@@ -447,4 +606,14 @@ watch(
 .chart-container {
   position: relative !important;
 }
+
+ion-col.col-gap.test {
+    margin-top: -46%;
+}
+
+.red-text {
+  color: #F7685B;
+}
 </style>
+
+

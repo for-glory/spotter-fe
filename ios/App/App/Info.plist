@@ -12,6 +12,15 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>de</string>
+		<string>nl</string>
+		<string>fr</string>
+		<string>it</string>
+		<string>pt-BR</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -31,7 +40,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.869230176984-bn1trvlrs429pp1ckamspec9mn7e538q</string>
+				<string>com.googleusercontent.apps.212274388127-c7d1n4mrgk1uja142mf7folc10vk30ek</string>
 			</array>
 		</dict>
 	</array>
@@ -55,6 +64,8 @@
 	<string>Calender is required to set match reminders</string>
 	<key>NSCameraUsageDescription</key>
 	<string>To take photos, to post content</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Need Contact access for showing contact list</string>
 	<key>NSDesktopFolderUsageDescription</key>
 	<string></string>
 	<key>NSDownloadsFolderUsageDescription</key>
