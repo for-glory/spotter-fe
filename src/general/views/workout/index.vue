@@ -65,7 +65,7 @@
           </div>
           <div v-else>
             <div v-if="filter==='all'">
-              <ion-text class="font-light font-12 color-white">Showing all </ion-text>
+              <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
               <div>
                 <div 
                   class="d-flex align-items-center justify-content-between w-100"
@@ -351,10 +351,10 @@ gotDailysData(({ data }) => {
 });
 
 gotDailysAnalyticsData(({ data }) => {
-  summaryData.value.totalViews = data.views;
-  summaryData.value.subscribers = data.purchases;
-  summaryData.value.totalRevenue = data.total_revenue;
-  summaryData.value.viewsPerDaily = data.per_daily_views;
+  summaryData.value.totalViews = data.dailyAnalytics.views;
+  summaryData.value.subscribers = data.dailyAnalytics.purchases;
+  summaryData.value.totalRevenue = data.dailyAnalytics.total_revenue;
+  summaryData.value.viewsPerDaily = data.dailyAnalytics.per_daily_views;
 });
 
 gotDailysPerformanceData(({ data }) => {
