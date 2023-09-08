@@ -1,7 +1,18 @@
 <template>
   <base-layout content-full-height>
     <template #header>
-      <page-header title="Settings" />
+      <page-header
+        :back-btn="true"
+        :title-class="role === RoleEnum.Trainer ? 'header_trainer__title' : 'header__title'"
+        title="Settings"
+      >
+        <template v-if="role === RoleEnum.Trainer" #custom-btn>
+          <ion-button class="header-btn" shape="round">
+            <ion-icon src="assets/icon/chat.svg" />
+            <span class="header-btn__badge"></span>
+          </ion-button>
+        </template>
+      </page-header>
     </template>
     <template #content>
       <ion-spinner
@@ -27,7 +38,7 @@
         <div class="profile__head">
           <ion-title
             @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()"
-            class="profile__fullname"
+            class="profile__fullname" :class="{'profile__fullname-gold': role === RoleEnum.Trainer }"
           >
             <template
               v-if="role === RoleEnum.User || role === RoleEnum.Trainer"
@@ -44,7 +55,7 @@
             />
           </ion-title>
           <div class="profile__address">
-            <address-item large>
+            <address-item :is-trainer="role === RoleEnum.Trainer">
               <template
                 v-if="role === RoleEnum.User || role === RoleEnum.Trainer"
               >
@@ -86,6 +97,7 @@
             expand="block"
             :disabled="profileOnDeleting"
             @click="showDeleteConfirmationModal"
+            v-if="role !== RoleEnum.Trainer"
           >
             Delete profile
           </ion-button>
@@ -191,6 +203,8 @@ const { role } = useRoles();
 const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
+console.log('defaultAddress', defaultAddress);
+
 const currentFacility = useFacilityStore();
 
 const {
@@ -285,6 +299,8 @@ const facilityAddress = computed<string>(
       (focility: any) => focility.id === activeFacilityId.value
     )?.address?.street ?? defaultAddress
 );
+console.log('facilityAddress', facilityAddress.value);
+
 const symbols = computed<string>(() => {
   switch (role) {
     case RoleEnum.User:
@@ -304,7 +320,7 @@ const symbols = computed<string>(() => {
 });
 
 gotUser(({ data }) => {
-  if(role !== RoleEnum.FacilityOwner) {
+  if (role !== RoleEnum.FacilityOwner) {
     activeFacilityId.value =
       facilities.value?.length && facilities.value[0]
         ? facilities.value[0].id
@@ -336,6 +352,8 @@ const menuType =
     ? EntitiesEnum.Facility
     : role;
 const menu = profileMenu[menuType];
+console.log('menu', menu);
+
 
 const goTo = (name: EntitiesEnum) => {
   switch (name) {
@@ -454,6 +472,10 @@ profileDeleted(() => {
     color: var(--ion-color-white);
   }
 
+  &__fullname-gold{
+    color: var(--gold);
+  }
+
   &__fullname-icon {
     display: inline-block;
     vertical-align: middle;
@@ -466,8 +488,9 @@ profileDeleted(() => {
   }
 
   &:deep(.choose-place__icon--start) {
-    height: 20px;
-    width: 20px;
+    // height: 20px;
+    // width: 20px;
+    font-size: 18px;
   }
 
   &:deep(.choose-place__label) {
@@ -513,5 +536,21 @@ profileDeleted(() => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.header-btn{
+  ion-icon{
+    font-size: 24px;
+  }
+}
+.header-btn__badge {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  margin: -12px 0 0 4px;
+  background: var(--alert-red);
 }
 </style>

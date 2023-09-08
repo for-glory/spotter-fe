@@ -59,6 +59,7 @@ const onClick = () => {
   --border-radius: 8px;
   --inner-padding-start: 14px;
   --inner-padding-end: 14px;
+  font-family: "Yantramanav";
 
   &__label {
     margin-inline-end: 4px;
