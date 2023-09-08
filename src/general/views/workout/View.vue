@@ -258,6 +258,7 @@ const showSettingsModal = () => {
     }
   });
   store.setValue('path', daily.video);
+  store.setValue('workoutPreview', `${process.env.VUE_APP_MEDIA_URL}${daily.preview}`);
   console.log('store.path: ', store.path);
   isSettingModalOpen.value = true;
 };

@@ -15,6 +15,7 @@
           :video-path="videoPath"
           button-text="Upload or record a video"
           :loadingPercent="percentLoaded"
+          :thumbnail="thumbnail"
         />
       </div>
       <div class="form-row">
@@ -129,6 +130,14 @@ const { value: priceValue, errorMessage: priceError } = useField<string>(
   "workoutPrice",
   requiredFieldSchema
 );
+const { value: exerciseDescription, errorMessage: descriptionError } = useField<string>(
+  "exerciseDescription",
+  requiredFieldSchema
+);
+
+const thumbnail = computed(
+  () =>store.workoutPreview
+);
 
 const workoutType = computed(() => store.workoutType?.name || "");
 const muscleTypesValue = computed(() =>
@@ -136,7 +145,6 @@ const muscleTypesValue = computed(() =>
     ? store.workoutMuscleTypes?.length
     : store.workoutMuscleTypes[0]?.label || ""
 );
-const exerciseDescription = ref<string>("");
 
 let abort: any;
 
@@ -212,6 +220,9 @@ const isValidForm = computed(
     titleValue.value &&
     !priceError.value &&
     priceValue.value &&
+    !descriptionError.value &&
+    exerciseDescription.value &&
+    videoPath.value &&
     store.workoutMuscleTypesIds?.length &&
     store.workoutType
 );

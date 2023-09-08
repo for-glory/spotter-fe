@@ -1,11 +1,10 @@
 <template>
   <div class="upload-video">
     <div v-if="video">
-      <video v-if="videoPath" :src="videoPath" controls autoplay muted style="max-width: 100%; width: 100%;"></video>
+      <img v-if="thumbnail" :src="thumbnail" class="w-100" />
       <div class="video">
         <span class="video__metadata">
           {{ videoName }}
-          <ion-text color="medium">({{ videoSize }})</ion-text>
         </span>
         <div class="video__actions">
           <ion-button
@@ -84,7 +83,8 @@ defineProps<{
   loadingPercent?: number;
   videoSize?: string;
   videoName?: string;
-  videoPath?: string
+  videoPath?: string;
+  thumbnail?: string;
 }>();
 
 const emits = defineEmits<{
