@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header title="My Dashboard">
+      <page-header title="Dashboard">
         <template #custom-btn>
           <ion-button @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
@@ -35,70 +35,36 @@
                 </ion-text>
                 <ion-text class="rating-dislikes">
                   {{ widgetInfo?.negative_reviews_count || 0 }}
-                  <ion-icon
-                    class="dislike-icon"
-                    src="assets/icon/dislike.svg"
-                  />
+                  <ion-icon class="dislike-icon" src="assets/icon/dislike.svg" />
                 </ion-text>
               </div>
             </template>
           </dashboard-item>
         </div>
-        <week-calendar
-          v-model="selectedDate"
-          :bookings="bookings"
-          @handle-view="onViewCalendar"
-        />
+        <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" />
         <div class="events__container">
-          <items-header
-            title="Upcoming bookings"
-            @handle-view="onViewAllEvents"
-            :hide-view-more="
-              !selectedEvents?.length ||
-              isFacilitiesLoading ||
-              isTrainingsLoading ||
-              isEventsLoading
-            "
-          />
-          <template
-            v-if="
-              selectedEvents.length &&
-              !isTrainingsLoading &&
-              !isEventsLoading &&
-              !isFacilitiesLoading
-            "
-          >
-            <event-item
-              v-for="event in selectedEvents"
-              :key="event.id"
-              :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings"
-              :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)"
-            />
+          <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
+            isFacilitiesLoading ||
+            isTrainingsLoading ||
+            isEventsLoading || isDropinsLoading
+            " />
+          <template v-if="selectedEvents.length &&
+            !isTrainingsLoading &&
+            !isEventsLoading &&
+            !isFacilitiesLoading &&
+            !isDropinsLoading
+            ">
+            <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
+              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
+              @click="openEvent(event.id)" />
           </template>
-          <ion-spinner
-            name="lines"
-            class="spinner"
-            v-else-if="
-              isTrainingsLoading || isEventsLoading || isFacilitiesLoading
-            "
-          >
+          <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
+            ">
           </ion-spinner>
-          <empty-block
-            v-else
-            hide-button
-            icon="assets/icon/empty.svg"
-            :title="`Sorry, no ${bookingName} found`"
-            :text="`Currently you have no booked ${bookingName}`"
-          />
+          <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
+            :text="`Currently you have no booked ${bookingName}`" />
         </div>
-        <page-tabs
-          :tabs="tabs"
-          class="page-tabs"
-          :value="activeTab"
-          @change="tabsChanged"
-        />
+        <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
       </div>
     </template>
   </base-layout>
@@ -107,10 +73,43 @@
 <script lang="ts">
 export default {
   name: "Dashboard",
+  // data() {
+  //   return {
+  //     tabs: [
+  //       {
+  //         name: "Facilities",
+  //         labelActive: "assets/icon/dumbbellActive.png",
+  //         labelInactive: "assets/icon/dumbbellActive.png",
+  //       },
+  //       {
+  //         name: "FacilityDropins",
+  //         labelActive: "assets/icon/dropinsActive.png",
+  //         labelInactive: "assets/icon/dropinsInactive.png",
+  //       },
+  //       {
+  //         name: "Trainings",
+  //         labelActive: "assets/icon/trainerActive.png",
+  //         labelInactive: "assets/icon/trainerInactive.png",
+  //       },
+  //       {
+  //         name: "Events",
+  //         labelActive: "assets/icon/facilitiesActive.png",
+  //         labelInactive: "assets/icon/facilitiesInactive.png",
+  //       },
+  //     ],
+  //     activeTab: "Facilities", // Initialize the active tab
+  //   };
+  // },
+  // methods: {
+  //   tabsChanged(tabName: string) {
+  //     this.activeTab = tabName;
+  //   },
+  // },
 };
 </script>
 
 <script setup lang="ts">
+
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
@@ -179,6 +178,31 @@ const {
   result: trainingsResult,
   loading: isTrainingsLoading,
   refetch: refetchTrainings,
+} = useQuery(
+  MyTrainingsDocument,
+  {
+    page: 1,
+    first: 4,
+    start_date: {
+      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+    },
+    orderBy: [
+      {
+        column: QueryMyTrainingsOrderByColumn.StartDate,
+        order: SortOrder.Asc,
+      },
+    ],
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+const {
+  result: dropinsResult,
+  loading: isDropinsLoading,
+  refetch: refetchDropins,
 } = useQuery(
   MyTrainingsDocument,
   {
@@ -308,36 +332,50 @@ const events = computed<EventPaginator["data"]>(() =>
 const trainings = computed(() =>
   trainingsResult?.value?.myTrainings?.data
     ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-        ...training,
-        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-        address: training.trainer.address,
-        media: [{ pathUrl: training.trainer.avatarUrl }],
-      }))
+      ...training,
+      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+      address: training.trainer.address,
+      media: [{ pathUrl: training.trainer.avatarUrl }],
+    }))
+    : []
+);
+
+const dropins = computed(() =>
+  dropinsResult?.value?.myTrainings?.data
+    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
+      ...training,
+      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+      address: training.trainer.address,
+      media: [{ pathUrl: training.trainer.avatarUrl }],
+    }))
     : []
 );
 
 const facilities = computed<UserPaginator["data"]>(() =>
   facilitiesResult?.value?.myFacilityItemPasses?.data
     ? facilitiesResult.value.myFacilityItemPasses.data.map(
-        (facilityPass: FacilityItemPass) => ({
-          id: facilityPass.id,
-          title: facilityPass.facilityItem.facility.name,
-          end_date: facilityPass.end_date,
-          start_date: dayjs(facilityPass.end_date)
-            .subtract(
-              facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
-              "d"
-            )
-            .format("YYYY-MM-DD HH:mm:ss"),
-          media: facilityPass.facilityItem.facility.media,
-          address: facilityPass.facilityItem.facility.address,
-        })
-      )
+      (facilityPass: FacilityItemPass) => ({
+        id: facilityPass.id,
+        title: facilityPass.facilityItem.facility.name,
+        end_date: facilityPass.end_date,
+        start_date: dayjs(facilityPass.end_date)
+          .subtract(
+            facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
+            "d"
+          )
+          .format("YYYY-MM-DD HH:mm:ss"),
+        media: facilityPass.facilityItem.facility.media,
+        address: facilityPass.facilityItem.facility.address,
+      })
+    )
     : []
 );
 
 const selectedEvents = computed(() => {
+
+
   if (activeTab.value === EntitiesEnum.Events) {
+
     return events.value;
   }
 
@@ -345,7 +383,27 @@ const selectedEvents = computed(() => {
     return facilities.value;
   }
 
+  if (activeTab.value === EntitiesEnum.FacilityDropins) {
+    return dropins.value;
+  }
   return trainings.value;
+});
+
+const dynamicTitle = computed(() => {
+  if (activeTab.value === EntitiesEnum.Events) {
+
+    return 'Upcoming Events';
+  }
+
+  if (activeTab.value === EntitiesEnum.Facilities) {
+    return 'My Passes';
+  }
+
+  if (activeTab.value === EntitiesEnum.FacilityDropins) {
+    return 'My Drop-ins';
+  }
+
+  return 'Upcoming Trainings';
 });
 
 const bookingName = computed(() => {
@@ -363,15 +421,23 @@ const bookingName = computed(() => {
 const tabs: TabItem[] = [
   {
     name: EntitiesEnum.Facilities,
-    label: "Gyms",
+    labelActive: "assets/icon/dumbbell.png",
+    labelInactive: "assets/icon/dumbbellActive.png",
+  },
+  {
+    name: EntitiesEnum.FacilityDropins,
+    labelActive: "assets/icon/dropinsActive.png",
+    labelInactive: "assets/icon/dropins.png",
   },
   {
     name: EntitiesEnum.Trainings,
-    label: "Trainings",
+    labelActive: "assets/icon/TrainerActive.png",
+    labelInactive: "assets/icon/Trainer.png",
   },
   {
     name: EntitiesEnum.Events,
-    label: "Events",
+    labelActive: "assets/icon/facilitiesActive.png",
+    labelInactive: "assets/icon/facilities.png",
   },
 ];
 
@@ -379,7 +445,7 @@ const selectedDate = ref<Dayjs | null>(dayjs());
 
 const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
-    EntitiesEnum.Facilities
+  EntitiesEnum.Facilities
 );
 
 const tabsChanged = (ev: EntitiesEnum) => {
@@ -393,6 +459,10 @@ const refetchBooking = () => {
   switch (activeTab.value) {
     case EntitiesEnum.Events:
       refetchEvents();
+      break;
+
+    case EntitiesEnum.FacilityDropins:
+      refetchDropins();
       break;
 
     case EntitiesEnum.Trainings:
