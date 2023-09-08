@@ -4,7 +4,7 @@
       id="page-tabs"
       mode="ios"
       class="tabs"
-      @ionChange="segmentChanged($event)"
+      @ionChange="segmentChanged"
       :value="value || (tabs && tabs[0].name)"
     >
       <ion-segment-button
@@ -14,7 +14,7 @@
         v-for="tab in tabs"
         :disabled="tab.disabled"
       >
-        {{ tab.label }}
+        <img :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -26,20 +26,30 @@ import { IonSegment, IonSegmentButton, SegmentCustomEvent } from "@ionic/vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
 
-defineProps<{
+const props = defineProps<{
   tabs?: TabItem[];
   value?: EntitiesEnum;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
   (e: "change", value: EntitiesEnum): void;
 }>();
 
 const segmentChanged = (event: SegmentCustomEvent) => {
   if (!event.detail.value) return;
-  emits("change", event.detail.value as EntitiesEnum);
+  emit("change", event.detail.value as EntitiesEnum);
+};
+
+const getTabImage = (tabName: EntitiesEnum) => {
+  const tab = props.tabs?.find((t) => t.name == tabName);
+  // alert(tab);
+  console.log(tab)
+  return tab ? (tab.name == props.value ? tab.labelActive : tab.labelInactive) : "";
 };
 </script>
+
+
+
 
 <style lang="scss" scoped>
 .tabs {
