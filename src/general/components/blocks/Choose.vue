@@ -1,6 +1,6 @@
 <template>
-  <ion-item :disabled="disabled" class="choose-place" @click="onClick">
-    <ion-text class="choose-place__label" slot="start">
+  <ion-item :disabled="disabled" class="choose-place"  @click="onClick">
+    <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer}" slot="start">
       <ion-icon
         v-if="icon"
         :src="`assets/icon/${icon}.svg`"
@@ -8,7 +8,7 @@
       />
       {{ title }}
     </ion-text>
-    <ion-text class="choose-place__value">
+    <ion-text class="choose-place__value" :class="{'native-app': role === RoleEnum.Trainer }">
       {{ value }}
     </ion-text>
     <ion-icon
@@ -28,6 +28,10 @@ export default {
 <script setup lang="ts">
 import { IonItem, IonText, IonIcon } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
+
+const { role } = useRoles();
 
 withDefaults(
   defineProps<{
@@ -90,5 +94,9 @@ const onClick = () => {
   &__icon--start {
     padding-right: 8px;
   }
+}
+
+.trainer-label-color {
+  color: #EFEFEF !important;
 }
 </style>

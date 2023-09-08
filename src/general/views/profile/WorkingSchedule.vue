@@ -8,29 +8,30 @@
         <ion-spinner v-if="loading || updateUserLoading" class="spinner" />
         <template v-else>
           <div class="ion-padding-horizontal">
-            <ion-label class="schedule__label"> Today, {{ today }}</ion-label>
+            <ion-label class="schedule__label" :class="{ 'native-app': role === RoleEnum.Trainer }"> Today, {{ today }}</ion-label>
             <ion-segment class="job-day" v-model="selectedDay">
               <ion-segment-button
                 :value="day.value"
                 v-for="day in scheduleDays"
                 :key="day.value"
-                :class="{ 'active-day': isWorkingDay[day.value] }"
+                :class="{ 'active-day': isWorkingDay[day.value], 'trainer-active-day': role === RoleEnum.Trainer && isWorkingDay[day.value] }"
               >
-                <ion-label>{{ day.label }} </ion-label>
+                
+                <ion-label :class="{ 'native-app': role === RoleEnum.Trainer }">{{ day.label }} </ion-label>
               </ion-segment-button>
             </ion-segment>
           </div>
           <div class="schedule">
-            <ion-label class="schedule__label">
+            <ion-label class="schedule__label" :class="{ 'native-app': role === RoleEnum.Trainer }">
               Are you working on this day?
             </ion-label>
             <base-toggle
-              class="schedule__toggle"
+              class="schedule__toggle" :class="{ 'native-app': role === RoleEnum.Trainer }"
               content="Working day"
               :value="isWorkingDay[selectedDay]"
               @change="onIsWorkingChecked"
             />
-            <ion-label class="schedule__label"> Set your work hours</ion-label>
+            <ion-label class="schedule__label" :class="{ 'native-app': role === RoleEnum.Trainer }"> Set your work hours</ion-label>
             <div
               v-for="(_, idx) in workingHoursRange[selectedDay]"
               :key="idx"
@@ -88,14 +89,14 @@
               </wheel-picker>
             </div>
             <ion-button
-              class="secondary"
+              class="secondary" :class="{ 'trainer-secondary-btn': role === RoleEnum.Trainer }"
               expand="block"
               @click="resetWorkingHour"
             >
               Reset set hours
             </ion-button>
             <ion-button
-              class="secondary"
+              class="secondary" :class="{ 'trainer-secondary-btn': role === RoleEnum.Trainer }"
               expand="block"
               @click="addWorkingHours"
             >
@@ -127,6 +128,7 @@ import {
   PickerColumnOption,
   IonSpinner,
   toastController,
+  modalController
 } from "@ionic/vue";
 import { scheduleDays } from "@/const/schedule-days";
 import dayjs from "dayjs";
@@ -137,9 +139,13 @@ import { pickerController } from "@ionic/vue";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import debounce from "lodash/debounce";
 import { HOURS_RANGE, IS_WORKING_DAYS, WEEKDAYS } from "@/const/schedule";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
+import TimePicker from "@/general/components/modals/time-picker/TimePicker.vue";
 dayjs.extend(customParseFormat);
 
 const router = useRouter();
+const { role } = useRoles();
 
 const onBack = () => {
   router.go(-1);
@@ -277,6 +283,7 @@ const openPicker = async (
     buttons: options.buttons,
     mode: "ios",
     columns,
+    cssClass: role === RoleEnum.Trainer ? "trainer-picker": ""
   });
 
   curIndex.value = name.split("-")[2];
@@ -328,7 +335,7 @@ const startTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "Form",
       role: "cancel",
     },
     {
@@ -369,7 +376,7 @@ const endTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "Form",
       role: "cancel",
     },
     {
@@ -473,6 +480,13 @@ const resetWorkingHour = () => {
     font-size: 14px;
     font-weight: 400;
   }
+  .trainer-secondary-btn {
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    --color: var(--fitnesswhite);
+    font-family: Yantramanav;
+    font-weight: 700;
+  }
 }
 
 .job-day {
@@ -499,6 +513,9 @@ const resetWorkingHour = () => {
     &.active-day {
       --background: var(--ion-color-white);
       --color: var(--gray-700);
+    }
+    &.trainer-active-day {
+      --background: var(--fitnesswhite);
     }
   }
 }
