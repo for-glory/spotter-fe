@@ -6109,6 +6109,14 @@ export const DailyAnalyticsDocument = gql`
   }
 }
     `;
+export const DailyPerformanceDocument = gql`
+    query dailyPerformance($facility_id: ID!, $limit: Int) {
+  dailyPerformance(facility_id: $facility_id, limit: $limit) {
+    date
+    count
+  }
+}
+    `;
 export const FilePreloadDocument = gql`
     mutation filePreload($file: Upload!, $upload_dir: String) {
   filePreload(file: $file, upload_dir: $upload_dir) {

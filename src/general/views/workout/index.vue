@@ -56,7 +56,11 @@
           <div v-if="tab === 'analytics'">
             <dailys-analytics :daily="dailysData[dailysData?.length-1]" />
             <dailys-summary :summaryData="summaryData"/>
-            <dailys-performance :daily="dailysData[dailysData?.length-1]"/>
+            <dailys-performance 
+              :performanceData="performanceData" 
+              :limit="performanceLimit.value" 
+              @change="setLimit"
+            />
             <dailys-top :summaryData="summaryData"/>
           </div>
           <div v-else>
@@ -250,7 +254,8 @@ import {
   SortOrder,
   HideWorkoutDocument,
   ShowWorkoutDocument,
-  DailyAnalyticsDocument
+  DailyAnalyticsDocument,
+  DailyPerformanceDocument
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -275,6 +280,7 @@ import DailysTop from "@/general/components/dailys/DailysTop.vue";
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('analytics');
 const filter = ref<string>('all');
+const performanceLimit = ref<string>('7');
 
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
@@ -287,7 +293,7 @@ const summaryData = ref<any>({
   viewsPerDaily: 0,
   topDailys: [],
 });
-
+const performanceData = ref<Array<any>>([]);
 const trendingDailys = ref<Array<any>>([]);
 const recommendedDailys = ref<Array<any>>([]);
 
@@ -311,14 +317,20 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
     fetchPolicy: "no-cache",
   }
 );
-
 const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
   DailyAnalyticsDocument,
   {
     facility_id: currentFacility.facility?.id,
+    limit: performanceLimit.value
   }
 );
-
+const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
+  DailyPerformanceDocument,
+  {
+    facility_id: currentFacility.facility?.id,
+    limit: 7
+  }
+);
 
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
@@ -343,7 +355,11 @@ gotDailysAnalyticsData(({ data }) => {
   summaryData.value.subscribers = data.purchases;
   summaryData.value.totalRevenue = data.total_revenue;
   summaryData.value.viewsPerDaily = data.per_daily_views;
-})
+});
+
+gotDailysPerformanceData(({ data }) => {
+  performanceData.value = data.dailyPerformance;
+});
 
 const dailysData = computed(
   () => dailysResult.value?.facilityWorkouts?.data
@@ -371,6 +387,21 @@ const watchDailys = (daily: any) => {
 const handleSetFilter = (value: string) => {
   console.log(value);
   filter.value = value;
+}
+
+const setLimit = (limit: string) => {
+  performanceLimit.value = limit;
+  if(limit === 'all') {
+    refetchDailyPerformance({ 
+      facility_id: currentFacility.facility.id,
+      limit: 0
+    })
+  } else {
+    refetchDailyPerformance({ 
+      facility_id: currentFacility.facility.id,
+      limit: parseInt(limit)
+    })
+  }
 }
 </script>
 

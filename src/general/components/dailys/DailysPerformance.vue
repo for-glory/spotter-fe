@@ -11,16 +11,16 @@
       </div>
       <div class="graph-field">
         <ion-text class="font-light font-12 color-white">
-          {{ graphDuration === 'all' ? 'All' : 'In the last ' + graphDuration + ' days' }}
+          {{ performanceLimit === 'all' ? 'All' : 'In the last ' + performanceLimit + ' days' }}
         </ion-text>
         <div class="chart-container">
           <LineChart :chartData="data" :chartOptions="option" />
         </div>
         <div class="d-flex align-items-center justify-content-center gap-12 tabs-group">
-          <ion-button :fill="graphDuration==='7'?'solid':'outline'" @click="handleSetDuration('7')">7 Days</ion-button>
-          <ion-button :fill="graphDuration==='30'?'solid':'outline'" @click="handleSetDuration('30')">30 Days</ion-button>
-          <ion-button :fill="graphDuration==='90'?'solid':'outline'" @click="handleSetDuration('90')">90 Days</ion-button>
-          <ion-button :fill="graphDuration==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
+          <ion-button :fill="performanceLimit==='7'?'solid':'outline'" @click="handleSetDuration('7')">7 Days</ion-button>
+          <ion-button :fill="performanceLimit==='30'?'solid':'outline'" @click="handleSetDuration('30')">30 Days</ion-button>
+          <ion-button :fill="performanceLimit==='90'?'solid':'outline'" @click="handleSetDuration('90')">90 Days</ion-button>
+          <ion-button :fill="performanceLimit==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
         </div>
       </div>
     </div>
@@ -28,22 +28,27 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref } from "vue";
-import { Workout } from "@/generated/graphql";
+import { defineProps, computed, ref, defineEmits } from "vue";
 import { IonItem, IonLabel } from "@ionic/vue";
 import LineChart from "@/general/components/LineChart.vue";
 
 const props = defineProps<{
-  workout: Workout;
+  performanceData: Array<any>;
+  limit: string
 }>(); 
-const graphDuration = ref<string>('7');
+const emits = defineEmits<{
+  (e: "change", limit: string): void;
+}>();
+
+const performanceLimit = ref<string>('7');
 
 const handleSetDuration = ( value: string ) => {
-  graphDuration.value = value;
+  emits('change', value);
+  performanceLimit.value = value;
 }
 
-const labels = ['01 Aug 2023', '02 Aug 2023', '03 Aug 2023', '04 Aug 2023', '05 Aug 2023', '06 Aug 2023', '07 Aug 2023', '08 Aug 2023'];
-const data = {
+const labels = ref<Array<string>>(['01 Aug 2023', '02 Aug 2023', '03 Aug 2023', '04 Aug 2023', '05 Aug 2023', '06 Aug 2023', '07 Aug 2023', '08 Aug 2023']);
+const data = ref<any>({
   labels,
   datasets: [{
     data: [20, 900, 450, 20, 450, 900, 20, 450],
@@ -52,7 +57,7 @@ const data = {
     lineTension: 0.4,
     radius: 6,
   }]
-};
+});
 const option = {
   scales: {
     y: {
