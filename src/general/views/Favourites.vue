@@ -149,11 +149,15 @@ const {
 const tabs: TabItem[] = [
   {
     name: EntitiesEnum.Facilities,
-    label: "Gyms",
+    // label: "Gyms",
+    labelActive: "assets/icon/gym-icon.svg",
+    labelInactive: "assets/icon/gym-icon.svg",
   },
   {
     name: EntitiesEnum.Trainers,
-    label: "Trainers",
+    // label: "Trainers",
+    labelActive: "assets/icon/dropinsActive.png",
+    labelInactive: "assets/icon/dropins.png",
   },
 ];
 

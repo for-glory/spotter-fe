@@ -1,71 +1,39 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header title="Upcoming Bookings" back-btn @back="onBack" />
+      <page-header :title="dynamicTitle" back-btn @back="onBack" />
     </template>
     <template #content>
       <div class="events__container">
-        <template
-          v-if="
-            selectedEvents &&
-            selectedEvents.length &&
-            !isTrainingsLoading &&
-            !isEventsLoading &&
-            !isFacilitiesLoading
-          "
-        >
-          <event-item
-            v-for="event in selectedEvents"
-            :key="event.id"
-            :item="event"
-            :rounded="activeTab === EntitiesEnum.Trainings"
-            @click="openEvent(event.id)"
-          />
+        <template v-if="selectedEvents &&
+          selectedEvents.length &&
+          !isTrainingsLoading &&
+          !isEventsLoading &&
+          !isFacilitiesLoading
+          ">
+          <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
+            :rounded="activeTab === EntitiesEnum.Trainings" @click="openEvent(event.id)" />
         </template>
-        <ion-spinner
-          name="lines"
-          class="spinner"
-          v-else-if="
-            isTrainingsLoading || isEventsLoading || isFacilitiesLoading
-          "
-        >
+        <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
+          ">
         </ion-spinner>
-        <empty-block
-          v-else
-          hide-button
-          icon="assets/icon/empty.svg"
-          :title="`Sorry, no ${bookingName} found`"
-          :text="`Currently you have no booked ${bookingName}`"
-        />
-        <ion-infinite-scroll
-          threshold="100px"
-          class="infinite-scroll"
-          @ionInfinite="loadData"
-          v-if="
-            (activeTab === EntitiesEnum.Facilities &&
-              facilities &&
-              facilities?.length < totalFacilities) ||
-            (activeTab === EntitiesEnum.Trainings &&
-              trainings &&
-              trainings?.length < totalTrainings) ||
-            (activeTab === EntitiesEnum.Events &&
-              events &&
-              events?.length < totalEvents)
-          "
-        >
-          <ion-infinite-scroll-content
-            loading-spinner="lines"
-            loading-text="Loading more data..."
-          >
+        <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
+          :text="`Currently you have no booked ${bookingName}`" />
+        <ion-infinite-scroll threshold="100px" class="infinite-scroll" @ionInfinite="loadData" v-if="(activeTab === EntitiesEnum.Facilities &&
+            facilities &&
+            facilities?.length < totalFacilities) ||
+          (activeTab === EntitiesEnum.Trainings &&
+            trainings &&
+            trainings?.length < totalTrainings) ||
+          (activeTab === EntitiesEnum.Events &&
+            events &&
+            events?.length < totalEvents)
+          ">
+          <ion-infinite-scroll-content loading-spinner="lines" loading-text="Loading more data...">
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
       </div>
-      <page-tabs
-        :tabs="tabs"
-        class="page-tabs"
-        :value="activeTab"
-        @change="tabsChanged"
-      />
+      <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
   </base-layout>
 </template>
@@ -106,15 +74,19 @@ const router = useRouter();
 const tabs: TabItem[] = [
   {
     name: EntitiesEnum.Facilities,
-    label: "Gyms",
+    label: "assets/icon/dumbbellActive.png",
+  },
+  {
+    name: EntitiesEnum.FacilityDropins,
+    label: "assets/icon/dropins.png",
   },
   {
     name: EntitiesEnum.Trainings,
-    label: "Trainings",
+    label: "assets/icon/Trainer.png",
   },
   {
     name: EntitiesEnum.Events,
-    label: "Events",
+    label: "assets/icon/facilities.png",
   },
 ];
 
@@ -268,7 +240,7 @@ gotEvents((response) => {
 
 const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
-    EntitiesEnum.Facilities
+  EntitiesEnum.Facilities
 );
 
 const selectedEvents = computed(() => {
@@ -283,6 +255,24 @@ const selectedEvents = computed(() => {
       return facilities.value;
   }
 });
+
+const dynamicTitle = computed(() => {
+  if (activeTab.value === EntitiesEnum.Events) {
+
+    return 'Upcoming Events';
+  }
+
+  if (activeTab.value === EntitiesEnum.Facilities) {
+    return 'My Passes';
+  }
+
+  if (activeTab.value === EntitiesEnum.FacilityDropins) {
+    return 'My Drop-ins';
+  }
+
+  return 'Upcoming Trainings';
+});
+
 
 const tabsChanged = (ev: EntitiesEnum) => {
   if (!ev) return;
