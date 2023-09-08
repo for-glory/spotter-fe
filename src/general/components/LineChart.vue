@@ -50,36 +50,6 @@ const props = defineProps<{
   chartOptions?: {
     type: any;
     required: false;
-    default: {
-      responsive: true,
-      scales: {
-        y: {
-          ticks: {
-            display: false, 
-          },
-          grid: {
-            display: false
-          }
-        },
-        x: {
-          ticks: {
-            angle: 45, 
-          },
-          grid: {
-            display: false
-          }
-        },
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          xAlign: "center",
-          yAlign: "top",
-        }
-      }
-    }
   };
 }>();
 const chartData = computed(() => props.chartData);
