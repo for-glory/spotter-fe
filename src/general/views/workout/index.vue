@@ -58,7 +58,7 @@
             <dailys-summary :summaryData="summaryData"/>
             <dailys-performance 
               :performanceData="performanceData" 
-              :limit="performanceLimit.value" 
+              :limit="performanceLimit" 
               @change="setLimit"
             />
             <dailys-top :summaryData="summaryData"/>
@@ -390,17 +390,20 @@ const handleSetFilter = (value: string) => {
 }
 
 const setLimit = (limit: string) => {
-  performanceLimit.value = limit;
   if(limit === 'all') {
     refetchDailyPerformance({ 
       facility_id: currentFacility.facility.id,
       limit: 0
+    })?.then(() => {
+      performanceLimit.value = limit;
     })
   } else {
     refetchDailyPerformance({ 
       facility_id: currentFacility.facility.id,
       limit: parseInt(limit)
-    })
+    })?.then(() => {
+      performanceLimit.value = limit;
+    });
   }
 }
 </script>
