@@ -6100,7 +6100,7 @@ export const DeleteDailyDocument = gql`
 }
     `;
 export const DailyAnalyticsDocument = gql`
-    mutation dailyAnalytics($facility_id: ID!) {
+    query dailyAnalytics($facility_id: ID!) {
   dailyAnalytics(facility_id: $facility_id) {
     total_revenue
     purchases
