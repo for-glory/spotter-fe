@@ -14,9 +14,24 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		A6CB27060F8EF5AE483CBFE7 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5858A8B815B5E12C4D83951B /* Pods_App.framework */; };
-		CEEE25A6293E665000ADC507 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEEE25A5293E665000ADC507 /* GoogleService-Info.plist */; };
+		A28991F62AAB247A00E94FBD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28991F52AAB247A00E94FBD /* GoogleService-Info.plist */; };
+		A2C988662AAA6C9D00AFAD10 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5858A8B815B5E12C4D83951B /* Pods_App.framework */; };
+		A2C988672AAA6C9D00AFAD10 /* Pods_App.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5858A8B815B5E12C4D83951B /* Pods_App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A24C60F22AAA5AA900780F9A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A2C988672AAA6C9D00AFAD10 /* Pods_App.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		25ED2A647C2FE2D7CDADCD27 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
@@ -31,8 +46,21 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		5858A8B815B5E12C4D83951B /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C04C6571753E2E00ECDD46A /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		A28991F52AAB247A00E94FBD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A2C9883F2AAA686800AFAD10 /* AppAuth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AppAuth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988422AAA687000AFAD10 /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988452AAA687500AFAD10 /* CapacitorApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988482AAA687E00AFAD10 /* CapacitorAppLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorAppLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C9884B2AAA688400AFAD10 /* CapacitorBlobWriter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorBlobWriter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C9884E2AAA688D00AFAD10 /* CapacitorBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988512AAA689200AFAD10 /* CapacitorCamera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorCamera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988542AAA689900AFAD10 /* CapacitorCommunityBarcodeScanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorCommunityBarcodeScanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988572AAA68A000AFAD10 /* CapacitorCommunityFacebookLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorCommunityFacebookLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C9885A2AAA68A700AFAD10 /* CapacitorCommunityStripe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorCommunityStripe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C9885D2AAA68AF00AFAD10 /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988602AAA68B900AFAD10 /* CapacitorFilesystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorFilesystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C988632AAA68BE00AFAD10 /* CapacitorGeolocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CapacitorGeolocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B529954428D9E70E0023DE1A /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
-		CEEE25A5293E665000ADC507 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,7 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6CB27060F8EF5AE483CBFE7 /* Pods_App.framework in Frameworks */,
+				A2C988662AAA6C9D00AFAD10 /* Pods_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,9 +101,9 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
-				CEEE25A5293E665000ADC507 /* GoogleService-Info.plist */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
+				A28991F52AAB247A00E94FBD /* GoogleService-Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
 			);
@@ -85,6 +113,19 @@
 		B78A75A5DEEE452A7DC859D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A2C988632AAA68BE00AFAD10 /* CapacitorGeolocation.framework */,
+				A2C988602AAA68B900AFAD10 /* CapacitorFilesystem.framework */,
+				A2C9885D2AAA68AF00AFAD10 /* Cordova.framework */,
+				A2C9885A2AAA68A700AFAD10 /* CapacitorCommunityStripe.framework */,
+				A2C988572AAA68A000AFAD10 /* CapacitorCommunityFacebookLogin.framework */,
+				A2C988542AAA689900AFAD10 /* CapacitorCommunityBarcodeScanner.framework */,
+				A2C988512AAA689200AFAD10 /* CapacitorCamera.framework */,
+				A2C9884E2AAA688D00AFAD10 /* CapacitorBrowser.framework */,
+				A2C9884B2AAA688400AFAD10 /* CapacitorBlobWriter.framework */,
+				A2C988482AAA687E00AFAD10 /* CapacitorAppLauncher.framework */,
+				A2C988452AAA687500AFAD10 /* CapacitorApp.framework */,
+				A2C988422AAA687000AFAD10 /* Capacitor.framework */,
+				A2C9883F2AAA686800AFAD10 /* AppAuth.framework */,
 				5858A8B815B5E12C4D83951B /* Pods_App.framework */,
 			);
 			name = Frameworks;
@@ -113,6 +154,7 @@
 				64D6BE172A3AB0FB007DF0AC /* ShellScript */,
 				803BB12F6786BBBF322676F3 /* [CP] Embed Pods Frameworks */,
 				FD9878ED5A49C39B679AA8A3 /* [CP] Copy Pods Resources */,
+				A24C60F22AAA5AA900780F9A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -168,7 +210,7 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
-				CEEE25A6293E665000ADC507 /* GoogleService-Info.plist in Resources */,
+				A28991F62AAB247A00E94FBD /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

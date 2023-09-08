@@ -62,6 +62,7 @@
     "apollo-upload-client": "^17.0.0",
     "capacitor-blob-writer": "^1.1.4",
     "chart.js": "^4.3.3",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "cordova-plugin-calendar": "^5.1.6",
     "cordova-plugin-document-viewer": "^1.0.0",
     "cordova-plugin-nativegeocoder": "^3.4.1",
