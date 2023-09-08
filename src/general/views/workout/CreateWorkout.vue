@@ -51,16 +51,6 @@ const {
   onDone: dailysCreated,
 } = useMutation(CreateDailyDocument);
 
-const duration = computed(() =>
-  store.workoutDuration ? store.workoutDuration : ""
-);
-
-const emitter: Emitter<Record<EventType, unknown>> | undefined =
-  inject("emitter"); // Inject `emitter`
-
-const openPicker = (name: string): void => {
-  emitter?.emit("open-picker", name);
-};
 
 const createDailys = () => {
   mutate({ 
@@ -72,7 +62,6 @@ const createDailys = () => {
     title: store.workoutTitle,
     description: store.exercises?.description,
     price: getSumForPayment(store.workoutPrice as number),
-    duration: Number(store.workoutDuration),
   })
     .then(async () => {
       const toast = await toastController.create({

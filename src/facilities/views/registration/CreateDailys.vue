@@ -58,25 +58,6 @@
         </div>
 
         <div class="form-row">
-          <ion-label class="label">
-            Choose the duration for the whole workout
-          </ion-label>
-          <wheel-picker
-            :options="durationOptions"
-            name="duration"
-            :values="[duration, 'min']"
-          >
-            <template #button>
-              <choose-block
-                title="Duration"
-                :value="duration ? `${duration} min` : ''"
-                @handle-click="openPicker('duration')"
-              />
-            </template>
-          </wheel-picker>
-        </div>
-
-        <div class="form-row">
           <base-input
             auto-grow
             v-model:value="exerciseDescription"
@@ -177,9 +158,6 @@ const muscleTypesValue = computed(() =>
 );
 const workoutType = computed(() => store.workoutType?.name || "");
 const exerciseDescription = ref<string>("");
-const duration = computed(() =>
-  store.workoutDuration ? store.workoutDuration : ""
-);
 
 const isConfirmedModalOpen = ref(false);
 
@@ -337,45 +315,6 @@ const { mutate: videoPreload } = useMutation(VideoPreloadDocument, {
     },
   },
 });
-
-const options = minutesDuration(10, 240, 10);
-const durationOptions: PickerOptions = {
-  columns: [
-    {
-      name: "duration",
-      options,
-    },
-    {
-      name: "minutes",
-      options: [
-        {
-          text: "MIN",
-          value: "min",
-        },
-      ],
-    },
-  ],
-  buttons: [
-    {
-      text: "Cancel",
-      role: "cancel",
-    },
-    {
-      text: "Choose duration",
-      handler: (value: PickerColumnOption) => {
-        store.setValue("workoutDuration", value?.duration?.value);
-      },
-    },
-  ],
-};
-
-const emitter: Emitter<Record<EventType, unknown>> | undefined =
-  inject("emitter"); // Inject `emitter`
-
-const openPicker = (name: string): void => {
-  emitter?.emit("open-picker", name);
-};
-
 // video uploading ----->
 const onHandleSelect = (pathName: string) => {
   router.push({ name: pathName });

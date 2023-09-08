@@ -11,16 +11,16 @@
       </div>
       <div class="graph-field">
         <ion-text class="font-light font-12 color-white">
-          {{ graphDuration === 'all' ? 'All' : 'In the last ' + graphDuration + ' days' }}
+          {{ performanceLimit === 'all' ? 'All' : 'In the last ' + performanceLimit + ' days' }}
         </ion-text>
         <div class="chart-container">
           <LineChart :chartData="data" :chartOptions="option" />
         </div>
         <div class="d-flex align-items-center justify-content-center gap-12 tabs-group">
-          <ion-button :fill="graphDuration==='7'?'solid':'outline'" @click="handleSetDuration('7')">7 Days</ion-button>
-          <ion-button :fill="graphDuration==='30'?'solid':'outline'" @click="handleSetDuration('30')">30 Days</ion-button>
-          <ion-button :fill="graphDuration==='90'?'solid':'outline'" @click="handleSetDuration('90')">90 Days</ion-button>
-          <ion-button :fill="graphDuration==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
+          <ion-button :fill="performanceLimit==='7'?'solid':'outline'" @click="handleSetDuration('7')">7 Days</ion-button>
+          <ion-button :fill="performanceLimit==='30'?'solid':'outline'" @click="handleSetDuration('30')">30 Days</ion-button>
+          <ion-button :fill="performanceLimit==='90'?'solid':'outline'" @click="handleSetDuration('90')">90 Days</ion-button>
+          <ion-button :fill="performanceLimit==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
         </div>
       </div>
     </div>
@@ -28,31 +28,73 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref } from "vue";
-import { Workout } from "@/generated/graphql";
+import { defineProps, computed, ref, defineEmits, watch } from "vue";
 import { IonItem, IonLabel } from "@ionic/vue";
 import LineChart from "@/general/components/LineChart.vue";
 
 const props = defineProps<{
-  workout: Workout;
+  performanceData: Array<any>;
+  limit: string
 }>(); 
-const graphDuration = ref<string>('7');
+const emits = defineEmits<{
+  (e: "change", limit: string): void;
+}>();
 
-const handleSetDuration = ( value: string ) => {
-  graphDuration.value = value;
-}
-
-const labels = ['01 Aug 2023', '02 Aug 2023', '03 Aug 2023', '04 Aug 2023', '05 Aug 2023', '06 Aug 2023', '07 Aug 2023', '08 Aug 2023'];
-const data = {
-  labels,
+const performanceLimit = computed(() => props.limit);
+const labels = ref<Array<string>>(['02 Aug 2023', '03 Aug 2023', '04 Aug 2023', '05 Aug 2023', '06 Aug 2023', '07 Aug 2023', '08 Aug 2023']);
+const data = ref<any>({
+  labels: labels.value,
   datasets: [{
-    data: [20, 900, 450, 20, 450, 900, 20, 450],
+    data: [0,0,0,0,0,0,0],
     fill: false,
     borderColor: '#E1DBC5',
     lineTension: 0.4,
     radius: 6,
   }]
-};
+});
+
+watch(() => performanceLimit.value,
+(newLimit) => {
+  const currentDate = new Date();
+  let limit = newLimit === 'all' ? 7 : parseInt(newLimit);
+  console.log(limit);
+  labels.value = [];
+  for (let i = limit - 1; i >= 0; i--) {
+    const date = new Date(currentDate);
+    date.setDate(currentDate.getDate() - i);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    });
+    labels.value.push(formattedDate);
+  }
+
+  console.log('labels:  ', labels);
+  const dataValues = [];
+  for (let i = props.performanceData.length - limit; i < props.performanceData.length; i++) {
+    dataValues[Math.abs(i + 1)] = props.performanceData[Math.abs(i + 1)]?.count || 0;
+    console.log(i);
+  }
+
+  const updatedData = {
+    labels: labels.value,
+    datasets: [{
+      data: dataValues,
+      fill: false,
+      borderColor: '#E1DBC5',
+      lineTension: 0.4,
+      radius: 6,
+    }]
+  };
+  console.log({ updatedData });
+  data.value = updatedData;
+});
+
+const handleSetDuration = ( value: string ) => {
+  emits('change', value);
+}
+
 const option = {
   scales: {
     y: {
@@ -87,7 +129,7 @@ const option = {
     }
   },
   responsive: true,
-  maintainAspectRatio: false,
+  maintainAspectRatio: true,
 }
 
 </script>

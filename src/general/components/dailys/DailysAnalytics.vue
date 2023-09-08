@@ -11,7 +11,7 @@
           <ion-text class="font-medium font-16">
             {{ daily?.title }}
           </ion-text>
-          <ion-text class="font-light font-14 color-gray-400 d-flex justify-content-center">
+          <ion-text class="font-light font-14 color-gray-400 d-flex align-items-center">
             <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
             {{ daily?.duration }} min • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
           </ion-text>

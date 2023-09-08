@@ -6100,12 +6100,20 @@ export const DeleteDailyDocument = gql`
 }
     `;
 export const DailyAnalyticsDocument = gql`
-    mutation dailyAnalytics($facility_id: ID!) {
+    query dailyAnalytics($facility_id: ID!) {
   dailyAnalytics(facility_id: $facility_id) {
     total_revenue
     purchases
     views
     per_daily_views
+  }
+}
+    `;
+export const DailyPerformanceDocument = gql`
+    query dailyPerformance($facility_id: ID!, $limit: Int) {
+  dailyPerformance(facility_id: $facility_id, limit: $limit) {
+    date
+    count
   }
 }
     `;

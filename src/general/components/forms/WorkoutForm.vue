@@ -15,6 +15,7 @@
           :video-path="videoPath"
           button-text="Upload or record a video"
           :loadingPercent="percentLoaded"
+          :thumbnail="thumbnail"
         />
       </div>
       <div class="form-row">
@@ -56,25 +57,6 @@
           :value="muscleTypesValue"
           @handle-click="onHandleSelect(EntitiesEnum.MuscleTypes)"
         />
-      </div>
-
-      <div class="form-row">
-        <ion-label class="label">
-          Choose the duration for the whole workout
-        </ion-label>
-        <wheel-picker
-          :options="durationOptions"
-          name="duration"
-          :values="[duration, 'min']"
-        >
-          <template #button>
-            <choose-block
-              title="Duration"
-              :value="duration ? `${duration} min` : ''"
-              @handle-click="openPicker('duration')"
-            />
-          </template>
-        </wheel-picker>
       </div>
 
       <div class="form-row">
@@ -135,13 +117,10 @@ const router = useRouter();
 const store = useDailysStore();
 
 const videoPath = computed(() => store.exercises?.videoPath);
-const videoName = computed(() => store.exercises?.videoName);
+const videoName = computed(() => store.path);
 const videoSize = computed(() => store.exercises?.videoSize);
 const videoOnLoading = ref<boolean>(false);
 const percentLoaded = ref<number | undefined>();
-const duration = computed(() =>
-  store.workoutDuration ? store.workoutDuration : ""
-);
 
 const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
@@ -151,6 +130,14 @@ const { value: priceValue, errorMessage: priceError } = useField<string>(
   "workoutPrice",
   requiredFieldSchema
 );
+const { value: exerciseDescription, errorMessage: descriptionError } = useField<string>(
+  "exerciseDescription",
+  requiredFieldSchema
+);
+
+const thumbnail = computed(
+  () =>store.workoutPreview
+);
 
 const workoutType = computed(() => store.workoutType?.name || "");
 const muscleTypesValue = computed(() =>
@@ -158,7 +145,6 @@ const muscleTypesValue = computed(() =>
     ? store.workoutMuscleTypes?.length
     : store.workoutMuscleTypes[0]?.label || ""
 );
-const exerciseDescription = ref<string>("");
 
 let abort: any;
 
@@ -234,50 +220,15 @@ const isValidForm = computed(
     titleValue.value &&
     !priceError.value &&
     priceValue.value &&
+    !descriptionError.value &&
+    exerciseDescription.value &&
+    videoPath.value &&
     store.workoutMuscleTypesIds?.length &&
     store.workoutType
 );
 
 const onHandleSelect = (pathName: string) => {
   router.push({ name: pathName });
-};
-
-const options = minutesDuration(10, 240, 10);
-const durationOptions: PickerOptions = {
-  columns: [
-    {
-      name: "duration",
-      options,
-    },
-    {
-      name: "minutes",
-      options: [
-        {
-          text: "MIN",
-          value: "min",
-        },
-      ],
-    },
-  ],
-  buttons: [
-    {
-      text: "Cancel",
-      role: "cancel",
-    },
-    {
-      text: "Choose duration",
-      handler: (value: PickerColumnOption) => {
-        store.setValue("workoutDuration", value?.duration?.value);
-      },
-    },
-  ],
-};
-
-const emitter: Emitter<Record<EventType, unknown>> | undefined =
-  inject("emitter"); // Inject `emitter`
-
-const openPicker = (name: string): void => {
-  emitter?.emit("open-picker", name);
 };
 
 const resetWorkout = () => {
