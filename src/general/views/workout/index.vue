@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <div class="banner">
+      <div class="banner" :class="{'ios-app-top': isPlatform('ios')}" >
         <ion-title class="banner__title">All dailys are stored here</ion-title>
         <ion-text class="banner__text">
           A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
@@ -252,6 +252,7 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  isPlatform
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
