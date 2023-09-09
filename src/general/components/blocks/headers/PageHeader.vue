@@ -4,6 +4,7 @@
     :class="{
       'header--transparent': transparent,
       'header--buttons-transparent': buttonsTransparent,
+      'ios-app-top': isPlatform('ios')
     }"
   >
     <ion-buttons slot="start">
@@ -44,6 +45,7 @@ import {
   IonButton,
   IonIcon,
   IonTitle,
+  isPlatform
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
 
