@@ -72,7 +72,7 @@ const videoOptions: VideoOptions = {
   highquality: true,
   source: CameraVideoSource.Prompt,
   promptLabelLibrary: "Video library",
-  promptLabelVideo: "Make a video",
+  promptLabelVideo: "Record a video",
 };
 
 const chooseVideo = () => {

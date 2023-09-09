@@ -7,12 +7,19 @@
           A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
         </ion-text>
         <div class="banner__background-image">
-          <img src="assets/backgrounds/Banner_3.png" alt="">
+          <img src="assets/backgrounds/Banner_3.png" alt="" class="w-100">
         </div>
       </div>
       <div class="workout-list" v-if="!(dailysLoading) && dailysData?.length">
         <div class="d-flex justify-content-around workout-list__top">
           <div class="filter-tabs d-flex align-items-center justify-content-center">
+            <ion-button
+              :fill="tab === 'dailys' ? 'solid' : 'outline'"
+              :color="tab === 'dailys' ? '' : 'medium'"
+              @click="setTab('dailys')"
+            >
+              Dailys
+            </ion-button>
             <ion-button 
               :fill="tab === 'analytics' ? 'solid' : 'outline'"
               :color="tab === 'analytics' ? '' : 'medium'"
@@ -21,11 +28,10 @@
               Analytics
             </ion-button>
             <ion-button
-              :fill="tab === 'dailys' ? 'solid' : 'outline'"
-              :color="tab === 'dailys' ? '' : 'medium'"
-              @click="setTab('dailys')"
+              fill="outline"
+              @click="router.push({ name: EntitiesEnum.CreateWorkout })"
             >
-              Dailys
+              Create Dailys
             </ion-button>
           </div>
         </div>
@@ -54,7 +60,7 @@
         </div>
         <div class="common-style" v-else>
           <div v-if="tab === 'analytics'">
-            <dailys-analytics :daily="dailysData[dailysData?.length-1]" />
+            <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
             <dailys-summary :summaryData="summaryData"/>
             <dailys-performance 
               :performanceData="performanceData" 
@@ -103,7 +109,7 @@
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
-                      :hidden="false"
+                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
                       @hide="hideDailysItem(daily.id)"
                       @show="showDailysItem(daily.id)"
                       @click="watchDailys(daily)"
@@ -147,7 +153,7 @@
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
-                      :hidden="false"
+                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
                       @hide="hideDailysItem(daily.id)"
                       @show="showDailysItem(daily.id)"
                       @click="watchDailys(daily)"
@@ -191,7 +197,7 @@
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
-                      :hidden="false"
+                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
                       @hide="hideDailysItem(daily.id)"
                       @show="showDailysItem(daily.id)"
                       @click="watchDailys(daily)"
@@ -225,7 +231,7 @@
                   :recommended_count="daily.recommended_count"
                   :share="true"
                   :hide="true"
-                  :hidden="false"
+                  :hidden="daily.state === WorkoutStatesEnum.Hidden"
                   @hide="hideDailysItem(daily.id)"
                   @show="showDailysItem(daily.id)"
                   @click="watchDailys(daily)"
@@ -256,7 +262,8 @@ import {
   HideWorkoutDocument,
   ShowWorkoutDocument,
   DailyAnalyticsDocument,
-  DailyPerformanceDocument
+  DailyPerformanceDocument,
+  WorkoutStatesEnum
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -279,7 +286,7 @@ import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue
 import DailysTop from "@/general/components/dailys/DailysTop.vue";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
-const tab = ref<string>('analytics');
+const tab = ref<string>('dailys');
 const filter = ref<string>('all');
 const performanceLimit = ref<string>('7');
 
@@ -335,8 +342,6 @@ const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetc
 
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
-  dailysItemsStore.setData(dailys);
-  console.log(dailysItemsStore.dailysData);
   dailys.sort((a: any, b: any) => {
     return a.total_revenue - b.total_revenue;
   });
@@ -349,6 +354,8 @@ gotDailysData(({ data }) => {
     return a.recommended_count - b.recommended_count;
   });
   recommendedDailys.value = dailys;
+  dailysItemsStore.setData(dailys.reverse());
+  console.log(dailysItemsStore.dailysData);
 });
 
 gotDailysAnalyticsData(({ data }) => {
@@ -382,6 +389,9 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
+  console.log(daily.id);
+  console.log(daily);
+  console.log(dailysData.value[0]);
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 

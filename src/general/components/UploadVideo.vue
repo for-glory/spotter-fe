@@ -99,7 +99,7 @@ const videoOptions: VideoOptions = {
   highquality: true,
   source: CameraVideoSource.Prompt,
   promptLabelLibrary: "Video library",
-  promptLabelVideo: "Make a video",
+  promptLabelVideo: "Record a video",
 };
 
 const chooseVideo = () => {
@@ -149,8 +149,9 @@ const chooseVideo = () => {
       if (alertModalError.value?.length) return;
 
       const fileSize = bytesToSize(file.size);
+      console.log(fileSize);
       const fileName = file.name;
-      emits("change", file, fileSize, fileName);
+      // emits("change", file, fileSize, fileName);
       input.remove();
     };
     input.click();
