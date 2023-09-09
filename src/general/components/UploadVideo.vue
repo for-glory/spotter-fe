@@ -136,7 +136,7 @@ const chooseVideo = () => {
       const file = event.target?.files[0];
 
       const videoDuration = await getVideoDuration(file);
-      if (file.size < maxVideoSize.value) {
+      if (file.size > maxVideoSize.value) {
         alertModalError.value = EntitiesEnum.MaxVideoSize;
       }
 
