@@ -18,7 +18,7 @@
 				</div>
 				<div class="detail">
 					<ion-text>
-						Build your gym profile, create your events and gym passes
+						Build your gym profile, create your events and passes
 					</ion-text>
 				</div>
 			</div>

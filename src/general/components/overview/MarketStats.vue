@@ -18,7 +18,7 @@
           </div>
           <div class="d-flex aling-items-center">
             <ion-icon class="green" src="assets/icon/Ellipse-green.svg" slot="icon-only"></ion-icon>
-            <ion-text>Gym pass</ion-text>
+            <ion-text>Passes</ion-text>
           </div>
           <div class="d-flex aling-items-center">
             <ion-icon class="purple" src="assets/icon/Ellipse-purple.svg" slot="icon-only"></ion-icon>

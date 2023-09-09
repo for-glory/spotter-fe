@@ -9,7 +9,7 @@
     <span
       @click="navigate(EntitiesEnum.DashboardPassList)"
       class="medium ion-padding-end clickable"
-      >Create gym pass</span
+      >Create Passes</span
     >
     <ion-icon
       class=""

@@ -28,7 +28,7 @@
               Analytics
             </ion-button>
             <ion-button
-              fill="outline"
+              fill="solid"
               @click="router.push({ name: EntitiesEnum.CreateWorkout })"
             >
               Create Dailys
@@ -198,7 +198,7 @@
             <div v-else>
               <div class="d-flex align-items-center justify-content-between" style="padding-bottom: 13px">
                 <ion-text class="font-light font-12 color-white">Showing all {{ filter }}</ion-text>
-                <ion-text class="font-medium font-14 color-gold"  @click="handleSetFilter('all')">View All</ion-text>
+                <ion-text class="font-medium font-14 color-gold"  @click="handleSetFilter('all')">Back</ion-text>
               </div>
               <div 
                 class="d-flex-col justify-content-center gap-16 "
@@ -227,7 +227,6 @@
                 />
               </div>
             </div>
-            <ion-button id="create" @click="router.push({ name: EntitiesEnum.CreateWorkout })">Create Dailys</ion-button>
           </div>
           <div v-else>
             <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />

@@ -51,7 +51,7 @@
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardPassList)">
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
-					<ion-text>Gym pass</ion-text>
+					<ion-text>Passes</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardDropinList)">
 					<ion-icon src="assets/icon/dropin.svg" />

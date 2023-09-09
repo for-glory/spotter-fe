@@ -104,7 +104,6 @@ const videoOptions: VideoOptions = {
 
 const chooseVideo = () => {
   if (isPlatform("capacitor")) {
-    alert("capacitor");
     CameraPro.getVideo(videoOptions)
       .then(async (video: Video) => {
         preloading.value = true;

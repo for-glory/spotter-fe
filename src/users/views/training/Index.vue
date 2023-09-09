@@ -134,7 +134,7 @@ const sessionType = route.query.type;
 const sessionTypeName = computed<string>(() => {
   switch (sessionType) {
     case EntitiesEnum.Facility:
-      return "GYM pass";
+      return "Passes";
 
     case EntitiesEnum.Training:
       return "training";

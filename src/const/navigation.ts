@@ -107,7 +107,7 @@ export const navigationMenu: NavigationMenu = {
     },
     {
       name: EntitiesEnum.FacilityPassList,
-      label: "Gym Pass",
+      label: "Passes",
       icon: "assets/icon/gym-user-icon.svg",
       category: "/facilities/pass",
     },

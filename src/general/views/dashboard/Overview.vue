@@ -25,7 +25,7 @@
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Gym pass</ion-text>
+          <ion-text class="content">Passes</ion-text>
           <span class="count">{{ widgetInfo?.pass_count }}</span>
         </div>
         <div>
