@@ -80,6 +80,7 @@ loginDone(({ data, errors }) => {
   display: grid;
   grid-template-rows: auto 1fr;
   height: calc(100% - 337px - var(--ion-safe-area-top));
+  padding: 24px;
 }
 .welcome-text {
   color: var(--gold);

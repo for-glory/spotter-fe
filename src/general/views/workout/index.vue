@@ -42,7 +42,7 @@
         class="ion-padding-horizontal height-100 main-content"
       >
         <ion-spinner
-          v-if="dailysLoading && dailysAnalyticsLoading"
+          v-if="dailysLoading || dailysAnalyticsLoading"
           name="lines"
           class="spinner"
         />
@@ -59,18 +59,7 @@
           />
         </div>
         <div class="common-style" v-else>
-          <div v-if="tab === 'analytics'">
-            <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
-            <dailys-summary :summaryData="summaryData"/>
-            <dailys-performance 
-              :performanceData="performanceData" 
-              :limit="performanceLimit"
-              :totalRevenue="summaryData.totalRevenue"
-              @change="setLimit"
-            />
-            <dailys-top :summaryData="summaryData"/>
-          </div>
-          <div v-else>
+          <div v-if="tab === 'dailys'">
             <div v-if="filter==='all'">
               <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
               <div>
@@ -239,6 +228,17 @@
               </div>
             </div>
             <ion-button id="create" @click="router.push({ name: EntitiesEnum.CreateWorkout })">Create Dailys</ion-button>
+          </div>
+          <div v-else>
+            <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
+            <dailys-summary :summaryData="summaryData"/>
+            <dailys-performance 
+              :performanceData="performanceData" 
+              :limit="performanceLimit"
+              :totalRevenue="summaryData.totalRevenue"
+              @change="setLimit"
+            />
+            <dailys-top :summaryData="summaryData"/>
           </div>
         </div>
       </div>
