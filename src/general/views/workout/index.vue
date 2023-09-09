@@ -266,7 +266,7 @@ import {
   WorkoutStatesEnum
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -339,6 +339,10 @@ const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetc
     limit: 7
   }
 );
+
+onMounted(() => {
+  store.clearState();
+})
 
 gotDailysData(({ data }) => {
   let dailys = data.facilityWorkouts.data;
