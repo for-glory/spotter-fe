@@ -76,6 +76,7 @@ const videoOptions: VideoOptions = {
 };
 
 const chooseVideo = () => {
+  console.log(maxVideoSize.value);
   if (isPlatform("capacitor")) {
     CameraPro.getVideo(videoOptions)
       .then(async (video: Video) => {
@@ -119,7 +120,10 @@ const chooseVideo = () => {
 
       preloading.value = false;
 
-      if (alertModalError.value?.length) return;
+      if (alertModalError.value?.length) {
+        alert(alertModalError.value);
+        return;
+      }
 
       const fileSize = bytesToSize(file.size);
       const fileName = file.name;
