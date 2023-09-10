@@ -1,75 +1,71 @@
 <template>
   <div class="chart-container">
-   <Pie
-      :options="chartOptions"
-      :data="chartData"
-      :width="null"
-      :height="null"
+   <Doughnut
+      :options="props.chartOptions"
+      :data="props.chartData"
     />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {
-  DatetimeCustomEvent,
-  IonDatetime,
-  IonText,
-  IonSpinner,
-} from "@ionic/vue";
-import {
-  defineProps,
-  onMounted,
-  ref,
-  withDefaults,
-  defineEmits,
-  watch,
+  defineProps, onMounted,
 } from "vue";
-import dayjs from "dayjs";
-import { computed } from "@vue/reactivity";
-import { Pie } from 'vue-chartjs';
+import { Doughnut } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
+  ArcElement
 } from 'chart.js'
 
-ChartJS.register(Title);
+ChartJS.register(Title, ArcElement);
 
-const props = defineProps<{
-  chartData?: {
-     type: 'pie', 
-    required: true;
-  };
-  chartOptions?: {
-    type: 'pie',
-  responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          annotation: {
-            annotations: [
-              {
-                drawTime: 'beforeDatasetsDraw', // Draw before the pie slices
-                type: 'text',
-                x: 50, // Adjust the x-position where you want to add the label
-                y: 50, // Adjust the y-position where you want to add the label
-                fontFamily: 'Arial',
-                fontSize: 16,
-                fontStyle: 'bold',
-                text: 'Custom Text', // Your custom text
-                fillStyle: 'black', // Customize the text color
-              },
-            ],
-          },
+const props = defineProps({
+  chartData: {
+    required: true
+  },
+  chartOptions: {
+    required: false,
+    default: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          align: 'center',
+          padding: 2,
+          labels: {
+            pointStyle: 'circle',
+            usePointStyle: true,
+          }
         },
-  };
-}>();
-const chartData = computed(() => props.chartData);
-const chartOptions = computed(() => props.chartOptions);
+        // annotation: {
+        //   annotations: [
+        //     {
+        //       drawTime: 'beforeDatasetsDraw', // Draw before the pie slices
+        //       type: 'text',
+        //       x: 50, // Adjust the x-position where you want to add the label
+        //       y: 50, // Adjust the y-position where you want to add the label
+        //       fontFamily: 'Arial',
+        //       fontSize: 16,
+        //       fontStyle: 'bold',
+        //       text: 'Custom Text', // Your custom text
+        //       fillStyle: 'black', // Customize the text color
+        //     },
+        //   ],
+        // },
+      },
+    },
 
+  }
+});
+onMounted(() => {
+  console.log(props)
+})
 </script>
 
 <style scoped lang="scss">
 .chart-container {
-  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;

@@ -21,9 +21,9 @@ const props = withDefaults(
     status?: string;
   }>(),
   {
-    title: "Swimming & Cycling",
-    dateTime: "Saturday, April 14 | 08:00 AM",
-    status: "Closed",
+    // title: "Swimming & Cycling",
+    // dateTime: "Saturday, April 14 | 08:00 AM",
+    // status: "Closed",
   }
 );
 </script>

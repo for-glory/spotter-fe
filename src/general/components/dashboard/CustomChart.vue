@@ -10,23 +10,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import {
-  DatetimeCustomEvent,
-  IonDatetime,
-  IonText,
-  IonSpinner,
-} from "@ionic/vue";
+<script setup >
 import {
   defineProps,
-  onMounted,
-  ref,
-  withDefaults,
-  defineEmits,
-  watch,
 } from "vue";
-import dayjs from "dayjs";
-import { computed } from "@vue/reactivity";
 import {
   Chart as ChartJS,
   Title,
@@ -40,22 +27,20 @@ import { Bar } from 'vue-chartjs';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const props = defineProps<{
-  chartData?: {
-    type: 'bar',
-    required: true;
-  };
-  chartOptions?: {
-   type: 'bar',
-    required: false;
+const props = defineProps({
+  chartData: {
+    required: true,
+  },
+  chartOptions: {
+    required: false,
     default: {
       responsive: true,
       scales: {
         y: {
-           stacked: true,
+          stacked: true,
         },
         x: {
-           stacked: true,
+          stacked: true,
         },
       },
        plugins: {
@@ -65,10 +50,9 @@ const props = defineProps<{
         },
      
     }
-  };
-}>();
-const chartData = computed(() => props.chartData);
-const chartOptions = computed(() => props.chartOptions);
+  }
+});
+
 
 </script>
 
