@@ -31,12 +31,17 @@ import { SocialProvidersEnum, SocialLoginDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
+// import {
+//   SignInWithApple,
+//   AppleSignInResponse,
+//   AppleSignInErrorResponse,
+//   ASAuthorizationAppleIDRequest,
+// } from "@awesome-cordova-plugins/sign-in-with-apple";
 import {
   SignInWithApple,
-  AppleSignInResponse,
-  AppleSignInErrorResponse,
-  ASAuthorizationAppleIDRequest,
-} from "@awesome-cordova-plugins/sign-in-with-apple";
+  SignInWithAppleResponse,
+  SignInWithAppleOptions,
+} from '@capacitor-community/apple-sign-in';
 import { Capacitor } from "@capacitor/core";
 
 const firebaseConfig = {
@@ -158,24 +163,53 @@ const loginWithApple = async () => {
         console.log("error: ", error);
       });
   } else {
-    SignInWithApple.signin({
-      requestedScopes: [0, 1],
-    })
-      .then((res) => {
-        // Successful sign-in
-        console.log("Apple Sign-In Success:", JSON.stringify(res));
 
-        if (res.authorizationCode) {
+        let options: SignInWithAppleOptions = {
+        clientId: 'com.spotterfitness.gabbymobileapp',
+        redirectURI: 'https://www.spotterfitness.com/auth/check',
+        scopes: 'webmaster@spotterfitness.com',
+        state: '12345',
+        nonce: 'nonce',
+      };
+
+          SignInWithApple.authorize(options)
+      .then((result: SignInWithAppleResponse) => {
+        // Handle user information
+        // Validate token with server and create new session
+        console.log("Apple Sign-In Success:", JSON.stringify(result.response));
+
+        if (result.response.identityToken) {
           login({
-            token: res.authorizationCode,
+            token: result.response.identityToken,
             provider: SocialProvidersEnum.Apple,
           });
         }
       })
-      .catch((err) => {
+      .catch(error => {
         // Sign-in failed
-        console.error("Apple Sign-In Error:", err);
+         console.error("Apple Sign-In Error:", error);
       });
+
+    // SignInWithApple.signin({
+    //   requestedScopes: [0, 1],
+    // })
+    //   .then((res) => {
+    //     // Successful sign-in
+    //     alert('success');
+    //     console.log("Apple Sign-In Success:", JSON.stringify(res));
+
+    //     if (res.authorizationCode) {
+    //       login({
+    //         token: res.authorizationCode,
+    //         provider: SocialProvidersEnum.Apple,
+    //       });
+    //     }
+    //   })
+    //   .catch((err) => {
+    //       alert('err');
+    //     // Sign-in failed
+    //     console.error("Apple Sign-In Error:", err);
+    //   });
   }
 };
 
