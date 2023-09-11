@@ -356,6 +356,15 @@ console.log('menu', menu);
 
 
 const goTo = (name: EntitiesEnum) => {
+  // const modal = await modalController.create({
+  //   component: WorkingSchedule,
+  //   cssClass: "web-working-schedule",
+  //   componentProps: {
+  //     isFromModal: true,
+  //   },
+  // });
+
+  // await modal.present();
   switch (name) {
     case EntitiesEnum.Facility:
       router.push({

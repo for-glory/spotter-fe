@@ -5,7 +5,7 @@
       slot="end"
       fill="clear"
       color="primary"
-      v-if="!hideViewMore"
+      
       class="items-header__btn"
       @click="$emit('handle-view')"
     >
@@ -13,7 +13,7 @@
     </ion-button>
   </ion-toolbar>
 </template>
-
+<!-- v-if="!hideViewMore" -->
 <script setup lang="ts">
 import { IonToolbar, IonButton, IonTitle } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";

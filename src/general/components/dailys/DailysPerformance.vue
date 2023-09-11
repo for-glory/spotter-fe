@@ -7,9 +7,9 @@
           Purchases
           <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
         </div>
-        {{ '389' }}
+        {{ totalRevenue }}
       </div>
-      <div class="graph-field">
+      <div class="graph-field" v-if="performanceData.length">
         <ion-text class="font-light font-12 color-white">
           {{ performanceLimit === 'all' ? 'All' : 'In the last ' + performanceLimit + ' days' }}
         </ion-text>
@@ -23,6 +23,9 @@
           <ion-button :fill="performanceLimit==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
         </div>
       </div>
+      <div class="graph-field d-flex align-items-center justify-content-center">
+        <ion-text class="font-bold font-20 color-white">No purchases</ion-text>
+      </div>
     </div>
   </div>
 </template>
@@ -34,7 +37,8 @@ import LineChart from "@/general/components/LineChart.vue";
 
 const props = defineProps<{
   performanceData: Array<any>;
-  limit: string
+  limit: string,
+  totalRevenue: number,
 }>(); 
 const emits = defineEmits<{
   (e: "change", limit: string): void;
@@ -45,11 +49,11 @@ const labels = ref<Array<string>>(['02 Aug 2023', '03 Aug 2023', '04 Aug 2023', 
 const data = ref<any>({
   labels: labels.value,
   datasets: [{
-    data: [0,0,0,0,0,0,0],
+    data: [30,50,13,23,33,40,20],
     fill: false,
     borderColor: '#E1DBC5',
-    lineTension: 0.4,
-    radius: 6,
+    tension: 0.3,
+    radius: 3,
   }]
 });
 
@@ -94,7 +98,30 @@ watch(() => performanceLimit.value,
 const handleSetDuration = ( value: string ) => {
   emits('change', value);
 }
+const customPlugin = {
+  beforeDraw: (chart) => {
+    const ctx = chart.ctx;
+    const xAxis = chart.scales.x;
+    const yAxis = chart.scales.y;
+    const dataset = chart.data.datasets[0];
+    const data = dataset.data;
+    const radius = dataset.pointRadius || 3;
+    const borderColor = dataset.borderColor || 'rgba(255, 255, 255)';
 
+    // Connect the first point with the first label
+    ctx.beginPath();
+    ctx.strokeStyle = borderColor;
+    ctx.moveTo(xAxis.getPixelForValue(data[0]), yAxis.getPixelForValue(data[0]));
+    ctx.lineTo(xAxis.getPixelForValue(xAxis.min), yAxis.getPixelForValue(data[0]));
+    ctx.stroke();
+
+    // Connect the last point with the last label
+    ctx.beginPath();
+    ctx.moveTo(xAxis.getPixelForValue(data[data.length - 1]), yAxis.getPixelForValue(data[data.length - 1]));
+    ctx.lineTo(xAxis.getPixelForValue(xAxis.max), yAxis.getPixelForValue(data[data.length - 1]));
+    ctx.stroke();
+  },
+};
 const option = {
   scales: {
     y: {
@@ -107,17 +134,21 @@ const option = {
     },
     x: {
       ticks: {
-        display: false
+        display: true, // Display x-axis ticks
+        maxRotation: 0, // Prevent label rotation
+        callback: (value, index, values) => {
+          // Display only the first and last labels
+          if (index === 0 || index === values.length - 1) {
+            return labels.value[value];
+          } else {
+            return ''; // Hide other labels
+          }
+        },
       },
       grid: {
         display: false
       }
     }
-  },
-  elements: {
-    point: {
-      pointStyle: "none", // Remove point elements
-    },
   },
   plugins: {
     legend: {
@@ -126,11 +157,20 @@ const option = {
     tooltip: {
       xAlign: "center",
       yAlign: "top",
-    }
+    },
+    datalabels: {
+      display: false, // Hide data labels
+    },
   },
   responsive: true,
   maintainAspectRatio: true,
-}
+  layout: {
+    padding: {
+      left: 20, // Adjust as needed
+      right: 20, // Adjust as needed
+    },
+  },
+};
 
 </script>
 

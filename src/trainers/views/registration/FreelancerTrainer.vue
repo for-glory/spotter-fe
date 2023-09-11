@@ -18,10 +18,7 @@
           >
             I work out of a gym
           </ion-button>
-          <ion-button
-            expand="block"
-            @click="navigate(EntitiesEnum.LocationRate)"
-          >
+          <ion-button expand="block" @click="navigate(EntitiesEnum.Quizz)">
             I am a freelancer
           </ion-button>
           <ion-button

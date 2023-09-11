@@ -10,23 +10,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import {
-  DatetimeCustomEvent,
-  IonDatetime,
-  IonText,
-  IonSpinner,
-} from "@ionic/vue";
+<script setup >
 import {
   defineProps,
-  onMounted,
-  ref,
-  withDefaults,
-  defineEmits,
-  watch,
 } from "vue";
-import dayjs from "dayjs";
-import { computed } from "@vue/reactivity";
 import {
   Chart as ChartJS,
   Title,
@@ -36,52 +23,36 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import { Bar } from 'vue-chartjs'
+import { Bar } from 'vue-chartjs';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const props = defineProps<{
-  chartData?: {
-    type: any;
-    required: true;
-  };
-  chartOptions?: {
-    type: any;
-    required: false;
+const props = defineProps({
+  chartData: {
+    required: true,
+  },
+  chartOptions: {
+    required: false,
     default: {
       responsive: true,
       scales: {
         y: {
-          ticks: {
-            display: false, 
-          },
-          grid: {
-            display: false
-          }
+          stacked: true,
         },
         x: {
-          ticks: {
-            angle: 45, 
-          },
-          grid: {
-            display: false
-          }
+          stacked: true,
         },
       },
-      plugins: {
-        legend: {
-          display: false
+       plugins: {
+          legend: {
+            position: 'bottom', // Change legend position to the bottom
+          },
         },
-        tooltip: {
-          xAlign: "center",
-          yAlign: "top",
-        }
-      }
+     
     }
-  };
-}>();
-const chartData = computed(() => props.chartData);
-const chartOptions = computed(() => props.chartOptions);
+  }
+});
+
 
 </script>
 

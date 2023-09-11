@@ -163,9 +163,10 @@ const loginWithApple = async () => {
     })
       .then((res) => {
         // Successful sign-in
+        alert("success");
         console.log("Apple Sign-In Success:", JSON.stringify(res));
 
-        if (res.authorizationCode) {
+        if (res.identityToken) {
           login({
             token: res.authorizationCode,
             provider: SocialProvidersEnum.Apple,
@@ -173,6 +174,7 @@ const loginWithApple = async () => {
         }
       })
       .catch((err) => {
+        alert("err");
         // Sign-in failed
         console.error("Apple Sign-In Error:", err);
       });
