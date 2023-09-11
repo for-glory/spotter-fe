@@ -91,7 +91,6 @@ ion-title {
 }
 
 .page {
-
   &--content {
     display: flex;
     margin: 0 24px;

@@ -18,6 +18,8 @@ PODS:
     - Capacitor
   - CapacitorCamera (5.0.6):
     - Capacitor
+  - CapacitorCommunityAppleSignIn (5.0.0):
+    - Capacitor
   - CapacitorCommunityBarcodeScanner (3.0.1):
     - Capacitor
   - CapacitorCommunityFacebookLogin (4.0.0):
@@ -69,34 +71,6 @@ PODS:
   - FBSDKCoreKit_Basics (14.1.0)
   - FBSDKLoginKit (14.1.0):
     - FBSDKCoreKit (= 14.1.0)
-  - Firebase/CoreOnly (10.13.0):
-    - FirebaseCore (= 10.13.0)
-  - Firebase/Messaging (10.13.0):
-    - Firebase/CoreOnly
-    - FirebaseMessaging (~> 10.13.0)
-  - FirebaseCore (10.13.0):
-    - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreInternal (10.13.0):
-    - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseDatabase (10.13.0):
-    - FirebaseCore (~> 10.0)
-    - leveldb-library (~> 1.22)
-  - FirebaseInstallations (10.13.0):
-    - FirebaseCore (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/UserDefaults (~> 7.8)
-    - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.13.0):
-    - FirebaseCore (~> 10.0)
-    - FirebaseInstallations (~> 10.0)
-    - GoogleDataTransport (~> 9.2)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Reachability (~> 7.8)
-    - GoogleUtilities/UserDefaults (~> 7.8)
-    - nanopb (< 2.30910.0, >= 2.30908.0)
   - GCDWebServer (3.5.4):
     - GCDWebServer/Core (= 3.5.4)
   - GCDWebServer/Core (3.5.4)
@@ -119,10 +93,6 @@ PODS:
     - GoogleMaps (~> 7.3)
   - Google-Maps-iOS-Utils/QuadTree (4.2.2):
     - GoogleMaps (~> 7.3)
-  - GoogleDataTransport (9.2.5):
-    - GoogleUtilities/Environment (~> 7.7)
-    - nanopb (< 2.30910.0, >= 2.30908.0)
-    - PromisesObjC (< 3.0, >= 1.2)
   - GoogleMaps (7.4.0):
     - GoogleMaps/Maps (= 7.4.0)
   - GoogleMaps/Base (7.4.0)
@@ -132,34 +102,10 @@ PODS:
     - AppAuth (~> 1.5)
     - GTMAppAuth (~> 1.3)
     - GTMSessionFetcher/Core (< 3.0, >= 1.1)
-  - GoogleUtilities/AppDelegateSwizzler (7.11.5):
-    - GoogleUtilities/Environment
-    - GoogleUtilities/Logger
-    - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.11.5):
-    - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.11.5):
-    - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.11.5):
-    - GoogleUtilities/Logger
-    - "GoogleUtilities/NSData+zlib"
-    - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.11.5)"
-  - GoogleUtilities/Reachability (7.11.5):
-    - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.11.5):
-    - GoogleUtilities/Logger
   - GTMAppAuth (1.3.1):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.3.0)
-  - leveldb-library (1.22.2)
-  - nanopb (2.30909.0):
-    - nanopb/decode (= 2.30909.0)
-    - nanopb/encode (= 2.30909.0)
-  - nanopb/decode (2.30909.0)
-  - nanopb/encode (2.30909.0)
-  - PromisesObjC (2.3.1)
   - StripeApplePay (23.0.0):
     - StripeCore (= 23.0.0)
   - StripeCore (23.0.0)
@@ -189,6 +135,7 @@ DEPENDENCIES:
   - CapacitorBlobWriter (from `../../node_modules/capacitor-blob-writer`)
   - "CapacitorBrowser (from `../../node_modules/@capacitor/browser`)"
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
+  - "CapacitorCommunityAppleSignIn (from `../../node_modules/@capacitor-community/apple-sign-in`)"
   - "CapacitorCommunityBarcodeScanner (from `../../node_modules/@capacitor-community/barcode-scanner`)"
   - "CapacitorCommunityFacebookLogin (from `../../node_modules/@capacitor-community/facebook-login`)"
   - "CapacitorCommunityStripe (from `../../node_modules/@capacitor-community/stripe`)"
@@ -208,8 +155,6 @@ DEPENDENCIES:
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
   - "DevaCommunityCapacitorCameraPro (from `../../node_modules/@deva-community/capacitor-camera-pro`)"
-  - Firebase/Messaging
-  - FirebaseDatabase
   - "WhiteguruCapacitorPluginVideoEditor (from `../../node_modules/@whiteguru/capacitor-plugin-video-editor`)"
 
 SPEC REPOS:
@@ -219,23 +164,12 @@ SPEC REPOS:
     - FBSDKCoreKit
     - FBSDKCoreKit_Basics
     - FBSDKLoginKit
-    - Firebase
-    - FirebaseCore
-    - FirebaseCoreInternal
-    - FirebaseDatabase
-    - FirebaseInstallations
-    - FirebaseMessaging
     - GCDWebServer
     - Google-Maps-iOS-Utils
-    - GoogleDataTransport
     - GoogleMaps
     - GoogleSignIn
-    - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
-    - leveldb-library
-    - nanopb
-    - PromisesObjC
     - StripeApplePay
     - StripeCore
     - StripePayments
@@ -256,6 +190,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/browser"
   CapacitorCamera:
     :path: "../../node_modules/@capacitor/camera"
+  CapacitorCommunityAppleSignIn:
+    :path: "../../node_modules/@capacitor-community/apple-sign-in"
   CapacitorCommunityBarcodeScanner:
     :path: "../../node_modules/@capacitor-community/barcode-scanner"
   CapacitorCommunityFacebookLogin:
@@ -305,6 +241,7 @@ SPEC CHECKSUMS:
   CapacitorBlobWriter: 110eeaf80611f19bf01a8a05ff3672149ed0baad
   CapacitorBrowser: 6192948e0ce804fd72aaf77f4114a3ad2e08c760
   CapacitorCamera: 4a95204d13a05b0b726bf9086b44124349ab1952
+  CapacitorCommunityAppleSignIn: eafdd59b18b38161fa5cceee7b0e31312b122958
   CapacitorCommunityBarcodeScanner: db2c9d3fdaeb22807afa497389d934185af4972a
   CapacitorCommunityFacebookLogin: 94cbbd5c5ed6ca7322c85325c3cc09c29763720a
   CapacitorCommunityStripe: 5cf0d79f8393c77fac090df1249bb1f023957aa3
@@ -328,23 +265,12 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
   FBSDKCoreKit_Basics: 6e578c9bdc7aa1365dbbbde633c9ebb536bcaa98
   FBSDKLoginKit: 787de205d524c3a4b17d527916f1d066e4361660
-  Firebase: 343d7539befb614d22b2eae24759f6307b1175e9
-  FirebaseCore: 9948a31ff2c6cf323f9b040068201a95d271b68d
-  FirebaseCoreInternal: b342e37cd4f5b4454ec34308f073420e7920858e
-  FirebaseDatabase: 7e34876e30ea3eb0cf42c64d171a6c48f73a4606
-  FirebaseInstallations: b28af1b9f997f1a799efe818c94695a3728c352f
-  FirebaseMessaging: c2b782a6af3058b6e53ac2a6eaab84c5786200c8
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   Google-Maps-iOS-Utils: f77eab4c4326d7e6a277f8e23a0232402731913a
-  GoogleDataTransport: 54dee9d48d14580407f8f5fbf2f496e92437a2f2
   GoogleMaps: 032f676450ba0779bd8ce16840690915f84e57ac
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
-  GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
-  leveldb-library: f03246171cce0484482ec291f88b6d563699ee06
-  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   StripeApplePay: 872cd6bee754b395c0cb33e64dd4ed887142dbf7
   StripeCore: 6ee53ff749d64fd9db3f06ae4c385fdd3f8580a2
   StripePayments: 6e580aac69d1923607a40f506602f5770f8eb2bc
@@ -353,6 +279,6 @@ SPEC CHECKSUMS:
   StripeUICore: 55b2660a2cad2fe055a05f59297caa4ae50acf74
   WhiteguruCapacitorPluginVideoEditor: f27137306c632d1b702856718510e6950c287ecc
 
-PODFILE CHECKSUM: 7447c4ddfcf0557516146ae1fbf6c3a9ce3d73b6
+PODFILE CHECKSUM: ddb22f67f4fdb03da85832ccaeec384492895c3c
 
 COCOAPODS: 1.12.1

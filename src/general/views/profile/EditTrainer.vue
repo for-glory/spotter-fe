@@ -2,7 +2,7 @@
   <ion-page ref="page">
     <base-layout hide-navigation-menu>
       <template #header>
-        <page-header back-btn @back="onBack" title="Edit trainer" />
+        <page-header back-btn @back="onBack" title="Create trainer profile" />
       </template>
       <template #content>
         <ion-spinner
@@ -31,7 +31,7 @@
               :error-message="firstNameError"
               placeholder="First Name"
               name="firstName"
-              class="form-row__control"
+              class="form-row__control form-row__input"
               required
             />
             <base-input
@@ -39,7 +39,7 @@
               :error-message="lastNameError"
               placeholder="Last Name"
               name="lastName"
-              class="form-row__control"
+              class="form-row__control form-row__input"
               required
             />
           </div>
@@ -57,11 +57,12 @@
               :error-message="hourlyRateError"
               placeholder="Hourly Rate"
               name="hourlyRate"
+              class="form-row__input"
               required
             />
           </div>
 
-          <div
+          <!-- <div
             class="form-row"
             v-if="
               trainerType === TrainerTypeEnum.Freelancer ||
@@ -74,17 +75,22 @@
               :error-message="remoteHourlyRateError"
               placeholder="Remote Hourly Rate"
               name="remoteHourlyRate"
+              class="form-row__input"
               required
             />
-          </div>
+          </div> -->
 
-          <div
-            class="form-row"
-            v-if="trainerType === TrainerTypeEnum.WorkingInGym"
-          >
+          <div class="form-row">
             <ion-label class="label">
               Choose the gym if you work in it
             </ion-label>
+            <div class="form-row">
+              <base-toggle
+                :value="trainerType === TrainerTypeEnum.WorkingInGym"
+                content="Use my current location"
+                @change="currentLocationToggleChanged"
+              />
+            </div>
             <choose-block
               title="Choose gym"
               :value="chosenGym?.name"

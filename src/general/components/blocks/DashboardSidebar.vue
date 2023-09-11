@@ -21,7 +21,10 @@
 						</template>
 					</ion-avatar>
 					<div>
-						<ion-title class="name">{{ facilityName }}</ion-title>
+            <div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 8px">
+              <ion-title class="name">{{ facilityName }} </ion-title>
+              <ion-icon size="12px" src="assets/icon/arrow-down-light.svg"></ion-icon>
+            </div>
 						<ion-text class="address">{{ facilityAddress }}</ion-text>
 					</div>
 				</div>
@@ -267,8 +270,8 @@ const getMenuItemClass = (name: string) => {
 			display: flex;
 			align-items: center;
 			gap: 16px;
-			padding: 8px 24px;
-			cursor: pointer;
+      padding: 8px 15px 8px 24px;
+      cursor: pointer;
 
 			&:hover {
 				background-color: var(--gray-800);
@@ -280,6 +283,12 @@ const getMenuItemClass = (name: string) => {
 			}
 			.name {
 				padding: 0;
+        color: var(--FITNESS-WHITE, #EFEFEF);
+        font-family: Poppins;
+        font-size: 1.25rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
 			}
 			.address {
 				color: var(--gray-400);

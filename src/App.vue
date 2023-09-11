@@ -17,7 +17,7 @@ import { navigationAfterPaymentCompleted } from "@/helpers/purchaseRouterNavigat
 import { setAuthItemsFromMe } from "./router/middleware/auth";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { MeDocument } from "./generated/graphql";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 onMounted(async () => {
   getMyProfile();
@@ -104,7 +104,11 @@ const {
 } = useLazyQuery(MeDocument);
 
 gotMyProfile(({ data }) => {
-  setAuthItemsFromMe(data.me);
+  // Use optional chaining to access data.me safely
+  const me = data?.me;
+  if (me) {
+    // me is not null or undefined, setAuthItemsFromMe can be safely called
+    setAuthItemsFromMe(me);
+  }
 });
-
 </script>

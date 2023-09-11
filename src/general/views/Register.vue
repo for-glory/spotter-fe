@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonText } from '@ionic/vue';
+import { IonText } from "@ionic/vue";
 import RegistrationForm from "@/general/components/forms/RegistrationForm.vue";
 import Socials from "@/general/components/Socials.vue";
 import { RegisterDocument } from "@/graphql/documents/authDocuments";
@@ -32,14 +32,13 @@ const {
   error,
 } = useMutation(RegisterDocument);
 
-let {
-  mutate: login,
-  onDone: loginDone,
-  onError,
-} = useMutation(LoginDocument);
+let { mutate: login, onDone: loginDone, onError } = useMutation(LoginDocument);
 
 const handleSubmit = async (
-  form: Pick<RegisterInput, "email" | "first_name" | "last_name" | "password" | "password_confirmation">
+  form: Pick<
+    RegisterInput,
+    "email" | "first_name" | "last_name" | "password" | "password_confirmation"
+  >
 ) => {
   await register({ ...form, role: RoleEnum.User });
   localStorage.setItem("temporary_email", JSON.stringify(form.email));
@@ -49,30 +48,29 @@ const handleSubmit = async (
 const router = useRouter();
 
 onDone(({ data, errors }) => {
-
-  if(data){
+  if (data) {
     // router.push({
     //   name: EntitiesEnum.CheckEmail,
     // });
-  } else if(errors){
-    let error :any = errors
-    
-    if(error[0].extensions.validation == 'unique'){
-      throw new Error(error[0].message)
+  } else if (errors) {
+    let error: any = errors;
+
+    if (error[0].extensions.validation == "unique") {
+      throw new Error(error[0].message);
     }
   }
 });
 
 loginDone(({ data, errors }) => {
-  if(!data && errors){
-    throw new Error(String(errors[0].extensions.reason))
+  if (!data && errors) {
+    throw new Error(String(errors[0].extensions.reason));
   }
   setAuthItems(data.login);
 
   router.push({
     name: EntitiesEnum.CheckEmail,
   });
-})
+});
 </script>
 
 <style scoped lang="scss">

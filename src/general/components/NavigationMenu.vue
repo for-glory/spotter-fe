@@ -128,6 +128,7 @@ const navigate = (name: string) => {
     display: flex;
     font-size: 24px;
     margin: 0 auto 4px;
+    padding: 6px;
     align-items: center;
     flex-direction: column;
     justify-content: center;

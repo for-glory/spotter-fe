@@ -44,7 +44,10 @@ export const setAuthItems = (authItems: AuthPayload) => {
     localStorage.setItem(key, JSON.stringify(value));
   }
   if (authItems.user) {
-    localStorage.setItem('currentSubscription', authItems.user?.currentSubscription);
+    localStorage.setItem(
+      "currentSubscription",
+      authItems.user?.currentSubscription
+    );
   }
   const token = localStorage.getItem("FCM_TOKEN");
   const { updateDeviceToken, registerPushNotifications } =
@@ -61,7 +64,7 @@ export const setAuthItemsFromMe = (user: any) => {
     localStorage.setItem(key, JSON.stringify(value));
   }
   if (user) {
-    localStorage.setItem('currentSubscription', user?.currentSubscription);
+    localStorage.setItem("currentSubscription", user?.currentSubscription);
   }
   const token = localStorage.getItem("FCM_TOKEN");
   const { updateDeviceToken, registerPushNotifications } =
