@@ -3,7 +3,7 @@
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
 	>
-    <div class="banner">
+    <div class="banner" style="background: url('assets/backgrounds/eventBanner.png')">
       <ion-title class="banner__title">Create events for clients and trainers</ion-title>
       <ion-text class="banner__text">
         Your hub for creating memorable gatherings. Effortlessly set up events, and easily track registrations to ensure a seamless experience.
@@ -14,10 +14,10 @@
     </div>
 		<div class="event-list">
 			<div class="d-flex justify-content-between event-list__top">
-				<div>
-					<ion-button class="button-rounded filter-btn" :fill="filter === 'all' ? 'solid':'outline'" @click="handleEventType('all')">
+				<div class="d-flex event-btns">
+					<!-- <ion-button class="button-rounded filter-btn" :fill="filter === 'all' ? 'solid':'outline'" @click="handleEventType('all')">
 						All
-					</ion-button>
+					</ion-button> -->
 					<ion-button class="button-rounded filter-btn" :fill="filter === 'ongoing' ? 'solid':'outline'" @click="handleEventType('ongoing')">
 						Ongoing
 					</ion-button>
@@ -242,13 +242,16 @@ const handleEventType = (evT: string) => {
   margin-top: 16px;
   margin-bottom: -24px;
 }
-
+.event-btns {
+    align-items: center;
+}
 .empty-section {
 	margin-top: 100px;
 }
 .event-list {
 	background-color: var(--gray-700);
   margin-top: 54px;
+  border-radius: 10px;
 
   &__top {
     margin-bottom: 16px;
@@ -263,6 +266,7 @@ const handleEventType = (evT: string) => {
   background: linear-gradient(180deg, #F0E2AE 0%, rgba(251, 248, 234, 0.00) 100%);
   position: relative;
   overflow: hidden;
+  text-align: center;
 
   &__background-image {
     position: absolute;
@@ -278,6 +282,7 @@ const handleEventType = (evT: string) => {
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    margin-bottom: 10px;
   }
   &__text {
     color: #FFF;
