@@ -80,7 +80,7 @@ watch(
 	display: flex;
 
 	&__sidebar {
-		width: 300px;
+		width: 256px;
 		box-shadow: 6px 0px 18px 0px rgba(0, 0, 0, 0.25);
 		background: var(--gray-700);
 	}

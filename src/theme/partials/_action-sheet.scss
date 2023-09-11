@@ -107,5 +107,9 @@
   &::part(content) {
     --width: 702px;
     --height: 438px;
+
+    @media (max-width:700px) {
+      --height: 100%;
+    }
   }
 }

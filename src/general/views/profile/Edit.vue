@@ -1,5 +1,5 @@
 <template>
-  <base-layout :hide-navigation-menu="role !== RoleEnum.Trainer">
+  <base-layout :hide-navigation-menu="role !== RoleEnum.Trainer" v-if="!isWebView">
     <template #header>
       <page-header
         back-btn
@@ -46,6 +46,45 @@
       </div>
     </template>
   </base-layout>
+  <template v-else>
+    <IonGrid class="web-profile-edit">
+      <IonRow>
+        <IonCol size="4" class="border">
+          <div class="profile-edit">
+            <div class="profile-edit__options">
+              <ion-spinner
+                class="spinner"
+                name="lines"
+                v-if="loading"
+              ></ion-spinner>
+              <template v-else :key="menuItem.name" v-for="menuItem in menu">
+                <choose-block
+                  :title="menuItem.label"
+                  :value="settings[menuItem.value]"
+                  @click="webItemClick(menuItem.name)"
+                  class="profile-edit__option"
+                  :is-web-item="true"
+                  :item-outline="filter === menuItem.name"
+                  v-if="
+                    role !== RoleEnum.Trainer ||
+                    menuItem.name !== EntitiesEnum.ProfileLocation ||
+                    trainerType !== TrainerTypeEnum.WorkingInGym
+                  "
+                  :disabled="
+                    role !== RoleEnum.Trainer && menuItem.name === EntitiesEnum.ProfileOrderConfirmation &&
+                    subscriptionType !== SubscriptionsTierEnum.Gold
+                  "
+                />
+              </template>
+            </div>
+          </div>
+        </IonCol>
+        <IonCol size="8">
+          <edit-trainer :isWebView="true" v-if="filter === EntitiesEnum.ProfileEditTrainer"></edit-trainer>
+        </IonCol>
+      </IonRow>
+    </IonGrid>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -72,7 +111,19 @@ import {
   SubscriptionsTierEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
+import { withDefaults,defineProps } from "vue";
+import { IonSpinner,IonGrid,IonCol,IonRow } from "@ionic/vue";
+import EditTrainer  from "./EditTrainer.vue";
 
+const props = withDefaults(
+  defineProps<{
+    isWebView?: boolean;
+  }>(),
+  {
+    isWebView: false,
+  }
+);
+const filter = ref<EntitiesEnum>(EntitiesEnum.ProfileEditTrainer);
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
@@ -220,6 +271,10 @@ const menuType =
     : role;
 const menu = editProfileMenu[menuType];
 
+const webItemClick = (name: EntitiesEnum) => {
+  filter.value = name;
+}
+
 const goTo = (name: EntitiesEnum) => {
   if (route.query.facilityId) {
     router.push({
@@ -271,5 +326,22 @@ const trainerType = computed<TrainerTypeEnum>(
 .spinner {
   display: block;
   margin: 30vh auto;
+}
+.web-profile-edit {
+  .profile-edit {
+    padding: 0;
+  }
+  .border {
+    padding-right: 14px;
+    position: relative;
+    &::before {
+      content: "";
+      border-right: 0.5px solid var(--gold);
+      height: 100vh;
+      position: absolute;
+      margin-top: -82px;
+      right: 0;
+    }
+  }
 }
 </style>

@@ -183,6 +183,7 @@ ion-note {
   ion-item {
     ion-input {
       font-family: "Yantramanav";
+      font-weight: 300;
     }
   }
 }
