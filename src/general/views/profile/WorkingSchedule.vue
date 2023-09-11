@@ -19,9 +19,12 @@
               class="schedule__label"
               :class="{ 'native-app': role === RoleEnum.Trainer }"
             >
-              Today, {{ today }}</ion-label
+              Today, {{ today }} {{ selectedDay }}</ion-label
             >
-            <ion-segment class="job-day segment" v-model="selectedDay">
+            <ion-segment
+              class="job-day segment"
+              v-model="selectedDay"
+            >
               <ion-segment-button
                 :value="day.value"
                 v-for="day in scheduleDays"
@@ -194,14 +197,15 @@ console.log("props===", props);
 
 const router = useRouter();
 const { role } = useRoles();
-
 const onBack = () => {
   router.go(-1);
 };
 
 const page = ref<typeof IonPage | null>(null);
 const today = ref(dayjs(new Date()).format("DD MMMM YYYY"));
+console.log(today);
 const selectedDay = ref(dayjs().format("dddd").toLowerCase());
+
 const workingHoursRange = reactive<{
   [index: string]: { [index: string | number]: string }[];
 }>(HOURS_RANGE);
@@ -390,7 +394,7 @@ const startTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Form",
+      text: "From",
       role: "cancel",
     },
     {
@@ -548,6 +552,7 @@ const resetWorkingHour = () => {
   justify-content: space-between;
 
   ion-segment-button {
+    overflow: hidden;
     flex: 0 0 38px;
     min-width: 38px;
     width: 38px;
@@ -647,6 +652,19 @@ const resetWorkingHour = () => {
 
   .date-range {
     margin-bottom: 27px;
+  }
+
+  @media (max-width: 600px) {
+    ion-segment {
+      gap: 0;
+      justify-content: space-between;
+    }
+    .grid-wrapper {
+      display: block;
+      ion-button {
+        margin-bottom: 16px;
+      }
+    }
   }
 }
 </style>

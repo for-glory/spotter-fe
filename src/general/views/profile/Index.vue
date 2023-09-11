@@ -148,6 +148,7 @@ import {
   IonIcon,
   IonModal,
   IonTitle,
+  modalController
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -176,6 +177,7 @@ import ChoiceLocation from "@/general/components/ChoiceLocation.vue";
 import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import WorkingSchedule from "./WorkingSchedule.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -337,16 +339,8 @@ const menuType =
     : role;
 const menu = profileMenu[menuType];
 
-const goTo = (name: EntitiesEnum) => {
-  // const modal = await modalController.create({
-  //   component: WorkingSchedule,
-  //   cssClass: "web-working-schedule",
-  //   componentProps: {
-  //     isFromModal: true,
-  //   },
-  // });
-
-  // await modal.present();
+const goTo = async (name: EntitiesEnum) => {
+  
   switch (name) {
     case EntitiesEnum.Facility:
       router.push({
@@ -391,6 +385,26 @@ const goTo = (name: EntitiesEnum) => {
       });
 
       break;
+
+      case EntitiesEnum.ProfileWorkingSchedule:
+        
+        
+        if(Capacitor.isNativePlatform()){
+            router.push({
+             name,
+            });
+        }else{
+          const modal = await modalController.create({
+          component: WorkingSchedule,
+          cssClass: "web-working-schedule",
+          componentProps: {
+            isFromModal: true,
+          },
+        });
+
+          await modal.present();
+        }
+        break;
     default:
       router.push({
         name,
