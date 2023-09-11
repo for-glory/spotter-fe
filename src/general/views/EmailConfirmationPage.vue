@@ -31,6 +31,7 @@ onMounted(() => {
 
 onDone(({ data }) => {
   setAuthItems(data.verifyEmail);
+  console.log("Verified User", data.verifyEmail.user);
   navigationAfterAuth(data.verifyEmail.user);
 });
 
