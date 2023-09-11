@@ -29,9 +29,14 @@ onMounted(() => {
   verifyEmail({ token: route.query.token });
 });
 
-onDone(({ data }) => {
+onDone(({ data, errors }) => {
+  if (!data && errors) {
+    router.push({
+      name: EntitiesEnum.Login,
+    });
+  }
+
   setAuthItems(data.verifyEmail);
-  console.log("Verified User", data.verifyEmail.user);
   navigationAfterAuth(data.verifyEmail.user);
 });
 
