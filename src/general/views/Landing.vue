@@ -36,10 +36,10 @@ const form = ref<LoginMutationVariables>({
 });
 
 onDone(({ data, errors }) => {
-  if(!data && errors){
-    throw new Error(String(errors[0].extensions.reason))
+  if (!data && errors) {
+    throw new Error(String(errors[0].extensions.reason));
   }
-  
+
   setAuthItems(data.login);
 
   const { verified } = useVerified();
@@ -49,7 +49,7 @@ onDone(({ data, errors }) => {
       JSON.stringify(data.login.user.email)
     );
   }
-  navigationAfterAuth(data.login.user)
+  navigationAfterAuth(data.login.user);
 });
 
 onError(() => {
