@@ -9,7 +9,7 @@
         <div class="video__actions">
           <ion-button
             class="video__action"
-            @click="chooseVideo"
+            @click="isUploadModalOpen = true"
             fill="clear"
             expand="block"
             color="medium"
@@ -32,7 +32,7 @@
       v-else
       fill="clear"
       expand="block"
-      @click="chooseVideo"
+      @click="isUploadModalOpen = true"
       class="upload-video__upload-btn"
     >
       <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
@@ -53,6 +53,35 @@
     cancelButton="Ok"
     hide-button
   />
+  <ion-modal
+    ref="modal"
+    :is-open="isUploadModalOpen"
+    class="upload-modal"
+    @willDismiss="isUploadModalOpen = false"
+  >
+    <div class="main-buttons">
+      <ion-button
+        @click="chooseVideo('library')"
+        expand="block"
+      >
+        Video Library
+      </ion-button>
+      <div class="split"/>
+      <ion-button
+        @click="chooseVideo('record')"
+        expand="block"
+      >
+        Record a video
+      </ion-button>
+    </div>
+    <ion-button
+      id="cancel"
+      @click="isUploadModalOpen = false"
+      expand="block"
+    >
+      Cancel
+    </ion-button>
+  </ion-modal>
 </template>
 
 <script setup lang="ts">
@@ -95,15 +124,18 @@ const emits = defineEmits<{
 const preloading = ref<boolean>(false);
 
 const videoOptions: VideoOptions = {
-  duration: 60,
   highquality: true,
-  source: CameraVideoSource.Prompt,
-  promptLabelLibrary: "Video library",
-  promptLabelVideo: "Record a video",
+  saveToGallery: true,
+  promptLabelHeader: 'Upload video',
+  promptLabelLibrary: '',
+  promptLabelVideo: 'Click here to start recording a video'
 };
 
-const chooseVideo = () => {
-  if (isPlatform("capacitor")) {
+const isUploadModalOpen = ref<boolean>(false);
+
+const chooseVideo = (mode: string) => {
+  isUploadModalOpen.value = false;
+  if (mode === 'record') {
     CameraPro.getVideo(videoOptions)
       .then(async (video: Video) => {
         preloading.value = true;
@@ -271,5 +303,40 @@ const videoErrors = {
       font-size: 1em;
     }
   }
+}
+.upload-modal {
+  --height: auto;
+  align-items: flex-end;
+  --backdrop-opacity: 0.6;
+  --background: none;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  &::part(content) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border-radius: 20px 20px 0 0;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 24px calc(16px + var(--ion-safe-area-bottom));
+    max-height: calc(
+      100vh - 136px - var(--ion-safe-area-top) - var(--ion-safe-area-bottom)
+    );
+  }
+}
+.main-buttons {
+  border-radius: 8px;
+  background: #262626;
+
+  ion-button {
+    --color: #EFEFEF;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+}
+ion-button#cancel {
+  --color: #FFFFFF6a;
+  --background: #262626;
+  font: 500 16px/1 Lato;
+  margin-top: 16px;
 }
 </style>
