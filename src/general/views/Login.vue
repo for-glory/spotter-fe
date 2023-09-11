@@ -2,7 +2,9 @@
   <div :class="!isNative && 'content'">
     <div class="welcome-text" :class="isNative && 'ion-padding'">
       <ion-text class="hide-if-native show-if-web">Welcome to Spotter</ion-text>
-      <ion-text class="show-if-native hide-if-web">Log In or Sign Up <br />to Get Started</ion-text>
+      <ion-text class="show-if-native hide-if-web"
+        >Log In or Sign Up <br />to Get Started</ion-text
+      >
     </div>
     <login-form
       v-model:username="form.username"
@@ -17,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonText, IonImg} from '@ionic/vue';
+import { IonText, IonImg } from "@ionic/vue";
 import LoginForm from "@/general/components/forms/LoginForm.vue";
 import Socials from "@/general/components/Socials.vue";
 import { ref } from "vue";
@@ -26,7 +28,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
 import useVerified from "@/hooks/useVerified";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 import { setSettings } from "@/hooks/useSettings";
 
 let {
@@ -46,9 +48,9 @@ const form = ref<LoginMutationVariables>({
 
 onDone(({ data, errors }) => {
   if (!data && errors) {
-    throw new Error(String(errors[0].extensions.errors.message))
+    throw new Error(String(errors[0].extensions.errors.message));
   }
-  
+
   setAuthItems(data.login);
   if (data.login.user.role === "MANAGER") {
     setSettings([{ isRoleSelected: true }]);
@@ -61,7 +63,7 @@ onDone(({ data, errors }) => {
       JSON.stringify(data.login.user.email)
     );
   }
-  navigationAfterAuth(data.login.user)
+  navigationAfterAuth(data.login.user);
 });
 
 onError(() => {

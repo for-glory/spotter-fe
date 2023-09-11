@@ -7,7 +7,7 @@ import useStripeConnect from "@/hooks/useStripeConnect";
 import useVerified from "@/hooks/useVerified";
 import useFacilityId from "@/hooks/useFacilityId";
 import router from "../../router/index";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 const navigationAfterAuth = (user: User) => {
   if (!user.email?.length) {
@@ -17,13 +17,12 @@ const navigationAfterAuth = (user: User) => {
 
   const { verified } = useVerified();
 
+  console.log(verified);
+
   if (!verified) {
     router.push({ name: EntitiesEnum.VerifyEmail });
     return;
-  }
-
-  const { isRoleSelected } = useSettings();
-  if (!isRoleSelected) {
+  } else {
     router.push({ name: EntitiesEnum.SelectRole });
     return;
   }
@@ -41,9 +40,11 @@ const navigationAfterAuth = (user: User) => {
       router.push({ name: EntitiesEnum.Facilities });
       break;
     }
+
     case RoleEnum.Trainer: {
       const { isAddressSelected, isQuizzDone, isIdentityVerified } =
         useSettings();
+
       if (!isAddressSelected) {
         router.push({ name: EntitiesEnum.FreelancerTrainer });
         break;
@@ -68,6 +69,7 @@ const navigationAfterAuth = (user: User) => {
       router.push({ name: EntitiesEnum.TrainerSchedule });
       break;
     }
+
     case RoleEnum.Manager:
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
@@ -87,18 +89,19 @@ const navigationAfterAuth = (user: User) => {
 
       const { id: myFacilityId } = useFacilityId();
 
-      if(!myFacilityId) {
+      if (!myFacilityId) {
         router.push({ name: EntitiesEnum.SuccessStripeConnect });
         break;
       }
-      
-      if(Capacitor.isNativePlatform()) {
+
+      if (Capacitor.isNativePlatform()) {
         router.push({ name: EntitiesEnum.Overview });
         break;
       }
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
     }
+
     case RoleEnum.OrganizationOwner: {
       const { isFacilitySetUp } = useSettings();
       if (!isFacilitySetUp) {
