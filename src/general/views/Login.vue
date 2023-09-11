@@ -48,7 +48,7 @@ const form = ref<LoginMutationVariables>({
 
 onDone(({ data, errors }) => {
   if (!data && errors) {
-    throw new Error(String(errors[0].extensions.errors.message));
+    throw new Error("Invalid Username/Password.");
   }
 
   setAuthItems(data.login);
