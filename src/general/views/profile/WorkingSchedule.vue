@@ -20,9 +20,12 @@
               class="schedule__label"
               :class="{ 'native-app': role === RoleEnum.Trainer }"
             >
-              Today, {{ today }}</ion-label
+              Today, {{ today }} {{ selectedDay }}</ion-label
             >
-            <ion-segment class="job-day segment" v-model="selectedDay">
+            <ion-segment
+              class="job-day segment"
+              v-model="selectedDay"
+            >
               <ion-segment-button
                 :value="day.value"
                 v-for="day in scheduleDays"

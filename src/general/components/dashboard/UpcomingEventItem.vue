@@ -28,7 +28,8 @@
         </div>
       </div>
     </ion-card-content>
-    <div class="view-details">
+
+    <div v-show="isLast" class="view-details">
       <ion-button>View full info</ion-button>
     </div>
   </ion-card>
@@ -46,6 +47,7 @@ const props = withDefaults(
      start_date?: Date;
      media?: string;
     status?: string;
+    isLast?: number;
   }>(),
   { 
     status: "Upcoming",
