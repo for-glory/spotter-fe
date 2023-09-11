@@ -9,7 +9,7 @@
   >
     <ion-header
       class="header ion-no-border"
-      :class="{ 'header--fixed': headerFixed, 'top-24': isPlatform('ios') }"
+      :class="{ 'header--fixed': headerFixed }"
     >
       <slot name="header"></slot>
     </ion-header>

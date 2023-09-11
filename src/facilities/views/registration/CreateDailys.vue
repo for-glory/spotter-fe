@@ -162,15 +162,7 @@ const exerciseDescription = ref<string>("");
 const isConfirmedModalOpen = ref(false);
 
 onMounted(() => {
-  if (store.workoutTitle) {
-    titleValue.value = store.workoutTitle;
-  }
-  if (store.workoutPrice) {
-    priceValue.value = store.workoutPrice.toString();
-  }
-  if(store.exercises?.description) {
-    exerciseDescription.value = store.exercises?.description;
-  }
+  store.clearState
 });
 
 watch(
@@ -201,7 +193,7 @@ const videoOptions: VideoOptions = {
   highquality: true,
   source: CameraVideoSource.Prompt,
   promptLabelLibrary: "Albums",
-  promptLabelVideo: "Make a video",
+  promptLabelVideo: "Record a video",
 };
 const preloading = ref<boolean>(false);
 

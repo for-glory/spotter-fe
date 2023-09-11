@@ -1,124 +1,126 @@
 <template>
-  <base-layout hideNavigationMenu>
-    <template #content>
-      <div class="common-style relative">
-        <div class="fixed top-buttons w-100 d-flex justify-content-between">
-          <span @click.stop="onBack">
-            <ion-icon src="assets/icon/arrow-back.svg" class="color-white" />
-          </span>
-          <span @click.stop="showSettingsModal">
-            <ion-icon src="assets/icon/three-dot.svg" />
-          </span>
-        </div>
-        <swiper 
-          :slidesPerView="1"
-          :spaceBetween="16"
-          class="w-100 h-100"
-          style="max-height: 100vh"
-          @swiper="onSwiper"
-        >
-          <swiper-slide 
-            v-for="daily in dailysItems" 
-            :key="daily.id"
-            style="height: calc(100vh - 40px);"
-            class="d-flex align-items-center justify-content-center relative"
+  <div ref="swipeContainer">
+    <base-layout hideNavigationMenu>
+      <template #content>
+        <div class="common-style relative">
+          <div class="fixed top-buttons w-100 d-flex justify-content-between">
+            <span @click.stop="onBack">
+              <ion-icon src="assets/icon/arrow-back.svg" class="color-white" />
+            </span>
+            <span @click.stop="showSettingsModal">
+              <ion-icon src="assets/icon/three-dot.svg" />
+            </span>
+          </div>
+          <swiper 
+            :slidesPerView="1"
+            :spaceBetween="16"
+            class="w-100 h-100"
+            style="max-height: 100vh"
+            @swiper="onSwiper"
           >
-            <daily-video-player 
-              :path="daily.video"
-              :play="dailysItems[activeIndex].id === daily.id"
-            />
-            <div class="d-flex-col justify-content-end align-items-start details details__left">
-              <div class="workout-item__head">
-                <ion-label class="workout-item__title"> {{ daily.title }}</ion-label>
-              </div>
-              <ion-text class="workout-item__info">
-                <ion-icon icon="assets/icon/time.svg" />
-                <span>
-                  <template v-if="duration">
-                    {{ timeConvertToHuman(daily.duration) }}
+            <swiper-slide 
+              v-for="daily in dailysItems" 
+              :key="daily.id"
+              style="height: calc(100vh - 40px);"
+              class="d-flex align-items-center justify-content-center relative"
+            >
+              <daily-video-player 
+                :path="daily.video"
+                :play="dailysItems[activeIndex].id === daily.id"
+              />
+              <div class="d-flex-col justify-content-end align-items-start details details__left">
+                <div class="workout-item__head">
+                  <ion-label class="workout-item__title"> {{ daily.title }}</ion-label>
+                </div>
+                <ion-text class="workout-item__info">
+                  <ion-icon icon="assets/icon/time.svg" />
+                  <span>
+                    <template v-if="duration">
+                      {{ timeConvertToHuman(daily.duration) }}
+                      <ion-text color="light" class="workout-item__info-dot">
+                        &nbsp;&#183;&nbsp;
+                      </ion-text>
+                    </template>
+                    {{ type }}
                     <ion-text color="light" class="workout-item__info-dot">
                       &nbsp;&#183;&nbsp;
                     </ion-text>
-                  </template>
-                  {{ type }}
-                  <ion-text color="light" class="workout-item__info-dot">
-                    &nbsp;&#183;&nbsp;
-                  </ion-text>
-                  {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
-                </span>
-              </ion-text>
-            </div>
-            <div class="d-flex-col justify-content-end align-items-end gap-24 details details__right">
-              <div class="d-flex-col gap-8">
-                <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
-                  <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                  <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                    {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
+                  </span>
+                </ion-text>
+              </div>
+              <div class="d-flex-col justify-content-end align-items-end gap-24 details details__right">
+                <div class="d-flex-col gap-8">
+                  <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
+                    <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
+                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                  </div>
+                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
+                    <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
+                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.total_revenue ?? 0) }}</ion-text>
+                  </div>
+                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
+                    <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.recommended_count ?? 0) }}</ion-text>
+                  </div>
+                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
+                    <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                  </div>
                 </div>
-                <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
-                  <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                  <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.total_revenue ?? 0) }}</ion-text>
-                </div>
-                <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
-                  <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                  <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.recommended_count ?? 0) }}</ion-text>
-                </div>
-                <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
-                  <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                  <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                <div class="d-flex align-items-center gap-12 justify-content-end">
+                  <ion-icon 
+                    @click.stop="shareWorkout(daily)"
+                    icon="assets/icon/share.svg" class="w-24 h-24 color-gold" 
+                  />
                 </div>
               </div>
-              <div class="d-flex align-items-center gap-12 justify-content-end">
-                <ion-icon 
-                  @click.stop="shareWorkout(daily)"
-                  icon="assets/icon/share.svg" class="w-24 h-24 color-gold" 
-                />
-              </div>
-            </div>
-          </swiper-slide>
-        </swiper>
-      </div>
-    </template>
-  </base-layout>
-  <workout-modal ref="workoutModal" />
-  <ion-modal
-    ref="modal"
-    :is-open="isSettingModalOpen"
-    class="settings-modal"
-    @willDismiss="isSettingModalOpen = false"
-  >
-    <div class="main-buttons">
-      <ion-button
-        id="delete"
-        @click="handleDelete"
-        expand="block"
-      >
-        Delete Dailys
-      </ion-button>
-      <div class="split"/>
-      <ion-button
-        id="create"
-        @click="handleEdit"
-        expand="block"
-      >
-        Edit Dailys
-      </ion-button>
-    </div>
-    <ion-button
-      id="cancel"
-      @click="isSettingModalOpen = false"
-      expand="block"
+            </swiper-slide>
+          </swiper>
+        </div>
+      </template>
+    </base-layout>
+    <workout-modal ref="workoutModal" />
+    <ion-modal
+      ref="modal"
+      :is-open="isSettingModalOpen"
+      class="settings-modal"
+      @willDismiss="isSettingModalOpen = false"
     >
-      Cancel
-    </ion-button>
-  </ion-modal>
-  <confirmation
-    :is-visible="showConfirmationModal"
-    :title="'Do you want to delete' + (type === 'PASS' ? ' Gym pass' : ' drop-in?') + '?'"
-    :description="(type === 'PASS' ? 'Gym Pass' : 'Drop-in') + ' will be deleted'"
-    button-text="Delete"
-    @discard="onDelete"
-    @decline="hideModal"
-  />
+      <div class="main-buttons">
+        <ion-button
+          id="delete"
+          @click="handleDelete"
+          expand="block"
+        >
+          Delete Dailys
+        </ion-button>
+        <div class="split"/>
+        <ion-button
+          id="create"
+          @click="handleEdit"
+          expand="block"
+        >
+          Edit Dailys
+        </ion-button>
+      </div>
+      <ion-button
+        id="cancel"
+        @click="isSettingModalOpen = false"
+        expand="block"
+      >
+        Cancel
+      </ion-button>
+    </ion-modal>
+    <confirmation
+      :is-visible="showConfirmationModal"
+      :title="'Do you want to delete' + (type === 'PASS' ? ' Passes' : ' drop-in?') + '?'"
+      :description="(type === 'PASS' ? 'Passes' : 'Drop-in') + ' will be deleted'"
+      button-text="Delete"
+      @discard="onDelete"
+      @decline="hideModal"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -145,6 +147,7 @@ import { Share } from "@capacitor/share";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode, Swiper as Swipeer } from "swiper";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 // import dayjs from "dayjs";
 import WorkoutModal from "@/general/components/modals/workout/WorkoutModal.vue";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
@@ -167,6 +170,13 @@ const dailysItems = computed(() => dailysItemsStore.dailysData);
 const swiperRef = ref<Swipeer>();
 const activeIndex = ref<number>(0);
 
+const swipeContainer = ref<any>();
+let startX = 0;
+let startY = 0;
+let deltaX = 0;
+let deltaY = 0;
+let isSwiping = false;
+
 const {
   mutate: deleteDailys,
   loading,
@@ -188,7 +198,29 @@ onMounted(() => {
   let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
+
 });
+
+const handleTouchStart = (event: any) => {
+  startX = event.touches[0].clientX;
+  startY = event.touches[0].clientY;
+}
+
+const handleTouchMove = (event: any) => {
+  deltaX = event.touches[0].clientX - startX;
+  deltaY = event.touches[0].clientY - startY;
+  if (deltaY < -50 || deltaY > 50) {
+    isSwiping = true;
+  }
+}
+
+const handleTouchEnd = () => {
+  if (isSwiping) {
+    console.log('Swipe-up detected');
+    router.go(-1);
+  }
+
+}
 
 const onSwiper = (swiper: any) =>{
   swiperRef.value = swiper;
@@ -247,10 +279,10 @@ const showSettingsModal = () => {
   id.value = daily.id;
   store.setWorkout({
     title: daily.title,
-    type: daily.type.name,
+    type: daily.type.id,
     duration: daily.duration,
     bodyParts: daily.workoutMuscleTypesIds,
-    price: daily.price / 100,
+    price: getSumForPayment(daily.price, true),
     trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
     exercise: {
       videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,

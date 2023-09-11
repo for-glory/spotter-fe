@@ -74,11 +74,12 @@ loginDone(({ data, errors }) => {
 </script>
 
 <style scoped lang="scss">
-// .register__container {
-//   display: grid;
-//   grid-template-rows: auto 1fr;
-//   height: calc(100% - 337px - var(--ion-safe-area-top));
-// }
+.register__container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: calc(100% - 337px - var(--ion-safe-area-top));
+  padding: 24px;
+}
 .welcome-text {
   color: var(--gold);
   font-family: Lato;

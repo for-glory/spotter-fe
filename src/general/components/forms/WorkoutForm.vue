@@ -259,6 +259,7 @@ const videoSelected = async (
         videoSize: size,
         videoName: name,
       });
+      store.setValue("updates", { video: store.path, preview: store.workoutPath });
     })
     .catch((error) => {
       abort();

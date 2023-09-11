@@ -9,15 +9,16 @@
     <span
       @click="navigate(EntitiesEnum.DashboardPassList)"
       class="medium ion-padding-end clickable"
-      >Gym pass</span
     >
+      Passes
+    </span>
     <ion-icon
       class=""
       mode="ios"
       color="primary"
       :icon="chevronBackOutline"
     ></ion-icon>
-    <span class="current-crumb">Create gym pass</span>
+    <span class="current-crumb">Create passes</span>
   </ion-item>
 
   <div class="form-body">
@@ -137,7 +138,7 @@ const createNewFacilityItemPass = () => {
   })
     .then(async () => {
       const toast = await toastController.create({
-        message: "New Gym Pass was created successfully",
+        message: "New Pass was created successfully",
         duration: 2000,
         icon: "assets/icon/success.svg",
         cssClass: "success-toast",

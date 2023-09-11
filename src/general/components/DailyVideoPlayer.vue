@@ -6,7 +6,8 @@
     <video 
       :src="videoPath" 
       @click="handlePlay"
-      ref="videoRef" 
+      ref="videoRef"
+      autoplay
       style="max-width: 100%; width: 100%; max-height: 100%; height: 100%"
     />
   </ion-item>
@@ -32,7 +33,7 @@ const props = defineProps({
   },
   play: {
     type: Boolean,
-    default: false,
+    default: true,
   }
 });
 
@@ -43,6 +44,11 @@ const shouldPlay = computed(() => props.play);
 
 onMounted(() => {
   console.log('mounted: shouldPlay?: ', shouldPlay.value);
+  if(shouldPlay.value) {
+    videoRef.value.play();
+  } else {
+    videoRef.value.pause();
+  }
 });
 
 watch(() => shouldPlay.value,

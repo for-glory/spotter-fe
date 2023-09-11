@@ -52,13 +52,11 @@ const updateDailys = () => {
     id: route.params.id,
     input: {
       title: store.workoutTitle,
-      description: store.description,
+      description: store.exercises?.description,
       price: getSumForPayment(store.workoutPrice as number),
-      duration: Number(store.workoutDuration),
       level: store.workoutType.id,
-      video: store.path,
       body_parts: store.workoutMuscleTypesIds,
-      preview: store.workoutPath,
+      ...store.updates
     }
   })
     .then(async () => {
