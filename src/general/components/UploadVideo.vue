@@ -95,11 +95,10 @@ const emits = defineEmits<{
 const preloading = ref<boolean>(false);
 
 const videoOptions: VideoOptions = {
-  duration: 60,
   highquality: true,
-  source: CameraVideoSource.Prompt,
-  promptLabelLibrary: "Video library",
-  promptLabelVideo: "Record a video",
+  promptLabelHeader: "Upload a video", 
+  promptLabelLibrary: "",
+  promptLabelVideo: "Click here to record a video",
 };
 
 const chooseVideo = () => {
