@@ -2,7 +2,7 @@
   <base-dashboard-layout>
     <template  #right-section>
 			<dashboard-searchbar />
-      <div :class="role !== RoleEnum.Trainer ? 'content' : ''">
+      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100'">
         <router-view />
       </div>
     </template>

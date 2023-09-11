@@ -34,12 +34,8 @@
       </div>
     </div>
 	</div>
-  <div v-else class="web-profile">
-    <div class="d-flex align-items-center page-header">
-      <ion-icon src="assets/icon/arrow-back.svg" />
-      <ion-title class="banner__title">Settings</ion-title>
-    </div>
-    <edit :is-web-view="true"></edit>
+  <div v-else class="h-100">
+    <edit :is-web-view="true" class="h-100"></edit>
   </div>
   <confirmation
     :is-visible="showConfirmationModal"
@@ -182,16 +178,5 @@ profileDeleted(() => {
     font-weight: 700;
     line-height: normal;
   }
-}
-.page-header{
-  padding-left: 26px;
-  margin-bottom: 21px;
-  ion-icon {
-    color: var(--gray-500);
-    font-size: 20px;
-  }
-}
-.web-profile{
-  padding: 22px 64px;
 }
 </style>

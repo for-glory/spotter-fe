@@ -62,6 +62,7 @@ const search = debounce((event?: SearchbarCustomEvent) => {
 		width: 80%;
 		color: var(--gold);
 		&__control {
+			font-family: 'Poppins';
 			padding: 0;
 			width: 100%;
 			z-index: 15;
@@ -73,6 +74,7 @@ const search = debounce((event?: SearchbarCustomEvent) => {
 			--placeholder-font-weight: 300;
 			--placeholder-color: var(--gold);
 			--box-shadow: none;
+			font-size: 12px !important;
 	
 			&--with-back-btn {
 				width: calc(100% - 56px);

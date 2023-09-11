@@ -99,8 +99,10 @@
             />
           </div>
 
-          <div class="form-row">
-            <ion-label class="label font-yantramanav"> Set working schedule </ion-label>
+          <div class="form-row" @click="goToSchedule">
+            <ion-label class="label font-yantramanav">
+              Set working schedule
+            </ion-label>
             <choose-block title="working schedule" />
           </div>
 
@@ -183,7 +185,11 @@
                   class="edit__edit-icon"
                   v-if="subscriptionType !== SubscriptionsTierEnum.Basic"
                 />
-                <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/>
+                <ion-icon
+                  src="assets/icon/eye.svg"
+                  color="light"
+                  class="edit__edit-icon"
+                />
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
@@ -221,7 +227,7 @@
       </template>
     </base-layout>
   </ion-page>
-  <div class="web-trainer-edit">
+  <div class="web-trainer-edit" v-else>
     <ion-spinner
       v-if="loading || updateUserLoading"
       name="lines"
@@ -248,7 +254,7 @@
             :error-message="firstNameError"
             placeholder="First Name"
             name="firstName"
-            class="form-row__control form-row__input"
+            class="form-row__input-web"
             required
           />
         </div>
@@ -266,21 +272,21 @@
             :error-message="hourlyRateError"
             placeholder="Hourly Rate"
             name="hourlyRate"
-            class="form-row__input"
+            class="form-row__input-web"
             required
           />
         </div>
 
         <div class="form-row">
           <base-input
-            class="form-row__control form-row__input"
+            class="form-row__control form-row__input-web"
             value="EES Sport Certificate 2022"
             placeholder="Enter your certification name"
             label="Add certification"
             required
           />
           <ion-item class="form-row__control certificate-item">
-            <ion-label>
+            <ion-label class="font-lato">
               certificate.pdf (64,5 MB)
               <ion-text color="medium"></ion-text>
             </ion-label>
@@ -292,7 +298,7 @@
 
         <div class="form-row">
           <base-input
-            class="form-row__control form-row__input"
+            class="form-row__control form-row__input-web"
             value="Advance Trainer ISSA2022"
             placeholder="Enter your certification name"
             label="Attach waiver or liability form (Compulsory)"
@@ -310,7 +316,7 @@
         </div>
 
         <div class="form-row">
-          <ion-label class="label font-yantramanav">
+          <ion-label class="label font-yantramanav label-web">
             Choose the gym if you work in it
           </ion-label>
           <div class="form-row toggle-row">
@@ -328,11 +334,10 @@
           />
         </div>
 
-        <div class="form-row">
-          <ion-label class="label font-yantramanav"> Set working schedule </ion-label>
+        <div class="form-row" @click="goToSchedule">
+          <ion-label class="label font-yantramanav label-web"> Set working schedule </ion-label>
           <choose-block title="working schedule" />
         </div>
-
       </div>
 
       <div class="certificate-controls">
@@ -353,7 +358,13 @@
           Add waiver or liability
         </ion-button>
       </div>
-      <div class="holder-button">
+      <div class="holder-button-web d-flex align-items-center justify-content-end gap-16">
+        <ion-button
+          class="secondary font-yantramanav font-bold"
+          expand="block"
+        >
+          Cancel
+        </ion-button>
         <ion-button
           class="button--submit font-yantramanav font-bold"
           expand="block"
@@ -378,6 +389,7 @@ import {
   IonSpinner,
   actionSheetController,
   toastController,
+  modalController,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -411,6 +423,8 @@ import { UploadPdfFile } from "@/ts/types/user";
 import { Filesystem } from "@capacitor/filesystem";
 import useSubscription from "@/hooks/useSubscription";
 import { defineProps, withDefaults } from "vue";
+import { Capacitor } from "@capacitor/core";
+import WorkingSchedule from "./WorkingSchedule.vue";
 
 const store = useSelectedAddressStore();
 
@@ -467,6 +481,8 @@ const props = withDefaults(
     isWebView: false,
   }
 );
+
+const isNativePlatform = Capacitor.isNativePlatform();
 
 onBeforeRouteLeave((to, from, next) => {
   if (to.name === EntitiesEnum.ChooseGymAccount) {
@@ -527,6 +543,23 @@ const deletePhoto = (_index: number, id: string) => {
 
   if (isSavedMedia) {
     deleteMediaMutate({ id });
+  }
+};
+
+const goToSchedule = async () => {
+  if (isNativePlatform) {
+    router.push({
+      name: EntitiesEnum.ProfileWorkingSchedule,
+    });
+  } else {
+    const modal = await modalController.create({
+      component: WorkingSchedule,
+      cssClass: "web-working-schedule",
+      componentProps: {
+        isFromModal: true,
+      },
+    });
+    await modal.present();
   }
 };
 
@@ -777,7 +810,7 @@ const viewFile = (key: DocumentsTypeEnum, id: string) => {
     );
 
     if (savedCertificate) {
-      Browser.open({ url: savedCertificate.pathUrl })
+      Browser.open({ url: savedCertificate.pathUrl });
     }
   } else {
     weiverAndLabilities.value.filter((doc) => doc.id !== id);
@@ -787,7 +820,7 @@ const viewFile = (key: DocumentsTypeEnum, id: string) => {
     );
 
     if (savedWeiverAndLability) {
-      Browser.open({ url: savedWeiverAndLability.pathUrl })
+      Browser.open({ url: savedWeiverAndLability.pathUrl });
     }
   }
 };
@@ -959,11 +992,21 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
     }
   }
   .certificate-controls {
+    margin-top: 24px;
     ion-button {
       width: 327px;
       margin-left: auto;
       margin-right: auto;
     }
   }
+}
+.holder-button-web {
+  ion-button {
+    min-width: 90px;
+  }
+}
+.label-web {
+  font-family: "Lato";
+  color: var(--fitnesswhite);
 }
 </style>
