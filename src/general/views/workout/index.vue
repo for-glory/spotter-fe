@@ -58,7 +58,8 @@
             <dailys-summary :summaryData="summaryData"/>
             <dailys-performance 
               :performanceData="performanceData" 
-              :limit="performanceLimit" 
+              :limit="performanceLimit"
+              :totalRevenue="summaryData.totalRevenue"
               @change="setLimit"
             />
             <dailys-top :summaryData="summaryData"/>

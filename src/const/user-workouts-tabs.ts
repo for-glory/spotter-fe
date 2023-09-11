@@ -4,11 +4,13 @@ import { EntitiesEnum } from "./entities";
 export const TABS: TabItem[] = [
   {
     name: EntitiesEnum.UserWorkouts,
-    label: "Workouts",
+    labelActive: "assets/icon/workout.svg",
+    labelInactive: "assets/icon/workout.svg",
   },
   {
     name: EntitiesEnum.UserPurchasedWorkouts,
-    label: "Purchased",
+    labelActive: "assets/icon/workout.svg",
+    labelInactive: "assets/icon/workout.svg",
   },
 ];
 
