@@ -15,3 +15,4 @@ android/.idea
 .env
 dist/*
 .DS_Store
+.idea/*

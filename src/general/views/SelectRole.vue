@@ -5,7 +5,9 @@
         <div class="page-content">
           <div>
             <ion-title>Please select your role</ion-title>
-            <ion-text class="font-20 grey-text"> Tell us how you will be utilizing Spotter</ion-text>
+            <ion-text class="font-20 grey-text">
+              Tell us how you will be utilizing Spotter</ion-text
+            >
           </div>
           <ion-radio-group v-model="selectedRole">
             <ion-item
@@ -141,7 +143,7 @@ const forward = () => {
 
     case RoleEnum.Trainer:
       router.push({
-        name: EntitiesEnum.FreelancerTrainer,
+        name: EntitiesEnum.StartMembership,
       });
       break;
 
@@ -175,7 +177,6 @@ ion-title {
   font-weight: 500;
   line-height: 130%;
 }
-
 
 .radiobutton {
   font-size: 1.25rem;

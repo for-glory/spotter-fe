@@ -29,7 +29,13 @@ onMounted(() => {
   verifyEmail({ token: route.query.token });
 });
 
-onDone(({ data }) => {
+onDone(({ data, errors }) => {
+  if (!data && errors) {
+    router.push({
+      name: EntitiesEnum.Login,
+    });
+  }
+
   setAuthItems(data.verifyEmail);
   navigationAfterAuth(data.verifyEmail.user);
 });

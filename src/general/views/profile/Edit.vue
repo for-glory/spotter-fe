@@ -1,5 +1,5 @@
 <template>
-  <base-layout hide-navigation-menu>
+  <base-layout :hide-navigation-menu="role !== RoleEnum.Trainer">
     <template #header>
       <page-header
         back-btn
@@ -37,7 +37,7 @@
                 trainerType !== TrainerTypeEnum.WorkingInGym
               "
               :disabled="
-                menuItem.name === EntitiesEnum.ProfileOrderConfirmation &&
+                role !== RoleEnum.Trainer && menuItem.name === EntitiesEnum.ProfileOrderConfirmation &&
                 subscriptionType !== SubscriptionsTierEnum.Gold
               "
             />

@@ -1,5 +1,8 @@
 <template>
-  <div :class="{ 'address--large': large }" class="address">
+  <div
+    :class="{ 'address--large': large, 'address--trainer': isTrainer }"
+    class="address address--trainer"
+  >
     <ion-icon
       :class="{ 'address__icon--large': large }"
       class="address__icon"
@@ -16,9 +19,11 @@ import { defineProps, withDefaults } from "vue";
 withDefaults(
   defineProps<{
     large?: boolean;
+    isTrainer?: boolean;
   }>(),
   {
     large: false,
+    isTrainer: false,
   }
 );
 </script>
@@ -43,7 +48,7 @@ withDefaults(
     flex-shrink: 0;
     line-height: 1;
     font-size: 24px;
-    margin-right: -4px;
+    margin-right: 4px;
     vertical-align: top;
     color: var(--ion-color-primary);
 
@@ -51,5 +56,12 @@ withDefaults(
       font-size: 28px;
     }
   }
+}
+.address--trainer {
+  font-family: "Yantramanav";
+  color: var(--fitnesswhite);
+  // ion-icon {
+  //   color: var(--gold) !important;
+  // }
 }
 </style>
