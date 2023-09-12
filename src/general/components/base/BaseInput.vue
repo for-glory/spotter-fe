@@ -180,9 +180,16 @@ ion-note {
   ion-label {
     font-family: "Yantramanav";
   }
+  &-web {
+    ion-label {
+      font-family: "Lato";
+      color: var(--fitnesswhite);
+    }
+  }
   ion-item {
     ion-input {
       font-family: "Yantramanav";
+      font-weight: 300;
     }
   }
 }

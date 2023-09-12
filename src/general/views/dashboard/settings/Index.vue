@@ -2,6 +2,7 @@
 	<div
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
+    v-if="role !== RoleEnum.Trainer"
 	>
     <div class="banner">
       <ion-icon src="assets/icon/arrow-back.svg" />
@@ -33,6 +34,9 @@
       </div>
     </div>
 	</div>
+  <div v-else class="h-100">
+    <edit :is-web-view="true" class="h-100"></edit>
+  </div>
   <confirmation
     :is-visible="showConfirmationModal"
     title="Do you want delete your account?"
@@ -50,7 +54,7 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  DeleteProfileDocument,
+  DeleteProfileDocument, RoleEnum,
 } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { ref, onMounted, computed } from "vue";
@@ -65,13 +69,14 @@ import Profile from "@/general/views/dashboard/settings/Profile.vue";
 import Security from "@/general/views/dashboard/settings/Security.vue";
 import Services from "@/general/views/dashboard/settings/Services.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
+import Edit from "../../profile/Edit.vue";
 
 
 const filter = ref<string>('profile');
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
+const { role } = useRoles();
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
 const { id } = JSON.parse(localStorage.getItem("user") || "{}");
@@ -173,6 +178,5 @@ profileDeleted(() => {
     font-weight: 700;
     line-height: normal;
   }
-
 }
 </style>
