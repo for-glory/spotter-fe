@@ -112,15 +112,15 @@
 			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
-					<ion-text>Manage Gyms</ion-text>
+					<ion-text>Location</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGymManager)" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
-					<ion-text>Gym Managers</ion-text>
+					<ion-text>HR</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
 					<ion-icon src="assets/icon/Card.svg" />
-					<ion-text>Getting Paid</ion-text>
+					<ion-text>Accounting</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardSettings)" @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
 					<ion-icon src="assets/icon/Setting.svg" />
