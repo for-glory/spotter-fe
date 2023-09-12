@@ -16,10 +16,10 @@
           </ion-col>
           <ion-col size="6" class="col-gap">
             <ion-card>
-            <img class="cardImage" src="assets/unsplash_ZuIDLSz3XLg.png" />
+            <img class="cardImage" :src="eventData.media?.length ? eventData?.media[0] : null" />
             <ion-card-header class="d-flex">
               <div>
-                <ion-card-title v-html="eventData?.title || ''"> </ion-card-title>
+                <ion-card-title v-html="eventData?.title || ''"></ion-card-title>
                 <ion-card-subtitle v-html="eventData?.address || ''"></ion-card-subtitle>
               </div>
               <div class="stack d-flex">
