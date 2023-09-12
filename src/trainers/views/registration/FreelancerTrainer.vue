@@ -59,6 +59,7 @@ const navigate = (name: EntitiesEnum) => {
 .content {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   min-height: calc(100% - 337px - var(--ion-safe-area-top));
   padding: 32px 24px calc(32px + var(--ion-safe-area-bottom));
@@ -68,7 +69,7 @@ const navigate = (name: EntitiesEnum) => {
   font-size: 14px;
   font-weight: 300;
   line-height: 1.5;
-  max-width: 260px;
+  max-width: 100%;
   text-align: center;
   margin: 0 auto 32px;
 }
@@ -76,19 +77,41 @@ const navigate = (name: EntitiesEnum) => {
 .title {
   padding: 0;
   display: block;
-  font-size: 28px;
+  font-size: 36px;
   line-height: 1.3;
   font-weight: 400;
   margin-bottom: 20px;
+  max-width: 100%;
   font-family: var(--title-font-family);
 }
 
 .buttons {
-  .button {
-    margin: 0;
+  margin-top: 7.5rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  width: 30%;
 
-    &:not(:first-child) {
-      margin-top: 16px;
+  @media (max-width: 992px) {
+    width: 100%;
+  }
+
+  ion-button {
+    margin-bottom: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 48px;
+    --border-radius: 12px;
+    color: var(--dark-grey, #262626);
+    text-align: center;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 130%;
+
+    &:last-child {
+      color: var(--ion-color-white, #ffffff);
     }
   }
 }
