@@ -7,9 +7,7 @@
       </router-link>
       <div class="message-text">
         <div class="title">
-          <ion-text color="primary">
-            Payment succesfully completed! dd
-          </ion-text>
+          <ion-text color="primary"> Payment succesfully completed! </ion-text>
         </div>
         <div class="detail">
           <ion-text>
