@@ -45,7 +45,7 @@
         </template>
       </div>
     </div>
-    <div class="quizz-item__footer">
+    <div class="buttons">
       <ion-button
         expand="block"
         @click="saveValue()"
@@ -153,6 +153,7 @@ const multiselectChange = (data: string[]): void => {
 <style lang="scss" scoped>
 .quizz-item {
   display: flex;
+  align-items: center;
   min-height: 100%;
   flex-direction: column;
   justify-content: space-between;
@@ -169,7 +170,7 @@ const multiselectChange = (data: string[]): void => {
     display: block;
     font-size: 28px;
     line-height: 1.3;
-    max-width: 254px;
+    max-width: 100%;
     margin: 0 auto 20px;
     color: var(--ion-color-primary);
     font-family: var(--title-font-family);
@@ -181,15 +182,35 @@ const multiselectChange = (data: string[]): void => {
     font-size: 14px;
     line-height: 1.5;
     font-weight: 300;
-    max-width: 260px;
+    max-width: 400px;
     color: var(--gray-400);
   }
 
-  &__footer {
-    margin-top: 32px;
+  .buttons {
+    margin-top: 7.5rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+    width: 25%;
 
-    .button {
-      margin: 0;
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+
+    ion-button {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font: 700 18px/1 Yantramanav;
+      width: 100%;
+      height: 48px;
+      --border-radius: 12px;
+      color: var(--dark-grey, #262626);
+      text-align: center;
+      font-family: Lato;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 130%;
     }
   }
 }
