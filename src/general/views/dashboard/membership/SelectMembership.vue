@@ -1,106 +1,114 @@
 <template>
-  <div>
-    <ion-spinner v-if="plansLoading" name="lines" class="spinner" />
-    <div class="page-content" v-else>
-      <div class="plan">
-        <ion-title class="font-20" color="primary">
-          Start with 30 days free trial
-        </ion-title>
-        <ion-title class="font-40 white-text" color="primary">
-          Choose your plan
-        </ion-title>
-        <div class="plan-features">
-          <div class="plan-features__item">
-            <ion-icon src="assets/icon/check-mark.svg" color="primary" />
-            <ion-text>All Features</ion-text>
+  <div class="scrolled-page">
+    <ion-grid :fixed="true">
+      <div>
+        <ion-spinner v-if="plansLoading" name="lines" class="spinner" />
+        <div class="page-content" v-else>
+          <div class="plan">
+            <ion-title class="font-20" color="primary">
+              Start with 30 days free trial
+            </ion-title>
+            <ion-title class="font-40 white-text" color="primary">
+              Choose your plan
+            </ion-title>
+            <div class="plan-features">
+              <div class="plan-features__item">
+                <ion-icon src="assets/icon/check-mark.svg" color="primary" />
+                <ion-text>All Features</ion-text>
+              </div>
+              <div class="plan-features__item">
+                <ion-icon src="assets/icon/check-mark.svg" color="primary" />
+                <ion-text>Other Features</ion-text>
+              </div>
+              <div class="plan-features__item">
+                <ion-icon src="assets/icon/check-mark.svg" color="primary" />
+                <ion-text>Premium Access</ion-text>
+              </div>
+            </div>
           </div>
-          <div class="plan-features__item">
-            <ion-icon src="assets/icon/check-mark.svg" color="primary" />
-            <ion-text>Other Features</ion-text>
+          <div class="membership w-100">
+            <ion-radio-group class="plans">
+              <ion-item
+                lines="none"
+                class="radiobutton"
+                v-for="plan in plans"
+                :key="plan.id"
+                @click="selectMembership(plan.id)"
+                :class="{
+                  'item-radio-checked':
+                    plan.owned && dayjs(plan.expiryDate).isAfter(dayjs()),
+                }"
+                :disabled="
+                  plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())
+                "
+              >
+                <div class="radiobutton__block">
+                  <div class="radiobutton__icon">
+                    <ion-icon src="assets/icon/medal.svg" />
+                  </div>
+                  <div class="radiobutton__description">
+                    <ion-label class="radiobutton__label">
+                      {{ plan.title }}
+                    </ion-label>
+
+                    <ion-text class="radiobutton__cost"
+                      >${{
+                        plan?.prices.length ? plan?.prices[0].price / 100 : ""
+                      }}
+                      <span> /per location </span>
+                    </ion-text>
+                    <ul>
+                      <li
+                        class="accessibility"
+                        v-for="(benefit, idx) in plan?.benefits"
+                        :key="idx"
+                      >
+                        <div>
+                          <ion-icon src="assets/icon/accessibility.svg" />
+                        </div>
+                        <div>
+                          <ion-text>{{ benefit?.description }}</ion-text>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <ion-radio :value="plan.id" slot="end"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
           </div>
-          <div class="plan-features__item">
-            <ion-icon src="assets/icon/check-mark.svg" color="primary" />
-            <ion-text>Premium Access</ion-text>
+          <!-- <div class="checkbox">
+            <ion-checkbox
+              mode="ios"
+              :modelValue="isAgreed"
+              @update:modelValue="isAgreed = $event"
+            >
+            </ion-checkbox>
+            <ion-label>
+              I confirm that I read and accept
+              <a
+                href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
+                >Privacy Policy</a
+              >
+              and
+              <a
+                href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
+                >Terms of Use</a
+              >
+            </ion-label>
+          </div> -->
+          <div class="buttons">
+            <ion-button
+              expand="block"
+              @click="handleContinue"
+              :disabled="!isAgreed || isLoading || !selectedProductId"
+            >
+              Next
+            </ion-button>
           </div>
         </div>
       </div>
-      <div class="membership w-100">
-        <ion-radio-group class="plans">
-          <ion-item
-            lines="none"
-            class="radiobutton"
-            v-for="plan in plans"
-            :key="plan.id"
-            @click="selectMembership(plan.id)"
-            :class="{
-              'item-radio-checked':
-                plan.owned && dayjs(plan.expiryDate).isAfter(dayjs()),
-            }"
-            :disabled="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
-          >
-            <div class="radiobutton__block">
-              <div class="radiobutton__icon">
-                <ion-icon src="assets/icon/medal.svg" />
-              </div>
-              <div class="radiobutton__description">
-                <ion-label class="radiobutton__label">
-                  {{ plan.title }}
-                </ion-label>
-
-                <ion-text class="radiobutton__cost"
-                  >${{ plan?.prices.length ? plan?.prices[0].price / 100 : "" }}
-                  <span> /per location </span>
-                </ion-text>
-                <ul>
-                  <li
-                    class="accessibility"
-                    v-for="(benefit, idx) in plan?.benefits"
-                    :key="idx"
-                  >
-                    <div>
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                    </div>
-                    <div>
-                      <ion-text>{{ benefit?.description }}</ion-text>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <ion-radio :value="plan.id" slot="end"></ion-radio>
-          </ion-item>
-        </ion-radio-group>
-      </div>
-      <div class="checkbox">
-        <ion-checkbox
-          mode="ios"
-          :modelValue="isAgreed"
-          @update:modelValue="isAgreed = $event"
-        >
-        </ion-checkbox>
-        <ion-label>
-          I confirm that I read and accept
-          <a
-            href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
-            >Privacy Policy</a
-          >
-          and
-          <a
-            href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
-            >Terms of Use</a
-          >
-        </ion-label>
-      </div>
-      <div class="buttons">
-        <ion-button
-          expand="block"
-          @click="handleContinue"
-          :disabled="!isAgreed || isLoading || !selectedProductId"
-        >
-          Next
-        </ion-button>
-      </div>
-    </div>
+    </ion-grid>
   </div>
 </template>
 
@@ -153,7 +161,7 @@ const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
 const errorMessage = ref("");
 const products = ref<any[]>([]);
-const isAgreed = ref<boolean>(false);
+const isAgreed = ref<boolean>(true);
 const selectedProductId = ref<string | number | boolean | undefined>(undefined);
 
 const backendStripe = new BackendStripe(
