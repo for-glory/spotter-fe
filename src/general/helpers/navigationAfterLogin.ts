@@ -22,14 +22,19 @@ const navigationAfterAuth = (user: User) => {
   if (!verified) {
     router.push({ name: EntitiesEnum.VerifyEmail });
     return;
-  } else {
+  }
+
+  const { isRoleSelected } = useSettings();
+
+  console.log("isRoleSelected : " + isRoleSelected);
+
+  if (!isRoleSelected) {
     router.push({ name: EntitiesEnum.SelectRole });
     return;
   }
 
   const { role } = useRoles();
-  console.log('user role',role);
-  
+
   switch (role) {
     case RoleEnum.User: {
       const { isQuizzDone } = useSettings();
@@ -63,7 +68,7 @@ const navigationAfterAuth = (user: User) => {
 
       const { type: subscriptionType } = useSubscription();
       if (subscriptionType === SubscriptionsTierEnum.Basic) {
-        if(Capacitor.isNativePlatform()){
+        if (Capacitor.isNativePlatform()) {
           router.push({ name: EntitiesEnum.Profile });
           break;
         }
