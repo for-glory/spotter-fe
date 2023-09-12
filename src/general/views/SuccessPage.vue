@@ -7,7 +7,9 @@
       </router-link>
       <div class="message-text">
         <div class="title">
-          <ion-text color="primary"> Payment succesfully completed! </ion-text>
+          <ion-text color="primary">
+            Payment succesfully completed! dd
+          </ion-text>
         </div>
         <div class="detail">
           <ion-text>
@@ -112,7 +114,7 @@ goToStripeConnect((res) => {
     font-style: normal;
     font-weight: 400;
     line-height: 130%;
-    max-width: 316px;
+    max-width: 100%;
   }
 
   .detail {
@@ -148,14 +150,28 @@ goToStripeConnect((res) => {
 
 .buttons {
   margin-top: 7.5rem;
-  width: 70%;
-  ion-button {
-    font: 700 16px/1 Yantramanav;
+  margin-top: 1rem;
+  border-radius: 8px;
+  width: 30%;
+
+  @media (max-width: 992px) {
     width: 100%;
-    height: 40px;
+  }
+
+  ion-button {
+    margin-bottom: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 48px;
     --border-radius: 12px;
-    --padding-start: 26px;
-    --padding-end: 26px;
+    color: var(--dark-grey, #262626);
+    text-align: center;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 130%;
   }
 }
 .spinner {
