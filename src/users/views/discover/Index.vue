@@ -1,21 +1,19 @@
 <template>
-  <base-layout>
+  <base-layout :hide-navigation-menu="isSearchOnFocus">
     <template #header>
-      <page-header title="Dashboard">
-        <template #custom-btn>
-          <ion-button @click="onViewChat" class="header-btn">
-            <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
-          </ion-button>
-          <ion-button @click="onViewFavourites" class="header-btn">
-            <ion-icon src="assets/icon/heart.svg" />
-          </ion-button>
-        </template>
-      </page-header>
+      <search-form
+        :type="EntitiesEnum.FacilityDropins"
+        @handle-focus="isSearchOnFocus = true"
+        @handle-blur="isSearchOnFocus = false"
+      />
+
+      <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
+    
+
     <template #content>
       <div class="dashboard">
-        <div class="dashboards-items">
+        <!-- <div class="dashboards-items">
           <dashboard-item :items="activityItems">
             <template #title>
               <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
@@ -40,14 +38,14 @@
               </div>
             </template>
           </dashboard-item>
-        </div>
-        <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" />
+        </div> -->
+        <!-- <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" /> -->
         <div class="events__container">
-          <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
+          <!-- <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
             isFacilitiesLoading ||
             isTrainingsLoading ||
             isEventsLoading || isDropinsLoading
-            " />
+            " /> -->
           <template v-if="selectedEvents.length &&
             !isTrainingsLoading &&
             !isEventsLoading &&
@@ -64,7 +62,7 @@
           <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
             :text="`Currently you have no booked ${bookingName}`" />
         </div>
-        <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+
       </div>
     </template>
   </base-layout>
@@ -133,7 +131,7 @@ import {
   QueryMyFacilityItemPassesOrderByColumn,
   QueryMyEventsOrderByColumn,
   TrainingStatesEnum,
-  
+
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -145,10 +143,12 @@ import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
 
 const router = useRouter();
 const { id } = useId();
 const unreadMessages = ref<number[]>([]);
+
 
 const {
   result: eventsResult,
@@ -420,7 +420,7 @@ const bookingName = computed(() => {
 });
 
 const tabs: TabItem[] = [
-{
+  {
     name: EntitiesEnum.FacilityDropins,
     labelActive: "assets/icon/dropinsActive.png",
     labelInactive: "assets/icon/dropins.png",
@@ -430,7 +430,7 @@ const tabs: TabItem[] = [
     labelActive: "assets/icon/dumbbell.png",
     labelInactive: "assets/icon/dumbbellActive.png",
   },
-  
+
   {
     name: EntitiesEnum.Trainings,
     labelActive: "assets/icon/TrainerActive.png",
@@ -444,6 +444,8 @@ const tabs: TabItem[] = [
 ];
 
 const selectedDate = ref<Dayjs | null>(dayjs());
+
+const isSearchOnFocus = ref<boolean>(false);
 
 const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
@@ -499,7 +501,7 @@ const openEvent = (id: string | number) => {
   switch (activeTab.value) {
     case EntitiesEnum.Facilities:
       return router.push({
-        name: EntitiesEnum.BookedTraining,
+        name: EntitiesEnum.Facilities,
         params: { id },
         query: {
           type: EntitiesEnum.Facility,
@@ -517,7 +519,7 @@ const openEvent = (id: string | number) => {
 
     case EntitiesEnum.Events:
       return router.push({
-        name: EntitiesEnum.BookedTraining,
+        name: EntitiesEnum.Event,
         params: { id },
         query: {
           type: EntitiesEnum.Event,
@@ -618,19 +620,19 @@ const openEvent = (id: string | number) => {
   padding-right: 4px;
 }
 
-.page-tabs {
-  left: 0;
-  right: 0;
-  display: flex;
-  z-index: 21000;
-  position: fixed;
-  align-items: center;
-  pointer-events: none;
-  flex-direction: column;
-  justify-content: center;
-  bottom: calc(84px + var(--ion-safe-area-bottom));
-  --btn-min-width: 100px;
-}
+// .page-tabs {
+//   left: 0;
+//   right: 0;
+//   display: flex;
+//   z-index: 21000;
+//   // position: fixed;
+//   align-items: center;
+//   pointer-events: none;
+//   flex-direction: column;
+//   justify-content: center;
+//   bottom: calc(84px + var(--ion-safe-area-bottom));
+//   --btn-min-width: 100px;
+// }
 
 .empty-block {
   margin-top: 48px;
@@ -639,5 +641,21 @@ const openEvent = (id: string | number) => {
 .spinner {
   display: block;
   margin: 64px auto;
+}
+
+.page-tabs{
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    --color: var(--gray-400);
+    /* min-width: var(--btn-min-width); */
+    --padding-top: 9px;
+    --padding-bottom: 9px;
+    /* --padding-start: 59px; */
+    // --padding-end: 0;
+    --color-checked: var(--gray-700);
+    --indicator-color: var(--ion-color-primary);
+    padding: 12px 20px 12px 20px;
 }
 </style>

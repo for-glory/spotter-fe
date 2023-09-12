@@ -43,7 +43,7 @@
     </template>
   </base-layout>
 
-  <page-tabs
+  <page-tabs-new
     :tabs="TABS"
     class="page-tabs"
     :value="EntitiesEnum.UserWorkouts"
@@ -66,6 +66,7 @@ import {
 } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import SearchWorkoutsForm from "@/general/components/forms/SearchWorkoutsForm.vue";
 
 const router = useRouter();

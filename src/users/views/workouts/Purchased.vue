@@ -48,7 +48,7 @@
     </template>
   </base-layout>
 
-  <page-tabs
+  <page-tabs-new
     :tabs="TABS"
     class="page-tabs"
     :value="EntitiesEnum.UserPurchasedWorkouts"
@@ -64,6 +64,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { MyWorkoutsDocument } from "@/generated/graphql";
 import { computed, onMounted, ref } from "vue";
 import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import { TABS } from "@/const/user-workouts-tabs";
 import BaseEmptyPage from "@/general/components/base/BaseEmptyPage.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
