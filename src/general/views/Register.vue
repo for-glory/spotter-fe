@@ -1,7 +1,7 @@
 <template>
   <div class="register__container">
     <div class="welcome-text">
-      <ion-text>Sign up and Create Your Profile</ion-text>
+    <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />  <ion-text> Sign up and Create Your Profile</ion-text>
     </div>
     <registration-form
       :is-loading="loading"
@@ -33,6 +33,10 @@ const {
 } = useMutation(RegisterDocument);
 
 let { mutate: login, onDone: loginDone, onError } = useMutation(LoginDocument);
+
+const onBack = () => {
+  router.go(-1);
+};
 
 const handleSubmit = async (
   form: Pick<
@@ -73,6 +77,8 @@ loginDone(({ data, errors }) => {
 });
 </script>
 
+
+
 <style scoped lang="scss">
 .register__container {
   display: grid;
@@ -82,10 +88,12 @@ loginDone(({ data, errors }) => {
 }
 .welcome-text {
   color: var(--gold);
+  margin-top:12%;
   font-family: Lato;
-  font-size: 40px;
+  font-size: 25px;
   font-style: normal;
   font-weight: 500;
   line-height: 130%;
 }
+
 </style>
