@@ -29,7 +29,7 @@
                 @click="navigate(EntitiesEnum.DashboardPassCreate)"
                 class="ion-margin-end"
                 fill="solid">
-                Create Gym pass
+                Create Passes
               </ion-button>
             </div>
           </div>

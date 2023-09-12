@@ -57,6 +57,11 @@ const inputValue = computed({
 <style scoped lang="scss">
 .base-toggle-container {
   position: relative;
+  &.toggle-wrapper {
+    .toggle-container {
+      padding-right: 4px;
+    }
+  }
 }
 
 ion-toggle {

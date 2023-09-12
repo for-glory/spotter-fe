@@ -4,6 +4,7 @@
     :class="{
       'header--transparent': transparent,
       'header--buttons-transparent': buttonsTransparent,
+      'ios-app-top': isPlatform('ios')
     }"
   >
     <ion-buttons slot="start">
@@ -27,7 +28,7 @@
         Skip
       </ion-button>
     </ion-buttons>
-    <ion-title class="header__title">{{ title }}</ion-title>
+    <ion-title :class="titleClass">{{ title }}</ion-title>
   </ion-toolbar>
 </template>
 
@@ -44,6 +45,7 @@ import {
   IonButton,
   IonIcon,
   IonTitle,
+  isPlatform
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
 
@@ -55,6 +57,7 @@ withDefaults(
     skipBtn?: boolean;
     closeBtn?: boolean;
     title?: string | null;
+    titleClass?: string;
   }>(),
   {
     transparent: false,
@@ -63,6 +66,7 @@ withDefaults(
     skipBtn: false,
     closeBtn: false,
     title: null,
+    titleClass: "header__title",
   }
 );
 
@@ -108,6 +112,13 @@ const emits = defineEmits<{
     line-height: 1.5;
     font-weight: 500;
     text-align: center;
+  }
+  &_trainer__title {
+    font: 500 20px Lato;
+    text-align: center;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--gold);
   }
 }
 

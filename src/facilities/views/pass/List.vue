@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym pass">
+      <page-header back-btn @back="onBack" title="Passes">
         <template #custom-btn>
           <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
@@ -45,10 +45,10 @@
       />
       <div v-else class="main-content">
         <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <ion-button @click="handleCreate">Create Gym pass</ion-button>
+          <ion-button @click="handleCreate">Create Passes</ion-button>
           <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
-            <ion-text class="status">Gym pass Empty</ion-text>
+            <ion-text class="status">Passes Empty</ion-text>
             <ion-text class="description">No registered member yet</ion-text>
           </div>
         </div>
@@ -84,7 +84,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-button @click="handleView" id="gym-pass">View Gym pass</ion-button>
+          <ion-button @click="handleView" id="gym-pass">View Passes</ion-button>
         </div>
       </div>
     </template>

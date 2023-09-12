@@ -179,7 +179,7 @@ checkFacilityPass((facilityPassResult) => {
   const facilityItemPass = facilityPassResult.data.facilityItemPass;
 
   if (!facilityItemPass?.is_active_pass)
-    return showToast("This GYM pass is not active", "warning-toast");
+    return showToast("This Pass is not active", "warning-toast");
 
   const { id: myId } = useId();
   const checkinByPassVariables: CheckinByPassMutationVariables = {

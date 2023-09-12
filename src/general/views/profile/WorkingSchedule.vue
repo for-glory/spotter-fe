@@ -1,106 +1,148 @@
 <template>
-  <ion-page ref="page">
+  <ion-page
+    ref="page"
+    :class="{ 'web-schedule': role === RoleEnum.Trainer && isFromModal }"
+  >
     <base-layout hide-navigation-menu>
       <template #header>
-        <page-header back-btn title="Working schedule" @back="onBack" />
+        <page-header
+          :back-btn="isFromModal && role === RoleEnum.Trainer ? false : true"
+          :close-btn="isFromModal && role === RoleEnum.Trainer && isWindowSmall"
+          title="Working schedule"
+          @back="onBack"
+        />
       </template>
       <template #content>
         <ion-spinner v-if="loading || updateUserLoading" class="spinner" />
         <template v-else>
-          <div class="ion-padding-horizontal">
-            <ion-label class="schedule__label"> Today, {{ today }}</ion-label>
-            <ion-segment class="job-day" v-model="selectedDay">
+          <div class="ion-padding-horizontal pb-16">
+            <ion-label
+              class="schedule__label"
+              :class="{ 'native-app': role === RoleEnum.Trainer }"
+            >
+              Today, {{ today }} {{ selectedDay }}</ion-label
+            >
+            <ion-segment
+              class="job-day segment"
+              v-model="selectedDay"
+            >
               <ion-segment-button
                 :value="day.value"
                 v-for="day in scheduleDays"
                 :key="day.value"
-                :class="{ 'active-day': isWorkingDay[day.value] }"
+                :class="{
+                  'active-day': isWorkingDay[day.value],
+                  'trainer-active-day':
+                    role === RoleEnum.Trainer && isWorkingDay[day.value],
+                }"
               >
-                <ion-label>{{ day.label }} </ion-label>
+                <ion-label :class="{ 'native-app': role === RoleEnum.Trainer }"
+                  >{{ day.label }}
+                </ion-label>
               </ion-segment-button>
             </ion-segment>
           </div>
           <div class="schedule">
-            <ion-label class="schedule__label">
-              Are you working on this day?
-            </ion-label>
-            <base-toggle
-              class="schedule__toggle"
-              content="Working day"
-              :value="isWorkingDay[selectedDay]"
-              @change="onIsWorkingChecked"
-            />
-            <ion-label class="schedule__label"> Set your work hours</ion-label>
-            <div
-              v-for="(_, idx) in workingHoursRange[selectedDay]"
-              :key="idx"
-              class="date-range"
-            >
-              <wheel-picker
-                :options="startTimeOptions"
-                :name="`startTime-${selectedDay}-${idx}`"
-                :values="[
-                  getTimeWheelPickerValue(idx, 'startTime')?.hour,
-                  getTimeWheelPickerValue(idx, 'startTime')?.minutes,
-                  getTimeWheelPickerValue(idx, 'startTime')?.text,
-                ]"
-              >
-                <template #button>
-                  <choose-block
-                    title="From"
-                    :value="getTimeValue(Number(idx), 'startTime')"
-                    @handle-click="
-                      openPicker(
-                        `startTime-${selectedDay}-${idx}`,
-                        getTimeValue(idx, 'startTime'),
-                        startTimeOptions
-                      )
-                    "
-                    class="workout-type"
-                    :disabled="!isWorkingDay[selectedDay]"
-                  />
-                </template>
-              </wheel-picker>
-              <wheel-picker
-                :options="endTimeOptions"
-                :name="`endTime-${selectedDay}-${idx}`"
-                :values="[
-                  getTimeWheelPickerValue(idx, 'endTime')?.hour,
-                  getTimeWheelPickerValue(idx, 'endTime')?.minutes,
-                  getTimeWheelPickerValue(idx, 'endTime')?.text,
-                ]"
-              >
-                <template #button>
-                  <choose-block
-                    title="To"
-                    :value="getTimeValue(idx, 'endTime')"
-                    @handle-click="
-                      openPicker(
-                        `endTime-${selectedDay}-${idx}`,
-                        getTimeValue(idx, 'endTime'),
-                        endTimeOptions
-                      )
-                    "
-                    class="workout-type"
-                    :disabled="!isWorkingDay[selectedDay]"
-                  />
-                </template>
-              </wheel-picker>
+            <div class="grid-wrapper">
+              <div>
+                <ion-label
+                  class="schedule__label"
+                  :class="{ 'native-app': role === RoleEnum.Trainer }"
+                >
+                  Are you working on this day?
+                </ion-label>
+                <base-toggle
+                  class="schedule__toggle"
+                  :class="{ 'native-app': role === RoleEnum.Trainer }"
+                  content="Working day"
+                  :value="isWorkingDay[selectedDay]"
+                  @change="onIsWorkingChecked"
+                />
+              </div>
+              <div>
+                <ion-label
+                  class="schedule__label"
+                  :class="{ 'native-app': role === RoleEnum.Trainer }"
+                >
+                  Set your work hours</ion-label
+                >
+                <div
+                  v-for="(_, idx) in workingHoursRange[selectedDay]"
+                  :key="idx"
+                  class="date-range"
+                >
+                  <wheel-picker
+                    :options="startTimeOptions"
+                    :name="`startTime-${selectedDay}-${idx}`"
+                    :values="[
+                      getTimeWheelPickerValue(idx, 'startTime')?.hour,
+                      getTimeWheelPickerValue(idx, 'startTime')?.minutes,
+                      getTimeWheelPickerValue(idx, 'startTime')?.text,
+                    ]"
+                  >
+                    <template #button>
+                      <choose-block
+                        title="From"
+                        :value="getTimeValue(Number(idx), 'startTime')"
+                        @handle-click="
+                          openPicker(
+                            `startTime-${selectedDay}-${idx}`,
+                            getTimeValue(idx, 'startTime'),
+                            startTimeOptions
+                          )
+                        "
+                        class="workout-type"
+                        :disabled="!isWorkingDay[selectedDay]"
+                      />
+                    </template>
+                  </wheel-picker>
+                  <wheel-picker
+                    :options="endTimeOptions"
+                    :name="`endTime-${selectedDay}-${idx}`"
+                    :values="[
+                      getTimeWheelPickerValue(idx, 'endTime')?.hour,
+                      getTimeWheelPickerValue(idx, 'endTime')?.minutes,
+                      getTimeWheelPickerValue(idx, 'endTime')?.text,
+                    ]"
+                  >
+                    <template #button>
+                      <choose-block
+                        title="To"
+                        :value="getTimeValue(idx, 'endTime')"
+                        @handle-click="
+                          openPicker(
+                            `endTime-${selectedDay}-${idx}`,
+                            getTimeValue(idx, 'endTime'),
+                            endTimeOptions
+                          )
+                        "
+                        class="workout-type"
+                        :disabled="!isWorkingDay[selectedDay]"
+                      />
+                    </template>
+                  </wheel-picker>
+                </div>
+              </div>
             </div>
-            <ion-button
-              class="secondary"
-              expand="block"
-              @click="resetWorkingHour"
-            >
-              Reset set hours
-            </ion-button>
-            <ion-button
-              class="secondary"
-              expand="block"
-              @click="addWorkingHours"
-            >
-              Add additional hours
-            </ion-button>
+
+            <div class="grid-wrapper">
+              <ion-button
+                class="secondary"
+                :class="{ 'trainer-secondary-btn': role === RoleEnum.Trainer }"
+                expand="block"
+                @click="resetWorkingHour"
+              >
+                Reset set hours
+              </ion-button>
+              <ion-button
+                class="secondary"
+                :class="{ 'trainer-secondary-btn': role === RoleEnum.Trainer }"
+                expand="block"
+                @click="addWorkingHours"
+              >
+                Add additional hours
+              </ion-button>
+            </div>
           </div>
         </template>
       </template>
@@ -127,6 +169,7 @@ import {
   PickerColumnOption,
   IonSpinner,
   toastController,
+  modalController,
 } from "@ionic/vue";
 import { scheduleDays } from "@/const/schedule-days";
 import dayjs from "dayjs";
@@ -137,17 +180,43 @@ import { pickerController } from "@ionic/vue";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import debounce from "lodash/debounce";
 import { HOURS_RANGE, IS_WORKING_DAYS, WEEKDAYS } from "@/const/schedule";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 dayjs.extend(customParseFormat);
 
-const router = useRouter();
+const props = withDefaults(
+  defineProps<{
+    isFromModal?: boolean;
+  }>(),
+  {
+    isFromModal: false,
+  }
+);
 
+const router = useRouter();
+const { role } = useRoles();
+const isWindowSmall = ref(false);
 const onBack = () => {
-  router.go(-1);
+  if (isWindowSmall.value) {
+    modalController.dismiss();
+  } else {
+    router.go(-1);
+  }
 };
+
+window.addEventListener("resize", (e) => {
+  if (window.innerWidth <= 700) {
+    isWindowSmall.value = true;
+  } else {
+    isWindowSmall.value = false;
+  }
+});
 
 const page = ref<typeof IonPage | null>(null);
 const today = ref(dayjs(new Date()).format("DD MMMM YYYY"));
+console.log(today);
 const selectedDay = ref(dayjs().format("dddd").toLowerCase());
+
 const workingHoursRange = reactive<{
   [index: string]: { [index: string | number]: string }[];
 }>(HOURS_RANGE);
@@ -272,11 +341,19 @@ const openPicker = async (
       };
     }
   );
+  let pickerClass: string;
+  if (role === RoleEnum.Trainer) {
+    pickerClass = "trainer-picker";
+    if (props.isFromModal) {
+      pickerClass = "trainer-picker web-trainer-picker";
+    }
+  }
 
   const picker = await pickerController.create({
     buttons: options.buttons,
     mode: "ios",
     columns,
+    cssClass: pickerClass,
   });
 
   curIndex.value = name.split("-")[2];
@@ -328,7 +405,7 @@ const startTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "From",
       role: "cancel",
     },
     {
@@ -369,7 +446,7 @@ const endTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "To",
       role: "cancel",
     },
     {
@@ -473,12 +550,20 @@ const resetWorkingHour = () => {
     font-size: 14px;
     font-weight: 400;
   }
+  .trainer-secondary-btn {
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    --color: var(--fitnesswhite);
+    font-family: Yantramanav;
+    font-weight: 700;
+  }
 }
 
 .job-day {
   justify-content: space-between;
 
   ion-segment-button {
+    overflow: hidden;
     flex: 0 0 38px;
     min-width: 38px;
     width: 38px;
@@ -499,6 +584,9 @@ const resetWorkingHour = () => {
     &.active-day {
       --background: var(--ion-color-white);
       --color: var(--gray-700);
+    }
+    &.trainer-active-day {
+      --background: var(--fitnesswhite);
     }
   }
 }
@@ -547,5 +635,47 @@ const resetWorkingHour = () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.web-schedule {
+  ion-segment {
+    gap: 32px;
+    justify-content: flex-start;
+  }
+
+  .grid-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    ion-button {
+      margin: 0;
+    }
+  }
+
+  .pb-16 {
+    padding-bottom: 16px;
+  }
+
+  .schedule {
+    padding: 20px 16px;
+  }
+
+  .date-range {
+    margin-bottom: 27px;
+  }
+
+  @media (max-width: 600px) {
+    ion-segment {
+      gap: 0;
+      justify-content: space-between;
+    }
+    .grid-wrapper {
+      display: block;
+      ion-button {
+        margin-bottom: 16px;
+      }
+    }
+  }
 }
 </style>

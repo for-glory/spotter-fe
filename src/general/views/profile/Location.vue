@@ -7,7 +7,7 @@
           isFreelancer ||
           role !== RoleEnum.Manager ||
           role !== RoleEnum.FacilityOwner ||
-          role !== RoleEnum.OrganizationOwner
+          role !== RoleEnum.OrganizationOwner || role !== RoleEnum.Trainer
             ? 'Location'
             : 'Choose my location'
         "

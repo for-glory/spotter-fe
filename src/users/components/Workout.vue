@@ -9,9 +9,9 @@
     </div>
 
     <div class="d-flex justify-content-between workout-item__inner">
-      <div class="d-flex-col justify-content-between align-items-start">
+      <div class="d-flex-col align-items-start" :class="hidden ?  'justify-content-end' : 'justify-content-between'">
         <ion-button
-          v-if="share && !hidden"
+          v-show="share && !hidden"
           class="workout-item__btn"
           fill="clear"
           color="light"

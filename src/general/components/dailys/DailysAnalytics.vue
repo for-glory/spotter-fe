@@ -8,7 +8,7 @@
           Purchases
         </ion-text>
         <div class="d-flex-col gap-4">
-          <ion-text class="font-medium font-16">
+          <ion-text class="font-medium font-16" @click="watchDaily">
             {{ daily?.title }}
           </ion-text>
           <ion-text class="font-light font-14 color-gray-400 d-flex align-items-center">
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { defineProps, computed, defineEmits } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
 
@@ -37,6 +37,13 @@ defineProps<{
   daily: any;
 }>(); 
 
+const emits = defineEmits<{
+  (e: "watch-daily"): void;
+}>();
+
+const watchDaily = () => {
+  emits('watch-daily');
+}
 
 </script>
 

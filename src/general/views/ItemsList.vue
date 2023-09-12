@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" :title="type === 'PASS' ? 'Gym pass' : 'Drop-ins'">
+      <page-header back-btn @back="onBack" :title="type === 'PASS' ? 'Passes' : 'Drop-ins'">
         <template #custom-btn>
           <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/plus.svg" />
@@ -46,7 +46,7 @@
         @click="handleDelete"
         expand="block"
       >
-        Delete {{type === 'PASS' ? 'Gym pass' : 'Drop-in'}}
+        Delete {{type === 'PASS' ? 'Passes' : 'Drop-in'}}
       </ion-button>
       <div class="split"/>
       <ion-button
@@ -54,7 +54,7 @@
         @click="handleEdit"
         expand="block"
       >
-        Edit {{type === 'PASS' ? 'Gym pass' : 'Drop-in'}}
+        Edit {{type === 'PASS' ? 'Passes' : 'Drop-in'}}
       </ion-button>
     </div>
     <ion-button
@@ -67,8 +67,8 @@
   </ion-modal>
   <confirmation
     :is-visible="showConfirmationModal"
-    :title="'Do you want to delete' + (type === 'PASS' ? ' Gym pass' : ' drop-in?') + '?'"
-    :description="(type === 'PASS' ? 'Gym Pass' : 'Drop-in') + ' will be deleted'"
+    :title="'Do you want to delete' + (type === 'PASS' ? ' Passes' : ' drop-in?') + '?'"
+    :description="(type === 'PASS' ? 'Passes' : 'Drop-in') + ' will be deleted'"
     button-text="Delete"
     @discard="onDelete"
     @decline="hideModal"

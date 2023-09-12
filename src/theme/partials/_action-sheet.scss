@@ -43,7 +43,7 @@
     padding-left: 8px !important;
     padding-right: 8px !important;
   }
-  
+
   .picker-toolbar-button {
     .picker-button {
       margin-right: -8px;
@@ -54,6 +54,62 @@
         margin-right: 0;
         margin-left: -8px;
       }
+    }
+  }
+}
+
+.trainer-picker {
+  .picker-wrapper {
+    height: 300px;
+
+    .picker-toolbar {
+      contain: initial;
+    }
+
+    .picker-toolbar div:nth-child(2) {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      width: calc(100% - 15%);
+      text-align: center;
+
+      button {
+        background: var(--gold);
+        color: var(--main-color);
+        text-align: center;
+        font-family: Yantramanav;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        width: 100%;
+        border-radius: 8px;
+      }
+    }
+  }
+}
+
+.web-trainer-picker {
+  --ion-backdrop-opacity: 0.4;
+
+  .picker-wrapper {
+    width: 375px;
+    height: 345px;
+
+    .picker-toolbar div:nth-child(2) {
+      bottom: 35px;
+    }
+  }
+}
+
+.web-working-schedule {
+  align-items: flex-end;
+
+  &::part(content) {
+    --width: 702px;
+    --height: 438px;
+
+    @media (max-width:700px) {
+      --height: 100%;
     }
   }
 }

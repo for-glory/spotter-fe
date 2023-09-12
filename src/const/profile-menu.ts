@@ -30,20 +30,14 @@ export const profileMenu: ProfileMenu = {
   ],
   TRAINER: [
     {
-      name: EntitiesEnum.ProfileScan,
-      label: "Scan code",
-      icon: "scan",
-    },
-    {
       name: EntitiesEnum.ProfileEdit,
       label: "Edit profile",
       icon: "edit",
     },
     {
-      name: EntitiesEnum.ProfileWorkingSchedule,
-      label: "Working schedule",
-      icon: "working",
-      isTrusted: true,
+      name: "View Profile",
+      label: "View profile",
+      icon: 'profile'
     },
     {
       name: EntitiesEnum.ProfileMembership,
@@ -52,17 +46,34 @@ export const profileMenu: ProfileMenu = {
       isTrusted: true,
     },
     {
-      name: EntitiesEnum.ProfilePaymentMethods,
-      label: "Payment methods",
-      icon: "payment",
-      isTrusted: true,
+      name: EntitiesEnum.ProfileScan,
+      label: "Scan",
+      icon: "scan",
     },
+    // {
+    //   name: EntitiesEnum.ProfileWorkingSchedule,
+    //   label: "Working schedule",
+    //   icon: "working",
+    //   isTrusted: true,
+    // },
     {
-      name: EntitiesEnum.ProfileBookingHistory,
-      label: "Booking history",
-      icon: "history",
+      name: EntitiesEnum.ProfilePaymentMethods,
+      label: "Getting Paid",
+      icon: "paid",
       isTrusted: true,
     },
+    // {
+    //   name: EntitiesEnum.ProfilePaymentMethods,
+    //   label: "Payment methods",
+    //   icon: "payment",
+    //   isTrusted: true,
+    // },
+    // {
+    //   name: EntitiesEnum.ProfileBookingHistory,
+    //   label: "Booking history",
+    //   icon: "history",
+    //   isTrusted: true,
+    // },
   ],
   FACILITY: [
     {

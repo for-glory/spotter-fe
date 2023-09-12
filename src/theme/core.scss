@@ -119,6 +119,10 @@ a {
   line-height: normal;
 }
 
+.font-yantramanav {
+  font-family: "Yantramanav";
+}
+
 .font-20 {
   font-size: 1.25rem;
   font-style: normal;
@@ -390,4 +394,8 @@ html:not(.plt-capacitor) .show-if-web {
 
 .native-app {
   font-family: Yantramanav !important;
+}
+
+.ios-app-top {
+  padding-top: 64px !important;
 }

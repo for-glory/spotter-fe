@@ -176,4 +176,21 @@ ion-note {
 .v-leave-to {
   opacity: 0;
 }
+.form-row__input {
+  ion-label {
+    font-family: "Yantramanav";
+  }
+  &-web {
+    ion-label {
+      font-family: "Lato";
+      color: var(--fitnesswhite);
+    }
+  }
+  ion-item {
+    ion-input {
+      font-family: "Yantramanav";
+      font-weight: 300;
+    }
+  }
+}
 </style>

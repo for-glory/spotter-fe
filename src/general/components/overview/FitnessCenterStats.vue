@@ -8,7 +8,7 @@
             <summary-item title="Total" keyText="Drop-ins" :value="dropinCount" />
           </td>
           <td>
-            <summary-item title="Total" keyText="Gym pass" :value="passCount" />
+            <summary-item title="Total" keyText="Passes" :value="passCount" />
           </td>
         </tr>
         <tr>

@@ -22,10 +22,10 @@
 					</ion-avatar>
 					<div>
             <div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 8px">
-              <ion-title class="name">{{ facilityName }} </ion-title>
-              <ion-icon size="12px" src="assets/icon/arrow-down-light.svg"></ion-icon>
+              <ion-title class="name">{{ facilityName || 'Tamra Dae' }} </ion-title>
+              <ion-icon size="12px" src="assets/icon/arrow-down-light.svg" v-if="role !== RoleEnum.Trainer"></ion-icon>
             </div>
-						<ion-text class="address">{{ facilityAddress }}</ion-text>
+						<ion-text class="address" >{{ facilityAddress || 'Arizona, Phoenix, USA' }}</ion-text>
 					</div>
 				</div>
 				<div class="facility-list__dropdown" v-if="facilities.length > 1 && isOpenFacilityDropdown">
@@ -43,7 +43,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="main-menu">
+			<div class="main-menu" v-if="role !== RoleEnum.Trainer">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
@@ -54,7 +54,7 @@
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardPassList)">
 					<ion-icon src="assets/icon/gym-user-icon.svg" />
-					<ion-text>Gym pass</ion-text>
+					<ion-text>Passes</ion-text>
 				</div>
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardDropinList)">
 					<ion-icon src="assets/icon/dropin.svg" />
@@ -71,6 +71,42 @@
 				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
 					<ion-text>Message</ion-text>
+				</div>
+			</div>
+			<div class="main-menu trainer-menu" v-if="role === RoleEnum.Trainer">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardOverview)" @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)">
+					<ion-icon src="assets/icon/dashboard.svg" />
+					<ion-text>Overview</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardEvent)" @click="onHandleClickMenu(EntitiesEnum.DashboardCalendar)">
+					<ion-icon src="assets/icon/calendar.svg" />
+					<ion-text>Bookings</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)" @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)">
+					<ion-icon src="assets/icon/daily.svg" />
+					<ion-text>Dailys</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardEvent)" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent)">
+					<ion-icon src="assets/icon/events.svg" />
+					<ion-text>Events</ion-text>
+				</div>
+				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
+					<ion-icon src="assets/icon/email.svg" />
+					<ion-text>Message</ion-text>
+				</div>
+			</div>
+			<div class="setting-menu trainer-setting-menu" v-if="role === RoleEnum.Trainer">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)" @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
+					<ion-icon src="assets/icon/add-user.svg" />
+					<ion-text>Membership</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
+					<ion-icon src="assets/icon/Card.svg" />
+					<ion-text>Getting Paid</ion-text>
+				</div>
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardSettings)" @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
+					<ion-icon src="assets/icon/Setting.svg" />
+					<ion-text>Settings</ion-text>
 				</div>
 			</div>
 			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
@@ -318,6 +354,11 @@ const getMenuItemClass = (name: string) => {
 		position: absolute;
 		bottom: 0;
 		border-top: 1px solid rgba(255, 255, 255, 0.60);
+	}
+}
+.trainer-menu,.trainer-setting-menu {
+	ion-icon {
+		font-size: 20px;
 	}
 }
 </style>

@@ -29,6 +29,7 @@
             :tabs="tabs"
             class="page-tabs ion-padding-horizontal"
             :value="activeTab"
+            type="label"
             @change="tabsChanged"
           />
         </div>
@@ -95,15 +96,18 @@ const totalReviewsCount = computed(() => store.reviews_count);
 const tabs: TabItem[] = [
   {
     name: ReviewTypeEnum.Recent,
-    label: "Recent",
+    labelActive: "Recent",
+    labelInactive: "Recent",
   },
   {
     name: ReviewTypeEnum.Positive,
-    label: "Positive",
+    labelActive: "Positive",
+    labelInactive: "Recent",
   },
   {
     name: ReviewTypeEnum.Negative,
-    label: "Negative",
+    labelActive: "Negative",
+    labelInactive: "Recent",
   },
 ];
 

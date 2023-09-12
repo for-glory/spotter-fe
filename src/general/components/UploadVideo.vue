@@ -95,11 +95,10 @@ const emits = defineEmits<{
 const preloading = ref<boolean>(false);
 
 const videoOptions: VideoOptions = {
-  duration: 60,
   highquality: true,
-  source: CameraVideoSource.Prompt,
-  promptLabelLibrary: "Video library",
-  promptLabelVideo: "Make a video",
+  promptLabelHeader: "Upload a video", 
+  promptLabelLibrary: "",
+  promptLabelVideo: "Click here to record a video",
 };
 
 const chooseVideo = () => {
@@ -111,9 +110,7 @@ const chooseVideo = () => {
         const mimeType = (video?.path && mime.getType(video?.path)) || "";
         const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
         const videoDuration = await getVideoDuration(file);
-        if (videoDuration > maxVideoDuration.value / 1000) {
-          alertModalError.value = EntitiesEnum.MaxVideoDuration;
-        } else if (file.size > maxVideoSize.value) {
+        if (file.size > maxVideoSize.value) {
           alertModalError.value = EntitiesEnum.MaxVideoSize;
         }
 
@@ -138,9 +135,7 @@ const chooseVideo = () => {
       const file = event.target?.files[0];
 
       const videoDuration = await getVideoDuration(file);
-      if (videoDuration > maxVideoDuration.value / 1000) {
-        alertModalError.value = EntitiesEnum.MaxVideoDuration;
-      } else if (file.size > maxVideoSize.value) {
+      if (file.size > maxVideoSize.value) {
         alertModalError.value = EntitiesEnum.MaxVideoSize;
       }
 
@@ -149,6 +144,7 @@ const chooseVideo = () => {
       if (alertModalError.value?.length) return;
 
       const fileSize = bytesToSize(file.size);
+      console.log(file.size);
       const fileName = file.name;
       emits("change", file, fileSize, fileName);
       input.remove();

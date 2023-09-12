@@ -33,7 +33,7 @@ const gymOwnerSubscription: Middleware = async ({ next, router }) => {
     await getFacilitySubscription()
       .then((data) => {
 				console.log("data--->", data);
-				if(data) {
+				if(data || role === RoleEnum.Trainer) {
 					return next();
 				}
 				else return router.push({ name: EntitiesEnum.DashboardStartMembership });

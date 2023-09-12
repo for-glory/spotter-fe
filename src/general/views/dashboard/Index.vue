@@ -2,7 +2,7 @@
   <base-dashboard-layout>
     <template  #right-section>
 			<dashboard-searchbar />
-      <div class="content">
+      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100'">
         <router-view />
       </div>
     </template>
@@ -13,8 +13,11 @@
 import BaseDashboardLayout from "@/general/components/base/BaseDashboardLayout.vue";
 import DashboardSearchbar from "@/general/components/blocks/DashboardSearchbar.vue";
 import { useRouter } from "vue-router";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const router = useRouter();
+const { role } = useRoles();
 
 </script>
 

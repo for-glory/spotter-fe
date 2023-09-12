@@ -25,7 +25,7 @@
         </div>
         <div>
           <div class="time">Total</div>
-          <ion-text class="content">Gym pass</ion-text>
+          <ion-text class="content">Passes</ion-text>
           <span class="count">{{ widgetInfo?.pass_count }}</span>
         </div>
         <div>
@@ -221,7 +221,7 @@
               <ion-text>No Closed Upcoming Events</ion-text>
             </div>
              <upcoming-event-item
-              v-for="event in upcomingevents"
+              v-for="(event, index) in upcomingevents"
               :key="event.id"
               :title="event.title"
               :street="event.address.street"
@@ -229,6 +229,7 @@
               :start_date = "event.start_date"
               :media = "event.media[0].pathUrl"
               status="Upcoming"
+              :isLast="(index+1) === upcomingevents?.length"
           />
           </div>
 
@@ -287,6 +288,7 @@ const selected = "February";
 const currentFacility = useFacilityStore();
 
 const attendanceChartOptions = {
+  
   responsive: true,
   scales: {
     y: {
@@ -304,15 +306,24 @@ const attendanceChartOptions = {
 }
 
 const marketStatsChartOptions = {
+  elements: {
+    bar: {
+      borderRadius: {
+        topLeft: 12,
+        topRight: 12,
+        bottomLeft: 12, 
+        bottomRight: 12
+    }
+   },
+  },
   responsive: true,
   scales: {
     y: {
-      beginAtZero: true,
-
+      beginAtZero: true, 
     },
     x: {
       stacked: false,
-      categoryPercentage: 0.7
+      categoryPercentage: 0.4,
     },
   },
   plugins: {
@@ -323,7 +334,7 @@ const marketStatsChartOptions = {
 }
 
 const marketStatsData = computed(() => {
-  const datasets = [ 0, 20, 40, 60, 80, 100 ];
+  const datasets = [ 0, 20, 40, 60, 80, 100 ]; 
   widgetInfo?.value?.checkin_data.map((data:any) => {
     datasets[parseInt(data.month) - 1] = data.value
   })
@@ -333,28 +344,28 @@ const marketStatsData = computed(() => {
       {
         label: 'Dailys',
         backgroundColor: '#F7685B',
-        data: datasets,
+         data: [3, 7, 4],
         barThickness: 8,
         borderRadius: 10,
       },
       {
         label: 'Gym pass',
         backgroundColor: '#FFB946',
-        data: datasets,
+       data: [4, 3, 5],
         barThickness: 8,
         borderRadius: 10,
       },
       {
         label: 'Drop-Ins',
         backgroundColor: '#2F9BFF',
-        data: datasets,
+        data: [7, 2, 6],
         barThickness: 8,
         borderRadius: 10,
       },
       {
         label: 'Event pass',
         backgroundColor: '#2ED47A',
-        data: datasets,
+        data: [10, 4, 9],
         barThickness: 8,
         borderRadius: 10,
       }
@@ -655,8 +666,8 @@ const upcomingeventsParams: EventsQueryVariables = {
     },
   ],
   start_date: {
-    from: dayjs().add(-1, 'y').format("YYYY-MM-DD HH:mm:ss"),
-    to: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    to: dayjs().add(+1, 'months').format("YYYY-MM-DD HH:mm:ss"),
   },
   ...idFilter.value,
 };
@@ -743,8 +754,6 @@ watch(
   gap: 0.38rem;
 }
 .upcoming {
-  // margin-left: 26px;
-  // margin-right: 26px;
   margin-top: 19px;
   margin: 19px 23px;
 }
@@ -753,6 +762,7 @@ watch(
   width: 100%;
   background-color: var(--gray-700);
   border-radius: 10px;
+  min-height: calc(100% - 15px);
   .date {
     padding: 0px !important;
   }
@@ -917,8 +927,7 @@ watch(
   height: 1.2rem;
   margin-bottom: 4px;
 }
-.date {
-  // border: 1px solid grey;
+.date { 
   border-radius: 10px;
   padding: 0.6rem;
   display: flex;
