@@ -2,7 +2,7 @@
   <div class="d-flex-col gap-24 content">
     <div class="block d-flex">
       <div class="d-flex-col gap-16 color-white w-70">
-        <ion-text class="font-light font-12">Latest daily. {{ "10 Aug 2023" }}</ion-text>
+        <ion-text class="font-light font-12">Latest daily. {{ dayjs(daily?.created_at).format('D MMMM YYYY') }}</ion-text>
         <ion-text class="font-light font-12">
           <span class="font-bold font-24">{{ daily?.total_revenue }}</span>
           Purchases
@@ -32,6 +32,7 @@
 import { defineProps, computed, defineEmits } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
+import dayjs from "dayjs";
 
 defineProps<{
   daily: any;

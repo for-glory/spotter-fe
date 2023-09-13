@@ -5980,6 +5980,7 @@ export const WorkoutsByFacilityDocument = gql`
       price
       duration
       was_ordered_by_me
+      created_at
       exercises {
         id
         title
