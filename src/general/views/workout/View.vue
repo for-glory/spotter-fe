@@ -2,7 +2,7 @@
   <div ref="swipeContainer">
     <base-layout hideNavigationMenu>
       <template #content>
-        <div class="common-style relative">
+        <div class="common-style relative d-flex align-items-center justify-content-center h-100">
           <div class="fixed top-buttons w-100 d-flex justify-content-between">
             <span @click.stop="onBack">
               <ion-icon src="assets/icon/arrow-back.svg" class="color-white" />
@@ -14,7 +14,7 @@
           <swiper 
             :slidesPerView="1"
             :spaceBetween="16"
-            class="w-100 h-100"
+            class="w-100"
             style="max-height: 100vh"
             @swiper="onSwiper"
           >
@@ -24,55 +24,62 @@
               style="height: calc(100vh - 40px);"
               class="d-flex align-items-center justify-content-center relative"
             >
-              <daily-video-player 
-                :path="daily.video"
-                :play="dailysItems[activeIndex].id === daily.id"
+              <ion-spinner
+                v-if="dailysStatusLoading"
+                name="lines"
+                class="spinner"
               />
-              <div class="d-flex-col justify-content-end align-items-start details details__left">
-                <div class="workout-item__head">
-                  <ion-label class="workout-item__title"> {{ daily.title }}</ion-label>
-                </div>
-                <ion-text class="workout-item__info">
-                  <ion-icon icon="assets/icon/time.svg" />
-                  <span>
-                    <template v-if="duration">
-                      {{ timeConvertToHuman(daily.duration) }}
+              <div v-else class="dailys-container">
+                <daily-video-player 
+                  :path="daily.video"
+                  :play="dailysItems[activeIndex].id === daily.id"
+                />
+                <div class="d-flex-col justify-content-end align-items-start details details__left">
+                  <div class="workout-item__head">
+                    <ion-label class="workout-item__title"> {{ daily.title }}</ion-label>
+                  </div>
+                  <ion-text class="workout-item__info">
+                    <ion-icon icon="assets/icon/time.svg" />
+                    <span>
+                      <template v-if="duration">
+                        {{ timeConvertToHuman(daily.duration) }}
+                        <ion-text color="light" class="workout-item__info-dot">
+                          &nbsp;&#183;&nbsp;
+                        </ion-text>
+                      </template>
+                      {{ type }}
                       <ion-text color="light" class="workout-item__info-dot">
                         &nbsp;&#183;&nbsp;
                       </ion-text>
-                    </template>
-                    {{ type }}
-                    <ion-text color="light" class="workout-item__info-dot">
-                      &nbsp;&#183;&nbsp;
-                    </ion-text>
-                    {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
-                  </span>
-                </ion-text>
-              </div>
-              <div class="d-flex-col justify-content-end align-items-end gap-24 details details__right">
-                <div class="d-flex-col gap-8">
-                  <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
-                    <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
-                  </div>
-                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
-                    <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.total_revenue ?? 0) }}</ion-text>
-                  </div>
-                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
-                    <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.recommended_count ?? 0) }}</ion-text>
-                  </div>
-                  <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
-                    <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                    <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
-                  </div>
+                      {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
+                    </span>
+                  </ion-text>
                 </div>
-                <div class="d-flex align-items-center gap-12 justify-content-end">
-                  <ion-icon 
-                    @click.stop="shareWorkout(daily)"
-                    icon="assets/icon/share.svg" class="w-24 h-24 color-gold" 
-                  />
+                <div class="d-flex-col justify-content-end align-items-end gap-24 details details__right">
+                  <div class="d-flex-col gap-8">
+                    <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
+                      <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                    </div>
+                    <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
+                      <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.orderItems?.length ?? 0) }}</ion-text>
+                    </div>
+                    <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
+                      <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.recommended_users?.length ?? 0) }}</ion-text>
+                    </div>
+                    <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
+                      <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.dailyViews?.length ?? 0) }}</ion-text>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-12 justify-content-end">
+                    <ion-icon 
+                      @click.stop="shareWorkout(daily)"
+                      icon="assets/icon/share.svg" class="w-24 h-24 color-gold" 
+                    />
+                  </div>
                 </div>
               </div>
             </swiper-slide>
@@ -127,11 +134,13 @@
 import {
   IonButton,
   toastController,
+  IonSpinner
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
   Workout,
-  DeleteDailyDocument 
+  DeleteDailyDocument,
+  DailyViewsAndPurchasesDocument
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed, watch, onMounted } from "vue";
@@ -189,6 +198,13 @@ const {
   showModal: showModal,
 } = useConfirmationModal();
 
+const { result: dailyStatus, loading: dailysStatusLoading, refetch: refetchDailyStatus, onResult: gotDailysStatus } = useQuery(
+  DailyViewsAndPurchasesDocument,
+  {
+    id: id.value
+  },
+);
+
 const onBack = () => {
   router.go(-1);
 };
@@ -198,7 +214,6 @@ onMounted(() => {
   let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
-
 });
 
 const handleTouchStart = (event: any) => {
@@ -219,7 +234,6 @@ const handleTouchEnd = () => {
     console.log('Swipe-up detected');
     router.go(-1);
   }
-
 }
 
 const onSwiper = (swiper: any) =>{
@@ -234,6 +248,8 @@ watch(() => swiperRef.value?.activeIndex,
 (newVal) => {
   console.log(newVal);
   activeIndex.value = newVal;
+  id.value = dailysItems.value[activeIndex.value].id;
+  refetchDailyStatus({ id: id.value });
 });
 
 const shareWorkout = async (daily: any) => {
@@ -250,7 +266,8 @@ const showWorkoutModal = (type: string, daily: any) => {
       workoutModal.value?.present({ 
         title: 'Views',
         description: `Viewd by ${daily.reviews_count} people`,
-        total_count: daily.reviews_count
+        total_count: daily.dailyViews?.length,
+        customerList: daily.dailyViews?.map((view: any) => view.user),
       });
       break;
     
@@ -258,7 +275,8 @@ const showWorkoutModal = (type: string, daily: any) => {
       workoutModal.value?.present({ 
         title: 'Purchases',
         description: `Total purchases made ${daily.total_revenue}`,
-        total_count: daily.total_revenue
+        total_count: daily.orderItems?.length,
+        customerList: daily.orderItems?.map((order: any) => order.order.user),
       });
       break;
 
@@ -266,7 +284,8 @@ const showWorkoutModal = (type: string, daily: any) => {
       workoutModal.value?.present({ 
         title: 'Views',
         description: `Liked by ${daily.recommended_count} people`,
-        total_count: daily.recommended_count
+        total_count: daily.recommended_users?.length,
+        customerList: daily.recommended_users
       });
       break;
   }
@@ -276,7 +295,6 @@ const showWorkoutModal = (type: string, daily: any) => {
 const isSettingModalOpen = ref<boolean>(false);
 const showSettingsModal = () => {
   let daily = dailysItems.value[activeIndex.value];
-  id.value = daily.id;
   store.setWorkout({
     title: daily.title,
     type: daily.type.id,
@@ -575,9 +593,6 @@ ion-button#cancel {
     }
   }
 }
-.h-100 {
-  height: 100% !important;
-}
 .details {
   position: fixed;
   padding: 16px;
@@ -590,5 +605,13 @@ ion-button#cancel {
   &__right {
     right: 24px;
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
+}
+.dailys-container {
+  z-index: -15;
 }
 </style>

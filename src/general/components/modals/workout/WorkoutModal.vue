@@ -11,7 +11,14 @@
         <ion-text class="font-medium font-14">{{ viewDescription }}</ion-text>
       </div>
       <div v-if="total_count" class="customer-list">
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
+        <customer-item 
+          v-for="customer in customerList"
+          :key="customer.id"
+          :name="customer.first_name + ' ' + customer.last_name"
+          :email="customer.email"
+          :avatarUrl="customer.avatarUrl"
+          @open-description-modal="showReviewDescriptionModal(id)" 
+        />
       </div>
       <div v-else class="d-flex align-items-center justify-content-center w-100 h-100">
         <ion-text class="font-medium font-20 color-white">No customers</ion-text>
@@ -85,22 +92,24 @@ const viewTitle = ref<string>("");
 const viewDescription = ref<string>("");
 const reviewDescription = ref<any>({});
 const total_count = ref<number>(0);
+const customerList = ref<Array<any>>([]);
 
 const present = ( props: any ) => {
   viewTitle.value = props.title;
   viewDescription.value = props.description;
   total_count.value = props.total_count;
+  customerList.value = props.customerList;
   workoutModal?.value?.$el.present();
 };
 
 const isReviewDescriptionModalOpen = ref<boolean>(false);
 const showReviewDescriptionModal = (id: any) => {
   reviewDescription.value = {
-    reviewerName: 'Amina Sally',
-    reviewerAvatar: 'assets/mock/profile.jpeg',
-    reviewerEmail: 'aminasaliat@gmail.com',
+    reviewerName: customerList.value[id]?.first_name + ' ' + customerList.value[id]?.last_name,
+    reviewerAvatar: customerList.value[id]?.avatarUrl,
+    reviewerEmail: customerList.value[id]?.email,
     reviewMessage: '',
-    date: '6 June, 2022'
+    date: customerList.value[id]?.created_at,
   }
   isReviewDescriptionModalOpen.value = true;
 };

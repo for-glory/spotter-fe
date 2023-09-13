@@ -6519,10 +6519,17 @@ export const GetFacilitySubscriptionDocument = gql`
   }
 }
     `;
-export const DailyViewsAndPurchasesDocument = gql`
+    export const DailyViewsAndPurchasesDocument = gql`
     query workout($id: ID!) {
   workout(id: $id) {
     id
+    recommended_users {
+      id
+      first_name
+      last_name
+      email
+      avatarUrl
+    }
     orderItems {
       id
       order {
