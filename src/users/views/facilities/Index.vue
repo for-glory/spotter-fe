@@ -66,7 +66,7 @@
     </template>
   </base-layout>
 
-  <page-tabs
+  <page-tabs-new
     :tabs="tabs"
     class="page-tabs"
     :value="activeTab"
@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import ItemsMap, { MapMarkerItem } from "@/general/components/ItemsMap.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
 import FacilitiesPage from "@/views/FacilitiesPage.vue";
@@ -99,6 +99,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { OnboardingStep } from "@/ts/types/onboardingStep";
 import { MapFilters, PositionLatLng } from "@/ts/types/map";
 import debounce from "lodash/debounce";
+import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const locations = ref<MapMarkerItem[]>([]);
 const selectedItem = ref<string | null>(null);
@@ -106,7 +107,7 @@ const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
 
-const tabs: TabItem[] = [
+const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.Facilities,
     label: "Gyms",

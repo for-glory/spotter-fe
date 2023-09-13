@@ -7,6 +7,7 @@
       <template #header>
         <page-header
           :back-btn="isFromModal && role === RoleEnum.Trainer ? false : true"
+          :close-btn="isFromModal && role === RoleEnum.Trainer && isWindowSmall"
           title="Working schedule"
           @back="onBack"
         />
@@ -181,7 +182,6 @@ import debounce from "lodash/debounce";
 import { HOURS_RANGE, IS_WORKING_DAYS, WEEKDAYS } from "@/const/schedule";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
-import TimePicker from "@/general/components/modals/time-picker/TimePicker.vue";
 dayjs.extend(customParseFormat);
 
 const props = withDefaults(
@@ -193,13 +193,24 @@ const props = withDefaults(
   }
 );
 
-console.log("props===", props);
-
 const router = useRouter();
 const { role } = useRoles();
+const isWindowSmall = ref(false);
 const onBack = () => {
-  router.go(-1);
+  if (isWindowSmall.value) {
+    modalController.dismiss();
+  } else {
+    router.go(-1);
+  }
 };
+
+window.addEventListener("resize", (e) => {
+  if (window.innerWidth <= 700) {
+    isWindowSmall.value = true;
+  } else {
+    isWindowSmall.value = false;
+  }
+});
 
 const page = ref<typeof IonPage | null>(null);
 const today = ref(dayjs(new Date()).format("DD MMMM YYYY"));

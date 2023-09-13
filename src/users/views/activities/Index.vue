@@ -118,7 +118,7 @@
     </template>
   </base-layout>
 
-  <page-tabs
+  <page-tabs-new
     :tabs="tabs"
     class="page-tabs"
     v-if="!isSearchOnFocus"
@@ -162,10 +162,12 @@ import { PositionLatLng } from "@/ts/types/map";
 import { Geolocation } from "@capacitor/geolocation";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
+import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const router = useRouter();
 
-const tabs: TabItem[] = [
+const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.ActivitiesNearby,
     label: "Nearby",

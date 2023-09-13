@@ -7,7 +7,9 @@
   --border-radius: 8px;
   --padding-top: 13px;
   --padding-bottom: 14px;
-
+  &.primary-outline {
+    --color: var(--fitnesswhite);
+  }
   &.secondary {
     --background: transparent;
     border: 1px solid var(--gray-500);

@@ -199,9 +199,6 @@ onMounted(() => {
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
 
-  swipeContainer.value.addEventListener('touchstart', handleTouchStart);
-  swipeContainer.value.addEventListener('touchmove', handleTouchMove);
-  swipeContainer.value.addEventListener('touchend', handleTouchEnd);
 });
 
 const handleTouchStart = (event: any) => {
@@ -212,9 +209,6 @@ const handleTouchStart = (event: any) => {
 const handleTouchMove = (event: any) => {
   deltaX = event.touches[0].clientX - startX;
   deltaY = event.touches[0].clientY - startY;
-
-  // You can add additional logic here to determine if it's a swipe-up
-  // For example, you can check if deltaY is less than -50 to detect a swipe-up.
   if (deltaY < -50 || deltaY > 50) {
     isSwiping = true;
   }
@@ -222,18 +216,10 @@ const handleTouchMove = (event: any) => {
 
 const handleTouchEnd = () => {
   if (isSwiping) {
-    // A swipe-up has been detected, you can trigger your desired action here.
-    // For example, show a modal or navigate to another page.
     console.log('Swipe-up detected');
     router.go(-1);
   }
 
-  // Reset variables
-  startX = 0;
-  startY = 0;
-  deltaX = 0;
-  deltaY = 0;
-  isSwiping = false;
 }
 
 const onSwiper = (swiper: any) =>{

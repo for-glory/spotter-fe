@@ -1,16 +1,19 @@
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "./entities";
+import { TabItemNew } from "@/interfaces/TabItemnew";
 
-export const TABS: TabItem[] = [
+export const TABS: TabItemNew[] = [
   {
     name: EntitiesEnum.UserWorkouts,
-    labelActive: "assets/icon/workout.svg",
-    labelInactive: "assets/icon/workout.svg",
+    label:'Workouts'
+    // labelActive: "assets/icon/workout.svg",
+    // labelInactive: "assets/icon/workout.svg",
   },
   {
     name: EntitiesEnum.UserPurchasedWorkouts,
-    labelActive: "assets/icon/workout.svg",
-    labelInactive: "assets/icon/workout.svg",
+    label:'Purchaged'
+    // labelActive: "assets/icon/workout.svg",
+    // labelInactive: "assets/icon/workout.svg",
   },
 ];
 

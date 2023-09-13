@@ -76,7 +76,7 @@
     </template>
   </base-layout>
 
-  <page-tabs
+  <page-tabs-new
     :tabs="tabs"
     class="page-tabs"
     :value="EntitiesEnum.MyTraining"
@@ -90,6 +90,7 @@ import { IonButton, IonTitle, IonToolbar, IonSpinner } from "@ionic/vue";
 import { computed, ref } from "vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import ItemsMap, { MapMarkerItem } from "@/general/components/ItemsMap.vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
@@ -108,6 +109,7 @@ import { discoverTabs } from "@/const/tabs";
 import { MapFilters, PositionLatLng } from "@/ts/types/map";
 import { debounce } from "lodash";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const router = useRouter();
 
@@ -115,7 +117,7 @@ const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
 
-const tabs: TabItem[] = discoverTabs;
+const tabs: TabItemNew[] = discoverTabs;
 
 const tabsChanged = (name: EntitiesEnum) => {
   router.push({

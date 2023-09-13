@@ -59,6 +59,7 @@ export enum EntitiesEnum {
   TrainerReviewDislike = "TRAINER_REVIEW_DISLIKE",
   TrainerDemo = "TRAINER_DEMO",
   DiscoverTrainers = "DISCOVER_TRAINERS",
+  Discover = "DISCOVER",
   FacilityRateSession = "FACILITY_RATE_SESSION",
   FacilityReviewLike = "FACILITY_REVIEW_LIKE",
   FacilityReviewDislike = "FACILITY_REVIEW_DISLIKE",

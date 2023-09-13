@@ -1,5 +1,5 @@
 <template>
-  <ion-page ref="page">
+  <ion-page ref="page" v-if="!isWebView">
     <base-layout hide-navigation-menu>
       <template #header>
         <page-header back-btn @back="onBack" title="Create trainer profile" />
@@ -81,14 +81,14 @@
           </div> -->
 
           <div class="form-row">
-            <ion-label class="label">
+            <ion-label class="label font-yantramanav">
               Choose the gym if you work in it
             </ion-label>
-            <div class="form-row">
+            <div class="form-row toggle-row">
               <base-toggle
                 :value="trainerType === TrainerTypeEnum.WorkingInGym"
-                content="Use my current location"
-                @change="currentLocationToggleChanged"
+                content="I’m working in the gym"
+                class="toggle-wrapper"
               />
             </div>
             <choose-block
@@ -99,7 +99,33 @@
             />
           </div>
 
-          <template v-if="certificates.length">
+          <div class="form-row" @click="goToSchedule">
+            <ion-label class="label font-yantramanav">
+              Set working schedule
+            </ion-label>
+            <choose-block title="working schedule" />
+          </div>
+
+          <div class="form-row">
+            <base-input
+              class="form-row__control form-row__input"
+              value="EES Sport Certificate 2022"
+              placeholder="Enter your certification name"
+              label="Add certification"
+              required
+            />
+            <ion-item class="form-row__control certificate-item">
+              <ion-label>
+                certificate.pdf (64,5 MB)
+                <ion-text color="medium"></ion-text>
+              </ion-label>
+              <ion-icon src="assets/icon/pencil.svg" class="edit__edit-icon" />
+              <!-- <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/> -->
+              <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
+            </ion-item>
+          </div>
+
+          <!-- <template v-if="certificates.length">
             <div
               class="form-row"
               v-for="certificate in certificates"
@@ -125,7 +151,7 @@
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
-          </template>
+          </template> -->
 
           <template v-if="weiverAndLabilities.length">
             <div
@@ -159,7 +185,11 @@
                   class="edit__edit-icon"
                   v-if="subscriptionType !== SubscriptionsTierEnum.Basic"
                 />
-                <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/>
+                <ion-icon
+                  src="assets/icon/eye.svg"
+                  color="light"
+                  class="edit__edit-icon"
+                />
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
@@ -167,24 +197,25 @@
 
           <div class="certificate-controls">
             <ion-button
-              class="secondary"
+              class="primary-outline font-yantramanav"
+              fill="outline"
               expand="block"
               @click="uploadFile(DocumentsTypeEnum.Certificate)"
             >
               Upload certificate
             </ion-button>
             <ion-button
-              class="secondary"
+              class="primary-outline font-yantramanav"
+              fill="outline"
               expand="block"
               @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)"
-              :disabled="subscriptionType === SubscriptionsTierEnum.Basic"
             >
               Add waiver or liability
             </ion-button>
           </div>
           <div class="holder-button">
             <ion-button
-              class="button--submit"
+              class="button--submit font-yantramanav font-bold"
               expand="block"
               @click="handleSubmit"
               :disabled="!isValidForm"
@@ -196,6 +227,155 @@
       </template>
     </base-layout>
   </ion-page>
+  <div class="web-trainer-edit" v-else>
+    <ion-spinner
+      v-if="loading || updateUserLoading"
+      name="lines"
+      class="spinner"
+    />
+    <div class="edit" v-else>
+      <div class="cards__container">
+        <photos-loader
+          @upload="uploadPhoto"
+          @delete="deletePhoto"
+          @change="uploadPhoto"
+          :circle-shape="false"
+          :photos="media"
+          :loading="photoOnLoad"
+          :progress="percentPhotoLoaded"
+          :disabled="loading || updateUserLoading"
+        />
+      </div>
+      <div class="grid">
+        <div class="form-row">
+          <base-input
+            label="What’s your full name"
+            v-model:value="firstName"
+            :error-message="firstNameError"
+            placeholder="First Name"
+            name="firstName"
+            class="form-row__input-web"
+            required
+          />
+        </div>
+
+        <div
+          class="form-row"
+          v-if="
+            trainerType === TrainerTypeEnum.WorkingInGym ||
+            trainerType === TrainerTypeEnum.Both
+          "
+        >
+          <base-input
+            label="Set the hourly rate (USD $)"
+            v-model:value="hourlyRate"
+            :error-message="hourlyRateError"
+            placeholder="Hourly Rate"
+            name="hourlyRate"
+            class="form-row__input-web"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <base-input
+            class="form-row__control form-row__input-web"
+            value="EES Sport Certificate 2022"
+            placeholder="Enter your certification name"
+            label="Add certification"
+            required
+          />
+          <ion-item class="form-row__control certificate-item">
+            <ion-label class="font-lato">
+              certificate.pdf (64,5 MB)
+              <ion-text color="medium"></ion-text>
+            </ion-label>
+            <ion-icon src="assets/icon/pencil.svg" class="edit__edit-icon" />
+            <!-- <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/> -->
+            <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
+          </ion-item>
+        </div>
+
+        <div class="form-row">
+          <base-input
+            class="form-row__control form-row__input-web"
+            value="Advance Trainer ISSA2022"
+            placeholder="Enter your certification name"
+            label="Attach waiver or liability form (Compulsory)"
+            required
+          />
+          <ion-item class="form-row__control certificate-item">
+            <ion-label>
+              certificate.pdf (64,5 MB)
+              <ion-text color="medium"></ion-text>
+            </ion-label>
+            <ion-icon src="assets/icon/pencil.svg" class="edit__edit-icon" />
+            <!-- <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon"/> -->
+            <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
+          </ion-item>
+        </div>
+
+        <div class="form-row">
+          <ion-label class="label font-yantramanav label-web">
+            Choose the gym if you work in it
+          </ion-label>
+          <div class="form-row toggle-row">
+            <base-toggle
+              :value="trainerType === TrainerTypeEnum.WorkingInGym"
+              content="I’m working in the gym"
+              class="toggle-wrapper"
+            />
+          </div>
+          <choose-block
+            title="Choose gym"
+            :value="chosenGym?.name"
+            @handle-click="openChooseGym"
+            :disabled="!workingInGym"
+          />
+        </div>
+
+        <div class="form-row" @click="goToSchedule">
+          <ion-label class="label font-yantramanav label-web"> Set working schedule </ion-label>
+          <choose-block title="working schedule" />
+        </div>
+      </div>
+
+      <div class="certificate-controls">
+        <ion-button
+          class="primary-outline font-yantramanav"
+          fill="outline"
+          expand="block"
+          @click="uploadFile(DocumentsTypeEnum.Certificate)"
+        >
+          Upload certificate
+        </ion-button>
+        <ion-button
+          class="primary-outline font-yantramanav"
+          fill="outline"
+          expand="block"
+          @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)"
+        >
+          Add waiver or liability
+        </ion-button>
+      </div>
+      <div class="holder-button-web d-flex align-items-center justify-content-end gap-16">
+        <ion-button
+          class="secondary font-yantramanav font-bold"
+          expand="block"
+        >
+          Cancel
+        </ion-button>
+        <ion-button
+          class="button--submit font-yantramanav font-bold"
+          expand="block"
+          @click="handleSubmit"
+          :disabled="!isValidForm"
+        >
+          Save
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -209,6 +389,7 @@ import {
   IonSpinner,
   actionSheetController,
   toastController,
+  modalController,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -241,6 +422,9 @@ import { v4 as uuidv4 } from "uuid";
 import { UploadPdfFile } from "@/ts/types/user";
 import { Filesystem } from "@capacitor/filesystem";
 import useSubscription from "@/hooks/useSubscription";
+import { defineProps, withDefaults } from "vue";
+import { Capacitor } from "@capacitor/core";
+import WorkingSchedule from "./WorkingSchedule.vue";
 
 const store = useSelectedAddressStore();
 
@@ -288,6 +472,17 @@ const { mutate: deleteDocumentMutate } = useMutation(DeleteDocumentDocument);
 const { mutate: deleteMediaMutate } = useMutation(DeleteMediaDocument);
 
 const { onResult, refetch, loading, result } = useQuery(MeDocument, { id });
+
+const props = withDefaults(
+  defineProps<{
+    isWebView?: boolean;
+  }>(),
+  {
+    isWebView: false,
+  }
+);
+
+const isNativePlatform = Capacitor.isNativePlatform();
 
 onBeforeRouteLeave((to, from, next) => {
   if (to.name === EntitiesEnum.ChooseGymAccount) {
@@ -348,6 +543,23 @@ const deletePhoto = (_index: number, id: string) => {
 
   if (isSavedMedia) {
     deleteMediaMutate({ id });
+  }
+};
+
+const goToSchedule = async () => {
+  if (isNativePlatform) {
+    router.push({
+      name: EntitiesEnum.ProfileWorkingSchedule,
+    });
+  } else {
+    const modal = await modalController.create({
+      component: WorkingSchedule,
+      cssClass: "web-working-schedule",
+      componentProps: {
+        isFromModal: true,
+      },
+    });
+    await modal.present();
   }
 };
 
@@ -598,7 +810,7 @@ const viewFile = (key: DocumentsTypeEnum, id: string) => {
     );
 
     if (savedCertificate) {
-      Browser.open({ url: savedCertificate.pathUrl })
+      Browser.open({ url: savedCertificate.pathUrl });
     }
   } else {
     weiverAndLabilities.value.filter((doc) => doc.id !== id);
@@ -608,7 +820,7 @@ const viewFile = (key: DocumentsTypeEnum, id: string) => {
     );
 
     if (savedWeiverAndLability) {
-      Browser.open({ url: savedWeiverAndLability.pathUrl })
+      Browser.open({ url: savedWeiverAndLability.pathUrl });
     }
   }
 };
@@ -721,10 +933,10 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
 }
 
 .certificate-controls {
+  margin-top: 35px;
   .button {
     margin: 0;
     font-size: 14px;
-    font-weight: 400;
 
     &:not(:first-child) {
       margin-top: 24px;
@@ -733,7 +945,7 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
 }
 
 .holder-button {
-  padding-top: 32px;
+  padding-top: 35px;
 
   .button {
     margin: 0;
@@ -748,6 +960,9 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
 }
 
 .form-row {
+  &.toggle-row {
+    margin-bottom: 16px;
+  }
   &__control {
     &:not(:first-child) {
       margin-top: 16px;
@@ -762,5 +977,36 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
   font-weight: 300;
   font-size: 14px;
   line-height: 1.5;
+}
+.web-trainer-edit {
+  .edit {
+    padding-top: 0;
+    padding-right: 0;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+    .base-input-container {
+      margin-bottom: 0;
+    }
+  }
+  .certificate-controls {
+    margin-top: 24px;
+    ion-button {
+      width: 327px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}
+.holder-button-web {
+  ion-button {
+    min-width: 90px;
+  }
+}
+.label-web {
+  font-family: "Lato";
+  color: var(--fitnesswhite);
 }
 </style>

@@ -109,6 +109,7 @@
           </div>
           <div class="buttons">
             <ion-button
+              expand="block"
               @click="handleContinue"
               :disabled="isLoading || !selectedProductId"
             >
@@ -212,6 +213,7 @@ onMounted(async () => {
     }, []);
   });
 });
+
 const getPlatform = () => {
   if (Capacitor.isNativePlatform()) {
     if (isPlatform("android")) {
@@ -227,15 +229,6 @@ const getPlatform = () => {
 
 const handleContinue = () => {
   isLoading.value = true;
-  console.log(selectedItem.value);
-  // onCardCreation();
-  // router.push({
-  // 	name: EntitiesEnum.SubscriptionPaymentMethod,
-  // 	params: { subscriptionId: selectedItem.value.product_id },
-  // 	query: {
-  // 			// facilityId: route?.query?.facilityId || "",
-  // 		},
-  // });
   const { mutate: createSubscriptionIntent } =
     backendStripe.createSubscriptionIntent();
   createSubscriptionIntent({
@@ -261,11 +254,6 @@ const selectMembership = (id: any) => {
       selectedProductId.value = plan.subscriptionPlan.product_id;
     }
   });
-};
-
-const onLogout = () => {
-  clearAuthItems();
-  router.push({ name: EntitiesEnum.Login });
 };
 </script>
 
@@ -320,7 +308,6 @@ const onLogout = () => {
     line-height: 1.5;
     position: relative;
     --padding-top: 0;
-    --border-radius: 8px;
     --padding-bottom: 8px;
     --border-radius: 4px;
     --color: var(--ion-color-medium);
@@ -475,29 +462,31 @@ const onLogout = () => {
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
 }
-
 .buttons {
+  margin-top: 7.5rem;
   margin-top: 1rem;
   border-radius: 8px;
-  background: #e1dbc5;
-  width: 80%;
+  width: 45%;
+
   @media (max-width: 992px) {
     width: 100%;
   }
+
   ion-button {
-    @media (max-width: 992px) {
-      width: 99%;
-    }
-    text-align: center;
-    background: #e1dbc5;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font: 700 18px/1 Yantramanav;
+    width: 100%;
+    height: 48px;
+    --border-radius: 12px;
     color: var(--dark-grey, #262626);
     text-align: center;
     font-family: Lato;
-    font-size: 16px;
+    font-size: 24px;
     font-style: normal;
     font-weight: 500;
-    line-height: 130%; /* 20.8px */
-    --border-radius: 12px;
+    line-height: 130%;
   }
 }
 .font-large {

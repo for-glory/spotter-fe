@@ -341,4 +341,12 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth],
     },
   },
+  {
+    name: 'DISCOVER',
+    path: "/users/discover",
+    component: () => import("@/users/views/discover/Index.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
 ];

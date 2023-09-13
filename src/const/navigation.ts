@@ -14,7 +14,7 @@ export const navigationMenu: NavigationMenu = {
     {
       name: EntitiesEnum.ActivitiesNearby,
       label: "Dailys",
-      id: "discover",
+      id: "dailys",
       icon: "assets/icon/youtube.svg",
       category: "/activities",
     },
@@ -32,11 +32,11 @@ export const navigationMenu: NavigationMenu = {
       // // isMainButton: true,
       // // isActive: true,
       // category: "/facilities",
-      name: EntitiesEnum.ActivitiesNearby,
+      name: EntitiesEnum.Discover,
       label: "Discover",
       id: "discover",
       icon: "assets/icon/discover.svg",
-      category: "/activities",
+      category: "/discover",
     },
     {
       name: EntitiesEnum.UserWorkouts,
