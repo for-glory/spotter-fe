@@ -35,7 +35,7 @@ import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
 const handleContinue = () => {
-  router.push({ name: EntitiesEnum.Overview });
+  router.push({ name: EntitiesEnum.Dashboard });
 };
 </script>
 
