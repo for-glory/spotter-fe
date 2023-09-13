@@ -79,7 +79,12 @@ const navigationAfterAuth = (user: User) => {
         break;
       }
 
-      router.push({ name: EntitiesEnum.TrainerSchedule });
+      if (Capacitor.isNativePlatform()) {
+        router.push({ name: EntitiesEnum.TrainerSchedule });
+      } else {
+        router.push({ name: EntitiesEnum.DashboardOverview });
+      }
+
       break;
     }
 
