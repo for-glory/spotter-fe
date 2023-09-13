@@ -24,18 +24,18 @@
 </template>
 
 <script setup lang="ts">
-import { IonText, IonImg, IonButton, IonSpinner } from "@ionic/vue";
+import { IonText, IonImg, IonButton } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import useFacilityId from "@/hooks/useFacilityId";
-import { MyStripeConnectDocument, LinksDocument } from "@/generated/graphql";
-import { onMounted } from "vue";
-import { Capacitor } from "@capacitor/core";
+import { isPlatform } from "@ionic/vue";
 
 const router = useRouter();
 const handleContinue = () => {
-  router.push({ name: EntitiesEnum.Dashboard });
+  if (!isPlatform("desktop") && !isPlatform("mobileweb")) {
+    router.push({ name: EntitiesEnum.Dashboard });
+  } else {
+    router.push({ name: EntitiesEnum.Overview });
+  }
 };
 </script>
 
