@@ -31,7 +31,7 @@ import { isPlatform } from "@ionic/vue";
 
 const router = useRouter();
 const handleContinue = () => {
-  if (!isPlatform("desktop") && !isPlatform("mobileweb")) {
+  if (isPlatform("desktop")) {
     router.push({ name: EntitiesEnum.Dashboard });
   } else {
     router.push({ name: EntitiesEnum.Overview });
