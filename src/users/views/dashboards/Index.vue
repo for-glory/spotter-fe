@@ -18,7 +18,7 @@
         <div class="dashboards-items">
           <dashboard-item :items="activityItems">
             <template #title>
-              <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
+              <ion-icon src="public/assets/icon/activity.svg" class="activity-icon" />
               Activity
             </template>
           </dashboard-item>
@@ -630,7 +630,9 @@ const openEvent = (id: string | number) => {
   justify-content: center;
   bottom: calc(84px + var(--ion-safe-area-bottom));
   --btn-min-width: 100px;
+  padding: 12px 20px 12px 20px;
 }
+
 
 .empty-block {
   margin-top: 48px;

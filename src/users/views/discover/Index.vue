@@ -1,15 +1,12 @@
 <template>
   <base-layout :hide-navigation-menu="isSearchOnFocus">
     <template #header>
-      <search-form
-        :type="EntitiesEnum.FacilityDropins"
-        @handle-focus="isSearchOnFocus = true"
-        @handle-blur="isSearchOnFocus = false"
-      />
+      <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
+        @handle-blur="isSearchOnFocus = false" />
 
       <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
-    
+
 
     <template #content>
       <div class="dashboard">
@@ -46,21 +43,470 @@
             isTrainingsLoading ||
             isEventsLoading || isDropinsLoading
             " /> -->
-          <template v-if="selectedEvents.length &&
-            !isTrainingsLoading &&
-            !isEventsLoading &&
-            !isFacilitiesLoading &&
-            !isDropinsLoading
-            ">
-            <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)" />
+          <template v-if="activeTab == EntitiesEnum.Facilities">
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
           </template>
-          <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
-            ">
-          </ion-spinner>
-          <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
-            :text="`Currently you have no booked ${bookingName}`" />
+          <template v-if="activeTab == EntitiesEnum.FacilityDropins">
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+                    <ion-icon src="assets/icon/my-marker.svg"></ion-icon>
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Diamond Gym</ion-label>
+                <div class="event__time">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $ 189.00
+                </div>
+
+                <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+
+                    Light Street, 24
+                  </address-item>
+                  <ion-text class="status-text ">
+                    7 Days <br> Subscription
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+          </template>
+          <template v-if="activeTab == EntitiesEnum.Trainings">
+            <!-- <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
+              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
+              @click="openEvent(event.id)" /> -->
+
+
+            <ion-item lines="none" class="event trainers">
+              <ion-thumbnail class="event__photo img-rounded">
+                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+
+                <ion-text class="event__date" style="display:flex !important;">
+                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-button fill="outline" size="small" shape="round"
+                    style="border-radius:none !important">4.5</ion-button>
+                  &nbsp;
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex" style="font-size:13px;">
+                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                    09:00 AM - 06:00 PM
+                  </div>
+                  <ion-text class="status-text">
+                    <ion-button>Book</ion-button>
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo img-rounded">
+                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+
+                <ion-text class="event__date" style="display:flex !important;">
+                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-button fill="outline" size="small" shape="round"
+                    style="border-radius:none !important">4.5</ion-button>
+                  &nbsp;
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex" style="font-size:13px;">
+                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                    09:00 AM - 06:00 PM
+                  </div>
+                  <ion-text class="status-text">
+                    <ion-button>Book</ion-button>
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo img-rounded">
+                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+
+                <ion-text class="event__date" style="display:flex !important;">
+                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-button fill="outline" size="small" shape="round"
+                    style="border-radius:none !important">4.5</ion-button>
+                  &nbsp;
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex" style="font-size:13px;">
+                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                    09:00 AM - 06:00 PM
+                  </div>
+                  <ion-text class="status-text">
+                    <ion-button>Book</ion-button>
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo img-rounded">
+                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+
+                <ion-text class="event__date" style="display:flex !important;">
+                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-button fill="outline" size="small" shape="round"
+                    style="border-radius:none !important">4.5</ion-button>
+                  &nbsp;
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex" style="font-size:13px;">
+                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                    09:00 AM - 06:00 PM
+                  </div>
+                  <ion-text class="status-text">
+                    <ion-button>Book</ion-button>
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+          </template>
+          <template v-if="activeTab == EntitiesEnum.Events">
+            <!-- <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
+              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
+              @click="openEvent(event.id)" /> -->
+
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Food Festival</ion-label>
+                <div class="event__time">
+                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                  08:30 AM
+                </div>
+                <ion-text class="event__date">
+                  17 June
+                  <template>- endDate </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+                    Light Street 1
+                  </address-item>
+                  <ion-text class="status-text">
+
+                  </ion-text>
+                  <ion-button>Register</ion-button>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Train Meeting</ion-label>
+                <div class="event__time">
+                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                  08:30 AM
+                </div>
+                <ion-text class="event__date">
+                  17 June
+                  <template>- endDate </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+                    Light Street 1
+                  </address-item>
+                  <ion-text class="status-text">
+
+                  </ion-text>
+                  <ion-button>Register</ion-button>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Run Competition</ion-label>
+                <div class="event__time">
+                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                  08:30 AM
+                </div>
+                <ion-text class="event__date">
+                  17 June
+                  <template>- endDate </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+                    Light Street 1
+                  </address-item>
+                  <ion-text class="status-text">
+
+                  </ion-text>
+                  <ion-button>Register</ion-button>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <template>
+                  fdfvdffv
+                </template>
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Run Competition</ion-label>
+                <div class="event__time">
+                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
+                  08:30 AM
+                </div>
+                <ion-text class="event__date">
+                  17 June
+                  <template>- endDate </template>
+                </ion-text>
+                <div class="d-flex align-items-center justify-content-between">
+                  <address-item class="event__address">
+                    Light Street 1
+                  </address-item>
+                  <ion-text class="status-text">
+
+                  </ion-text>
+                  <ion-button>Register</ion-button>
+                </div>
+              </div>
+            </ion-item>
+
+          </template>
         </div>
 
       </div>
@@ -131,9 +577,12 @@ import {
   QueryMyFacilityItemPassesOrderByColumn,
   QueryMyEventsOrderByColumn,
   TrainingStatesEnum,
+  RoleEnum,
+  UsersDocument,
+  UsersQuery,
 
 } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
 import ItemsHeader from "@/general/components/blocks/headers/ItemsHeader.vue";
 import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
@@ -144,6 +593,8 @@ import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
+import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
+import { ActivityItem } from "@/interfaces/ActivityItem";
 
 const router = useRouter();
 const { id } = useId();
@@ -199,6 +650,8 @@ const {
     fetchPolicy: "no-cache",
   }
 );
+
+
 
 const {
   result: dropinsResult,
@@ -372,6 +825,13 @@ const facilities = computed<UserPaginator["data"]>(() =>
     : []
 );
 
+
+
+
+
+
+
+
 const selectedEvents = computed(() => {
 
 
@@ -389,6 +849,7 @@ const selectedEvents = computed(() => {
   }
   return trainings.value;
 });
+
 
 const dynamicTitle = computed(() => {
   if (activeTab.value === EntitiesEnum.Events) {
@@ -458,6 +919,16 @@ const tabsChanged = (ev: EntitiesEnum) => {
   localStorage.setItem("dashboard_active_tab", activeTab.value);
   refetchBooking();
 };
+
+const openFacility = (facilityId: string | number) => {
+  router.push({
+    name: EntitiesEnum.NearbyGym,
+    params: {
+      id: facilityId,
+    },
+  });
+};
+
 
 const refetchBooking = () => {
   switch (activeTab.value) {
@@ -608,6 +1079,12 @@ const openEvent = (id: string | number) => {
   font-size: 24px;
 }
 
+.event__time {
+  font-size: 16px;
+  padding: 0px 42px 0px 0px;
+
+}
+
 .trophy-icon {
   font-size: 18px;
   padding-right: 6px;
@@ -618,6 +1095,10 @@ const openEvent = (id: string | number) => {
 .activity-icon {
   font-size: 24px;
   padding-right: 4px;
+}
+
+.trainers .event__title {
+  padding: 12px 0;
 }
 
 // .page-tabs {
@@ -643,19 +1124,145 @@ const openEvent = (id: string | number) => {
   margin: 64px auto;
 }
 
-.page-tabs{
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 400;
-    --color: var(--gray-400);
-    /* min-width: var(--btn-min-width); */
-    --padding-top: 9px;
-    --padding-bottom: 9px;
-    /* --padding-start: 59px; */
-    // --padding-end: 0;
-    --color-checked: var(--gray-700);
-    --indicator-color: var(--ion-color-primary);
-    padding: 12px 20px 12px 20px;
+
+.img-rounded {
+
+  border-radius: 50%;
 }
-</style>
+
+.page-tabs {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  --color: var(--gray-400);
+  /* min-width: var(--btn-min-width); */
+  --padding-top: 9px;
+  --padding-bottom: 9px;
+  /* --padding-start: 59px; */
+  // --padding-end: 0;
+  --color-checked: var(--gray-700);
+  --indicator-color: var(--ion-color-primary);
+  padding: 12px 20px 12px 20px;
+}
+
+.event {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  position: relative;
+  --border-radius: 8px;
+  --min-height: 73px;
+  --padding-top: 13px;
+  --padding-bottom: 13px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --background: var(--gray-700);
+
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+
+  &__photo {
+    flex-shrink: 0;
+    --size: 68px;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 68px;
+    text-align: center;
+    width: var(--size);
+    margin: 0 16px 0 0;
+    height: var(--size);
+    color: var(--gray-700);
+    background: var(--gray-600);
+    --border-radius: 8px;
+
+    &--rounded {
+      --border-radius: 50%;
+    }
+  }
+
+  &__holder {
+    min-height: 73px;
+    width: calc(100% - 68px);
+
+    .event--time-hidden & {
+      display: flex;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 2px;
+    max-width: calc(100% - 86px);
+    color: var(--ion-color-white);
+
+    .event--time-hidden & {
+      max-width: none;
+    }
+  }
+
+  &__date {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  &__time {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 0;
+    right: 0;
+    color: var(--ion-color-white);
+
+    ion-icon {
+      line-height: 1;
+      font-size: 24px;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+.time-icon {
+  font-size: 20px;
+  padding-right: 4px;
+}
+
+.status-text {
+  font: 16px Lato;
+  padding: 2px 0px 2px 8px;
+  border-radius: 16px;
+}
+
+.ongoing {
+  background-color: #E1DBC5;
+  color: #19191B;
+}
+
+.status-text ion-button {
+  height: 30px;
+  margin-top: -55px;
+}
+
+.event__date ion-button {
+  height: 30px;
+  padding: 5px;
+}
+
+.finished {
+  background: none;
+  border: 1px #AFAFAF;
+  color: #AFAFAF;
+}
+
+.justify-content-between ion-button {
+  height: 36px;
+}
+
+.event__time .time-icon {}</style>

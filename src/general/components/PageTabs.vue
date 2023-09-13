@@ -14,8 +14,9 @@
         v-for="tab in tabs"
         :disabled="tab.disabled"
       >
-        <img v-if="props.type === 'image'" :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
-        <span v-else>{{ tab.labelActive }}</span>
+      <img :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
+        <!-- <img v-if="props.type === 'image'" :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" /> -->
+        <!-- <span v-else>{{ tab.labelActive }}</span> -->
       </ion-segment-button>
     </ion-segment>
   </div>
