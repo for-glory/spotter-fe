@@ -24,8 +24,6 @@ const navigationAfterAuth = (user: User) => {
 
   const { isRoleSelected } = useSettings();
 
-  console.log("isRoleSelected : " + isRoleSelected);
-
   if (!isRoleSelected) {
     router.push({ name: EntitiesEnum.SelectRole });
     return;
@@ -36,12 +34,18 @@ const navigationAfterAuth = (user: User) => {
   switch (role) {
     case RoleEnum.User: {
       const { isQuizzDone } = useSettings();
+
       if (!isQuizzDone) {
         router.push({ name: EntitiesEnum.Quizz });
         break;
       }
 
-      router.push({ name: EntitiesEnum.Facilities });
+      if (Capacitor.isNativePlatform()) {
+        router.push({ name: EntitiesEnum.Facilities });
+      } else {
+        router.push({ name: EntitiesEnum.DashboardOverview });
+      }
+
       break;
     }
 
@@ -65,6 +69,7 @@ const navigationAfterAuth = (user: User) => {
       }
 
       const { type: subscriptionType } = useSubscription();
+
       if (subscriptionType === SubscriptionsTierEnum.Basic) {
         if (Capacitor.isNativePlatform()) {
           router.push({ name: EntitiesEnum.Profile });
@@ -81,6 +86,7 @@ const navigationAfterAuth = (user: User) => {
     case RoleEnum.Manager:
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
+
     case RoleEnum.FacilityOwner: {
       const { type: subscriptionType } = useSubscription();
       const { stripeAccountState } = useStripeConnect();
