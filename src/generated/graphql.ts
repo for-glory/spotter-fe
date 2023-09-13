@@ -6130,6 +6130,7 @@ export const VideoPreloadDocument = gql`
   videoPreload(file: $file, upload_dir: $upload_dir) {
     path
     thumbnail_path
+    duration
   }
 }
   `;
@@ -6517,3 +6518,38 @@ export const GetFacilitySubscriptionDocument = gql`
   }
 }
     `;
+export const DailyViewsAndPurchasesDocument = gql`
+    query workout($id: ID!) {
+  workout(id: $id) {
+    id
+    orderItems {
+      id
+      order {
+        id
+        user {
+          id
+          first_name
+          last_name
+          email
+          avatarUrl
+        }
+      }
+      created_at
+    }
+    dailyViews {
+      id
+      user {
+        id
+        first_name
+        last_name
+        email
+        avatarUrl
+      }
+      workout {
+        id
+      }
+      created_at
+    }
+  }
+}
+  `;

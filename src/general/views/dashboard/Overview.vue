@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-parsing-error -->
 <template>
   <ion-spinner
       v-if="loading || eventsLoading || upcomingeventsLoading"
@@ -194,7 +195,7 @@
             <div class="flex-container">
               <div class="title white-text">Completed</div>
               <div class="d-flex ion-align-items-center" style="gap: 9.34px">
-                <div class="">View All</div>
+                <div class="" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent, 'finished')">View All</div>
                 <ion-icon style="width: 12px; height: 12px;" src="assets/icon/arrow-right-light.svg"></ion-icon>
               </div>
             </div>
@@ -213,7 +214,7 @@
             <div class="flex-container">
               <div class="title red-text" style=" margin-bottom: 12px">Upcoming</div>
               <div class="d-flex ion-align-items-center" style="gap: 9.34px">
-                <div class="">View All</div>
+                <div class="" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent, 'upcoming')">View All</div>
                 <ion-icon style="width: 12px; height: 12px;" src="assets/icon/arrow-right-light.svg"></ion-icon>
               </div>
             </div>
@@ -222,12 +223,13 @@
             </div>
              <upcoming-event-item
               v-for="(event, index) in upcomingevents"
+              @click="onHandleDetailsPage(EntitiesEnum.EventsDetailed, event.id)"
               :key="event.id"
               :title="event.title"
-              :street="event.address.street"
+              :street="event?.address?.street"
               :price ="event.price"
               :start_date = "event.start_date"
-              :media = "event.media[0].pathUrl"
+              :media = "event?.media[0]?.pathUrl"
               status="Upcoming"
               :isLast="(index+1) === upcomingevents?.length"
           />
@@ -339,39 +341,32 @@ const marketStatsData = computed(() => {
     datasets[parseInt(data.month) - 1] = data.value
   })
   return {
-    labels: ["05 Mon", "06 Tue", "07 Wed", "08 Thur", "09 Fri", "10 Sat","11 Sun"],
-    datasets: [
-      {
-        label: 'Dailys',
-        backgroundColor: '#F7685B',
-         data: [3, 7, 4],
-        barThickness: 8,
-        borderRadius: 10,
-      },
-      {
-        label: 'Gym pass',
-        backgroundColor: '#FFB946',
-       data: [4, 3, 5],
-        barThickness: 8,
-        borderRadius: 10,
-      },
-      {
-        label: 'Drop-Ins',
-        backgroundColor: '#2F9BFF',
-        data: [7, 2, 6],
-        barThickness: 8,
-        borderRadius: 10,
-      },
-      {
-        label: 'Event pass',
-        backgroundColor: '#2ED47A',
-        data: [10, 4, 9],
-        barThickness: 8,
-        borderRadius: 10,
-      }
-    ]
+    labels: ["05 Mon", "06 Tue", "07 Wed", "08 Thur", "09 Fri", "10 Sat","11 Sun"], 
+          datasets:  [
+            {
+              label: "Daily",
+              backgroundColor: '#F7685B',
+              data: [3, 7, 4, 3, 7, 2, 4]
+            },
+            {
+              label: "Gym Pass",
+              backgroundColor: '#FFB946',
+              data: [4, 3, 5, 3, 7, 4, 9]
+            },
+            {
+              label: "Drop-Ins ",
+               backgroundColor: '#2F9BFF',
+              data: [7, 2, 6, 3, 7, 6, 4]
+            },
+            {
+              label: "Event Pass",
+              backgroundColor: '#FFB946',
+              data: [4, 3, 5, 3, 7, 4, 9]
+            },
+          ]
   }
 });
+
 
 const pieChartOptionsDanger = {
   responsive: true,
@@ -475,6 +470,17 @@ const pieChartDataDanger = computed(() => {
     ],
   }
 });
+
+
+// handle click event
+const onHandleDetailsPage = (pathName: string, id: string) => {
+	console.log(pathName, id)
+  router.push({
+     name: pathName, 
+      params: { id: id } 
+    
+    });
+};
 
 const handleDay = () => {
   console.log("Day");
@@ -611,7 +617,6 @@ const chartData = computed(() => {
         data: datasets,
         barThickness: 30,
         borderRadius: 10,
-        stack: 'stack 1',
       },
       {
         label: 'Excellent',
@@ -683,6 +688,16 @@ const upcomingevents = computed(() => {
   return upcomingeventRes.value?.events?.data;
 });
 
+
+// handle click event
+const onHandleClickMenu = (pathName: string, status: string) => {
+	console.log(pathName, status)
+  router.push({
+     name: pathName, 
+      query: { status: status } 
+    
+    });
+};
 
 
 watch(

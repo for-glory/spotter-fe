@@ -18,7 +18,7 @@
           </div>
           <div class="d-flex-col time-location" style="">
             <div class="d-flex justify-content-start ion-align-items-center" style="gap: 0.25rem" >
-              <ion-icon :icon="time"></ion-icon> <span class="time"> 08:30 AM </span>
+              <ion-icon :icon="time"></ion-icon> <span class="time"> {{getTime}} </span>
             </div>
             <div class="d-flex justify-content-start ion-align-items-center subtitle" style="gap: 0.25rem">
               <ion-icon size="14px" :icon="location"></ion-icon> <span>{{street}}</span>
@@ -55,6 +55,9 @@ const props = withDefaults(
 );
 const getDate = computed(() => {
   return dayjs(props.start_date).format('DD MMM') || ''
+})
+const getTime = computed(() => {
+  return dayjs(props.start_date).format('HH:mm a') || ''
 })
 </script>
 <style scoped lang="scss">

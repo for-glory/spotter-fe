@@ -3,31 +3,31 @@
     <ion-grid :fixed="true">
       <div>
         <ion-spinner v-if="plansLoading" name="lines" class="spinner" />
-        <div class="content" v-else>
+        <div class="page-content" v-else>
           <div class="plan">
-            <ion-title class="font-medium white-text" color="primary">
+            <ion-title class="font-20" color="primary">
               Start with 30 days free trial
             </ion-title>
-            <ion-title class="font-large" color="primary">
+            <ion-title class="font-40 white-text" color="primary">
               Choose your plan
             </ion-title>
             <div class="plan-features">
-              <div class="plan-features__item font-small">
+              <div class="plan-features__item">
                 <ion-icon src="assets/icon/check-mark.svg" color="primary" />
                 <ion-text>All Features</ion-text>
               </div>
-              <div class="plan-features__item font-small">
+              <div class="plan-features__item">
                 <ion-icon src="assets/icon/check-mark.svg" color="primary" />
                 <ion-text>Other Features</ion-text>
               </div>
-              <div class="plan-features__item font-small">
+              <div class="plan-features__item">
                 <ion-icon src="assets/icon/check-mark.svg" color="primary" />
                 <ion-text>Premium Access</ion-text>
               </div>
             </div>
           </div>
           <div class="membership w-100">
-            <ion-radio-group class="plans" v-model="selectedPlanId">
+            <ion-radio-group class="plans">
               <ion-item
                 lines="none"
                 class="radiobutton"
@@ -44,62 +44,32 @@
               >
                 <div class="radiobutton__block">
                   <div class="radiobutton__icon">
-                    <ion-icon
-                      src="assets/icon/medal.svg"
-                      :class="
-                        plan?.tier === 'BRONZE'
-                          ? 'bronze'
-                          : plan?.tier === 'SILVER'
-                          ? 'silver'
-                          : 'gold'
-                      "
-                    />
+                    <ion-icon src="assets/icon/medal.svg" />
                   </div>
                   <div class="radiobutton__description">
                     <ion-label class="radiobutton__label">
                       {{ plan.title }}
-                      <span
-                        class="status-text"
-                        v-if="
-                          currentPlan?.tier.toLowerCase() ===
-                            plan?.tier.toLowerCase() || plan?.tier === 'GOLD'
-                        "
-                      >
-                        {{
-                          currentPlan?.tier.toLowerCase() ===
-                          plan?.tier.toLowerCase()
-                            ? "Current"
-                            : plan?.tier === "GOLD"
-                            ? "TOP"
-                            : ""
-                        }}
-                      </span>
                     </ion-label>
 
-                    <ion-text class="radiobutton__cost font-small">
-                      ${{ plan?.prices[0].price / 100 }}
-                      <span class="font-mini">
-                        /{{
-                          plan?.tier === "GOLD"
-                            ? "for first location"
-                            : "per location"
-                        }}
-                      </span>
+                    <ion-text class="radiobutton__cost"
+                      >${{
+                        plan?.prices.length ? plan?.prices[0].price / 100 : ""
+                      }}
+                      <span> /per location </span>
                     </ion-text>
                     <ul>
                       <li
-                        class="accessibility d-flex align-items-center"
+                        class="accessibility"
                         v-for="(benefit, idx) in plan?.benefits"
                         :key="idx"
                       >
-                        <ion-icon src="assets/icon/accessibility.svg" />
-                        <span>{{ benefit?.description }}</span>
+                        <div>
+                          <ion-icon src="assets/icon/accessibility.svg" />
+                        </div>
+                        <div>
+                          <ion-text>{{ benefit?.description }}</ion-text>
+                        </div>
                       </li>
-                      <!-- TODO add inaccessible features -->
-                      <!-- <li>
-												<ion-icon src="assets/icon/inaccessible.svg" />
-												Top Features
-											</li> -->
                     </ul>
                   </div>
                 </div>
@@ -107,13 +77,33 @@
               </ion-item>
             </ion-radio-group>
           </div>
+          <!-- <div class="checkbox">
+            <ion-checkbox
+              mode="ios"
+              :modelValue="isAgreed"
+              @update:modelValue="isAgreed = $event"
+            >
+            </ion-checkbox>
+            <ion-label>
+              I confirm that I read and accept
+              <a
+                href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
+                >Privacy Policy</a
+              >
+              and
+              <a
+                href="https://app.termly.io/document/privacy-policy/90cdb569-0bff-4241-9edd-7d3584f78bfc"
+                >Terms of Use</a
+              >
+            </ion-label>
+          </div> -->
           <div class="buttons">
             <ion-button
               expand="block"
               @click="handleContinue"
-              :disabled="isLoading || !selectedProductId"
+              :disabled="!isAgreed || isLoading || !selectedProductId"
             >
-              Continue
+              Next
             </ion-button>
           </div>
         </div>
@@ -174,7 +164,7 @@ const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
 const errorMessage = ref("");
 const products = ref<any[]>([]);
-const isAgreed = ref<boolean>(false);
+const isAgreed = ref<boolean>(true);
 const selectedProductId = ref<string | number | boolean | undefined>(undefined);
 
 const backendStripe = new BackendStripe(
@@ -258,23 +248,37 @@ const selectMembership = (id: any) => {
 </script>
 
 <style scoped lang="scss">
-.membership {
-  padding: 24px;
-}
-
-@media (max-width: 992px) {
-  .membership {
-    padding: 0px;
+.header {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--fitnesswhite);
+  .logo {
+    width: 13.75rem;
+    min-width: 60px;
   }
 }
-
-.content {
+.back {
+  color: var(--gold);
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+}
+.page-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 24px calc(32px + var(--ion-safe-area-bottom));
-  min-height: calc(100% - 337px - var(--ion-safe-area-top));
+}
+
+.title {
+  padding: 0;
+  margin-bottom: 20px;
+  color: var(--gold);
+  font-family: Lato;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
 }
 
 .plan {
@@ -300,22 +304,33 @@ const selectMembership = (id: any) => {
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
-  align-items: center;
   .radiobutton {
     max-width: 340px;
+    --min-height: 100%;
     width: 33%;
     font-size: 14px;
     line-height: 1.5;
     position: relative;
     --padding-top: 0;
+    --border-radius: 8px;
     --padding-bottom: 8px;
     --border-radius: 4px;
     --color: var(--ion-color-medium);
     --inner-padding: 0;
+    --inner-height: 100%;
     --background: var(--gray-700);
     --border-width: 0.8px;
     --border-style: solid;
     --border-color: var(--gray-600);
+
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
+
+    &.item-radio-checked {
+      --color: var(--ion-color-white);
+      --border-color: var(--ion-color-primary);
+    }
 
     ion-radio {
       width: 18px;
@@ -345,6 +360,7 @@ const selectMembership = (id: any) => {
       flex-direction: column;
       align-items: center;
       width: 100%;
+      height: 100%;
     }
 
     &__icon {
@@ -451,7 +467,7 @@ const selectMembership = (id: any) => {
     flex-direction: column;
     align-items: center;
     .radiobutton {
-      width: 100%;
+      width: 80%;
       max-width: unset;
     }
   }
@@ -462,50 +478,45 @@ const selectMembership = (id: any) => {
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
 }
+
 .buttons {
-  margin-top: 7.5rem;
   margin-top: 1rem;
-  border-radius: 8px;
-  width: 45%;
-
-  @media (max-width: 992px) {
-    width: 100%;
-  }
-
-  ion-button {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font: 700 18px/1 Yantramanav;
-    width: 100%;
-    height: 48px;
-    --border-radius: 12px;
-    color: var(--dark-grey, #262626);
+  width: 40%;
+  .button {
+    margin: 0;
     text-align: center;
     font-family: Lato;
-    font-size: 24px;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
     line-height: 130%;
+
+    &:not(:first-child) {
+      margin-top: 16px;
+    }
   }
 }
-.font-large {
-  font: 500 40px/1 Lato;
-}
-.font-medium {
-  font: 500 20px/1 Lato;
-}
-.font-small {
-  font: 500 14px/1 Lato;
-}
-.font-mini {
-  font: 500 12px/1 Lato;
-}
-.status-text {
-  color: var(--gray-700);
-  background-color: #e1dbc5;
-  border-radius: 20px;
-  font: 500 12px/1 Lato;
-  padding: 2px 9px 2px 9px;
+.checkbox {
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--ion-color-secondary);
+
+  ion-checkbox {
+    --size: 20px;
+    flex-shrink: 0;
+    --border-width: 1px;
+    margin: 0 10px 0 2px;
+    --border-color: var(--ion-color-primary);
+  }
+
+  ion-label {
+    margin: 0;
+    white-space: normal;
+  }
 }
 </style>

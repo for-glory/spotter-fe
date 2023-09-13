@@ -10,7 +10,6 @@
           </ion-text>
         </div>
         <div class="buttons">
-          <br />
           <ion-button
             @click="start"
             class="button"
@@ -181,11 +180,28 @@ const goNext = () => {
 }
 
 .buttons {
-  margin-top: 24px;
+  margin-top: 7.5rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  width: 30%;
+  margin: 0 auto;
   margin-bottom: calc(32px + var(--ion-safe-area-bottom));
-}
 
-.button {
-  margin: 0;
+  @media (max-width: 992px) {
+    width: 100%;
+  }
+
+  ion-button {
+    margin-bottom: 1rem;
+    width: 100%;
+    height: 48px;
+    --border-radius: 12px;
+    color: var(--dark-grey, #262626);
+    text-align: center;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 130%;
+  }
 }
 </style>
