@@ -1265,4 +1265,4 @@ const openEvent = (id: string | number) => {
   height: 36px;
 }
 
-.event__time .time-icon {}</style>
+</style>
