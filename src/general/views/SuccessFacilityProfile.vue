@@ -27,14 +27,14 @@
 import { IonText, IonImg, IonButton } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
-import { isPlatform } from "@ionic/vue";
+import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
 const handleContinue = () => {
-  if (isPlatform("desktop")) {
-    router.push({ name: EntitiesEnum.Dashboard });
-  } else {
+  if (Capacitor.isNativePlatform()) {
     router.push({ name: EntitiesEnum.Overview });
+  } else {
+    router.push({ name: EntitiesEnum.DashboardOverview });
   }
 };
 </script>

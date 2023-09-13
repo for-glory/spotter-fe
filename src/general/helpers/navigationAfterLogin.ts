@@ -17,8 +17,6 @@ const navigationAfterAuth = (user: User) => {
 
   const { verified } = useVerified();
 
-  console.log(verified);
-
   if (!verified) {
     router.push({ name: EntitiesEnum.VerifyEmail });
     return;
