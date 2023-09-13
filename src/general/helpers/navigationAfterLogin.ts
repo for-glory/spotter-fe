@@ -97,7 +97,12 @@ const navigationAfterAuth = (user: User) => {
       }
 
       if (stripeAccountState !== "ACTIVE") {
-        router.push({ name: EntitiesEnum.SuccessMembership });
+        if (Capacitor.isNativePlatform()) {
+          router.push({ name: EntitiesEnum.Overview });
+        } else {
+          router.push({ name: EntitiesEnum.SuccessMembership });
+        }
+
         break;
       }
 
@@ -112,6 +117,7 @@ const navigationAfterAuth = (user: User) => {
         router.push({ name: EntitiesEnum.Overview });
         break;
       }
+
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
     }
