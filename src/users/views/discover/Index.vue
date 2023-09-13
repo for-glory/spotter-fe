@@ -1,4 +1,5 @@
 <template>
+
   <base-layout :hide-navigation-menu="isSearchOnFocus">
     <template #header>
       <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
@@ -43,30 +44,34 @@
             isTrainingsLoading ||
             isEventsLoading || isDropinsLoading
             " /> -->
+            <div data-v-2b823bc0="" class="fixed-content"></div>
+            <div data-v-2b823bc0="" class="draggable-content">
           <template v-if="activeTab == EntitiesEnum.Facilities">
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_1.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <div class="event__time my_txt_rate">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 89.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Light Street, 24</span>
+                  </div>
                   </address-item>
-                  <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                  <ion-text class="status-text my_txt">
+                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="#E1DBC5;">Subscription</span> 
                   </ion-text>
                 </div>
               </div>
@@ -74,27 +79,29 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_2.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Fantastic Gym</ion-label>
+                <div class="event__time my_txt_rate">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 42.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Wall Street, 24</span>
+                  </div>
                   </address-item>
-                  <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                  <ion-text class="status-text  my_txt">
+                   <span style="color:#E1DBC5;">3 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
                   </ion-text>
                 </div>
               </div>
@@ -102,27 +109,29 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Summer</ion-label>
+                <div class="event__time my_txt_rate">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 30.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Yellow Street, 24</span>
+                  </div>
                   </address-item>
-                  <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                  <ion-text class="status-text  my_txt">
+                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
                   </ion-text>
                 </div>
               </div>
@@ -130,27 +139,29 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Summer</ion-label>
+                <div class="event__time my_txt_rate">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $55.85
                 </div>
 
-                <ion-text class="event__date">
+               <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Yellow Street, 24</span>
+                  </div>
                   </address-item>
-                  <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                  <ion-text class="status-text  my_txt">
+                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
                   </ion-text>
                 </div>
               </div>
@@ -158,29 +169,31 @@
           </template>
           <template v-if="activeTab == EntitiesEnum.FacilityDropins">
 
-            <ion-item lines="none" class="event">
+            <ion-item class="event" style="padding:0px; !important">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_1.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <div class="event__time my_txt2">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 89.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-                    <ion-icon src="assets/icon/my-marker.svg"></ion-icon>
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Light Street, 24</span>
+                  </div>
                   </address-item>
                   <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="font-size:12px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
@@ -188,27 +201,29 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_2.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Fantastic Gym</ion-label>
+                <div class="event__time my_txt2">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 42.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Wall Street, 24</span>
+                  </div>
                   </address-item>
                   <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                   <span style="color:#E1DBC5;">3 Days</span> <br><span style="font-size:12px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
@@ -216,27 +231,29 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Summer</ion-label>
+                <div class="event__time my_txt2">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $ 30.90
                 </div>
 
-                <ion-text class="event__date">
+                <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Yellow Street, 24</span>
+                  </div>
                   </address-item>
                   <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="font-size:12px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
@@ -244,27 +261,59 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Summer</ion-label>
+                <div class="event__time my_txt2">
                   <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 189.00
+                  $55.85
                 </div>
 
-                <ion-text class="event__date">
+               <!-- <ion-text class="event__date">
                   &nbsp;
                   <template> </template>
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
                   <address-item class="event__address">
-
-                    Light Street, 24
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Yellow Street, 24</span>
+                  </div>
                   </address-item>
                   <ion-text class="status-text ">
-                    7 Days <br> Subscription
+                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="font-size:12px;">Access</span> 
+                  </ion-text>
+                </div>
+              </div>
+            </ion-item>
+
+            <ion-item lines="none" class="event">
+              <ion-thumbnail class="event__photo">
+                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
+
+              </ion-thumbnail>
+              <div class="event__holder">
+                <ion-label class="event__title">Antimatter Gym</ion-label>
+                <div class="event__time my_txt2">
+                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
+                  $55.85
+                </div>
+
+               <!-- <ion-text class="event__date">
+                  &nbsp;
+                  <template> </template>
+                </ion-text> -->
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                  <address-item class="event__address">
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <span style="padding-left:10px;">Jason Street, 78</span>
+                  </div>
+                  </address-item>
+                  <ion-text class="status-text ">
+                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="font-size:12px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
@@ -279,7 +328,7 @@
 
             <ion-item lines="none" class="event trainers">
               <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <img src="assets/backgrounds/tamra.png" class="event__img img-rounded" />
                 <template>
                   fdfvdffv
                 </template>
@@ -298,15 +347,15 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button>Book</ion-button>
+                    <ion-button class="btn_txt">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" class="event trainers">
               <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <img src="assets/backgrounds/women2.png" class="event__img img-rounded" />
                 <template>
                   fdfvdffv
                 </template>
@@ -314,7 +363,7 @@
               <div class="event__holder">
 
                 <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-label class="event__title">Jennifer Oven</ion-label>
                   <ion-button fill="outline" size="small" shape="round"
                     style="border-radius:none !important">4.5</ion-button>
                   &nbsp;
@@ -325,14 +374,14 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button>Book</ion-button>
+                    <ion-button class="btn_txt">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" class="event trainers">
               <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <img src="assets/backgrounds/women3.png" class="event__img img-rounded" />
                 <template>
                   fdfvdffv
                 </template>
@@ -340,7 +389,7 @@
               <div class="event__holder">
 
                 <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-label class="event__title">Alice James</ion-label>
                   <ion-button fill="outline" size="small" shape="round"
                     style="border-radius:none !important">4.5</ion-button>
                   &nbsp;
@@ -351,14 +400,14 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button>Book</ion-button>
+                    <ion-button class="btn_txt">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" class="event trainers">
               <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/avatar1.png" class="event__img img-rounded" />
+                <img src="assets/backgrounds/women4.png" class="event__img img-rounded" />
                 <template>
                   fdfvdffv
                 </template>
@@ -366,7 +415,7 @@
               <div class="event__holder">
 
                 <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Tamra Dae</ion-label>
+                  <ion-label class="event__title">China Xang</ion-label>
                   <ion-button fill="outline" size="small" shape="round"
                     style="border-radius:none !important">4.5</ion-button>
                   &nbsp;
@@ -377,7 +426,7 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button>Book</ion-button>
+                    <ion-button class="btn_txt">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
@@ -392,7 +441,7 @@
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/food1.png" class="event__img" />
                 <template>
                   fdfvdffv
                 </template>
@@ -403,25 +452,32 @@
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
-                <ion-text class="event__date">
-                  17 June
-                  <template>- endDate </template>
-                </ion-text>
+                <div>
+                 
                 <div class="d-flex align-items-center justify-content-between">
+
                   <address-item class="event__address">
-                    Light Street 1
+                    <ion-text class="event__date">
+                      17 June
+                      <template>- endDate </template>
+                    </ion-text>
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                      <span style="padding-left:10px;">Light Street, 24</span>
+                    </div>
                   </address-item>
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button>Register</ion-button>
+                  <ion-button class="evnt_btn">Register</ion-button>
                 </div>
+              </div>
               </div>
             </ion-item>
 
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/train.png" class="event__img" />
                 <template>
                   fdfvdffv
                 </template>
@@ -432,25 +488,31 @@
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
-                <ion-text class="event__date">
-                  17 June
-                  <template>- endDate </template>
-                </ion-text>
+                <div>
+                 
                 <div class="d-flex align-items-center justify-content-between">
+
                   <address-item class="event__address">
-                    Light Street 1
+                    <ion-text class="event__date">
+                      17 June
+                      <template>- endDate </template>
+                    </ion-text>
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                      <span style="padding-left:10px;">Light Street, 24</span>
+                    </div>
                   </address-item>
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button>Register</ion-button>
+                  <ion-button class="evnt_btn">Register</ion-button>
                 </div>
               </div>
+              </div>
             </ion-item>
-
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/run.png" class="event__img" />
                 <template>
                   fdfvdffv
                 </template>
@@ -461,25 +523,31 @@
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
-                <ion-text class="event__date">
-                  17 June
-                  <template>- endDate </template>
-                </ion-text>
+                <div>
+                 
                 <div class="d-flex align-items-center justify-content-between">
+
                   <address-item class="event__address">
-                    Light Street 1
+                    <ion-text class="event__date">
+                      17 June
+                      <template>- endDate </template>
+                    </ion-text>
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                      <span style="padding-left:10px;">Light Street, 24</span>
+                    </div>
                   </address-item>
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button>Register</ion-button>
+                  <ion-button class="evnt_btn">Register</ion-button>
                 </div>
               </div>
+              </div>
             </ion-item>
-
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/avatar1.png" class="event__img" />
+                <img src="assets/backgrounds/run.png" class="event__img" />
                 <template>
                   fdfvdffv
                 </template>
@@ -490,27 +558,34 @@
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
-                <ion-text class="event__date">
-                  17 June
-                  <template>- endDate </template>
-                </ion-text>
+                <div>
+                 
                 <div class="d-flex align-items-center justify-content-between">
+
                   <address-item class="event__address">
-                    Light Street 1
+                    <ion-text class="event__date">
+                      17 June
+                      <template>- endDate </template>
+                    </ion-text>
+                    <div class="mid_txt" style="display:flex;align-items:center;">
+                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                      <span style="padding-left:10px;">Light Street, 24</span>
+                    </div>
                   </address-item>
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button>Register</ion-button>
+                  <ion-button class="evnt_btn">Register</ion-button>
                 </div>
               </div>
+              </div>
             </ion-item>
-
           </template>
         </div>
-
+</div>
       </div>
     </template>
+    
   </base-layout>
 </template>
 
@@ -1002,7 +1077,6 @@ const openEvent = (id: string | number) => {
   }
 };
 </script>
-
 <style scoped lang="scss">
 .dashboard {
   padding: 24px 16px 78px;
@@ -1081,7 +1155,12 @@ const openEvent = (id: string | number) => {
 
 .event__time {
   font-size: 16px;
-  padding: 0px 42px 0px 0px;
+  padding: 0px 2px 0px 0px;
+
+}
+
+.my_txt_rate{
+  padding: 0px 35px 0px 0px;
 
 }
 
@@ -1146,6 +1225,17 @@ const openEvent = (id: string | number) => {
   padding: 12px 20px 12px 20px;
 }
 
+.item-inner {
+  padding-left: unset;
+  padding-right: unset;
+  padding-inline-start: var(--inner-padding-start);
+  padding-inline-end: unset; /* Remove padding-inline-end */
+}
+
+.item-native{
+
+  background-color:red !important;
+}
 .event {
   font-size: 14px;
   line-height: 1.5;
@@ -1265,4 +1355,40 @@ const openEvent = (id: string | number) => {
   height: 36px;
 }
 
+.draggable-content{
+  z-index: 50;
+  padding-top: 24px;
+  position: relative;
+  border-radius: 20px 20px 0 0;
+  margin-top: 1px;
+  transition: margin-top 0.35s ease;
+  background: var(--ion-background-color);
+  min-height: calc(100% - var(--offset) - var(--ion-safe-area-top));
+}
+
+.my_txt{
+
+position: absolute;
+right:0px;
+
+}
+
+.my_txt2{
+
+  padding: 0px 11px 0px 0px;  
+}
+
+.btn_txt{
+
+  position:absolute;
+  right:0;
+  bottom:0;
+}
+
+.evnt_btn{
+
+  height:16px !important;
+  position: absolute;
+  right:0;
+}
 </style>
