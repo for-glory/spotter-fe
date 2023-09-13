@@ -18,7 +18,6 @@ export const navigationMenu: NavigationMenu = {
       icon: "assets/icon/youtube.svg",
       category: "/activities",
     },
-    
     {
       name: EntitiesEnum.Profile,
       label: "Trainers",
