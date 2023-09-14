@@ -41,11 +41,11 @@
                   <ion-text class="workout-item__info">
                     <ion-icon icon="assets/icon/time.svg" />
                     <span>
-                      <template v-if="duration">
-                        {{ timeConvertToHuman(daily.duration) }}
+                      <template v-if="daily.duration">
                         <ion-text color="light" class="workout-item__info-dot">
                           &nbsp;&#183;&nbsp;
                         </ion-text>
+                        {{ getDurationText(daily.duration) }}
                       </template>
                       {{ type }}
                       <ion-text color="light" class="workout-item__info-dot">
@@ -175,6 +175,7 @@ const workoutModal = ref<typeof WorkoutModal | null>(null);
 const id = ref<any>();
 const share = true;
 const dailysItems = computed(() => dailysItemsStore.dailysData);
+console.log(dailysItems.value);
 
 const swiperRef = ref<Swipeer>();
 const activeIndex = ref<number>(0);
@@ -319,7 +320,7 @@ const showSettingsModal = () => {
 const handleDelete = () => {
   isSettingModalOpen.value = false;
   showModal();
-}
+};
 const onDelete = () => {
   hideModal();
   deleteDailys({ id: id.value })
@@ -343,7 +344,7 @@ const onDelete = () => {
 
       throw new Error(error);
     });
-}
+};
 
 const handleEdit = () => {
   isSettingModalOpen.value = false;
@@ -353,7 +354,7 @@ const handleEdit = () => {
 const showReviews = (daily: any) => {
   console.log({daily});
   router.push({ name: EntitiesEnum.WorkoutReviews, params: { id: id.value } });
-}
+};
 
 const formatNumber = (num: number) => {
   if(num <= 9) {
@@ -365,7 +366,17 @@ const formatNumber = (num: number) => {
   } else {
     return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
   }
-}
+};
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
 
 </script>
 

@@ -201,7 +201,7 @@ const formatNumber = (num: number) => {
   } else {
     return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
   }
-}
+};
 
 </script>
 
