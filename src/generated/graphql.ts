@@ -6550,7 +6550,18 @@ export const EventDocument = gql`
         last_name
         score
         address {
+          id
+          lat
+          lng
+          extra
           street
+          city {
+            id
+            name
+            state {
+              name
+            }
+          }
         }
         facilities {
           address {
@@ -6631,18 +6642,9 @@ export const EventsDocument = gql`
     ) {
       data {
         address {
-          id
           lat
           lng
-          extra
           street
-          city {
-            id
-            name
-            state {
-              name
-            }
-          }
         }
         amenities {
           icon
@@ -8316,18 +8318,7 @@ export const MyEventsDocument = gql`
         id
         title
         address {
-          id
-          lat
-          lng
-          extra
           street
-          city {
-            id
-            name
-            state {
-              name
-            }
-          }
         }
         start_date
         media {
