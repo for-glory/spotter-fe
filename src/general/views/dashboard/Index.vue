@@ -1,8 +1,10 @@
 <template>
   <base-dashboard-layout>
-    <template  #right-section>
-			<dashboard-searchbar />
-      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100'">
+    <template #right-section>
+      <dashboard-searchbar />
+      <div
+        :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 trainer-content'"
+      >
         <router-view />
       </div>
     </template>
@@ -18,14 +20,19 @@ import { RoleEnum } from "@/generated/graphql";
 
 const router = useRouter();
 const { role } = useRoles();
-
 </script>
 
 <style scoped lang="scss">
 .content {
-	height: calc(100vh - 92px);
-	overflow: auto;
-	padding: 48px;
+  height: calc(100vh - 92px);
+  overflow: auto;
+  padding: 48px;
+  background: var(--main-color);
+}
+
+.trainer-content {
+  overflow: auto;
+  padding: 40px 108px 40px 55px;
   background: var(--main-color);
 }
 </style>
