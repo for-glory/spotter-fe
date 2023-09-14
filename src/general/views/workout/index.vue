@@ -342,7 +342,9 @@ const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetc
 
 onMounted(() => {
   store.clearState();
-  console.log(currentFacility.facility?.id || localStorage.getItem("selected_facility"));
+  if(!currentFacility.facility?.id) {
+    router.push({ name: EntitiesEnum.Overview });
+  }
 })
 
 gotDailysData(({ data }) => {
