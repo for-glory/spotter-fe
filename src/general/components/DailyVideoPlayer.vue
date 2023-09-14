@@ -5,6 +5,7 @@
     class="relative"
   >
     <video 
+      v-show="shouldPlay"
       :src="videoPath" 
       ref="videoRef"
       autoplay
