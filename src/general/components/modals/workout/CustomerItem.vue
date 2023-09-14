@@ -7,9 +7,6 @@
           <ion-text class="font-medium font-16 color-white">
             {{ name }}
           </ion-text>
-          <ion-text class="font-medium font-12 color-gray">
-            {{ email }}
-          </ion-text>
         </div>
       </div>
       <div v-if="reviewMessage">
@@ -32,7 +29,6 @@ withDefaults(
   }>(),
   {
     name: 'Amina Sally',
-    email: 'aminasaliat@gmail.com',
     reviewMessage: '',
     avatarUrl: 'assets/mock/profile.jpeg',
   }

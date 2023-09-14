@@ -5582,6 +5582,7 @@ export const ReviewsDocument = gql`
     data {
       author {
         id
+        email
         first_name
         last_name
         avatarUrl
@@ -5882,6 +5883,8 @@ export const WorkoutDocument = gql`
       role
       score
     }
+    positive_reviews_count
+    negative_reviews_count
   }
 }
     `;

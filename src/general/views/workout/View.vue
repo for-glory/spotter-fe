@@ -63,15 +63,15 @@
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
                       <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.orderItems?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.orderItems?.length ?? 0) }}</ion-text>
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
                       <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.recommended_users?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.recommended_users?.length ?? 0) }}</ion-text>
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
                       <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.dailyViews?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.dailyViews?.length ?? 0) }}</ion-text>
                     </div>
                   </div>
                   <div class="d-flex align-items-center gap-12 justify-content-end">
@@ -265,27 +265,27 @@ const showWorkoutModal = (type: string, daily: any) => {
     case 'views' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Viewd by ${daily.reviews_count} people`,
-        total_count: daily.dailyViews?.length,
-        customerList: daily.dailyViews?.map((view: any) => view.user),
+        description: `Viewd by ${dailyStatus.value?.workout?.dailyViews?.length} people`,
+        total_count: dailyStatus.value?.workout?.dailyViews?.length,
+        customerList: dailyStatus.value?.workout?.dailyViews?.map((view: any) => view.user),
       });
       break;
     
     case 'purchases' :
       workoutModal.value?.present({ 
         title: 'Purchases',
-        description: `Total purchases made ${daily.total_revenue}`,
-        total_count: daily.orderItems?.length,
-        customerList: daily.orderItems?.map((order: any) => order.order.user),
+        description: `Total purchases made ${dailyStatus.value?.workout?.orderItems?.length}`,
+        total_count: dailyStatus.value?.workout?.orderItems?.length,
+        customerList: dailyStatus.value?.workout?.orderItems?.map((order: any) => order.order.user),
       });
       break;
 
     case 'likes' :
       workoutModal.value?.present({ 
         title: 'Views',
-        description: `Liked by ${daily.recommended_count} people`,
-        total_count: daily.recommended_users?.length,
-        customerList: daily.recommended_users
+        description: `Liked by ${dailyStatus.value?.workout?.recommended_users?.length} people`,
+        total_count: dailyStatus.value?.workout?.recommended_users?.length,
+        customerList: dailyStatus.value?.workout?.recommended_users
       });
       break;
   }

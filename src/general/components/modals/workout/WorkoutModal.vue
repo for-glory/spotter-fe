@@ -7,21 +7,24 @@
           {{ viewTitle }}
         </ion-label>
       </div>
-      <div class="description-field">
+      <div class="description-field d-flex align-items-center justify-content-between">
         <ion-text class="font-medium font-14">{{ viewDescription }}</ion-text>
+        <ion-text v-if="viewTitle === 'Purchases'" class="d-flex align-items-center">
+          <ion-icon src="assets/icon/dollar-circle.svg" style="width: 24px; height: 24px;" />
+          <span class="font-medium color-white font-14">{{ getPaymentNumber(totalRevenue) }}</span>
+        </ion-text>
       </div>
       <div v-if="total_count" class="customer-list">
         <customer-item 
           v-for="customer in customerList"
           :key="customer.id"
           :name="customer.first_name + ' ' + customer.last_name"
-          :email="customer.email"
           :avatarUrl="customer.avatarUrl"
           @open-description-modal="showReviewDescriptionModal(id)" 
         />
       </div>
       <div v-else class="d-flex align-items-center justify-content-center w-100 h-100">
-        <ion-text class="font-medium font-20 color-white">No customers</ion-text>
+        <ion-text class="font-medium font-20 color-white">No {{ viewTitle }}</ion-text>
       </div>
       <div v-if="isReviewDescriptionModalOpen" class="backdrop" />
     </div>
@@ -93,12 +96,14 @@ const viewDescription = ref<string>("");
 const reviewDescription = ref<any>({});
 const total_count = ref<number>(0);
 const customerList = ref<Array<any>>([]);
+const totalRevenue = ref<number>(0);
 
 const present = ( props: any ) => {
   viewTitle.value = props.title;
   viewDescription.value = props.description;
   total_count.value = props.total_count;
   customerList.value = props.customerList;
+  totalRevenue.value = props.totalRevenue || 0;
   workoutModal?.value?.$el.present();
 };
 
@@ -112,6 +117,14 @@ const showReviewDescriptionModal = (id: any) => {
     date: customerList.value[id]?.created_at,
   }
   isReviewDescriptionModalOpen.value = true;
+};
+
+const getPaymentNumber = (value: number) => {
+  if(value > 1e3){
+    return (value / 1e3).toFixed(0) + 'K';
+  } else {
+    return value;
+  }
 };
 
 defineExpose({

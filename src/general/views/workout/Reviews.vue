@@ -7,21 +7,21 @@
     <template #content>
       <div class="common-style">
         <div class="header">
-          <ion-text class="font-medium font-14 color-white">Showing {{ formatNumber(0) }} reviews</ion-text>
+          <ion-text class="font-medium font-14 color-white">Showing {{ formatNumber(totalReviewsCount) }} reviews</ion-text>
         </div>
         <div class="rating ion-padding-horizontal">
           <div class="rating-star">
-            <span class="rating-star__title">{{ trainer?.score }}</span>
-            <star-rating :model-value="trainer?.score || 0" size="medium" />
+            <span class="rating-star__title">{{ score }}</span>
+            <star-rating :model-value="score || 0" size="medium" />
             <ion-text color="medium" class="rating-star__reviews">
-              based on {{ trainer?.reviews_count ?? 0 }} reviews
+              based on {{ formatNumber(totalReviewsCount) ?? 0 }} reviews
             </ion-text>
           </div>
           <like-rating
-            :likes="trainer?.positive_reviews_count || 0"
-            :total="trainer?.reviews_count || 0"
-            :dislikes="trainer?.negative_reviews_count || 0"
-            :progressValue="progressValue"
+            :likes="positiveCount || 0"
+            :total="totalReviewsCount || 0"
+            :dislikes="negativeCount || 0"
+            :progressValue="positiveCount / (positiveCount + negativeCount)"
           />
         </div>
         <div class="tabs-holder">
@@ -34,21 +34,25 @@
           />
         </div>
         <div class="content ion-padding-horizontal w-100 h-100">
-          <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
+          <ion-spinner v-if="reviewLoading || dailyLoading" name="lines" class="spinner" />
           <div v-else-if="!reviews.length" class="d-flex align-items-center justify-content-center">
             <ion-text class="font-bold font-20 color-white">No reviews</ion-text>
           </div>
           <div v-else>
-            <review-item
+            <div
               v-for="review in reviews"
               :key="review.id"
               class="review-item"
-              :avatar-url="review.avatarUrl"
-              :full-name="review.fullName"
-              :date="review.date"
-              :rating="review.rating"
-              :text="review.text"
-            />
+            >
+              <div class="d-flex align-items-center justify-content-between" style="gap: 8px">
+                <div class="d-flex align-items-center" style="gap: 8px;">
+                  <ion-img :src="review.avatarUrl" class="w-68 h-68" style="border-radius: 100px" />
+                  <ion-text class="font-medium font-16 color-white">{{ review.fullName }}</ion-text>
+                </div>
+                <ion-text class="font-medium font-12 color-gray" style="text-align: end">{{ dayjs(review.date).format('D MMMM YYYY') }}</ion-text>
+              </div>
+              <ion-text class="font-14 color-gray-400">{{ review.text }}</ion-text>
+            </div>
           </div>
         </div>
       </div>
@@ -69,6 +73,7 @@ import {
   ReviewTypeEnum,
   FeedbackEntityEnum,
   ReviewsDocument,
+  WorkoutDocument
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
@@ -83,6 +88,8 @@ import useRoles from "@/hooks/useRole";
 import StarRating from "@/users/components/StarRating.vue";
 import LikeRating from "@/users/components/LikeRating.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
+import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
+import dayjs from "dayjs";
 
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
@@ -91,7 +98,6 @@ const route = useRoute();
 const store = useDailysStore();
 
 const id = computed(() => route.params.id);
-const totalReviewsCount = computed(() => store.reviews_count);
 
 const tabs: TabItem[] = [
   {
@@ -130,12 +136,18 @@ const handleBack = () => {
   router.go(-1);
 };
 
-const { result: reviewsResult, loading: reviewLoading, refetch } = useQuery(
+const { result: reviewsResult, loading: reviewLoading, refetch, onResult: getReviews } = useQuery(
   ReviewsDocument,
   () => ({
     id: route.params.id,
     type: FeedbackEntityEnum.Workout,
     review_type: activeTab.value,
+  })
+);
+const { result: dailyResult, loading: dailyLoading, refetch: refetchDaily } = useQuery(
+  WorkoutDocument,
+  () => ({
+    id: route.params.id,
   })
 );
 
@@ -155,14 +167,32 @@ const reviews = computed(() =>
     []
   )
 );
+const totalReviewsCount = ref<number>(0);
+const score = ref<number>(0);
+const positiveCount = computed(() => dailyResult.value?.workout?.positive_reviews_count);
+const negativeCount = computed(() => dailyResult.value?.workout?.negative_reviews_count);
+
+getReviews(({ data }) => {
+  if(activeTab.value === 'Recent') {
+    score.value = 0;
+    data?.reviews?.data.map((review: any) => {
+      score.value += review.score;
+    });
+    score.value /= data?.reviews?.data?.length;
+    console.log(score.value);
+    totalReviewsCount.value = data?.reviews?.data?.length;
+
+    refetchDaily();
+  }
+});
 
 const onBack = () => {
   router.go(-1);
 };
 
 const formatNumber = (num: number) => {
-  if(num === 0) {
-    return 0;
+  if(num < 1e3) {
+    return num;
   } else if (num >= 1e6) {
     return (num / 1e6).toFixed(1) + 'M';
   } else if (num >= 1e5) {
@@ -176,7 +206,7 @@ const formatNumber = (num: number) => {
 
 <style scoped lang="scss">
 .header {
-  padding: 9px;
+  padding: 9px 20px;
 }
 .rating {
   display: flex;
@@ -218,7 +248,18 @@ const formatNumber = (num: number) => {
 }
 
 .review-item {
+  border: 1px solid #3d3d3d;
   margin-bottom: 16px;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  ion-img {
+    &::part(image) {
+      border-radius: 100px;
+    }
+  }
 }
 
 .spinner {
@@ -228,8 +269,20 @@ const formatNumber = (num: number) => {
   --color: var(--ion-color-white);
 }
 .common-style {
+  .font-12 {
+    font-size: 14px;
+  }
   .font-14 {
     font-size: 14px;
   }
+  .font-16 {
+    font-size: 16px;
+  }
+}
+.w-68 {
+  width: 68px;
+}
+.h-68 {
+  height: 68px;
 }
 </style>
