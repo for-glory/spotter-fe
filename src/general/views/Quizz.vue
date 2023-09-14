@@ -50,6 +50,7 @@ import { dataURItoFile } from "@/utils/fileUtils";
 import useId from "@/hooks/useId";
 import { setSettings } from "@/hooks/useSettings";
 import { ProfileSettings } from "@/ts/enums/user";
+import { Capacitor } from "@capacitor/core";
 
 const { role } = useRoles();
 
@@ -136,14 +137,25 @@ const { mutate: updateUserSettings, onDone: settingsUpdated } = useMutation(
 settingsUpdated(() => {
   if (role === RoleEnum.Trainer) {
     const { id } = useId();
-    router.push({
-      name: EntitiesEnum.Trainer,
-      params: {
-        id,
-      },
-    });
+
+    if (Capacitor.isNativePlatform()) {
+      router.push({ name: EntitiesEnum.Overview });
+    } else {
+      router.push({ name: EntitiesEnum.DashboardOverview });
+    }
+
+    // router.push({
+    //   name: EntitiesEnum.Trainer,
+    //   params: {
+    //     id,
+    //   },
+    // });
   } else {
-    router.push({ name: EntitiesEnum.RegistrationDone });
+    if (Capacitor.isNativePlatform()) {
+      router.push({ name: EntitiesEnum.Facilities });
+    } else {
+      router.push({ name: EntitiesEnum.DashboardOverview });
+    }
   }
 });
 
