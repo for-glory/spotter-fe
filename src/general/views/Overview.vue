@@ -1,5 +1,5 @@
 <template>
-  <base-layout content-full-height>
+  <base-layout content-full-height :hideNavigationMenu="loadingUser || loadingDashboarData">
     <template #header>
       <page-header title="Overview">
         <template #avatar-field>
