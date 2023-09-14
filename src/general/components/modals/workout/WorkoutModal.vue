@@ -80,6 +80,12 @@ import {
   toastController,
   IonSpinner,
 } from "@ionic/vue";
+import {
+  ReviewTypeEnum,
+  FeedbackEntityEnum,
+  ReviewsDocument,
+} from "@/generated/graphql";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { defineExpose, defineEmits, ref, defineProps } from "vue";
 import { Capacitor } from '@capacitor/core';
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -108,16 +114,28 @@ const present = ( props: any ) => {
   workoutModal?.value?.$el.present();
 };
 
+const { result: reviewsResult, loading: reviewLoading, refetch, onResult: getReviews } = useQuery(
+  ReviewsDocument,
+  () => ({
+    id: route.params.id,
+    type: FeedbackEntityEnum.Workout,
+    user_id: 0,
+  })
+);
+
 const isReviewDescriptionModalOpen = ref<boolean>(false);
 const showReviewDescriptionModal = (id: any) => {
-  reviewDescription.value = {
-    reviewerName: customerList.value[id]?.first_name + ' ' + customerList.value[id]?.last_name,
-    reviewerAvatar: customerList.value[id]?.avatarUrl,
-    reviewerEmail: customerList.value[id]?.email,
-    reviewMessage: '',
-    date: customerList.value[id]?.created_at,
-  }
-  isReviewDescriptionModalOpen.value = true;
+  refetch({ id: route.params.id, type: FeedbackEntityEnum.Workout, user_id: id})?.
+    then(() => {
+       reviewDescription.value = {
+        reviewerName: customerList.value[id]?.first_name + ' ' + customerList.value[id]?.last_name,
+        reviewerAvatar: customerList.value[id]?.avatarUrl,
+        reviewerEmail: customerList.value[id]?.email,
+        reviewMessage: reviewsResult.value.reviews?.data[0].review,
+        date: customerList.value[id]?.created_at,
+      }
+      isReviewDescriptionModalOpen.value = true;
+    })
 };
 
 const getPaymentNumber = (value: number) => {
