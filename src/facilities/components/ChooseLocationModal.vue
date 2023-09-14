@@ -126,6 +126,12 @@ const setPlace = (place: any) => {
         const res_city = res.data.cities.data[0];
         console.log("selected city", res_city)
         store.setAddress(res_city.state, res_city, address);
+        const venueAddress = {
+          state:res_city.state,
+           city: res_city,
+           address: address
+        }
+        localStorage.setItem("venueAddress", JSON.stringify(venueAddress))
         console.log({ res_city });
       });
       chooseModal?.value?.$el.dismiss();
