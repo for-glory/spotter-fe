@@ -12,7 +12,26 @@
       </div> -->
       <div>
         <div class="carousel">
-          <ion-img :src="result?.facility?.media[0]?.pathUrl"></ion-img>
+          <swiper
+            v-if="medias.length"
+            free-mode
+            slidesPerView="auto"
+            :spaceBetween="16"
+            :slidesOffsetAfter="0"
+            :slidesOffsetBefore="0"
+            :modules="[FreeMode]"
+          >
+            <swiper-slide
+              v-for="(item, index) in medias"
+              :key="`swiper_${index}`"
+              class="swiper-slide"
+            >
+              <ion-img
+                :src="item?.pathUrl"
+                class="media-item"
+              />
+            </swiper-slide>
+          </swiper>
         </div>
         <div class="data-box d-flex justify-content-between">
           <div class="d-flex-col">
@@ -170,6 +189,9 @@ import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import Avatar from "@/general/components/blocks/Avatar.vue";
 import dayjs from "dayjs";
+import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { FreeMode } from "swiper";
 
 const currentFacility = useFacilityStore();
 
@@ -194,6 +216,10 @@ const { result: managerResult, loading: managerLoading } = useQuery(
 console.log(managerResult)
 const manager = computed(() =>
   managerResult?.value?.managers?.data.length ? managerResult?.value?.managers?.data[0] : {}
+);
+
+const medias = computed(() =>
+  result.value?.facility?.media.length ? result.value.facility?.media : []
 );
 
 const tabs: TabItem[] = [

@@ -1,10 +1,15 @@
 <template>
+ <div class="banner__background-image hide-if-web">
+        <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />
+        <img class="banner" src="assets/backgrounds/forget-banner.png" alt="">
+      </div>
   <div class="page--content">
+    <!-- <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />  -->
     <div class="page--title">
-      <ion-title>Uh oh! Forgot your password?</ion-title>
+   <ion-title> Uh oh! Forgot your password?</ion-title>
       <ion-text>
         Don't sweat it! Enter your email below to receive instructions to reset
-        your password
+        your password1
       </ion-text>
     </div>
     <forgot-password-form
@@ -42,9 +47,14 @@ const form = ref<ForgotPasswordMutationVariables>({
   email: "",
 });
 
+const onBack = () => {
+  router.go(-1);
+};
+
 const resetPassword = (formData: ForgotPasswordMutationVariables) => {
   forgotPassword({ ...formData });
 };
+
 
 onDone(() => {
   localStorage.setItem("temporary_email", JSON.stringify(form.value.email));
@@ -56,8 +66,18 @@ onDone(() => {
 ion-title {
   padding: 0;
   margin: 20px auto;
-  font-size: 28px;
+  font-size: 20px;
   --color: var(--gold);
+}
+
+#header {
+position: absolute;
+left: 3%;
+top: 7%;
+}
+
+.banner {
+  width: -webkit-fill-available;
 }
 
 ion-text {
@@ -72,6 +92,7 @@ ion-text {
 .page {
   &--title {
     text-align: center;
+    margin-top:5%;
     margin: 20px auto 32px;
   }
 
