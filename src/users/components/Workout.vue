@@ -28,7 +28,7 @@
             <ion-icon icon="assets/icon/time.svg" />
             <span>
               <template v-if="duration">
-                {{ timeConvertToHuman(duration) }}
+                {{ getDurationText(duration) }}
                 <ion-text color="light" class="workout-item__info-dot"
                   >&nbsp;&#183;&nbsp;</ion-text
                 >
@@ -167,6 +167,15 @@ const formatNumber = (num: number) => {
   }
 }
 
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+}
 
 </script>
 

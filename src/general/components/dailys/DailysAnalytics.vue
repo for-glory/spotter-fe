@@ -13,7 +13,7 @@
           </ion-text>
           <ion-text class="font-light font-14 color-gray-400 d-flex align-items-center">
             <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
-            {{ daily?.duration }} min • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
+            {{ getDurationText(daily?.duration) }} • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
           </ion-text>
         </div>
       </div>
@@ -37,6 +37,16 @@ import dayjs from "dayjs";
 defineProps<{
   daily: any;
 }>(); 
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return value / 60 + ' min ' + value % 60 + ' s';
+  } else {
+    return value / 3600 + ' h ' + (value % 3600) / 60 + ' min ' + ((value % 3600) % 60) + ' s';
+  }
+}
 
 const emits = defineEmits<{
   (e: "watch-daily"): void;
