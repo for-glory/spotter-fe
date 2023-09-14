@@ -51,6 +51,7 @@ defineEmits<{
     --padding-bottom: 0;
     --padding-start: 0;
     --padding-end: 0;
+    font-family: "Yantramanav";
   }
 
   &__title {

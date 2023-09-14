@@ -75,7 +75,7 @@ const handleSend = () => {
 <style scoped lang="scss">
 .room-footer {
   position: relative;
-  background: rgba(var(--ion-color-gray-900-rgb), 0.88);
+  // background: rgba(var(--ion-color-gray-900-rgb), 0.88);
   min-height: calc(68px + var(--ion-safe-area-bottom));
   padding: 10px 24px calc(10px + var(--ion-safe-area-bottom));
 

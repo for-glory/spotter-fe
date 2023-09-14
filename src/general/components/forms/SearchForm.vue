@@ -161,7 +161,6 @@ import {
   inject,
   watch,
 } from "vue";
-import { IonContent, PickerColumnOption } from "@ionic/vue";
 import {
   IonSearchbar,
   SearchbarCustomEvent,
@@ -172,6 +171,8 @@ import {
   IonIcon,
   IonModal,
   toastController,
+  IonContent,
+  PickerColumnOption
 } from "@ionic/vue";
 import {
   FacilitiesDocument,

@@ -5,8 +5,8 @@
         class="trainer-item__avatar"
         :src="
           type === EntitiesEnum.Training
-            ? event.user.avatarUrl
-            : event.media[0].pathUrl
+            ? event?.user?.avatarUrl
+            : event?.media[0].pathUrl
         "
         :symbols="symbols"
       />
@@ -14,25 +14,27 @@
         <div class="trainer-item__head">
           <ion-label class="trainer-item__title">
             <template v-if="type === EntitiesEnum.Training">
-              {{ event.user.first_name }} {{ event.user.last_name }}
+              {{ event?.user.first_name }} {{ event?.user.last_name }}
             </template>
             <template v-else>
-              {{ event.title }}
+              {{ event?.title }}
             </template>
           </ion-label>
           <template v-if="type === EntitiesEnum.Training">
-            <ion-text class="rating rating__likes">
+            <div class="d-flex gap-4 align-items-center">
+              <ion-text class="rating rating__likes">
               <ion-icon src="assets/icon/like.svg" class="rating__icon" />
-              {{ event.user.positive_reviews_count }}
+              {{ 64 }}
             </ion-text>
             <ion-text class="rating rating__dislikes">
               <ion-icon src="assets/icon/dislike.svg" class="rating__icon" />
-              {{ event.user.negative_reviews_count }}
+              {{ 48 }}
             </ion-text>
+            </div>
           </template>
         </div>
         <address-item
-          class="trainer-item__address"
+          class="trainer-item__address address--trainer"
           v-if="
             trainingAddress === undefined ? address : trainingAddress !== ''
           "
@@ -48,7 +50,7 @@
           {{
             infoOneValue
               ? infoOneValue
-              : dayjs(event.start_date).format("MM/DD/YYYY")
+              : dayjs(event?.start_date).format("MM/DD/YYYY")
           }}
         </ion-text>
       </div>
@@ -58,14 +60,14 @@
           {{
             infoTwoValue
               ? infoTwoValue
-              : dayjs(event.start_date).format("h:mm A")
+              : dayjs(event?.start_date).format("h:mm A")
           }}
         </ion-text>
       </div>
       <div class="order__item">
         <ion-text class="order__label">{{ infoThreeTitle }}</ion-text>
         <ion-text class="order__info">
-          {{ infoThreeValue ? infoThreeValue : `$${event.order?.front_total}` }}
+          {{ infoThreeValue ? infoThreeValue : `$${event?.order?.front_total}` }}
         </ion-text>
       </div>
     </div>
@@ -84,7 +86,7 @@ import { EntitiesEnum } from "@/const/entities";
 
 const props = withDefaults(
   defineProps<{
-    event: Training | Event;
+    event?: Training | Event | null;
     type?: EntitiesEnum;
     infoOneTitle?: string;
     infoTwoTitle?: string;
@@ -98,6 +100,7 @@ const props = withDefaults(
     infoOneTitle: "Date",
     infoTwoTitle: "Time",
     infoThreeTitle: "Total",
+    event: null
   }
 );
 
@@ -127,7 +130,7 @@ const symbols = computed(() => {
 <style lang="scss" scoped>
 .content {
   &__container {
-    margin: 16px 0 25px;
+    margin: 16px 0 24px;
     border-radius: 8px;
     background-color: var(--gray-700);
   }
@@ -209,16 +212,21 @@ const symbols = computed(() => {
   align-items: center;
 
   &__icon {
-    font-size: 18px;
+    font-size: 24px;
     margin-right: 3px;
   }
-
+  &__likes, &__dislikes{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Yantramanav";
+    color: var(--gold);
+  }
   &__likes {
-    color: var(--ion-color-success-tint);
+    // color: var(--ion-color-success-tint);
   }
 
   &__dislikes {
-    color: var(--ion-color-danger-tint);
+    // color: var(--ion-color-danger-tint);
   }
 }
 
@@ -230,7 +238,7 @@ const symbols = computed(() => {
   }
 
   &__item {
-    padding: 0 0 12px;
+    padding: 0 0 16px;
     display: flex;
     flex-direction: column;
     line-height: 1.5;
@@ -239,13 +247,14 @@ const symbols = computed(() => {
   &__label {
     font-weight: 500;
     font-size: 12px;
-    --color: var(--ion-color-secondary);
+    color: var(--gray-60);
+    font-family: "Yantramanav";
   }
 
   &__info {
     font-weight: 500;
     font-size: 16px;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
   }
 }
 

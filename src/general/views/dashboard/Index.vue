@@ -2,7 +2,7 @@
   <base-dashboard-layout>
     <template  #right-section>
 			<dashboard-searchbar />
-      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100'">
+      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 bg-main'">
         <router-view />
       </div>
     </template>
@@ -27,5 +27,9 @@ const { role } = useRoles();
 	overflow: auto;
 	padding: 48px;
   background: var(--main-color);
+}
+.bg-main {
+  background-color: var(--main-color);
+  overflow: hidden;
 }
 </style>

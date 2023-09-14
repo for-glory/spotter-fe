@@ -120,6 +120,7 @@ http://ionicframework.com/docs/theming/ */
   --bronze: #a87e45;
   --beige: beige;
   --alert-red: #F4A5A5;
+  --gray-60: rgba(255, 255, 255, 0.60);
 
   --ion-font-family: Lato, sans-serif;
   --title-font-family: Lato, sans-serif;

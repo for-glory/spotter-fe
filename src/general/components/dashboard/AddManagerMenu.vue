@@ -103,6 +103,10 @@ import {
   IonMenuToggle,
   IonInput,
   IonMenu,
+  IonContent,
+  IonToolbar,
+  IonLabel,
+  IonHeader
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";

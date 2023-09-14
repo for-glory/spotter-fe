@@ -33,13 +33,13 @@ withDefaults(
   defineProps<{
     title: string;
     text: string;
-    buttonText: string;
+    buttonText?: string;
     hideButton?: boolean;
     icon?: string;
   }>(),
   {
     icon: "assets/icon/shore-run.svg",
-    buttonText: "Create"
+    buttonText: "Create",
   }
 );
 </script>

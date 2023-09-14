@@ -97,10 +97,10 @@ const handleSend = () => {
   &__textarea {
     margin: 0;
     max-height: 132px;
-    background: var(--gray-800);
+    background: var(--gray-700);
     border: 0.8px solid var(--gray-600);
     border-radius: 8px;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
     --padding-start: 58px;
     --padding-end: 58px;
     --padding-top: 12px;
@@ -108,6 +108,7 @@ const handleSend = () => {
     font-weight: 300;
     font-size: 14px;
     line-height: 21px;
+    font-family: "Yantramanav";
 
     &:deep(textarea) {
       max-height: 130px;
@@ -128,6 +129,7 @@ const handleSend = () => {
   z-index: 15;
   padding-right: 9px;
   color: var(--ion-color-white);
+  opacity: 0.6;
 
   &:before {
     top: 50%;
@@ -154,5 +156,6 @@ const handleSend = () => {
   line-height: 22px;
   z-index: 25;
   color: var(--gold);
+  font-family: "Yantramanav";
 }
 </style>
