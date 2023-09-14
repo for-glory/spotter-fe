@@ -85,6 +85,8 @@ export const clearAuthItems = () => {
   localStorage.removeItem("dashboard_active_tab");
   localStorage.removeItem("preferred_booking_tab");
   localStorage.removeItem("trainer_schedule_active_tab");
+  localStorage.removeItem("selectedGym");
+  localStorage.removeItem("facilities");
 };
 
 const auth: Middleware = async ({ next, router }) => {
