@@ -72,7 +72,7 @@ export default {
 <script setup lang="ts">
 import { IonText, IonSpinner, actionSheetController } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
-import Detail from "@/general/components/Detail.vue";
+import Detail from "@/general/components/EventDetail.vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   AddToCartDocument,

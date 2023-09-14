@@ -9,7 +9,7 @@
           <div style="width: 100%; min-height: 50px">
             <div class="d-flex justify-content-between title" >
               <span>{{title}}</span>
-              <span>${{price}}</span>
+              <span>${{formatNumber(price)}}</span>
             </div>
             <div class="d-flex justify-content-between" >
               <span>{{getDate}}</span>
@@ -21,7 +21,7 @@
               <ion-icon :icon="time"></ion-icon> <span class="time"> {{getTime}} </span>
             </div>
             <div class="d-flex justify-content-start ion-align-items-center subtitle" style="gap: 0.25rem">
-              <ion-icon size="14px" :icon="location"></ion-icon> <span>{{street}}</span>
+              <ion-icon style="margin-bottom: 9%;" size="14px" :icon="location"></ion-icon> <span class="break">{{street}}</span>
             </div>
             <div class="upcoming">Upcoming</div>
           </div>
@@ -56,6 +56,10 @@ const props = withDefaults(
 const getDate = computed(() => {
   return dayjs(props.start_date).format('DD MMM') || ''
 })
+
+const formatNumber = ((num: any) => {
+    return parseFloat(num).toFixed(2)
+  })
 const getTime = computed(() => {
   return dayjs(props.start_date).format('HH:mm a') || ''
 })
@@ -120,6 +124,12 @@ ion-thumbnail {
 
 ion-icon {
   color: #EDE8D7;
+}
+
+.break {
+  display: block;
+    width: 100px;
+    overflow-wrap: break-word;
 }
 
 .time {
