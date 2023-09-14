@@ -174,7 +174,7 @@ watch(
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
     });
-    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal));
+    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal) as Facility);
   }
 );
 
@@ -207,12 +207,18 @@ gotUser(({ data }) => {
       : null;
 
   if(!localStorage.getItem("selected_facility")) {
-    facilityStore.setFacility(facilities.value?.at(0));
+    facilityStore.setFacility(facilities.value?.at(0) as Facility);
     localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
   } else {
     activeFacilityId.value = localStorage.getItem("selected_facility");
+    let facilityValue = facilities.value?.find((facility) => facility?.id === activeFacilityId.value);
     console.log(activeFacilityId.value);
-    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
+    if(!facilityValue && facilities.value?.length){
+      facilityStore.setFacility(facilities.value?.at(0) as Facility);
+      localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
+    } else {
+      facilityStore.setFacility(facilityValue as Facility);
+    }
   }
   refetch( { id: facilityStore?.facility?.id } );
 
