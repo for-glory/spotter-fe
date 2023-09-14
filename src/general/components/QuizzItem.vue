@@ -155,15 +155,44 @@ const multiselectChange = (data: string[]): void => {
   display: flex;
   align-items: center;
   min-height: 100%;
+  width: 100%;
   flex-direction: column;
   justify-content: space-between;
   padding-bottom: calc(32px + var(--ion-safe-area-bottom));
 
+  &__main {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 12px;
+    width: 50%;
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+  }
+
   &__head {
-    min-height: 28vh;
     padding-top: 48px;
     text-align: center;
     margin-bottom: 32px;
+    width: 100%;
+  }
+
+  &__body {
+    padding-top: 48px;
+    width: 100%;
+
+    ion-item {
+      margin: 0 auto;
+      width: 40%;
+
+      @media (max-width: 992px) {
+        width: 100%;
+      }
+    }
   }
 
   &__title {
@@ -216,6 +245,7 @@ const multiselectChange = (data: string[]): void => {
 }
 
 .radiobutton {
+  align-self: center;
   font-size: 14px;
   line-height: 1.5;
   --padding-top: 0;
