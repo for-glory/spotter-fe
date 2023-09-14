@@ -206,7 +206,7 @@ const { result: dailyStatus, loading: dailysStatusLoading, refetch: refetchDaily
 );
 
 const onBack = () => {
-  router.go(-1);
+  router.push({ name: EntitiesEnum.WorkoutList });
 };
 
 onMounted(() => {
