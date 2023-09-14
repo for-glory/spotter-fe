@@ -162,7 +162,10 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
 
 const { loading: subscriptionUserLoading, onResult } = useQuery(
   SubscriptionUserDocument,
-  { facility_id: currentFacility.facility?.id }
+  {
+    facility_id: currentFacility.facility?.id,
+    unique_identifier: currentStripeSubscription.value.unique_identifier,
+  }
 );
 
 onResult(({ data }) => {
