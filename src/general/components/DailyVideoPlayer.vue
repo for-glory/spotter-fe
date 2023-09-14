@@ -8,7 +8,7 @@
       :src="videoPath" 
       ref="videoRef"
       autoplay
-      style="max-width: 100%; width: 100%; max-height: 100%; height: 100%"
+      style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
       class="shadow"
     />
     <div @click="handlePlay" class="shadow w-100 h-100 absolute" />
