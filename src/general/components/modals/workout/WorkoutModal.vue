@@ -20,7 +20,7 @@
           :key="customer.id"
           :name="customer.first_name + ' ' + customer.last_name"
           :avatarUrl="customer.avatarUrl"
-          :haveMessage="customer.was_commented_by_self"
+          :hasMessage="customer.was_commented_by_self"
           @open-description-modal="showReviewDescriptionModal(id)" 
         />
       </div>

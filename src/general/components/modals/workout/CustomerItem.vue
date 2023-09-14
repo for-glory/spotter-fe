@@ -9,7 +9,7 @@
           </ion-text>
         </div>
       </div>
-      <div v-if="reviewMessage">
+      <div v-if="hasMessage">
         <ion-icon src="assets/icon/messages.svg" class="w-24 h-24" @click="openDescriptionModal" />
       </div>
     </div>
@@ -25,11 +25,10 @@ withDefaults(
     name?: string;
     avatarUrl?: string;
     email?: string;
-    reviewMessage?: string;
+    hasMessage?: string;
   }>(),
   {
     name: 'Amina Sally',
-    reviewMessage: '',
     avatarUrl: 'assets/mock/profile.jpeg',
   }
 );
