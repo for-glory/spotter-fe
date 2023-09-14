@@ -164,7 +164,7 @@ const { loading: subscriptionUserLoading, onResult } = useQuery(
   SubscriptionUserDocument,
   {
     facility_id: currentFacility.facility?.id,
-    unique_identifier: currentStripeSubscription.value.unique_identifier,
+    unique_identifier: currentStripeSubscription?.value?.unique_identifier,
   }
 );
 
@@ -193,7 +193,7 @@ onMounted(async () => {
               ? subscriptionPlan[0]
               : {},
         });
-        if (currentStripeSubscription.value.plan_id === cur.id) {
+        if (currentStripeSubscription?.value?.plan_id === cur.id) {
           currentPlan.value = {
             ...cur,
             owned: currentStripeSubscription.value.plan_id === cur.id,
