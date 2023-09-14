@@ -317,7 +317,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   {
     page: 1,
     first: 1000,
-    facility_id: currentFacility.facility?.id,
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
     order: SortOrder.Asc,
   },
@@ -328,20 +328,21 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
   DailyAnalyticsDocument,
   {
-    facility_id: currentFacility.facility?.id,
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
     limit: performanceLimit.value
   }
 );
 const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
   DailyPerformanceDocument,
   {
-    facility_id: currentFacility.facility?.id,
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
     limit: 7
   }
 );
 
 onMounted(() => {
   store.clearState();
+  console.log(currentFacility.facility?.id || localStorage.getItem("selected_facility"));
 })
 
 gotDailysData(({ data }) => {
