@@ -46,7 +46,7 @@ import {
 } from "@deva-community/capacitor-camera-pro";
 import PhotoCropper from "@/general/components/modals/crop/PhotoCropper.vue";
 import CircleProgress from "@/general/components/CircleProgress.vue";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 enum uploadTypesEnum {
   MakeAPhoto = "MAKE_A_PHOTO",
@@ -78,7 +78,7 @@ const emits = defineEmits<{
   (e: "delete", index: number, id?: string): void;
 }>();
 
-const openImagePicker = async (index?: number, mediaId?: string) => {    
+const openImagePicker = async (index?: number, mediaId?: string) => {
   const mobileButtons = [
     {
       text: "Take photo",
@@ -110,10 +110,10 @@ const openImagePicker = async (index?: number, mediaId?: string) => {
       role: "cancel",
     },
   ];
-  
+
   const actionSheet = await actionSheetController.create({
     mode: "ios",
-    buttons: Capacitor.isNativePlatform()?mobileButtons:webButtons
+    buttons: Capacitor.isNativePlatform() ? mobileButtons : webButtons,
   });
 
   await actionSheet.present();

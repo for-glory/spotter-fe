@@ -22,16 +22,16 @@
         >
         </ion-back-button>
       </ion-buttons>
-      <ion-icon
+
+      <ion-img
         v-if="!hiddenLogo"
-        src="assets/icon/logo.svg"
+        src="assets/icon/logo-complete.png"
         class="logo"
-        alt="logo"
+        alt="Spotter"
       />
+
       <div class="header__circles" />
-      <slot name="title">
-        <ion-title class="logo-title"> SPOTTER</ion-title>
-      </slot>
+      <slot name="title"> </slot>
       <slot name="description">
         <ion-title class="logo-description">
           <template v-if="isLogin">
@@ -149,12 +149,12 @@ const isRegistration = computed(
 }
 
 .logo {
-  width: 108px;
-  height: 108px;
+  width: 220px;
+  height: auto;
   display: block;
   min-width: 60px;
   min-height: 60px;
-  margin: 0 auto 8px;
+  margin: 5rem auto 8px;
 }
 
 .logo-description {

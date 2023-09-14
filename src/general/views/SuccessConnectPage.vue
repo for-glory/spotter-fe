@@ -18,7 +18,11 @@
       </div>
       <div class="buttons">
         <ion-button expand="block" @click="handleContinue">
-          Set up gym profile
+          {{
+            role === RoleEnum.Trainer
+              ? "Set up trainer profile"
+              : "Set up gym profile"
+          }}
         </ion-button>
       </div>
     </div>
