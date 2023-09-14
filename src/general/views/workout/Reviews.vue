@@ -102,18 +102,15 @@ const id = computed(() => route.params.id);
 const tabs: TabItem[] = [
   {
     name: ReviewTypeEnum.Recent,
-    labelActive: "Recent",
-    labelInactive: "Recent",
+    label: "Recent",
   },
   {
     name: ReviewTypeEnum.Positive,
-    labelActive: "Positive",
-    labelInactive: "Recent",
+    label: "Positive",
   },
   {
     name: ReviewTypeEnum.Negative,
-    labelActive: "Negative",
-    labelInactive: "Recent",
+    label: "Negative",
   },
 ];
 

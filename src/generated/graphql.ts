@@ -6522,7 +6522,7 @@ export const GetFacilitySubscriptionDocument = gql`
   }
 }
     `;
-    export const DailyViewsAndPurchasesDocument = gql`
+export const DailyViewsAndPurchasesDocument = gql`
     query workout($id: ID!) {
   workout(id: $id) {
     id
@@ -6532,35 +6532,24 @@ export const GetFacilitySubscriptionDocument = gql`
       last_name
       email
       avatarUrl
+      was_commented_by_self
     }
-    orderItems {
+    purchased_users {
       id
-      order {
-        id
-        user {
-          id
-          first_name
-          last_name
-          email
-          avatarUrl
-        }
-      }
-      created_at
+      first_name
+      last_name
+      email
+      avatarUrl
+      was_commented_by_self
     }
-    dailyViews {
+    viewed_users {
       id
-      user {
-        id
-        first_name
-        last_name
-        email
-        avatarUrl
-      }
-      workout {
-        id
-      }
-      created_at
+      first_name
+      last_name
+      email
+      avatarUrl
+      was_commented_by_self
     }
   }
 }
-  `;
+`;
