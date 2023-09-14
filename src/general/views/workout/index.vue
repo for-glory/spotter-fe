@@ -94,7 +94,7 @@
                       "
                       :id="daily.id"
                       :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.reviews_count"
+                      :reviews_count="daily.views_count"
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
@@ -138,7 +138,7 @@
                       "
                       :id="daily.id"
                       :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.reviews_count"
+                      :reviews_count="daily.views_count"
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
@@ -182,7 +182,7 @@
                       "
                       :id="daily.id"
                       :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.reviews_count"
+                      :reviews_count="daily.views_count"
                       :recommended_count="daily.recommended_count"
                       :share="true"
                       :hide="true"
@@ -276,6 +276,7 @@ import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { useDailysStore } from "@/general/stores/useDailysStore";
+import dayjs from "dayjs";
 import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
@@ -301,10 +302,6 @@ const summaryData = ref<any>({
   viewsPerDaily: 0,
   topDailys: [],
 });
-const performanceData = ref<Array<any>>([]);
-const trendingDailys = ref<Array<any>>([]);
-const recommendedDailys = ref<Array<any>>([]);
-
 const router = useRouter();
 const store = useDailysStore();
 
@@ -347,22 +344,36 @@ onMounted(() => {
   }
 })
 
+const performanceData = ref<Array<any>>();
+const trendingDailys = computed(() => {
+  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+   dailys.sort((a: any, b: any) => {
+    return b.views_count - a.views_count;
+  });
+  return dailys;
+});
+const recommendedDailys = computed(() => {
+  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+  dailys.sort((a: any, b: any) => {
+    return b.recommended_count - a.recommended_count;
+  });
+  return dailys;
+});
+
+
 gotDailysData(({ data }) => {
-  let dailys = data.facilityWorkouts.data;
+  let dailys = [ ...data.facilityWorkouts.data ];
   dailys.sort((a: any, b: any) => {
     return a.total_revenue - b.total_revenue;
   });
   summaryData.value.topDailys = dailys.slice(0, 10);
-  dailys.sort((a: any, b: any) => {
-    return a.views_count - b.views_count;
+  let recentDailys = [ ...data.facilityWorkouts.data ];
+  recentDailys.sort((a: any, b: any) => {
+    const dateFirst = dayjs(a, "h:mm A");
+    const dateLast = dayjs(b, "h:mm A");
+    return dateFirst.isBefore(dateLast) ? 1 : -1;
   });
-  trendingDailys.value = dailys;
-  dailys.sort((a: any, b: any) => {
-    return a.recommended_count - b.recommended_count;
-  });
-  recommendedDailys.value = dailys;
-  dailysItemsStore.setData(dailys.reverse());
-  console.log(dailysItemsStore.dailysData);
+  dailysItemsStore.setData(recentDailys);
 });
 
 gotDailysAnalyticsData(({ data }) => {
@@ -377,7 +388,7 @@ gotDailysPerformanceData(({ data }) => {
 });
 
 const dailysData = computed(
-  () => dailysResult.value?.facilityWorkouts?.data
+  () => dailysItemsStore.dailysData
 );
 
 const { mutate: showDailys, loading: dailysShowLoading } =
@@ -396,14 +407,10 @@ const showDailysItem = (id: number) => {
 }
 
 const watchDailys = (daily: any) => {
-  console.log(daily.id);
-  console.log(daily);
-  console.log(dailysData.value[0]);
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
 }
 
 const handleSetFilter = (value: string) => {
-  console.log(value);
   filter.value = value;
 }
 
