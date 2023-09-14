@@ -66,7 +66,7 @@
     </template>
   </base-layout>
 
-  <page-tabs-new
+  <page-tabs
     :tabs="tabs"
     class="page-tabs"
     :value="activeTab"
@@ -107,7 +107,7 @@ const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
 
-const tabs: TabItemNew[] = [
+const tabs: TabItem[] = [
   {
     name: EntitiesEnum.Facilities,
     label: "Gyms",

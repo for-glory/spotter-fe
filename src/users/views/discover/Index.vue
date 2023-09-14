@@ -5,7 +5,7 @@
       <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
         @handle-blur="isSearchOnFocus = false" />
 
-      <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+      <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
 
 
@@ -329,9 +329,6 @@
             <ion-item lines="none" class="event trainers">
               <ion-thumbnail class="event__photo img-rounded">
                 <img src="assets/backgrounds/tamra.png" class="event__img img-rounded" />
-                <template>
-                  fdfvdffv
-                </template>
               </ion-thumbnail>
               <div class="event__holder">
 
@@ -633,10 +630,10 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
-import { TabItem } from "@/interfaces/TabItem";
+import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
-import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import {
   EventPaginator,
   MyEventsDocument,
@@ -955,7 +952,7 @@ const bookingName = computed(() => {
   return "trainings";
 });
 
-const tabs: TabItem[] = [
+const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.FacilityDropins,
     labelActive: "assets/icon/dropinsActive.png",

@@ -14,9 +14,7 @@
         v-for="tab in tabs"
         :disabled="tab.disabled"
       >
-      <img :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
-        <!-- <img v-if="props.type === 'image'" :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" /> -->
-        <!-- <span v-else>{{ tab.labelActive }}</span> -->
+        {{ tab.label }}
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -27,11 +25,11 @@ import { defineProps, defineEmits } from "vue";
 import { IonSegment, IonSegmentButton, SegmentCustomEvent } from "@ionic/vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
+import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const props = defineProps<{
-  tabs?: TabItem[];
+  tabs?: TabItemNew[];
   value?: EntitiesEnum;
-  type?: 'image'
 }>();
 
 const emit = defineEmits<{
@@ -43,12 +41,7 @@ const segmentChanged = (event: SegmentCustomEvent) => {
   emit("change", event.detail.value as EntitiesEnum);
 };
 
-const getTabImage = (tabName: EntitiesEnum) => {
-  const tab = props.tabs?.find((t) => t.name == tabName);
-  // alert(tab);
-  console.log(tab)
-  return tab ? (tab.name == props.value ? tab.labelActive : tab.labelInactive) : "";
-};
+
 </script>
 
 
