@@ -18,7 +18,7 @@
         <div class="dashboards-items">
           <dashboard-item :items="activityItems">
             <template #title>
-              <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
+              <ion-icon src="public/assets/icon/activity.svg" class="activity-icon" />
               Activity
             </template>
           </dashboard-item>
@@ -64,7 +64,7 @@
           <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
             :text="`Currently you have no booked ${bookingName}`" />
         </div>
-        <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+        <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
       </div>
     </template>
   </base-layout>
@@ -114,10 +114,10 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
-import { TabItem } from "@/interfaces/TabItem";
+import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
-import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import {
   EventPaginator,
   MyEventsDocument,
@@ -419,7 +419,7 @@ const bookingName = computed(() => {
   return "trainings";
 });
 
-const tabs: TabItem[] = [
+const tabs: TabItemNew[] = [
 {
     name: EntitiesEnum.FacilityDropins,
     labelActive: "assets/icon/dropinsActive.png",
@@ -630,7 +630,9 @@ const openEvent = (id: string | number) => {
   justify-content: center;
   bottom: calc(84px + var(--ion-safe-area-bottom));
   --btn-min-width: 100px;
+  padding: 12px 20px 12px 20px;
 }
+
 
 .empty-block {
   margin-top: 48px;

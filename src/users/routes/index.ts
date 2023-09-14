@@ -349,4 +349,12 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth],
     },
   },
+  {
+    name: 'Events_detail',
+    path: "/users/discover/event_detail",
+    component: () => import("@/users/views/discover/event_detail.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
 ];

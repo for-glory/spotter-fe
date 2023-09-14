@@ -76,7 +76,7 @@
     </template>
   </base-layout>
 
-  <page-tabs-new
+  <page-tabs
     :tabs="tabs"
     class="page-tabs"
     :value="EntitiesEnum.MyTraining"
@@ -117,7 +117,7 @@ const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
 
-const tabs: TabItemNew[] = discoverTabs;
+const tabs: TabItem[] = discoverTabs;
 
 const tabsChanged = (name: EntitiesEnum) => {
   router.push({
