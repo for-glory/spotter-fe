@@ -118,7 +118,7 @@
     </template>
   </base-layout>
 
-  <page-tabs-new
+  <page-tabs
     :tabs="tabs"
     class="page-tabs"
     v-if="!isSearchOnFocus"
@@ -167,7 +167,7 @@ import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const router = useRouter();
 
-const tabs: TabItemNew[] = [
+const tabs: TabItem[] = [
   {
     name: EntitiesEnum.ActivitiesNearby,
     label: "Nearby",

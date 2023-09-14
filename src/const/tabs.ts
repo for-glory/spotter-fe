@@ -2,7 +2,7 @@ import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
 import { TabItemNew } from "@/interfaces/TabItemnew";
 
-export const discoverTabs: TabItemNew[] = [
+export const discoverTabs: TabItem[] = [
   {
     name: EntitiesEnum.ActivitiesNearby,
     label: "Nearby",
@@ -16,7 +16,7 @@ export const discoverTabs: TabItemNew[] = [
     // labelInactive: "assets/icon/workout.svg",
   },
 ];
-export const scheduleTabs: TabItemNew[] = [
+export const scheduleTabs: TabItem[] = [
   {
     name: EntitiesEnum.Trainings,
     label: "Trainings",
