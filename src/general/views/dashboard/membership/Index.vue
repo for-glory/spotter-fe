@@ -179,6 +179,7 @@ onResult(({ data }) => {
 
 onMounted(async () => {
   backendStripe.init();
+
   onPlansResult(async ({ data }) => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
@@ -193,7 +194,7 @@ onMounted(async () => {
               ? subscriptionPlan[0]
               : {},
         });
-        if (currentStripeSubscription?.value?.plan_id === cur.id) {
+        if (currentStripeSubscription.value?.plan_id === cur.id) {
           currentPlan.value = {
             ...cur,
             owned: currentStripeSubscription.value.plan_id === cur.id,
