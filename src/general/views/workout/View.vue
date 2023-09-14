@@ -249,6 +249,10 @@ watch(() => swiperRef.value?.activeIndex,
   console.log(newVal);
   activeIndex.value = newVal;
   id.value = dailysItems.value[activeIndex.value].id;
+  router.push({
+    name: router?.currentRoute?.value?.name,
+    params: { id: id.value },
+  });
   refetchDailyStatus({ id: id.value });
 });
 
@@ -347,7 +351,8 @@ const handleEdit = () => {
 }
 
 const showReviews = (daily: any) => {
-  router.push({ name: EntitiesEnum.WorkoutReviews, params: { id: daily.id } });
+  console.log({daily});
+  router.push({ name: EntitiesEnum.WorkoutReviews, params: { id: id.value } });
 }
 
 const formatNumber = (num: number) => {

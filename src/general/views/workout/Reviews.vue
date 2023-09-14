@@ -12,15 +12,15 @@
         <div class="rating ion-padding-horizontal">
           <div class="rating-star">
             <span class="rating-star__title">{{ score }}</span>
-            <star-rating :model-value="score || 0" size="medium" />
+            <star-rating :model-value="score ?? 0" size="medium" />
             <ion-text color="medium" class="rating-star__reviews">
               based on {{ formatNumber(totalReviewsCount) ?? 0 }} reviews
             </ion-text>
           </div>
           <like-rating
-            :likes="positiveCount || 0"
-            :total="totalReviewsCount || 0"
-            :dislikes="negativeCount || 0"
+            :likes="positiveCount ?? 0"
+            :total="totalReviewsCount ?? 0"
+            :dislikes="negativeCount ?? 0"
             :progressValue="positiveCount / (positiveCount + negativeCount)"
           />
         </div>
@@ -175,13 +175,14 @@ const negativeCount = computed(() => dailyResult.value?.workout?.negative_review
 getReviews(({ data }) => {
   if(activeTab.value === 'Recent') {
     score.value = 0;
-    data?.reviews?.data.map((review: any) => {
-      score.value += review.score;
-    });
-    score.value /= data?.reviews?.data?.length;
-    console.log(score.value);
     totalReviewsCount.value = data?.reviews?.data?.length;
-
+    if(totalReviewsCount.value) {
+       data?.reviews?.data.map((review: any) => {
+        score.value += review.score;
+      });
+      score.value /= data?.reviews?.data?.length;
+    }
+    console.log(score.value);
     refetchDaily();
   }
 });
