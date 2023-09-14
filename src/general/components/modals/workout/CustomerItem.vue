@@ -2,7 +2,7 @@
   <div class="common-style">
     <div class="d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-8">
-        <ion-img :src="avatarUrl" class="w-68 h-68" />
+        <ion-img :src="avatarUrl" class="" />
         <div class="d-flex-col gap-2">
           <ion-text class="font-medium font-16 color-white">
             {{ name }}
@@ -79,6 +79,8 @@ const openDescriptionModal = () => {
 ion-img{
   &::part(image) {
     border-radius: 100px;
+    width: 68px !important;
+    height: 68px !important;
   }
 }
 </style>

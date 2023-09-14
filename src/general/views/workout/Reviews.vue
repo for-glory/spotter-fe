@@ -46,7 +46,7 @@
             >
               <div class="d-flex align-items-center justify-content-between" style="gap: 8px">
                 <div class="d-flex align-items-center" style="gap: 8px;">
-                  <ion-img :src="review.avatarUrl" class="w-68 h-68" style="border-radius: 100px" />
+                  <ion-img :src="review.avatarUrl" class="w-68" style="border-radius: 100px" />
                   <ion-text class="font-medium font-16 color-white">{{ review.fullName }}</ion-text>
                 </div>
                 <ion-text class="font-medium font-12 color-gray" style="text-align: end">{{ dayjs(review.date).format('D MMMM YYYY') }}</ion-text>
