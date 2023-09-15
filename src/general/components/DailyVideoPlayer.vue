@@ -7,6 +7,7 @@
     <video 
       v-show="shouldPlay"
       :src="videoPath" 
+      :poster="preview"
       ref="videoRef"
       autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
@@ -37,11 +38,16 @@ const props = defineProps({
   play: {
     type: Boolean,
     default: true,
-  }
+  },
+  preview: {
+    type: String,
+    required: true,
+  },
 });
 
 const videoPath = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.path}`);
 const videoRef = ref<any>();
+const preview = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.preview}`);
 
 const shouldPlay = computed(() => props.play);
 
