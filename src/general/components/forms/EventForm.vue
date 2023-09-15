@@ -649,12 +649,11 @@ const submitEvent = async (type: string) => {
         equipments: eventEquipments.value.map((equipment) => equipment.id),
         amenities: eventAmenities.value.map((amenity) => amenity.id),
         media: eventPhotos.value?.map((photo, index) => {
-          console.log(photo, 'photossss');
           return {
             title: `${eventTitle.value
               .replace(/\s/g, "")
               .toLowerCase()}-${index}`,
-            file: photo.url,
+            file: photo.path,
           };
         }),
       }
@@ -665,12 +664,11 @@ const submitEvent = async (type: string) => {
         amenities: eventAmenities.value.map((amenity) => amenity.id),
         media: eventPhotos.value
           ?.map((photo, index) => {
-             console.log(photo, 'photossss');
             return {
               title: `${eventTitle.value
                 .replace(/\s/g, "")
                 .toLowerCase()}-${index}`,
-              file: photo.url,
+              file: photo.path,
             };
           })
           .filter((photo) => photo.file),
@@ -703,12 +701,11 @@ const submitEvent = async (type: string) => {
       equipments: eventEquipments.value.map((equipment) => equipment.id),
       amenities: eventAmenities.value.map((amenity) => amenity.id),
       media: eventPhotos.value?.map((photo, index) => {
-         console.log(photo, 'photossss');
         return {
           title: `${eventTitle.value
             .replace(/\s/g, "")
             .toLowerCase()}-${index}`,
-          file: photo.url,
+          file: photo.path,
         };
       }),
   }, type);
