@@ -1,35 +1,16 @@
 <template>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
-	<!-- <div
+	<div
     v-else
-		class=""
+		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !loading }"
-	> -->
-  <div v-else
-		class=""
-		:class="{ 'holder-content--empty': !loading }">
-    <div class="add-gym-container">
-      <ion-button class="add-gym-btn" @click="goToGymCreate({
-              data: null,
-              title: 'New Gym',
-            })">Add new gym</ion-button>
-    </div>
-
-    <!-- <div v-if="medias || result ">
-      <common-list :medias="medias" :result="result"/>
-    </div> -->
-    <div class="list-component-container">
-      <common-list :allData="result"/>
-      <common-list :allData="result"/>
-      <common-list :allData="result"/>
-      <common-list :allData="result"/>
-    </div>
-    <!-- <div> -->
+	>
+    <div>
       <!-- <div class="banner">
         <ion-icon src="assets/icon/arrow-back.svg" />
         <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title>
       </div> -->
-      <!-- <div>
+      <div>
         <div class="carousel">
           <swiper
             v-if="medias.length"
@@ -102,9 +83,9 @@
             </div>
           </div>
         </div>
-      </div> -->
-    <!-- </div> -->
-    <!-- <div class="panel">
+      </div>
+    </div>
+    <div class="panel">
       <div class="d-flex justify-content-center">
         <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button>
       </div>
@@ -116,14 +97,14 @@
 					</template>
 				</ion-avatar>
         <ion-label class="name">
-          {{ `${manager.first_name} ${manager.last_name}`}} -->
+          {{ `${manager.first_name} ${manager.last_name}`}}
           <!-- <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon> -->
-        <!-- </ion-label>
+        </ion-label>
         <ion-text class="contact">{{"Gym Manager"}}</ion-text>
-        <ion-text class="contact">{{ manager.email }}</ion-text> -->
+        <ion-text class="contact">{{ manager.email }}</ion-text>
         <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
-      <!-- </div> -->
-      <!-- <div>
+      </div>
+      <div>
         <ion-button class="share-btn">Share Gym</ion-button>
         <div class="tabs-holder">
           <page-tabs
@@ -133,7 +114,7 @@
             @change="tabsChanged"
           />
           <div class="content">
-            <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" /> -->
+            <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
             <!-- <div v-else>
               <review-item
                 v-for="review in reviews"
@@ -147,7 +128,7 @@
               />
             </div> -->
 
-            <!-- <div v-else>
+            <div v-else>
               <div class="black-box review" v-for="review in reviews" :key="review.id">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex reviewer align-items-center">
@@ -159,14 +140,13 @@
                 </div>
                 <ion-text class="review-message">{{ review.text }}</ion-text>
               </div>
-            </div> -->
+            </div>
             
-          <!-- </div>
+          </div>
         </div>
       </div>
-    </div> -->
+    </div>
 	</div> 
-  <create-gym-modal ref="createGymModal" />
 </template>
 
 <script setup lang="ts">
@@ -212,8 +192,6 @@ import dayjs from "dayjs";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode } from "swiper";
-import CommonList from "@/general/components/CommonList.vue";
-import CreateGymModal from "@/general/components/forms/CreateGymModal.vue";
 
 const currentFacility = useFacilityStore();
 
@@ -244,10 +222,6 @@ const medias = computed(() =>
   result.value?.facility?.media.length ? result.value.facility?.media : []
 );
 
-const allData = (() =>
-  [...result,...result,...result]
-);
-
 const tabs: TabItem[] = [
   {
     name: ReviewTypeEnum.Recent,
@@ -271,7 +245,7 @@ const tabsChanged = (newTab: ReviewTypeEnum) => {
 
 const router = useRouter();
 
-let {
+const {
   result: reviewsResult,
   loading: reviewLoading,
   refetch,
@@ -302,21 +276,14 @@ const reviews = computed(() =>
   )
 );
 
-const createGymModal = ref<typeof CreateGymModal | null>(null);
-
-const goToGymCreate = (data: any) => {
-  // router.push({
-  //   name: EntitiesEnum.DashboardGymCreate
-  // })
-  console.log('gdufgjsgbfdbgs: ', data);
-  createGymModal.value?.present({ data });
+const goToGymCreate = () => {
+  router.push({
+    name: EntitiesEnum.DashboardGymCreate
+  })
 }
 </script>
 
 <style scoped lang="scss">
-.list-component-container {
-  margin-top: 35px;
-}
 .holder-content {
   padding-left: 50px;
   padding-right: 420px;
@@ -430,10 +397,10 @@ const goToGymCreate = (data: any) => {
     max-height: 56px;
     margin-bottom: 14px;
   }
-  // .add-gym-btn {
-  //   width: 40%;
-  //   margin: 20px 0;
-  // }
+  .add-gym-btn {
+    width: 40%;
+    margin: 20px 0;
+  }
   .black-box {
     background-color: var(--main-color);
     border-radius: 8px;
@@ -535,14 +502,5 @@ const goToGymCreate = (data: any) => {
 .photo {
     width: 94px;
     height: 94px;
-  }
-  .add-gym-container {
-    display: flex;
-    justify-content: end;
-    padding: 15px;
-    background-color: #262626;
-    ion-button {
-      height: 40px;
-    }
   }
 </style>
