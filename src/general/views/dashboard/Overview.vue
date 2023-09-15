@@ -246,12 +246,19 @@
             </div>
           </div>
           <div class="ts-chart-container">
-            <div style="position: relative; width: 100%; height: 250px">
+            <doughnut 
+            :data="traningPieChartData"
+            :options="chartOptions"
+            :width="null"
+            :height="null"
+          />
+          <span class="pie-chart-title">{{ pichartTitle }}</span>
+
+            <!-- <div style="position: relative; width: 100%; height: 250px">
               <pie-chart
                 :chartData="pieChartDataDanger"
                 :chart-options="pieChartOptionsDanger"
               />
-              <span class="pie-chart-title">{{ pichartTitle }}</span>
               <div
                 style="
                   position: absolute;
@@ -268,7 +275,7 @@
                   :chart-options="pieChartOptionsPrimary"
                 />
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="header">
             <div
@@ -306,14 +313,21 @@
             </div>
           </div>
           <div class="event-ring">
-            <div>
+            <doughnut 
+            :data="eventPieChartData"
+            :options="chartOptions"
+            :width="null"
+            :height="null"
+          />
+          <span class="pie-chart-title completed-chart-title">{{ pichartTitle }}</span>
+            <!-- <div> -->
               <!-- event chart -->
-              <div style="position: relative; width: 100%; height: 250px">
+            
+              <!-- <div style="position: relative; width: 100%; height: 250px">
                 <pie-chart
                   :chartData="pieChartDataDanger"
                   :chart-options="pieChartOptionsDanger"
                 />
-                <span class="pie-chart-title completed-chart-title">{{ pichartTitle }}</span>
                 <div
                   style="
                     position: absolute;
@@ -331,7 +345,7 @@
                   />
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="completed">
             <div class="flex-container">
@@ -463,7 +477,15 @@ import { getFacilitySubscription } from "@/router/middleware/gymOwnerSubscriptio
 import _default from "chart.js/dist/plugins/plugin.legend";
 import useRoles from "@/hooks/useRole";
 import labels = _default.defaults.labels;
-import { ChartData, ChartOptions } from "chart.js";
+import { Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  ArcElement, ChartData, ChartOptions } from "chart.js";
+import { Doughnut } from 'vue-chartjs';
+ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
+
 
 const router = useRouter();
 const selected = "February";
@@ -648,6 +670,70 @@ const pieChartOptionsPrimary = {
   },
 };
 
+const traningPieChartData:ChartData = {
+  labels: [
+    'Completed',
+    'Upcoming events',
+  ],
+  datasets: [{
+    data: [60, 40],
+    backgroundColor: [
+      '#E1DBC5',
+      '#F7685B',
+    ],
+    circumference: 180,
+    rotation: -90,
+    borderJoinStyle: 'rounded',
+    cutout:75,
+    borderWidth: 0,
+    borderRadius: 20,
+    spacing: -30,
+    pointStyle: 'circle'
+  }]
+};
+const eventPieChartData = {
+  labels: [
+    'Completed',
+    'Upcoming events',
+  ],
+  datasets: [{
+    data: [60, 40],
+    backgroundColor: [
+      '#E1DBC5',
+      '#F7685B',
+    ],
+    circumference: 180,
+    rotation: -90,
+    borderJoinStyle: 'rounded',
+    cutout: 75,
+    borderWidth: 0,
+    borderRadius: 20,
+    spacing: -30,
+    pointStyle: 'circle'
+  }]
+};
+const chartOptions:ChartOptions = {
+  responsive: false,
+  aspectRatio: 2,
+  plugins: {
+    legend: {
+      position: 'right',
+      labels: {
+        usePointStyle: true,
+        boxHeight: 6,
+        filter(item, data) {
+            item.fontColor = item.fillStyle;
+            return true;
+        },
+        font :{
+          family :"Lato",
+          size: 10,
+        }
+      },
+    },
+  }
+};
+
 const piechartDataPrimary = computed(() => {
   return {
     labels: ["Completed", "Upcoming events"],
@@ -655,7 +741,7 @@ const piechartDataPrimary = computed(() => {
       {
         data: [60, 40],
         backgroundColor: ["#E1DBC5", "transparent"],
-        cutout: "80%",
+        cutout: "85%",
         borderWidth: 0,
         borderRadius: 20,
         circumference: 180,
@@ -673,7 +759,7 @@ const pieChartDataDanger = computed<ChartData>(() => {
       {
         data: [60, 40],
         backgroundColor: ["transparent", "#F7685B"],
-        cutout: "80%",
+        cutout: "85%",
         borderWidth: 0,
         borderRadius: 20,
         circumference: 180,
@@ -1088,8 +1174,8 @@ watch(
   margin: 0 39px;
 }
 .event-ring {
-  margin-left: 49px;
-  margin-right: 9px;
+  position: relative;
+  margin: 5px 9px 10px 49px;
 }
 .ring {
   width: 12rem;
@@ -1297,9 +1383,9 @@ ion-col.col-gap.test {
   }
 
   .ts-chart-container {
-    width: clamp(250px, 100%, 400px);
-    height: 225px;
-    padding-left: 25px;
+    position: relative;
+    height: fit-content;
+    padding: 25px 20px 25px 40px;
   }
   .title {
     color: var(--fitnesswhite);
@@ -1331,8 +1417,8 @@ ion-col.col-gap.test {
 
   .pie-chart-title {
     position: absolute;
-    bottom: 24%;
-    left: 27%;
+    bottom: 40px;
+    left: 109px;
     font-family: Inter;
     color: var(--gold);
     font-size: 26px;
@@ -1340,8 +1426,8 @@ ion-col.col-gap.test {
   }
 
   .completed-chart-title {
-    bottom: 20%;
-    left: 30%;
+    bottom: 20px;
+    left: 70px;
   }
 
   .dropdown {
@@ -1358,31 +1444,40 @@ ion-col.col-gap.test {
     flex-direction: column;
   }
 
-  @media (max-width: 1600px){
-    .completed-chart-title {
-      left: clamp(10%, 27%, 30%);
-     }
-  }
-  @media (max-width: 1500px){
-    .completed-chart-title {
-        left: clamp(8%, 25%, 28%);
-        font-size: clamp(10px, 20px, 24px);
-        bottom: 24%;
-     }
+  @media (max-width: 1400px){
+    .event-ring {
+      margin-left: 35px;
+      canvas {
+        scale: .9;
+      }
+    }
   }
   @media (max-width: 1350px){
-    .completed-chart-title {
-      left: 22%;
-      bottom: 26%;
-     }
+     .completed-chart-title {
+      left: 76px;
+    }
   }
   @media (max-width: 1300px){
     .event-ring {
       margin-left: 10px;
+
+      canvas {
+        scale: .8;
+      }
     }
     .completed-chart-title {
-      bottom: 28%;
+      bottom: 23px;
+      left: 82px;
+     }     
+  }
+
+  @media only screen and (max-width: 1400px) and (min-width: 1200px){
+    .completed {
+      margin: 0 10px;
      }
+    .upcoming{
+      margin: 0;
+    }
   }
 
   @media (max-width: 1200px) {
@@ -1390,21 +1485,22 @@ ion-col.col-gap.test {
       padding: 0;
     }
     .completed {
-      margin-top: 20px;
+      margin: 20px 20px 0 20px
     }
-    .ts-chart-container {
-      height: 240px;
+    .upcoming { 
+      margin: 19px 14px;
     }
     .event-ring {
-      width: clamp(250px, 100%, 400px);
-      height: 225px;
-      padding-left: 25px;
       margin: 0;
+      padding-left: 25px;
+      canvas {
+        scale: initial;
+      }
     }
     .completed-chart-title {
       font-size: 27px;
-      bottom: 24%;
-      left: 27%;
+      bottom: 20px;
+      left: 98px;
     }
   }
   @media (max-width: 1100px) {
@@ -1415,21 +1511,17 @@ ion-col.col-gap.test {
   }
 
   @media (max-width: 850px) {
-    .pie-chart-title,
     .completed-chart-title {
-      left: 26%;
       font-size: 22px;
     }
-
-    .event-ring,
-    .ts-chart-container {
-      padding-left: 10px;
-    }
   }
-  @media (max-width: 780px) {
-    .pie-chart-title,
-    .completed-chart-title {
-      left: 23%;
+
+  @media (max-width: 320px){
+    .ts-chart-container {
+
+      canvas {
+        scale: .9;
+      }
     }
   }
 }
