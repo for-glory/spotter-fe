@@ -2,25 +2,23 @@
   <ion-card>
     <ion-card-content>
       <div class="event-wrapper d-flex">
-        <div
-          class="d-flex ion-align-items-center ion-justify-content-center"
-          style="gap: 10px"
-        >
+        <div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 12px">
           <!-- <ion-thumbnail> -->
-          <img alt="Silhouette of mountains" class="event-img" :src="media" />
-          <!-- </ion-thumbnail> -->
-          <div class="" style="width: 100%">
-            <div style="width: 100%; min-height: 50px">
-              <div class="d-flex justify-content-between title">
-                <span>{{ title }}</span>
-                <span>${{ formatNumber(price) }}</span>
+            <img class="event-img"  alt="Silhouette of mountains" :src="media" />
+            <!-- </ion-thumbnail> -->
+            <div style="width: 100%;">
+
+              <div style="width: 100%; min-height: 50px">
+                <div class="d-flex justify-content-between title" >
+                <span>{{title}}</span>
+                <span>${{formatNumber(price)}}</span>
               </div>
               <div class="d-flex justify-content-between">
-                <span class="subtitle">{{ getDate }}</span>
-                <span class="subtitle">Entry</span>
+                  <span class="subtitle">{{ getDate }}</span>
+                  <span class="subtitle">Entry</span>
               </div>
             </div>
-            <div class="d-flex-col time-location" style="">
+            <!-- <div class="d-flex-col time-location" style="">
               <div
                 class="d-flex justify-content-start ion-align-items-center"
                 style="gap: 0.25rem"
@@ -36,8 +34,21 @@
                 <span>{{ street }}</span>
               </div>
               <div class="upcoming">Upcoming</div>
+            </div> -->
+            <div class="d-flex justify-content-start ion-align-items-center" style="gap: 0.25rem" >
+              <ion-icon :icon="time"></ion-icon> <span class="time"> {{getTime}} </span>
             </div>
+          <div class="d-flex-col time-location" style="">
+            
+            <div class="d-flex justify-content-start ion-align-items-center subtitle" style="gap: 0.25rem">
+              <ion-icon v-if="role !== RoleEnum.Trainer" style="margin-bottom: 9%;" size="14px" :icon="location"></ion-icon> 
+              <ion-icon v-if="role === RoleEnum.Trainer" src="assets/icon/location.svg"></ion-icon>
+              <span :class="{'break': role !== RoleEnum.Trainer}">{{street}}</span>
+            </div>
+            <div class="upcoming">Upcoming</div>
           </div>
+        </div>
+
         </div>
         <template v-if="role === RoleEnum.Trainer">
           <div class="content native-app">
@@ -74,7 +85,7 @@
 import dayjs from "dayjs";
 import { computed, defineProps, withDefaults } from "vue";
 import { IonIcon, IonButton } from "@ionic/vue";
-import { time } from "ionicons/icons";
+import { time, location } from "ionicons/icons";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
 
@@ -93,12 +104,14 @@ const props = withDefaults(
     status: "Upcoming",
   }
 );
+
 const getDate = computed(() => {
-  return dayjs(props.start_date).format("DD MMM") || "";
-});
-const formatNumber = (num: any) => {
-  return parseFloat(num).toFixed(2);
-};
+  return dayjs(props.start_date).format('DD MMM') || ''
+})
+
+const formatNumber = ((num: any) => {
+    return parseFloat(num).toFixed(2)
+  })
 const getTime = computed(() => {
   return dayjs(props.start_date).format("HH:mm a") || "";
 });
@@ -109,7 +122,7 @@ ion-card {
 }
 .time-location {
   width: 100%;
-  min-height: 52px;
+  // min-height: 52px;
   gap: 4px;
   position: relative;
   .upcoming {
@@ -141,8 +154,8 @@ ion-card-content {
 }
 
 .event-img {
-  width: 80px;
-  height: 80px;
+  width: 77px;
+  height: 77px;
   border-radius: 14px;
 }
 
@@ -170,14 +183,20 @@ ion-card-content {
   }
 }
 
+.mr-b {
+  margin-bottom: 9%;
+}
+
 ion-icon {
   color: #ede8d7;
 }
+
 .break {
   display: block;
-  width: 100px;
-  overflow-wrap: break-word;
+    width: 100px;
+    overflow-wrap: break-word;
 }
+
 .time {
   color: var(--white, #fff);
   /* yantra/body 2 */
@@ -214,6 +233,7 @@ ion-icon {
     }
   }
 }
+
 
 .view-details {
   width: 100%;

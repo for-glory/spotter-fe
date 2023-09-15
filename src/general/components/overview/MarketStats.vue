@@ -50,7 +50,7 @@ import useRoles from "@/hooks/useRole";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import { ChartOptions } from 'chart.js';
 import BaseSelect from "../base/BaseSelect.vue";
-import { TrainerSelectOptions } from '@/const/app.contant'
+import { TrainerSelectOptions } from '@/const/TrainerSelectOption'
 
 const { role } = useRoles()
 
