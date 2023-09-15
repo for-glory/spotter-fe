@@ -25,7 +25,7 @@ withDefaults(
     name?: string;
     avatarUrl?: string;
     email?: string;
-    hasMessage?: string;
+    hasMessage?: boolean;
   }>(),
   {
     name: 'Amina Sally',
