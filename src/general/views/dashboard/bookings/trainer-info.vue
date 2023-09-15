@@ -109,14 +109,17 @@ const { mutate: createChatMutation, loading: chatLoading } =
     useMutation(CreateChatDocument);
 
 const openChat = () => {
-    createChatMutation({ participant_id: result.value?.training.user.id || 5321 }).then(
-        (res) => {
-            router.push({
-                name: EntitiesEnum.ChatPersonal,
-                params: { id: res?.data?.createChat?.id },
-            });
-        }
-    );
+    // createChatMutation({ participant_id: result.value?.training.user.id || 5321 }).then(
+    //     (res) => {
+    //         router.push({
+    //             name: EntitiesEnum.ChatPersonal,
+    //             params: { id: res?.data?.createChat?.id },
+    //         });
+    //     }
+    // );
+    router.push({
+        name: EntitiesEnum.DashboardMessage
+    });
 };
 </script>
   

@@ -1,6 +1,6 @@
 
 <template>
-    <div class="dashboard web-bookings">
+    <div class="dashboard web-bookings hide-scrollbar">
         <div class="d-flex align-items-center page-header">
           <ion-button class="common-back-btn" fill="clear" @click="router.back()">
             <ion-icon src="assets/icon/arrow-back.svg" />
@@ -277,6 +277,8 @@ const openEvent = (id: string) => {
 
 .web-bookings {
   padding: 0 64px;
+  overflow: auto;
+  height: 100%;
 }
 .page-header{
   padding-top: 21px;

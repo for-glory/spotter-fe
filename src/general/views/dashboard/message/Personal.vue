@@ -1,12 +1,12 @@
 <template>
-	<div ref="messagesContainer" class="messages__container">
+	<div ref="messagesContainer" class="messages__container" :class="role === RoleEnum.Trainer ? 'messages_container__trainer' : ''">
 		<div>
 			<template v-for="(message, idx) in data.messages" :key="message.id">
 				<message
 					:content="message.content"
 					:timestamp="message.timestamp"
 					:date="message.date"
-					:content-type="message.type"
+					:content-type="message.contentType"
 					:current-user="message.isCurUserMessage"
 					:show-date="showDate(idx)"
 					:approvable="isApprovable(message.type, idx)"
@@ -71,7 +71,7 @@ const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
   chats: [],
   messages: [
   {
-      content: "test",
+      content: "Training session on Jul 17, 8:30 PM",
       timestamp: "Jul 17, 2022",
       date: "8:27 PM",
       contentType: ChatMessageTypeEnum.Message,
@@ -84,7 +84,7 @@ const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
       key: "1",
     },
     {
-      content: "test",
+      content: "Training session on Jul 17, 8:30 PM",
       timestamp: "Jul 17, 2022",
       date: "8:27 PM",
       contentType: ChatMessageTypeEnum.Message,
@@ -97,7 +97,7 @@ const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
       key: "1",
     },
     {
-      content: "test",
+      content: "Training session on Jul 17, 8:30 PM",
       timestamp: "Jul 17, 2022",
       date: "8:27 PM",
       contentType: ChatMessageTypeEnum.Message,
@@ -110,7 +110,7 @@ const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
       key: "1",
     },
     {
-      content: "test",
+      content: "Training session on Jul 17, 8:30 PM",
       timestamp: "Jul 17, 2022",
       date: "8:27 PM",
       contentType: ChatMessageTypeEnum.Message,
@@ -368,8 +368,14 @@ const onBack = () => {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: url("../../../../../public/assets/icon/chat-circles.png") 50% 50% /
-      cover repeat;
+    // background: url("../../../../../public/assets/icon/chat-circles.png") 50% 50% /
+    //   cover repeat;
+  }
+  &__trainer {
+    &:after {
+      z-index: 1;
+      // background: url("/public/assets/icon/chat-bg.svg") cover repeat;
+    }
   }
 }
 </style>

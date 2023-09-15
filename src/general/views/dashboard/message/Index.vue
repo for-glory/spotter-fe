@@ -152,12 +152,19 @@
                 </div>
               </div> -->
             </div>
+            <div v-else class="d-flex align-items-center justify-content-center h-100">
+              <div class="d-flex-col align-items-center m-auto">
+                <ion-icon src="assets/icon/dashboard/email.svg" class="form-row fs-48"></ion-icon>
+                <ion-label class="label fs-24 font-medium">Message Empty</ion-label>
+                <ion-text class="label fs-16 font-light">You have no active message</ion-text>
+              </div>
+            </div>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner } from "@ionic/vue";
+import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner, IonIcon, IonLabel, IonText } from "@ionic/vue";
 import ChatList from "@/general/components/dashboard/chat/list.vue";
 import ChatFooter from "@/general/components/dashboard/chat/list.vue";
 import Message from "@/general/components/dashboard/chat/message.vue";
@@ -547,14 +554,10 @@ onMounted(() => {
     overflow: auto;
   }
 }
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 .mb-8 {
   margin-bottom: 8px;
+}
+.fs-48 {
+  font-size: 48px;
 }
 </style>
