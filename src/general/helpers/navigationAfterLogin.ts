@@ -17,16 +17,12 @@ const navigationAfterAuth = (user: User) => {
 
   const { verified } = useVerified();
 
-  console.log(verified);
-
   if (!verified) {
     router.push({ name: EntitiesEnum.VerifyEmail });
     return;
   }
 
   const { isRoleSelected } = useSettings();
-
-  console.log("isRoleSelected : " + isRoleSelected);
 
   if (!isRoleSelected) {
     router.push({ name: EntitiesEnum.SelectRole });
@@ -38,12 +34,18 @@ const navigationAfterAuth = (user: User) => {
   switch (role) {
     case RoleEnum.User: {
       const { isQuizzDone } = useSettings();
+
       if (!isQuizzDone) {
         router.push({ name: EntitiesEnum.Quizz });
         break;
       }
 
-      router.push({ name: EntitiesEnum.Facilities });
+      if (Capacitor.isNativePlatform()) {
+        router.push({ name: EntitiesEnum.Facilities });
+      } else {
+        router.push({ name: EntitiesEnum.DashboardOverview });
+      }
+
       break;
     }
 
@@ -67,6 +69,7 @@ const navigationAfterAuth = (user: User) => {
       }
 
       const { type: subscriptionType } = useSubscription();
+
       if (subscriptionType === SubscriptionsTierEnum.Basic) {
         if (Capacitor.isNativePlatform()) {
           router.push({ name: EntitiesEnum.Profile });
@@ -76,13 +79,19 @@ const navigationAfterAuth = (user: User) => {
         break;
       }
 
-      router.push({ name: EntitiesEnum.TrainerSchedule });
+      if (Capacitor.isNativePlatform()) {
+        router.push({ name: EntitiesEnum.TrainerSchedule });
+      } else {
+        router.push({ name: EntitiesEnum.DashboardOverview });
+      }
+
       break;
     }
 
     case RoleEnum.Manager:
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
+
     case RoleEnum.FacilityOwner: {
       const { type: subscriptionType } = useSubscription();
       const { stripeAccountState } = useStripeConnect();
@@ -93,7 +102,12 @@ const navigationAfterAuth = (user: User) => {
       }
 
       if (stripeAccountState !== "ACTIVE") {
-        router.push({ name: EntitiesEnum.SuccessMembership });
+        if (Capacitor.isNativePlatform()) {
+          router.push({ name: EntitiesEnum.Overview });
+        } else {
+          router.push({ name: EntitiesEnum.SuccessMembership });
+        }
+
         break;
       }
 
@@ -108,6 +122,7 @@ const navigationAfterAuth = (user: User) => {
         router.push({ name: EntitiesEnum.Overview });
         break;
       }
+
       router.push({ name: EntitiesEnum.DashboardOverview });
       break;
     }

@@ -7,7 +7,7 @@
     "build": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "android": "vue-cli-service build && ionic capacitor build android --prod && npx cap copy android && npx cap sync android && npx cap open android",
+    "android": "vue-cli-service build && ionic capacitor build android --prod && npx cap copy android && npx cap sync android",
     "ios": "vue-cli-service build && ionic capacitor build ios --prod && npx cap copy && npx cap sync ios && npx cap open ios",
     "gql:generate": "NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=1 VERBOSE=1 graphql-codegen --config codegen.yml",
     "start:android": "ionic cap run android --livereload --external",

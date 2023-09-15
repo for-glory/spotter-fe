@@ -20,11 +20,11 @@
 							{{ facilityName?.charAt(0) }}
 						</template>
 					</ion-avatar>
-					<div>
-            <div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 8px">
-              <ion-title class="name">{{ facilityName || 'Tamra Dae' }} </ion-title>
-              <ion-icon size="12px" src="assets/icon/arrow-down-light.svg" v-if="role !== RoleEnum.Trainer"></ion-icon>
-            </div>
+					<div class="facility__item-content">
+						<div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 8px">
+							<ion-title class="name selected">{{ facilityName || 'Tamra Dae' }} </ion-title>
+							<ion-icon size="12px" src="assets/icon/arrow-down-light.svg" v-if="role !== RoleEnum.Trainer"></ion-icon>
+						</div>
 						<ion-text class="address" >{{ facilityAddress || 'Arizona, Phoenix, USA' }}</ion-text>
 					</div>
 				</div>
@@ -36,7 +36,7 @@
 								{{ facilityItem.name?.charAt(0) }}
 							</template>
 						</ion-avatar>
-						<div>
+						<div class="facility__item-content">
 							<ion-title class="name">{{ facilityItem.name }}</ion-title>
 							<ion-text class="address">{{ facilityItem.address?.street }}</ion-text>
 						</div>
@@ -112,15 +112,15 @@
 			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
-					<ion-text>Manage Gyms</ion-text>
+					<ion-text>Location</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGymManager)" @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)">
 					<ion-icon src="assets/icon/profile.svg" />
-					<ion-text>Gym Managers</ion-text>
+					<ion-text>HR</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)" @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)">
 					<ion-icon src="assets/icon/Card.svg" />
-					<ion-text>Getting Paid</ion-text>
+					<ion-text>Accounting</ion-text>
 				</div>
 				<div :class="getMenuItemClass(EntitiesEnum.DashboardSettings)" @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
 					<ion-icon src="assets/icon/Setting.svg" />
@@ -306,8 +306,8 @@ const getMenuItemClass = (name: string) => {
 			display: flex;
 			align-items: center;
 			gap: 16px;
-      padding: 8px 15px 8px 24px;
-      cursor: pointer;
+			padding: 8px 16px;
+			cursor: pointer;
 
 			&:hover {
 				background-color: var(--gray-800);
@@ -319,12 +319,15 @@ const getMenuItemClass = (name: string) => {
 			}
 			.name {
 				padding: 0;
-        color: var(--FITNESS-WHITE, #EFEFEF);
-        font-family: Poppins;
-        font-size: 1.25rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
+				color: var(--FITNESS-WHITE, #EFEFEF);
+				font-family: Poppins;
+				font-size: 1.25rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: normal;
+			}
+			.name.selected {
+				width: calc(100% - 24px);
 			}
 			.address {
 				color: var(--gray-400);
@@ -333,6 +336,9 @@ const getMenuItemClass = (name: string) => {
 				font-style: normal;
 				font-weight: 400;
 				line-height: 150%; /* 21px */
+			}
+			&__item-content {
+				width: calc(100% - 64px);
 			}
 		}
 

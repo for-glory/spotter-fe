@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="holder-content ion-padding-horizontal"
-		:class="{ 'holder-content--empty': !eventsLoading && !events.length }"
+		:class="{ 'holder-content--empty': !eventsLoading && !events?.length }" 
 	>
     <div class="banner" style="background: url('assets/backgrounds/eventBanner.png')">
       <ion-title class="banner__title">Create events for clients and trainers</ion-title>
@@ -15,9 +15,9 @@
 		<div class="event-list">
 			<div class="d-flex justify-content-between event-list__top">
 				<div class="d-flex event-btns">
-					<!-- <ion-button class="button-rounded filter-btn" :fill="filter === 'all' ? 'solid':'outline'" @click="handleEventType('all')">
-						All
-					</ion-button> -->
+					<ion-button class="button-rounded filter-btn" :fill="filter === 'upcoming' ? 'solid':'outline'" @click="handleEventType('upcoming')">
+						Upcoming
+					</ion-button>
 					<ion-button class="button-rounded filter-btn" :fill="filter === 'ongoing' ? 'solid':'outline'" @click="handleEventType('ongoing')">
 						Ongoing
 					</ion-button>
@@ -31,7 +31,7 @@
 					</ion-button>
 				</div>
 			</div>
-      <div v-if="events.length">
+      <div v-if="events?.length">
         <event-data-table
           :events="events"
         />
@@ -44,7 +44,7 @@
 		/>
 		<div
 			class="empty-section"
-			v-if="!eventsLoading && !events.length"
+			v-if="!eventsLoading && !events?.length"
 		>
 			<empty-block
 				title="Library Empty"
@@ -98,13 +98,15 @@ import {
   SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed , withDefaults, defineProps, } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import { routes } from "@/general/routes";
+
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
@@ -114,12 +116,21 @@ const { id: myId } = useId();
 const currentFacility = useFacilityStore();
 const { role: myRole } = useRoles();
 
+import { useRoute } from 'vue-router'
+ const route = useRoute()
+ import { IonPage } from '@ionic/vue';
+
 const idFilter = computed(() => {
   return myRole === RoleEnum.Trainer
     ? { created_by_trainer: myId }
     : { created_by_facility: currentFacility.facility?.id }
 });
 
+
+
+// useEffect(() => {
+//         console.log(props.router.query.name);
+//     }, [props.router.query]);
 const eventsParams: EventsQueryVariables = {
   first: 8,
   page: eventsPage.value,
@@ -136,6 +147,9 @@ const eventsParams: EventsQueryVariables = {
   ...idFilter.value,
 };
 
+
+ 
+
 const {
   result,
   onResult: gotEvents,
@@ -147,11 +161,13 @@ const {
 });
 
 const allEvents = ref([]);
+const status = route.query.status;
 const events = computed(() => {
-  return allEvents.value.filter(ev => {
+   return allEvents.value.filter(ev => {
     if(filter.value === 'all') return true;
     return ev.status === filter.value
-  });
+  });  
+
 });
 
 gotEvents((response) => {
@@ -159,10 +175,13 @@ gotEvents((response) => {
   response.data?.events?.data.map(item => {
     allEvents.value.push({
       ...item,
-      status: dayjs().isBefore(item.end_date) ? 'ongoing' : 'finished'
+      status: dayjs().isBefore(item.end_date) ?  'upcoming' : 'finished',
     })
   });
 });
+
+
+
 
 watch(
   () => currentFacility,
@@ -184,7 +203,9 @@ watch(
   {
     deep: true
   }
+  
 );
+
 
 const router = useRouter();
 const openEvent = (eventId: string) => {
@@ -222,6 +243,7 @@ const loadData = (ev: InfiniteScrollCustomEvent) => {
 
 const handleEventType = (evT: string) => {
   filter.value = evT;
+  console.log(filter.value);
 }
 </script>
 

@@ -24,18 +24,18 @@
 </template>
 
 <script setup lang="ts">
-import { IonText, IonImg, IonButton, IonSpinner } from "@ionic/vue";
+import { IonText, IonImg, IonButton } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import useFacilityId from "@/hooks/useFacilityId";
-import { MyStripeConnectDocument, LinksDocument } from "@/generated/graphql";
-import { onMounted } from "vue";
 import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
 const handleContinue = () => {
-  router.push({ name: EntitiesEnum.Overview });
+  if (Capacitor.isNativePlatform()) {
+    router.push({ name: EntitiesEnum.Overview });
+  } else {
+    router.push({ name: EntitiesEnum.DashboardOverview });
+  }
 };
 </script>
 
@@ -104,14 +104,27 @@ const handleContinue = () => {
 
 .buttons {
   margin-top: 7.5rem;
-  width: 70%;
-  ion-button {
-    font: 700 16px/1 Yantramanav;
+  margin-top: 1rem;
+  border-radius: 8px;
+  width: 30%;
+  margin: 0 auto;
+  margin-bottom: calc(32px + var(--ion-safe-area-bottom));
+
+  @media (max-width: 992px) {
     width: 100%;
-    height: 40px;
+  }
+
+  ion-button {
+    margin-bottom: 1rem;
+    width: 100%;
+    height: 48px;
     --border-radius: 12px;
-    --padding-start: 26px;
-    --padding-end: 26px;
+    color: var(--dark-grey, #262626);
+    text-align: center;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 130%;
   }
 }
 .spinner {

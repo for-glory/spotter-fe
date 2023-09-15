@@ -18,7 +18,11 @@
       </div>
       <div class="buttons">
         <ion-button expand="block" @click="handleContinue">
-          Set up gym profile
+          {{
+            role === RoleEnum.Trainer
+              ? "Set up trainer profile"
+              : "Set up gym profile"
+          }}
         </ion-button>
       </div>
     </div>
@@ -82,7 +86,7 @@ const handleContinue = () => {
     font-style: normal;
     font-weight: 400;
     line-height: 130%;
-    max-width: 316px;
+    max-width: 100%;
   }
 
   .detail {
@@ -117,13 +121,29 @@ const handleContinue = () => {
 }
 
 .buttons {
+  margin-top: 7.5rem;
   margin-top: 1rem;
-  width: 80%;
-  ion-button {
-    font: 700 16px/1 Yantramanav;
+  border-radius: 8px;
+  width: 30%;
+
+  @media (max-width: 992px) {
     width: 100%;
-    height: 40px;
+  }
+
+  ion-button {
+    margin-bottom: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 48px;
     --border-radius: 12px;
+    color: var(--dark-grey, #262626);
+    text-align: center;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 130%;
   }
 }
 </style>
