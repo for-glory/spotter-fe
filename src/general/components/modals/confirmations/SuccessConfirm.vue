@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { IonButton, IonModal, IonTitle, IonText } from "@ionic/vue";
+import { IonButton, IonModal, IonTitle, IonText, IonContent } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({

@@ -39,8 +39,8 @@ withDefaults(
     value?: string;
     icon?: string;
     disabled?: boolean;
-    isWebItem: boolean;
-    itemOutline: boolean;
+    isWebItem?: boolean;
+    itemOutline?: boolean;
   }>(),
   {
     disabled: false,

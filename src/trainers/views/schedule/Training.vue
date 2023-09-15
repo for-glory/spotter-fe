@@ -21,7 +21,7 @@
     <template #footer>
       <div class="holder-button">
         <ion-button
-          class="button--submit"
+          class="font-bold"
           expand="block"
           @click="openChat"
           :disabled="chatLoading"
@@ -29,7 +29,8 @@
           Chat with client
         </ion-button>
         <ion-button
-          class="secondary"
+          class="primary-outline ion-margin-top font-bold"
+          fill="outline"
           expand="block"
           @click="showModal"
           :disabled="trainingOnCanceling"
@@ -41,11 +42,12 @@
   </base-layout>
 
   <confirmation
+    class="cancel-training-modal"
     :is-visible="showConfirmationModal"
     title="Do you want to cancel training?"
-    description="Training will be deleted from your upcoming events"
-    button-text="Cancel session"
-    cancel-button-text="No, keep session"
+    description="Training will be deleted from your schedule"
+    button-text="Cancel training"
+    cancel-button-text="Cancel"
     @discard="onCancelTraining"
     @decline="hideModal"
   />
@@ -98,7 +100,7 @@ const showSuccessToast = async () => {
     message: "Your training with Nick Fox has been canceled",
     duration: 2000,
     icon: "assets/icon/success.svg",
-    cssClass: "success-toast",
+    cssClass: "common-toast success-toast",
   });
   return toast.present();
 };
@@ -109,7 +111,20 @@ const { result } = useQuery<Pick<Query, "training">>(TrainingDocument, {
 });
 
 const training = computed(() => {
-  return result.value?.training;
+  // return result.value?.training;
+  return {
+    user : {
+        id: '2',
+        title: 'Nick Fox',
+        address: {
+          street: 'Summer Gym, Wall Street, 24',
+        },
+        start_date: new Date(),
+        userId: '2',
+        first_name:'Nick',
+        last_name:'Fox',
+      }
+  };
 });
 
 const openProfile = (id: number | string) => {
@@ -144,7 +159,12 @@ const openChat = () => {
 .header {
   margin-bottom: 24px;
 }
-
+.content__title{
+  color: var(--fitnesswhite);
+  font-family: "Lato";
+  font-size: 16px;
+  font-weight: 500;
+}
 .holder-content {
   .secondary {
     margin-left: 8px;

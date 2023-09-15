@@ -4,20 +4,22 @@
       <ion-text class="dashboard-item__title">
         <slot name="title"></slot>
       </ion-text>
-      <div
+      <div class="align-items-center gap-16" :class="isWeb ? 'd-flex' : ''">
+        <div
         v-for="item in itemsWithIds"
         :key="item._id"
-        class="dashboard-item__content"
-      >
+        class="dashboard-item__content d-flex align-items-center"
+        >
         <ion-text class="dashboard-item__content-value">
           {{ item.value }}
         </ion-text>
         <ion-text class="dashboard-item__content-descr">
           {{ item.description }}
         </ion-text>
-      </div>
-      <div class="dashboard-item__content">
-        <slot name="bottom"></slot>
+        </div>
+        <div class="dashboard-item__content">
+          <slot name="bottom"></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -30,6 +32,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const props = defineProps<{
   items: { value: number | string; description: string }[];
+  isWeb?: boolean
 }>();
 
 const itemsWithIds = computed(() =>
@@ -47,7 +50,6 @@ const itemsWithIds = computed(() =>
     align-items: center;
     padding: 12px 16px;
   }
-
   &__title {
     display: flex;
     align-items: center;
@@ -55,7 +57,7 @@ const itemsWithIds = computed(() =>
     font-weight: 500;
     font-size: 16px;
     line-height: 150%;
-    padding-left: 2px;
+    // padding-left: 2px;
     color: var(--gold);
     margin-bottom: 10px;
   }
@@ -77,7 +79,13 @@ const itemsWithIds = computed(() =>
       font-weight: 300;
       font-size: 14px;
       line-height: 150%;
+      color: var(--fitnesswhite);
     }
+  }
+}
+.trainer-item {
+  .dashboard-item__title {
+    font-family: "Yantramanav";
   }
 }
 </style>

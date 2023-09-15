@@ -60,7 +60,7 @@ const emits = defineEmits<{
 <style lang="scss" scoped>
 .header {
   position: relative;
-  --color: var(--ion-color-white);
+  --color: var(--gold);
   --min-height: var(--header-height);
   --background: var(--gray-800);
   --padding-top: 15px;
@@ -96,7 +96,7 @@ const emits = defineEmits<{
       color: var(--gold);
 
       &--offline {
-        color: var(--gray-500);
+        color: var(--gold);
       }
     }
   }

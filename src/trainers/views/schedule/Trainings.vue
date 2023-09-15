@@ -39,6 +39,7 @@
               v-for="training in trainings"
               :key="training.id"
               :item="training"
+              class="trainer-event-item"
               rounded
               @click="openTraining(training.id)"
             />
@@ -95,12 +96,13 @@
           >
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
+        <!-- <page-tabs
         <page-tabs v-if="!fromOverview"
           :tabs="tabs"
           class="page-tabs"
           :value="activeTab"
           @change="tabsChanged"
-        />
+        /> -->
       </div>
     </template>
   </base-layout>

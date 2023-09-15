@@ -77,15 +77,16 @@ const isCurrent = computed(
     font-size: 16px;
     width: 32px;
     height: 32px;
+    font-family: "Yantramanav";
+    color: rgba(255, 255, 255, 0.60);
 
     &--current {
       background: var(--gray-600);
-      color: var(--ion-color-white);
     }
 
     &--highlighted {
       background: var(--gold);
-      color: var(--gray-800);
+      color: var(--gray-700);
     }
   }
 
@@ -95,6 +96,7 @@ const isCurrent = computed(
     line-height: 150%;
     color: var(--gray-500);
     text-transform: uppercase;
+    font-family: "Yantramanav";
 
     &--highlighted {
       color: var(--gold);

@@ -19,18 +19,19 @@
         <template v-else>
           <transition-group name="list" tag="ion-item-sliding">
             <template v-for="room in data.chats" :key="room.key">
-              <room
+              <room v-if="room.type == activeTab"
                 :last-message="room.lastMessage"
                 :room-id="room.roomId"
                 :room-name="room.roomName"
                 :avatar-url="room.avatar"
                 :time="room.lastTime"
-                :is-online="isOnline(room.participantId)"
+                :is-online="room.isOnline"
                 :type="room.type"
                 @open="onOpen($event, room.roomId)"
                 @delete="onDelete($event, room.roomId)"
                 :symbols="room.symbols"
                 :unread="room.unread"
+                :currentTab="currenTab"
                 class="room-item__container"
               />
             </template>
@@ -77,26 +78,53 @@ const tabs = [
   {
     name: RoomType.Chat,
     label: "Chats",
+    labelActive: "Chats",
   },
   {
     name: RoomType.Request,
     label: "Requests",
+    labelActive: "Requests",
   },
 ];
 
 const loading = ref(false);
 const data = reactive({
-  chats: [],
+  chats: [
+    {
+      id: 1,
+      lastMessage: "hi",
+      roomName: "John Deo",
+      lastTime: "now",
+      roomId: "1",
+      isOnline: true,
+      time: "now",
+      type: RoomType.Chat,
+      symbols: 'test',
+      unread: 2,
+    },
+    {
+      id: 2,
+      lastMessage: "What about other exercises?",
+      roomName: "Daniel Will",
+      lastTime: "20 min",
+      roomId: "1",
+      isOnline: false,
+      time: "now",
+      type: RoomType.Request,
+      symbols: 'test',
+      unread: 0,
+    }
+  ],
   activeUsers: [],
 });
 
-const activeTab = ref<RoomType | string>("");
+const activeTab = ref<RoomType | string>(RoomType.Chat);
 
 const { mutate } = useMutation(DeleteChatDocument);
 
 const title = computed(() =>
   !isTrainer.value || activeTab.value === RoomType.Chat
-    ? "Chat History"
+    ? "Chat"
     : "Requests"
 );
 
@@ -112,7 +140,7 @@ const requests = computed(
 watch(
   () => requests.value,
   () => {
-    fetchChats();
+    // fetchChats();
   }
 );
 
@@ -224,7 +252,7 @@ onBeforeMount(() => {
 
 onMounted(() => {
   fetchActiveUsers();
-  fetchChats();
+  // fetchChats();
 });
 </script>
 

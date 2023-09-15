@@ -69,6 +69,7 @@ const segmentChanged = (event: SegmentCustomEvent) => {
     --padding-end: 16px;
     --color-checked: var(--gray-700);
     --indicator-color: var(--ion-color-primary);
+    font-family: "Yantramanav";
 
     &::part(indicator) {
       padding: 0;

@@ -1,12 +1,18 @@
 <template>
   <div
+    class="message__row"
     :class="{
       'message__row--current-user': currentUser,
+      'row_align-center': contentType !== ChatMessageTypeEnum.Message,
+      'message__row__trainer': role === RoleEnum.Trainer
     }"
-    class="message__row"
   >
     <div v-if="showDate" class="message__date">{{ date }}</div>
     <div class="message__container">
+      <div class="user-detail-wrapper" v-if="contentType === ChatMessageTypeEnum.Message && role === RoleEnum.Trainer" :class="currentUser ? 'user-detail-wrapper--current-user' : ''">
+        <img src="https://picsum.photos/200/300">
+        <ion-label class="label">{{ currentUser ? 'You' : 'Alice James' }}</ion-label>
+      </div>
       <img
         v-if="contentType === ChatMessageTypeEnum.Attachment"
         :src="`${uri}/${content}`"
@@ -27,27 +33,39 @@
         }"
         class="message__content"
       >
-        <div class="message__content-main">
-          <div v-if="isSystemMessage" class="system-icon__container">
-            <ion-icon
-              :src="`assets/icon/chat/${contentType}.svg`"
-              class="system-icon"
-            />
+        <div class="message__content-main justify-content-between">
+          <div class="d-flex">
+              <div v-if="isSystemMessage" class="system-icon__container">
+              <ion-icon
+                :src="`assets/icon/chat/${contentType}.svg`"
+                class="system-icon"
+              />
+            </div>
+            {{ content }}
           </div>
-          {{ content }}
+          <div class="d-flex" v-if="role === RoleEnum.Trainer && isSystemMessage && contentType === ChatMessageTypeEnum.Info">
+              <div class="system-icon__container">
+              <ion-icon
+                :src="`assets/icon/location.svg`"
+                class="system-icon"
+              />
+            </div>
+           Home, Wall Street, 24
+          </div>
         </div>
         <ion-popover trigger="click-trigger" trigger-action="click">
           <ion-content class="ion-padding">Delete</ion-content>
         </ion-popover>
-
         <div
           v-if="contentType === ChatMessageTypeEnum.Info && approvable"
           class="message__content-additional"
         >
-          <ion-text class="message__content-additional--primary" color="primary"
+          <template v-if="role !== RoleEnum.Trainer">
+            <ion-text class="message__content-additional--primary" color="primary"
             >You have to approve or decline the order. Client is waiting...
           </ion-text>
           <br />
+          </template>
           <ion-text class="message__content-additional--light" color="light">
             <ion-icon class="system-icon" src="assets/icon/info.svg" />
             You have 2 hours to approve or decline session
@@ -56,6 +74,7 @@
             :value="0.8"
             class="approve-progress"
             color="light"
+            v-if="role !== RoleEnum.Trainer"
           ></ion-progress-bar>
         </div>
       </div>
@@ -95,17 +114,20 @@ import {
   IonPopover,
   alertController,
   IonSpinner,
+IonLabel,
 } from "@ionic/vue";
 import { useMutation } from "@vue/apollo-composable";
 import {
   ChangeTrainingStateDocument,
   ChatMessageTypeEnum,
+  RoleEnum,
   TrainingStatesEnum,
 } from "@/generated/graphql";
 import { toastController } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { RoomType } from "@/ts/enums/chat";
+import useRoles from "@/hooks/useRole";
 
 const props = withDefaults(
   defineProps<{
@@ -129,6 +151,8 @@ const props = withDefaults(
 const uri = ref(process.env.VUE_APP_FB_STORAGE);
 
 const router = useRouter();
+
+const { role } = useRoles();
 
 const emits = defineEmits<{
   (e: "delete-message", id: number): void;
@@ -246,6 +270,28 @@ const onHandleDeclineOrder = () => {
 </script>
 
 <style scoped lang="scss">
+.user-detail-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  &--current-user {
+    justify-content: flex-end;
+  }
+  img {
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .label{
+    font-family: "Lato";
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fitnesswhite);
+    margin: 0;
+  }
+}
 .message {
   &__row {
     display: flex;
@@ -264,6 +310,8 @@ const onHandleDeclineOrder = () => {
     font-size: 12px;
     line-height: 150%;
     margin: 12px auto 24px;
+    font-family: "Yantramanav";
+    color: var(--gray-500);
   }
 
   &__content {
@@ -278,8 +326,9 @@ const onHandleDeclineOrder = () => {
     background: var(--gray-700);
     font-weight: 400;
     font-size: 14px;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
     line-height: 1.5;
+    font-family: "Yantramanav";
 
     &-main {
       display: flex;
@@ -369,6 +418,42 @@ const onHandleDeclineOrder = () => {
   &__button {
     margin: 0 10px;
     width: calc(100% - 20px);
+  }
+}
+
+.message__row__trainer {
+  &.row_align-center {
+    align-items: center;
+    .approve-form__buttons {
+      width: auto;
+    }
+  }
+  .message__content {
+    gap: 0;
+    &-additional{
+      border-top: 0.5px solid var(--gray-600);
+      padding-top: 12px;
+      margin-top: 6px;
+      border-bottom: 1.4px solid var(--gray-500);
+    }
+    background: #E1DBC4;
+    border-radius: 1px 8px 8px 8px;
+    padding: 16px;
+    color: var(--main-color);
+    font-family: "Lato";
+    font-size: 16px;
+    &--current-user {
+      background: transparent;
+      color: var(--fitnesswhite);
+      border: 1px solid #E4E9EE;
+      border-radius: 8px 0px 8px 8px;
+    }
+  }
+  .message__timestamp {
+      font-family: "Yantramanav";
+    }
+  .message__content-additional--light {
+    color: var(--gray-500);
   }
 }
 </style>

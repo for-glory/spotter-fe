@@ -174,16 +174,6 @@ const chartOptions:ChartOptions = {
         }
       },
     },
-    title: {
-      display: false,
-      text: '60%',
-      align: "center",
-      position: "bottom",
-      color: "#E1DBC5",
-      font: {
-        family: "Inter",
-      }
-    }
   }
 };
 

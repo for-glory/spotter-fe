@@ -1,12 +1,12 @@
 <template>
-	<div ref="messagesContainer" class="messages__container">
+	<div ref="messagesContainer" class="messages__container" :class="role === RoleEnum.Trainer ? 'messages_container__trainer' : ''">
 		<div>
 			<template v-for="(message, idx) in data.messages" :key="message.id">
 				<message
 					:content="message.content"
 					:timestamp="message.timestamp"
 					:date="message.date"
-					:content-type="message.type"
+					:content-type="message.contentType"
 					:current-user="message.isCurUserMessage"
 					:show-date="showDate(idx)"
 					:approvable="isApprovable(message.type, idx)"
@@ -69,7 +69,138 @@ const messagesContainer = ref<HTMLDivElement | null>(null);
 const layout = ref<typeof BaseLayout | null>(null);
 const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
   chats: [],
-  messages: [],
+  messages: [
+  {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: true,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: false,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: true,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: false,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: true,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: false,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: true,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: false,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:27 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: true,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    },
+    {
+      content: "Training session on Jul 17, 8:30 PM",
+      timestamp: "Jul 17, 2022",
+      date: "8:28 PM",
+      contentType: ChatMessageTypeEnum.Message,
+      type: ChatMessageTypeEnum.Message,
+      isCurUserMessage: false,
+      id: 1,
+      trainingId: 5328,
+      username: "john",
+      parentId: 5684,
+      key: "1",
+    }
+  ],
 });
 
 onBeforeRouteLeave((to, from, next) => {
@@ -222,6 +353,7 @@ const onBack = () => {
 
 <style scoped lang="scss">
 .messages__container {
+  overflow: auto;
   height: inherit;
 
   &::-webkit-scrollbar {
@@ -236,8 +368,14 @@ const onBack = () => {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: url("../../../../../public/assets/icon/chat-circles.png") 50% 50% /
-      cover repeat;
+    // background: url("../../../../../public/assets/icon/chat-circles.png") 50% 50% /
+    //   cover repeat;
+  }
+  &__trainer {
+    &:after {
+      z-index: 1;
+      // background: url("/public/assets/icon/chat-bg.svg") cover repeat;
+    }
   }
 }
 </style>

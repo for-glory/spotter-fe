@@ -7,6 +7,7 @@
     :rows="12"
     transparent
     borderless
+    :masks="{weekdays:weekDaysFormat}"
   ></v-calendar>
 </template>
 
@@ -22,6 +23,7 @@ import { ref, defineProps, withDefaults, defineEmits } from "vue";
 withDefaults(
   defineProps<{
     attrs?: any;
+    weekDaysFormat?: string;
   }>(),
   {
     attrs: [
@@ -35,6 +37,7 @@ withDefaults(
         dates: [new Date()],
       },
     ],
+    weekDaysFormat:"WWW"
   }
 );
 
@@ -59,23 +62,68 @@ const dateChanged = (event: any) => {
   width: 100%;
   .vc-day {
     color: white;
+    font-family: "Yantramanav";
+    font-size: 16px;
   }
   .vc-title {
     background: none;
-    color: #dbb582;
+    color: var(--gold);
+    font-family: "Lato";
+    font-size: 16px;
+    font-weight: 500;
   }
   .vc-weekday {
-    display: none;
+    // display: none;
+    font-family: "Yantramanav";
+    color: var(--gray-500);
+    font-weight: 400;
+    text-transform: uppercase;
   }
   .vc-arrow {
     display: none;
   }
+  .vc-week{
+    margin: 6px 0;
+  }
 }
 .vc-highlight-content-solid {
-  color: black;
-  background-color: #dbb582;
+  color: var(--gray-700);
+  background-color: var(--gold);
 }
 .vc-popover-content-wrapper {
   display: none !important;
+}
+.web-custom-calendar {
+  border: 0.872px solid var(--gray-600);
+  & .vc-pane-layout {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 2px !important;
+        background-color: var(--gray-600);
+        .vc-pane {
+          background-color: var(--gray-700);
+        }
+        .vc-header {
+          // display: block;
+          // padding-left: 4px;
+          button {
+            font-family: "Nunito";
+            font-size: 12.208px;
+            font-weight: 600;
+            color: var(--ion-color-white);
+          }
+        }
+        .vc-weekday, .vc-day-content {
+          font-family: "Nunito";
+          font-size: 10.464px;
+          color: var(--ion-color-white);
+        }
+        .vc-highlight-content-solid {
+          font-family: "Lato";
+          color: var(--main-color);
+        }
+        .vc-week {
+          margin: 0;
+        }
+    }
 }
 </style>

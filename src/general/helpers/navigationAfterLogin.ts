@@ -41,7 +41,7 @@ const navigationAfterAuth = (user: User) => {
       }
 
       if (Capacitor.isNativePlatform()) {
-        router.push({ name: EntitiesEnum.Facilities });
+        router.push({ name: EntitiesEnum.Dashboard });
       } else {
         router.push({ name: EntitiesEnum.DashboardOverview });
       }
@@ -80,7 +80,7 @@ const navigationAfterAuth = (user: User) => {
       }
 
       if (Capacitor.isNativePlatform()) {
-        router.push({ name: EntitiesEnum.TrainerSchedule });
+        router.push({ name: EntitiesEnum.Dashboard });
       } else {
         router.push({ name: EntitiesEnum.DashboardOverview });
       }

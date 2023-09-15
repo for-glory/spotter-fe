@@ -125,6 +125,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ChatList,
+    path: "/trainers/schedule/chat",
+    component: () => import("@/general/views/chat/List.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.TrainerScheduleCalendar,
     path: "/trainers/schedule/calendar",
     component: () => import("@/trainers/views/schedule/Calendar.vue"),
