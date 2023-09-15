@@ -215,11 +215,15 @@ onMounted(() => {
   let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
+  swipeContainer.value.addEventListener('touchstart', handleTouchStart);
+  swipeContainer.value.addEventListener('touchmove', handleTouchMove);
+  swipeContainer.value.addEventListener('touchend', handleTouchEnd);
 });
 
 const handleTouchStart = (event: any) => {
   startX = event.touches[0].clientX;
   startY = event.touches[0].clientY;
+  console.log("swipe start");
 }
 
 const handleTouchMove = (event: any) => {
@@ -235,6 +239,11 @@ const handleTouchEnd = () => {
     console.log('Swipe-up detected');
     router.go(-1);
   }
+  startX = 0;
+  startY = 0;
+  deltaX = 0;
+  deltaY = 0;
+  isSwiping = false;
 }
 
 const onSwiper = (swiper: any) =>{
