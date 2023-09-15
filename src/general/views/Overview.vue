@@ -3,7 +3,6 @@
     content-full-height 
     :hideNavigationMenu="loadingUser || loadingDashboarData" 
     :class="{ 'trainer-overview': role === RoleEnum.Trainer }" 
-    content-full-height
   >
     <template #header>
       <page-header title="Overview" title-class="header_overview__title">
