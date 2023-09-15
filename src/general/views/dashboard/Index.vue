@@ -1,10 +1,8 @@
 <template>
   <base-dashboard-layout>
-    <template #right-section>
-      <dashboard-searchbar />
-      <div
-        :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 trainer-content'"
-      >
+    <template  #right-section>
+			<dashboard-searchbar />
+      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 bg-main'">
         <router-view />
       </div>
     </template>
@@ -29,10 +27,8 @@ const { role } = useRoles();
   padding: 48px;
   background: var(--main-color);
 }
-
-.trainer-content {
-  overflow: auto;
-  padding: 40px 108px 40px 55px;
-  background: var(--main-color);
+.bg-main {
+  background-color: var(--main-color);
+  overflow: hidden;
 }
 </style>

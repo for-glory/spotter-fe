@@ -30,6 +30,10 @@
   </ion-menu>
 </template>
 
+<script setup lang="ts">
+import { IonHeader, IonContent } from "@ionic/vue";
+</script>
+
 <style scoped lang="scss">
 .landing-menu {
   display: flex;

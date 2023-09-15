@@ -4,14 +4,9 @@
       <page-header
         :back-btn="true"
         :title-class="role === RoleEnum.Trainer ? 'header_trainer__title' : 'header__title'"
+        :chat-btn="role === RoleEnum.Trainer ? true : false"
         title="Settings"
       >
-        <template v-if="role === RoleEnum.Trainer" #custom-btn>
-          <ion-button class="header-btn" shape="round">
-            <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge"></span>
-          </ion-button>
-        </template>
       </page-header>
     </template>
     <template #content>
@@ -160,7 +155,8 @@ import {
   IonIcon,
   IonModal,
   IonTitle,
-  modalController
+  modalController,
+  IonSpinner
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -215,7 +211,7 @@ const {
   loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
-const progress = ref<string | number>("");
+const progress = ref<string | number>(0);
 
 const isTrusted = computed(() =>
   role === RoleEnum.User ? Number(progress.value) >= 100 : true
@@ -559,21 +555,5 @@ profileDeleted(() => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
-}
-
-.header-btn{
-  ion-icon{
-    font-size: 24px;
-  }
-}
-.header-btn__badge {
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  position: absolute;
-  margin: -12px 0 0 4px;
-  background: var(--alert-red);
 }
 </style>

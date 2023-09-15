@@ -99,7 +99,7 @@ import {
   PickerOptions,
 	IonGrid,
 	IonRow,
-	IonCol
+	IonCol,
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";

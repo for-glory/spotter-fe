@@ -81,6 +81,16 @@ ion-modal::part(backdrop) {
 .modal {
   &__img {
     margin-bottom: 24px;
+    position: relative;
+    &::after {
+      content: "";
+      background: rgba(25, 25, 27, 0.80);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
   }
 
   &__title {
@@ -118,11 +128,11 @@ ion-modal::part(backdrop) {
 
 .close-btn {
   position: absolute;
-  top: 18px;
-  right: 20px;
-  height: 16px;
+  top: 16px;
+  right: 16px;
+  height: 24px;
   display: block;
-  min-width: 16px;
+  min-width: 24px;
   --icon-font-size: 24px;
   --padding-bottom: 0;
   --padding-end: 0;
@@ -135,5 +145,25 @@ ion-modal::part(backdrop) {
   --min-height: 16px;
   --min-width: 16px;
   z-index: 5;
+}
+.cancel-training-modal {
+  .modal__title {
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .modal__text {
+    font-family: "Yantramanav";
+  }
+  .modal__footer {
+    .modal__button {
+      font-family: "Yantramanav";
+      --color: var(--gray-700);
+      &.secondary{
+        --border-color: var(--gold);
+        --border-width: 0.8px;
+        --color: var(--fitnesswhite);
+      }
+    }
+  }
 }
 </style>

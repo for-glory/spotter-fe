@@ -9,7 +9,7 @@
 		<div class="dashboard-container__sidebar">
 			<dashboard-sidebar :facilities="facilities"/>
 		</div>
-		<div class="dashboard-container__right-section">
+		<div class="dashboard-container__right-section" :class="role === RoleEnum.Trainer ? 'scrollable-content' : ''">
 			<slot name="right-section"></slot>
 		</div>
 	</div>
@@ -30,11 +30,13 @@ import {
   UserDocument,
 } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import useRoles from "@/hooks/useRole";
 
 const isLoading = ref(true);
 const facilities = ref();
 const store = useProfileStore();
 const facilityStore = useFacilityStore();
+const { role } = useRoles();
 
 const setIsLoading = () => {
 	isLoading.value = false;
@@ -94,5 +96,12 @@ watch(
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.scrollable-content {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
 }
 </style>

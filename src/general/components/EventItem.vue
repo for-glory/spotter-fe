@@ -191,6 +191,28 @@ const formatTime = (date: number, time: string): string => {
   border: 1px #AFAFAF;
   color: #AFAFAF;
 }
+.trainer-event-item {
+  .event {
+    &__title, &__time, &__date, &__address {
+    font-family: "Yantramanav";
+    }
+    &__date, &__address {
+      color: rgba(255, 255, 255, 0.60);
+    }
+    &__time {
+      color: var(--fitnesswhite);
+    }
+    &__address{
+      font-weight: 300;
+      ion-icon {
+        margin-left: -4px;
+      }
+    }
+  }
+  .status-text {
+    display: none;
+  }
+}
 
 .trainer-item{
   .event__title, .event__time, .event__date, .status-text  {

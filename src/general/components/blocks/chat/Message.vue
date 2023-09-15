@@ -264,6 +264,8 @@ const onHandleDeclineOrder = () => {
     font-size: 12px;
     line-height: 150%;
     margin: 12px auto 24px;
+    font-family: "Yantramanav";
+    color: var(--gray-500);
   }
 
   &__content {
@@ -278,8 +280,9 @@ const onHandleDeclineOrder = () => {
     background: var(--gray-700);
     font-weight: 400;
     font-size: 14px;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
     line-height: 1.5;
+    font-family: "Yantramanav";
 
     &-main {
       display: flex;

@@ -78,7 +78,7 @@
 					<ion-icon src="assets/icon/dashboard.svg" />
 					<ion-text>Overview</ion-text>
 				</div>
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardEvent)" @click="onHandleClickMenu(EntitiesEnum.DashboardCalendar)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardBookings)" @click="onHandleClickMenu(EntitiesEnum.DashboardBookings)">
 					<ion-icon src="assets/icon/calendar.svg" />
 					<ion-text>Bookings</ion-text>
 				</div>
@@ -90,7 +90,7 @@
 					<ion-icon src="assets/icon/events.svg" />
 					<ion-text>Events</ion-text>
 				</div>
-				<div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
+				<div class="menu-item" :class="getMenuItemClass(EntitiesEnum.DashboardMessage)" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
 					<ion-icon src="assets/icon/email.svg" />
 					<ion-text>Message</ion-text>
 				</div>

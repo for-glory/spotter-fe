@@ -151,7 +151,7 @@ import {
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
 import { withDefaults,defineProps } from "vue";
-import { IonSpinner,IonGrid,IonCol,IonRow } from "@ionic/vue";
+import { IonSpinner,IonGrid,IonCol,IonRow, IonIcon, IonTitle } from "@ionic/vue";
 import EditTrainer  from "./EditTrainer.vue";
 
 const props = withDefaults(

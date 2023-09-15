@@ -20,6 +20,27 @@ ion-toast {
   &::part(icon) {
     color: var(--ion-color-success-tint);
   }
+  &.common-toast {
+    --background: rgba(24, 24, 24, 0.64);
+    font-family: "Yantramanav";
+    &::part(message){
+      color: var(--fitnesswhite);
+    }
+    &::part(icon) {
+      color: #DC5858;
+      font-size: 24px;
+    }
+  }
+  &.web-toast {
+    font-family: "Lato";
+    top: 60px;
+    &::part(container) {
+      margin-bottom: 0;
+    }
+    &::part(message){
+      font-size: 16px;
+    }
+  }
 }
 
 .danger-toast {

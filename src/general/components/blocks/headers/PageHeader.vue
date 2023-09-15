@@ -14,6 +14,9 @@
       <ion-button v-if="closeBtn" class="close-btn" @click="$emit('back')">
         <ion-icon src="assets/icon/close.svg" />
       </ion-button>
+      <ion-button v-if="scanBtn" class="back-btn" @click="$emit('scan')">
+        <ion-icon src="assets/icon/scan.svg" />
+      </ion-button>
       <slot name="avatar-field"></slot>
     </ion-buttons>
     <ion-buttons slot="end">
@@ -26,6 +29,10 @@
         @click="emits('skip')"
       >
         Skip
+      </ion-button>
+      <ion-button v-if="chatBtn" class="chat-btn" shape="round" @click="emits('chat-click')">
+        <ion-icon src="assets/icon/chat.svg" />
+        <span class="chat-btn__badge"></span>
       </ion-button>
     </ion-buttons>
     <ion-title :class="titleClass">{{ title }}</ion-title>
@@ -56,6 +63,8 @@ withDefaults(
     backBtn?: boolean;
     skipBtn?: boolean;
     closeBtn?: boolean;
+    scanBtn?: boolean;
+    chatBtn?: boolean;
     title?: string | null;
     titleClass?: string;
   }>(),
@@ -65,6 +74,8 @@ withDefaults(
     backBtn: false,
     skipBtn: false,
     closeBtn: false,
+    scanBtn: false,
+    chatBtn: false,
     title: null,
     titleClass: "header__title",
   }
@@ -73,6 +84,8 @@ withDefaults(
 const emits = defineEmits<{
   (e: "back"): void;
   (e: "skip"): void;
+  (e: "scan"): void;
+  (e: "chat-click"): void;
 }>();
 </script>
 
@@ -107,7 +120,7 @@ const emits = defineEmits<{
 
   &__title {
     padding: 0;
-    font-family: "Yantramanav", serif;
+    font-family: "Lato";
     font-size: 20px;
     line-height: 1.5;
     font-weight: 500;
@@ -175,5 +188,21 @@ const emits = defineEmits<{
   --icon-font-size: 16px;
   --min-height: 30px;
   --min-width: 30px;
+}
+.chat-btn {
+  margin: 0 !important;
+  ion-icon {
+    font-size: 24px;
+  }
+}
+.chat-btn__badge {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  margin: -12px 0 0 4px;
+  background: var(--alert-red);
 }
 </style>
