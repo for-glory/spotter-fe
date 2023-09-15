@@ -24,17 +24,17 @@
         <empty-block
           hide-button
           icon="assets/icon/empty.svg"
-          v-else-if="
+          v-else-if="role !== RoleEnum.Trainer &&
             (activeTab === EntitiesEnum.Trainings &&
               trainings &&
               !trainings.length) ||
-            (activeTab === EntitiesEnum.Events && events && !events.length)
+            (role !== RoleEnum.Trainer && activeTab === EntitiesEnum.Events && events && !events.length)
           "
           :title="`Sorry, no ${activityName} found`"
           :text="`Currently you have no booked ${activityName}`"
         />
         <template v-else>
-          <template v-if="activeTab === EntitiesEnum.Trainings">
+          <template v-if="role !== RoleEnum.Trainer && activeTab === EntitiesEnum.Trainings">
             <event-item
               v-for="training in trainings"
               :key="training.id"
@@ -44,12 +44,36 @@
               @click="openTraining(training.id)"
             />
           </template>
-          <template v-if="activeTab === EntitiesEnum.Events">
+          <template v-if="role === RoleEnum.Trainer && activeTab === EntitiesEnum.Trainings">
+            <event-item
+              v-for="training in testingTranings"
+              :key="training.id"
+              :item="training"
+              rounded
+            />
+          </template>
+          <template v-if="role !== RoleEnum.Trainer && activeTab === EntitiesEnum.Events">
             <event-item
               v-for="event in events"
               :key="event.id"
               :item="event"
               @click="openEvent(event.id)"
+            />
+          </template>
+
+          <template v-if="role === RoleEnum.Trainer && activeTab === EntitiesEnum.Events">
+            <upcoming-item
+              v-for="event in testingEvents"
+              :key="event.id"
+              :img-src="event.media"
+              :title="event.title"
+              :subtitle="event.subTitle"
+              :location="event.address.street"
+              :time="'08:30 AM'"
+              :square-img="true"
+              is-upcomming
+              is-short-time
+              :upcoming-type="event.type"
             />
           </template>
         </template>
@@ -73,6 +97,7 @@
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
         <!-- <page-tabs
+        <page-tabs v-if="!fromOverview"
           :tabs="tabs"
           class="page-tabs"
           :value="activeTab"
@@ -99,6 +124,7 @@ import {
   QueryEventsOrderByColumn,
   QueryTrainerTrainingsOrderByColumn,
   TrainingStatesEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -113,8 +139,13 @@ import {
 } from "@ionic/vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
+import UpcomingItem from "@/general/components/dashboard/UpcomingItem.vue";
 
 const router = useRouter();
+const { role } = useRoles();
+
+const fromOverview = ref(history.state?.fromOverview ? history.state?.fromOverview : false);
 
 const onBack = () => {
   router.go(-1);
@@ -187,6 +218,111 @@ const totalEvents = computed<number>(
 const events = ref<Event[]>();
 const trainings = ref<Event[]>();
 
+const testingEvents = [
+  { 
+    id: "1",
+    title: "Food festival",
+    subTitle: "17 June",
+    address: {
+      street: "Light Street, 1"
+    },
+    start_date: new Date(),
+    end_date: new Date(),
+    media: "assets/gym.png",
+    type: "Upcoming"
+  },
+  { 
+    id: "1",
+    title: "Food festival",
+    subTitle: "17 June",
+    address: {
+      street: "Light Street, 1"
+    },
+    start_date: new Date(),
+    end_date: new Date(),
+    media: "assets/gym.png",
+    type: "Finished"
+  },
+  { 
+    id: "1",
+    title: "Food festival",
+    subTitle: "17 June",
+    address: {
+      street: "Light Street, 1"
+    },
+    start_date: new Date(),
+    end_date: new Date(),
+    media: "assets/gym.png",
+    type: "Finished"
+  },
+  { 
+    id: "1",
+    title: "Food festival",
+    subTitle: "17 June",
+    address: {
+      street: "Light Street, 1"
+    },
+    start_date: new Date(),
+    end_date: new Date(),
+    media: "assets/gym.png",
+    type: "Upcoming"
+  },
+  { 
+    id: "1",
+    title: "Food festival",
+    subTitle: "17 June",
+    address: {
+      street: "Light Street, 1"
+    },
+    start_date: new Date(),
+    end_date: new Date(),
+    media: "assets/gym.png",
+    type: "Upcoming"
+  }
+]
+const testingTranings = [
+  {
+    id: "1",
+    title: "Johne deo",
+    address: {street:"Summer Gym, Wall Street, 24"},
+    media: [
+      {
+      pathUrl: "assets/gym.png"
+      }
+    ]
+  },
+  {
+    id: "1",
+    title: "Johne deo",
+    address: {street:"Summer Gym, Wall Street, 24"},
+    media: [
+      {
+      pathUrl: "assets/gym.png"
+    }
+    ]
+  },
+  {
+    id: "1",
+    title: "Johne deo",
+    address: {street:"Summer Gym, Wall Street, 24"},
+    media: [
+      {
+      pathUrl: "assets/gym.png"
+    }
+    ]
+  },
+  {
+    id: "1",
+    title: "Johne deo",
+    address: {street:"Summer Gym, Wall Street, 24"},
+    media: [
+      {
+      pathUrl: "assets/gym.png"
+    }
+    ]
+  }
+]
+
 gotTrainings((response) => {
   const newTrainings =
     response.data?.trainerTrainings?.data?.map((training: Training) => ({
@@ -228,6 +364,8 @@ const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("trainer_schedule_active_tab") as EntitiesEnum) ??
     EntitiesEnum.Trainings
 );
+console.log("activeTab.value", activeTab.value);
+
 
 const tabsChanged = (ev: EntitiesEnum) => {
   if (ev) activeTab.value = ev;
@@ -241,10 +379,10 @@ const tabsChanged = (ev: EntitiesEnum) => {
 
 const activityName = computed(() => {
   if (activeTab.value === EntitiesEnum.Events) {
-    return "events";
+    return "Events";
   }
 
-  return "Sessions";
+  return "Trainings";
 });
 
 const openTraining = (id: string) => {

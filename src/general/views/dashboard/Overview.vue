@@ -1275,6 +1275,14 @@ ion-col.col-gap.test {
 }
 
 .tr-overview {
+  padding: 40px 108px 40px 55px;
+  overflow: auto;
+  height: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   .traning-status {
     width: 100%;
     background-color: var(--gray-700);

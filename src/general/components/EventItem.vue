@@ -2,7 +2,7 @@
   <ion-item
     lines="none"
     class="event"
-    :class="{ 'event--time-hidden': hideTime }"
+    :class="{ 'event--time-hidden': hideTime, 'trainer-item': role === RoleEnum.Trainer }"
   >
     <ion-thumbnail
       :class="{ 'event__photo--rounded': rounded }"
@@ -19,7 +19,7 @@
     </ion-thumbnail>
     <div class="event__holder">
       <ion-label class="event__title">{{ item.title }}</ion-label>
-      <div class="event__time" v-if="!dateRange && !hideTime">
+      <div class="event__time">
         <ion-icon src="assets/icon/time.svg" class="time-icon" />
         {{ time }}
       </div>
@@ -31,7 +31,7 @@
         <address-item class="event__address" v-if="item.address?.street">
           {{ item.address?.street }}
         </address-item>
-        <ion-text 
+        <ion-text v-if="props.item.end_date && props.item.start_date"
           class="status-text"
           :class="formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? 'ongoing' : 'finished'">
           {{ formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? "Ongoing" : "Finished" }}
@@ -45,8 +45,11 @@
 import { IonThumbnail, IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import { computed, defineProps, withDefaults } from "vue";
-import { Event } from "@/generated/graphql";
+import { Event, RoleEnum } from "@/generated/graphql";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
+
+const { role } = useRoles()
 
 const props = withDefaults(
   defineProps<{
@@ -208,6 +211,30 @@ const formatTime = (date: number, time: string): string => {
   }
   .status-text {
     display: none;
+  }
+}
+
+.trainer-item{
+  .event__title, .event__time, .event__date, .status-text  {
+    font-family: Yantramanav;
+  }
+
+  .status-text {
+    font-family: "Lato";
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--grey-text);
+    display: flex;
+    padding: 2px 8px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    border: 1px solid var(--grey-text);
+    line-height: 150%;
+  }
+
+  .event__date {
+    color: rgba(255, 255, 255, 0.60);
   }
 }
 </style>

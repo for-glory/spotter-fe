@@ -18,14 +18,13 @@ import { RoleEnum } from "@/generated/graphql";
 
 const router = useRouter();
 const { role } = useRoles();
-
 </script>
 
 <style scoped lang="scss">
 .content {
-	height: calc(100vh - 92px);
-	overflow: auto;
-	padding: 48px;
+  height: calc(100vh - 92px);
+  overflow: auto;
+  padding: 48px;
   background: var(--main-color);
 }
 .bg-main {
