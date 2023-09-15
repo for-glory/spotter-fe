@@ -120,6 +120,14 @@ const emits = defineEmits<{
     font-weight: 500;
     color: var(--gold);
   }
+  &_overview__title {
+    font-family: Lato;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: 0.216px;
+  }
 }
 
 .buttons-last-slot {

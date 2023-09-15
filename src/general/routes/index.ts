@@ -468,6 +468,11 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.Upcoming,
+        path: "/upcoming/:type",
+        component: () => import("@/general/views/dashboard/Upcoming.vue"),
+      },
+      {
         name: EntitiesEnum.DashboardEvent,
         path: "event",
         component: () => import("@/general/views/dashboard/events/Index.vue"),

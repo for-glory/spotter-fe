@@ -6,7 +6,7 @@
       expand="block"
       :disabled="loading"
     >
-      <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" />
+      <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" /> &nbsp; &nbsp; Drag and Drop file or Choose file
       <div class="add-photo__file__loader" v-if="loading">
         <circle-progress :percent="progress" class="add-photo__img__progress" />
       </div>
@@ -46,7 +46,7 @@ import {
 } from "@deva-community/capacitor-camera-pro";
 import PhotoCropper from "@/general/components/modals/crop/PhotoCropper.vue";
 import CircleProgress from "@/general/components/CircleProgress.vue";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 enum uploadTypesEnum {
   MakeAPhoto = "MAKE_A_PHOTO",
@@ -78,7 +78,7 @@ const emits = defineEmits<{
   (e: "delete", index: number, id?: string): void;
 }>();
 
-const openImagePicker = async (index?: number, mediaId?: string) => {    
+const openImagePicker = async (index?: number, mediaId?: string) => {
   const mobileButtons = [
     {
       text: "Take photo",
@@ -110,10 +110,10 @@ const openImagePicker = async (index?: number, mediaId?: string) => {
       role: "cancel",
     },
   ];
-  
+
   const actionSheet = await actionSheetController.create({
     mode: "ios",
-    buttons: Capacitor.isNativePlatform()?mobileButtons:webButtons
+    buttons: Capacitor.isNativePlatform() ? mobileButtons : webButtons,
   });
 
   await actionSheet.present();
@@ -248,7 +248,7 @@ const getUploadedImg = (image: string) => {
 
   &__file {
     flex: 0 0 88px;
-    width: 88px;
+    width: 100%;
     height: 88px;
     margin: 0;
     margin-right: 8px;

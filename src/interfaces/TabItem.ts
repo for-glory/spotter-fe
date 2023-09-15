@@ -3,7 +3,6 @@ import { ReviewTypeEnum } from "@/generated/graphql";
 
 export type TabItem = {
   name: EntitiesEnum | ReviewTypeEnum;
-  labelActive: string;
-  labelInactive:string,
+  label:string;
   disabled?: boolean;
 };

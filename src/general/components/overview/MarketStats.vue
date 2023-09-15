@@ -2,21 +2,23 @@
   <div class="attendance">
     <div class="d-flex align-items-center justify-content-between">
       <ion-title class="title">Market Stats</ion-title>
-      <div class="view-option">
-        <ion-text>This Month</ion-text>
-        <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
-      </div>
+      <BaseSelect id="trigger-market" :options="TrainerSelectOptions" defualtCheck="This Month" />
+      <!-- <div class="view-option"> -->
+        <!-- <ion-text id="trigger-button">This Month</ion-text>
+        <ion-img src="assets/icon/arrow-down-light.svg"></ion-img> -->
+      <!-- </div> -->
     </div>
     <div class="block attendance">
       <custom-chart :chartData="marketChartData" :chartOptions="marketChartOption"/>
       <div class="split" />
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="market-description d-flex align-items-center justify-content-center">
-          <div class="d-flex aling-items-center">
-            <ion-icon class="yellow" src="assets/icon/Ellipse-yellow.svg" slot="icon-only"></ion-icon>
-            <ion-text>Workout</ion-text>
-          </div>
-          <div class="d-flex aling-items-center">
+      <div class="legend-wrapper d-flex align-items-center justify-content-between">
+        <div class="market-description d-flex align-items-center justify-content-center"  v-for="(data, index) in marketChartData.datasets" :key="index">
+          <!-- <div class="d-flex aling-items-center justify-content-center"> -->
+            <!-- <ion-icon class="yellow" src="assets/icon/Ellipse-yellow.svg" slot="icon-only"></ion-icon> -->
+            <div class="round" :style="{ 'background-color': data.backgroundColor }"></div>
+            <ion-text>{{ data.label  }}</ion-text>
+          <!-- </div> -->
+          <!-- <div class="d-flex aling-items-center">
             <ion-icon class="green" src="assets/icon/Ellipse-green.svg" slot="icon-only"></ion-icon>
             <ion-text>Passes</ion-text>
           </div>
@@ -27,11 +29,11 @@
           <div class="d-flex aling-items-center">
             <ion-icon class="red" src="assets/icon/Ellipse-red.svg" slot="icon-only"></ion-icon>
             <ion-text>Event pass</ion-text>
-          </div>
+          </div> -->
         </div>
-        <div class="stats d-flex align-items-center">
-          <ion-text>{{-0.88}}%</ion-text>
-          <ion-icon src="assets/icon/arrow-square-up.svg"></ion-icon>
+        <div class="stats stats-green d-flex align-items-center">
+          <ion-text>{{ marketState.symbol + 0.88}}%</ion-text>
+          <ion-icon :src="'assets/icon/'+ marketState.icon + '.svg'"></ion-icon>
         </div>
       </div>
     </div>
@@ -40,71 +42,45 @@
 
 <script setup lang="ts">
 import {
-  IonRadioGroup,
-  IonButton,
   IonIcon,
-  IonModal,
   IonTitle,
-  IonImg,
-  IonAvatar
 } from "@ionic/vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import {
-  Query,
-  RoleEnum,
-  SettingsCodeEnum,
-  UserDocument,
-  DeleteProfileDocument,
-  SubscriptionsTypeEnum,
-} from "@/generated/graphql";
-import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
-import AddressItem from "@/general/components/AddressItem.vue";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import { EntitiesEnum } from "@/const/entities";
-import { clearAuthItems } from "@/router/middleware/auth";
-import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref, watch } from "vue";
+import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
-import useId from "@/hooks/useId";
-import { Capacitor } from "@capacitor/core";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  ArcElement
-} from 'chart.js';
-import { Doughnut } from 'vue-chartjs';
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useUserStore } from "@/general/stores/user";
+import { ChartOptions } from 'chart.js';
+import BaseSelect from "../base/BaseSelect.vue";
+import { TrainerSelectOptions } from '@/const/TrainerSelectOption'
 
-const router = useRouter();
-const route = useRoute();
+const { role } = useRoles()
 
 const marketDatas = [
     [30, 30, 30, 30, 30, 30, 30],
     [58, 58, 58, 58, 58, 58, 58],
     [18, 18, 18, 18, 18, 18, 18],
     [78, 78, 78, 78, 78, 78, 78]];
-const backgroundColors = ['#FFB946', '#2ED47A', '#7C4EFF', '#F7685B'];
+const backgroundColors = ['#FFB946', '#2ED47A', '#F7685B', '#7C4EFF'];
+const marketState = {
+  icon: "arrow-up-new",
+  symbol: "+"
+};
+
+const defaultLabels =  role === RoleEnum.Trainer ?['Dailys', 'Bookings', 'Event pass', 'Drop-ins'] : ['Workout', 'Passes', "Drop-ins", 'Event pass']
 const marketChartData = {
   labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
   datasets: backgroundColors.map((colors, index) => {
     return {
-      label: `Dataset ${index + 1}`,
+      label: defaultLabels[index],
       backgroundColor: colors,
       data: marketDatas[index],
-      barThickness: 3,
-      borderRadius: 4,
+      barPercentage: .6,
+      borderRadius: Number.MAX_VALUE,
+      borderSkipped: false
     };
   }),
 };
-const marketChartOption = {
+
+const marketChartOption:ChartOptions = {
   responsive: true,
   scales: {
     y: {
@@ -113,6 +89,11 @@ const marketChartOption = {
         stepSize: 25, // Set step size to 25
         max: 100, // Set maximum value to 100
         min: 0, // Set minimum value to 0
+        color: "#AFAFAF",
+        font: {
+          family: "Lato",
+          size: 10
+        }
       },
       grid: {
         display: true, // Display y-axis grid lines
@@ -121,7 +102,11 @@ const marketChartOption = {
     },
     x: {
       ticks: {
-        angle: 45,
+        color: "#AFAFAF",
+        font: {
+          family: "Lato",
+          size: 10
+        }
       },
       grid: {
         display: false
@@ -217,6 +202,12 @@ const marketChartOption = {
     gap: 25px;
   }
 }
+
+.legend-wrapper{
+  flex-wrap: wrap;
+  gap: 6px;
+
+}
 .title {
   padding: 8px 0px;
   font-size: 1.6rem;
@@ -251,15 +242,22 @@ const marketChartOption = {
   }
   ion-text {
     font: 10px/1 Lato;
-    color: #ffffff6a;
+    color: rgba(255, 255, 255, 0.60);
   }
 }
 .stats {
   font: 600 20px/1 Lato;
   color: #F7685B;
 }
-.stats {
-  font: 600 20px/1 Lato;
-  color: #F7685B;
+
+.stats-green {
+  color: #2ED47A;
+}
+
+.round {
+  width: 4px;
+  height: 4px;
+  border-radius: 50% 50%;
+  margin-right: 4px;
 }
 </style>
