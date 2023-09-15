@@ -13,7 +13,7 @@
           route.path.match(item.category ?? '')
         ),
       }"
-      :disabled="
+      :disabled=" role !== RoleEnum.Trainer &&
         (item.name === EntitiesEnum.TrainerWorkouts &&
           subscriptionType === SubscriptionsTierEnum.Basic) ||
         (item.name === EntitiesEnum.TrainerEvents &&
@@ -54,8 +54,9 @@ import { IonButton, IonIcon } from "@ionic/vue";
 import { NavigationItem } from "@/interfaces/NavigationItem";
 import { useRoute, useRouter } from "vue-router";
 import useSubscription from "@/hooks/useSubscription";
-import { SubscriptionsTierEnum } from "@/generated/graphql";
+import { RoleEnum, SubscriptionsTierEnum } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
+import useRoles from "@/hooks/useRole";
 
 defineProps<{
   items?: NavigationItem[];
@@ -63,7 +64,7 @@ defineProps<{
 
 const route = useRoute();
 const router = useRouter();
-
+const { role } = useRoles()
 const { type: subscriptionType } = useSubscription();
 
 const navigate = (name: string) => {

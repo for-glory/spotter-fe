@@ -113,3 +113,10 @@
     }
   }
 }
+
+ion-popover{
+  &::part(content){
+    --width: 140px;
+    margin-top: 18px;
+  }
+}

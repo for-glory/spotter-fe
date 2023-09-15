@@ -1,7 +1,12 @@
 <template>
-  <base-layout content-full-height :hideNavigationMenu="loadingUser || loadingDashboarData">
+  <base-layout 
+    content-full-height 
+    :hideNavigationMenu="loadingUser || loadingDashboarData" 
+    :class="{ 'trainer-overview': role === RoleEnum.Trainer }" 
+    content-full-height
+  >
     <template #header>
-      <page-header title="Overview">
+      <page-header title="Overview" title-class="header_overview__title">
         <template #avatar-field>
           <ion-avatar v-if="!loadingUser || !loadingDashboarData" class="header__photo" @click="openSettings">
             <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
@@ -13,7 +18,7 @@
         <template #custom-btn>
           <ion-button v-if="!loadingUser || !loadingDashboarData" @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+            <span class="header-btn__badge"></span>
           </ion-button>
           <ion-button v-if="!loadingUser || !loadingDashboarData" @click="openQR" class="header-btn">
             <ion-icon src="assets/icon/scan.svg" />
@@ -29,10 +34,11 @@
       />
       <div v-else class="profile">
         <fitness-center-stats :overviewData="overviewData"  />
-        <revenue :overviewData="overviewData" />
-        <attendance-trend :overviewData="overviewData" />
+        <revenue v-if="role !== RoleEnum.Trainer" :overviewData="overviewData" />
+        <attendance-trend v-if="role !== RoleEnum.Trainer" :overviewData="overviewData" />
         <market-stats />
         <event-status />
+        <event-status :title="'Training Status'" />
       </div>
     </template>
   </base-layout>
@@ -220,6 +226,8 @@ gotUser(({ data }) => {
       facilityStore.setFacility(facilityValue as Facility);
     }
   }
+  console.log("facilityStore.facility", facilityStore.facility);
+  
   refetch( { id: facilityStore?.facility?.id } );
 
   userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
@@ -255,7 +263,7 @@ const fetchChats = () => {
 
 const openQR = () => {
   router.push({
-    name: EntitiesEnum.ProfileScan,
+    name: EntitiesEnum.TrainersUpcomingTrainings,
   });
 };
 
@@ -661,5 +669,11 @@ img#cover {
 .time-icon {
   width: 12px;
   height: 12px;
+}
+
+.trainer-overview {
+  .header-btn__badge {
+    background: var(--color-red);
+  }
 }
 </style>

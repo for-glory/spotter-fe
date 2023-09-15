@@ -43,16 +43,24 @@ const props = withDefaults(
   gap: 4px;
 }
 .text-title {
-  font: 14px/1 var(--ion-font-family);
+  font: 14px/1 "Lato";
   color: var(--gold);
 }
 .text-key {
-  font: 500 16px/1 var(--ion-font-family);
+  font: 500 16px/1 "Lato";
   color: var(--gray-500);
+
+  @media (max-width: 320px){
+    font-size: 14px;
+  }
 }
 .text-value {
   font: 600 26px/1 var(--ion-font-family);
   color: var(--gray-500);
+
+  @media (max-width: 320px){
+    font-size: 22px;
+  }
 }
 .text-box {
   height: 100%;

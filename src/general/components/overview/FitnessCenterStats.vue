@@ -1,8 +1,8 @@
 <template>
   <div>
-    <ion-title class="title">Fitness Center Stats</ion-title>
-    <div class="block">
-      <table class="custom-table">
+    <ion-title class="title" v-if="role !== RoleEnum.Trainer">Fitness Center Stats</ion-title>
+    <div class="block" v-if="role !== RoleEnum.Trainer">
+      <table class="custom-table" >
         <tr>
           <td>
             <summary-item title="Total" keyText="Drop-ins" :value="dropinCount" />
@@ -25,7 +25,14 @@
           </td>
         </tr>
       </table>
+      
     </div>
+    <div class="block trainer-block" v-else>
+        <summary-item title="Total" keyText="Trainings" :value="14" />
+        <summary-item title="Total" keyText="Message counts" :value="10" />
+        <summary-item title="Total" keyText="Event counts" :value="23" />
+        <summary-item title="Total" keyText="Dailys" :value="10" />
+      </div>
   </div>
 </template>
 
@@ -78,6 +85,7 @@ import { Doughnut } from 'vue-chartjs';
 
 const router = useRouter();
 const route = useRoute();
+const { role } = useRoles()
 
 const props = defineProps<{ overviewData?: any; }>();
 const dropinCount = computed(() => props.overviewData?.dropin_count);
@@ -108,5 +116,17 @@ td {
   border-radius: 4px;
   margin-bottom: 1rem;
   padding: 1rem 1rem 1rem 1rem;
+}
+
+.trainer-block{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 26px 14px;
+  grid-row-gap: 24px;
+  grid-column-gap: 18px;
+  @media(max-width: 320px){
+    grid-row-gap: 20px;
+    grid-column-gap: 16px;
+  }
 }
 </style>
