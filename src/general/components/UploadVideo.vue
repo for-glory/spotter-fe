@@ -126,6 +126,7 @@ const preloading = ref<boolean>(false);
 const videoOptions: VideoOptions = {
   highquality: true,
   saveToGallery: true,
+  source: CameraVideoSource.Camera,
   promptLabelHeader: 'Upload video',
   promptLabelLibrary: '',
   promptLabelVideo: 'Click here to start recording a video'
