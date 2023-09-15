@@ -109,7 +109,7 @@ import {
 } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
 import BaseSelect from "../base/BaseSelect.vue";
-import { TrainerSelectOptions } from '@/const/app.contant'
+import { TrainerSelectOptions } from '@/const/TrainerSelectOption'
 import router from "@/router";
 import { EntitiesEnum } from "@/const/entities";
 
