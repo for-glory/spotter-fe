@@ -1,39 +1,53 @@
 <template>
   <div>
-    <div class="title">Event Status</div>
-    <div class="block">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="title">{{ title }}</div>
+      <BaseSelect :id="'trigger-' + title.split(' ')[0].toLocaleLowerCase()" :options="TrainerSelectOptions" defualtCheck="This Month" />
+      <!-- <div class="view-option"> -->
+        <!-- <ion-text id="trigger-button">This Month</ion-text>
+        <ion-img src="assets/icon/arrow-down-light.svg"></ion-img> -->
+        <!-- <ion-popover trigger="trigger-button">
+          <ion-content>Hello Styled World!</ion-content>
+        </ion-popover> -->
+      <!-- </div> -->
+    </div>
+    <div class="block" @click="goToUpcoming">
+      <div class="chart-title">{{ chartTitle }}</div>
       <div class="perform">
         <doughnut 
           :data="chartData"
           :options="chartOptions"
           :width="null"
           :height="null"
-          class="doughnut"
         />
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="title white-text">Completed</div>
-          <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
-        </div>
-        <event-item
-          title="Swimming & Cycling1111"
-          dateTime="Saturday, April 14 | 08:00 AM"
-          status="Closed"
-        />
-        <event-item
-          title="Swimming & Cycling"
-          dateTime="Saturday, April 14 | 08:00 AM"
-          status="Closed"
-        />
-        <event-item
-          title="Swimming & Cycling"
-          dateTime="Saturday, April 14 | 08:00 AM"
-          status="Closed"
-        />
-        <event-item
-          title="Swimming & Cycling"
-          dateTime="Saturday, April 14 | 08:00 AM"
-          status="Closed"
-        />
+
+        <template v-if="role !== RoleEnum.Trainer">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="title white-text">Completed</div>
+            <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
+          </div>
+          <event-item
+            title="Swimming & Cycling1111"
+            dateTime="Saturday, April 14 | 08:00 AM"
+            status="Closed"
+          />
+          <event-item
+            title="Swimming & Cycling"
+            dateTime="Saturday, April 14 | 08:00 AM"
+            status="Closed"
+          />
+          <event-item
+            title="Swimming & Cycling"
+            dateTime="Saturday, April 14 | 08:00 AM"
+            status="Closed"
+          />
+          <event-item
+            title="Swimming & Cycling"
+            dateTime="Saturday, April 14 | 08:00 AM"
+            status="Closed"
+          />
+      </template>
+
         <!-- <div class="d-flex align-items-center justify-content-between">
           <div class="red-title">Upcoming</div>
           <div class="view-option">View All <ion-img src="assets/icon/arrow-down-light.svg"></ion-img></div>
@@ -80,36 +94,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonRadioGroup,
-  IonButton,
-  IonIcon,
-  IonModal,
-  IonTitle,
-  IonImg,
-  IonAvatar
-} from "@ionic/vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import {
-  Query,
-  RoleEnum,
-  SettingsCodeEnum,
-  UserDocument,
-  DeleteProfileDocument,
-  SubscriptionsTypeEnum,
-} from "@/generated/graphql";
-import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
-import AddressItem from "@/general/components/AddressItem.vue";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import { EntitiesEnum } from "@/const/entities";
-import { clearAuthItems } from "@/router/middleware/auth";
-import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref, watch } from "vue";
+import { IonImg } from "@ionic/vue";
+import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
-import useId from "@/hooks/useId";
-import { Capacitor } from "@capacitor/core";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
-import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import EventItem from "@/general/components/dashboard/EventItem.vue";
 import {
   Chart as ChartJS,
@@ -117,17 +104,35 @@ import {
   Tooltip,
   Legend,
   CategoryScale,
-  ArcElement
+  ArcElement,
+  ChartOptions
 } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import { useUserStore } from "@/general/stores/user";
+import BaseSelect from "../base/BaseSelect.vue";
+import { TrainerSelectOptions } from '@/const/app.contant'
+import router from "@/router";
+import { EntitiesEnum } from "@/const/entities";
 
-const router = useRouter();
-const route = useRoute();
+const props = withDefaults( defineProps<{
+  title?:string
+}>(), {
+  title: "Event Status"
+})
+const { role }= useRoles()
+const chartTitle = "60%";
+const screenWidth = window.innerWidth;
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
+
+const goToUpcoming = () => {
+  const tab = props.title.split(' ')[0] === "Event" ? EntitiesEnum.Events : EntitiesEnum.Trainings;
+  localStorage.setItem("trainer_schedule_active_tab", tab);
+  router.push({
+    name: EntitiesEnum.TrainersUpcomingTrainings,
+    state: {
+      fromOverview: true
+    }
+  })
+}
 
 const chartData = {
   labels: [
@@ -143,24 +148,41 @@ const chartData = {
     circumference: 180,
     rotation: -90,
     borderJoinStyle: 'rounded',
-    cutout: 50,
+    cutout: screenWidth > 320 ? 72 : 62,
     borderWidth: 0,
+    borderRadius: 20,
+    spacing: -30,
     pointStyle: 'circle'
   }]
 };
-const chartOptions = {
+const chartOptions:ChartOptions = {
   responsive: true,
+  aspectRatio: 2,
   plugins: {
     legend: {
       position: 'right',
-      useBorderRadius: true,
-      borderRadius: 100,
       labels: {
         usePointStyle: true,
+        boxHeight: 6,
+        filter(item, data) {
+            item.fontColor = item.fillStyle;
+            return true;
+        },
+        font :{
+          family :"Lato",
+          size: 10,
+        }
       },
     },
     title: {
       display: false,
+      text: '60%',
+      align: "center",
+      position: "bottom",
+      color: "#E1DBC5",
+      font: {
+        family: "Inter",
+      }
     }
   }
 };
@@ -186,7 +208,8 @@ const chartOptions = {
   background-color: #262626;
   border-radius: 4px;
   margin-bottom: 1rem;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 2rem 1rem;
+  position: relative;
 }
 .view-option {
   color: #E1DBC5;
@@ -218,5 +241,21 @@ const chartOptions = {
 .stats {
   font: 600 20px/1 Lato;
   color: #F7685B;
+}
+
+.chart-title {
+  position: absolute;
+  bottom: 19%;
+  left: 26%;
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+
+  @media (max-width: 320px) {
+    bottom: 18%;
+    left: 22%;
+    font-size: 22px;
+  } 
 }
 </style>

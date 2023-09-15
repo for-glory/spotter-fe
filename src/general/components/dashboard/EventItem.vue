@@ -32,9 +32,10 @@ const props = withDefaults(
   display: contents;
 }
 .status {
-  font-size: 14px;
+  font-size: 12px;
   border-radius: 20px;
-  background-color: grey;
+  background-color: rgba(255, 255, 255, 0.6);
+  height: 22px;
   color: white;
   padding: 3px 8px;
 }
@@ -45,12 +46,12 @@ const props = withDefaults(
   padding: 1rem;
   .title {
     color: var(--grey-text);
-    font-size: 16px;
+    font-size: 14px;
     padding-bottom: 0.5rem;
   }
   .date-time {
     color: var(--fitnesswhite);
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 .flex-container {
