@@ -141,12 +141,5 @@ const calendarOption = computed(() => {
 .overflow-hidden {
     overflow: hidden;
 }
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 </style>
   

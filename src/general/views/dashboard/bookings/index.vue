@@ -61,11 +61,14 @@
             </template>
         </div>
     </div>
+    <!-- <IonModal :is-open="true" :backdrop-dismiss="false">
+        <TrainerInfo></TrainerInfo>
+    </IonModal> -->
 </template>
   
 <script setup lang="ts">
 import DashboardItem from "@/general/components/DashboardItem.vue";
-import { IonIcon, IonText, IonSpinner, IonButton, IonTitle } from "@ionic/vue";
+import { IonIcon, IonText, IonSpinner, IonButton, IonTitle, IonModal, IonLabel } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, ref } from "vue";
 import {
@@ -88,6 +91,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import TrainerInfo from "./trainer-info.vue";
 
 const router = useRouter();
 const { id } = useId();
