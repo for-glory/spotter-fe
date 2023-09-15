@@ -18,7 +18,10 @@
         <div class="dashboards-items">
           <dashboard-item :items="activityItems">
             <template #title>
-              <ion-icon src="public/assets/icon/activity.svg" class="activity-icon" />
+              <ion-icon
+                src="public/assets/icon/activity.svg"
+                class="activity-icon"
+              />
               Activity
             </template>
           </dashboard-item>
@@ -35,36 +38,72 @@
                 </ion-text>
                 <ion-text class="rating-dislikes">
                   {{ widgetInfo?.negative_reviews_count || 0 }}
-                  <ion-icon class="dislike-icon" src="assets/icon/dislike.svg" />
+                  <ion-icon
+                    class="dislike-icon"
+                    src="assets/icon/dislike.svg"
+                  />
                 </ion-text>
               </div>
             </template>
           </dashboard-item>
         </div>
-        <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" />
+        <week-calendar
+          v-model="selectedDate"
+          :bookings="bookings"
+          @handle-view="onViewCalendar"
+        />
         <div class="events__container">
-          <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
-            isFacilitiesLoading ||
-            isTrainingsLoading ||
-            isEventsLoading || isDropinsLoading
-            " />
-          <template v-if="selectedEvents.length &&
-            !isTrainingsLoading &&
-            !isEventsLoading &&
-            !isFacilitiesLoading &&
-            !isDropinsLoading
-            ">
-            <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)" />
+          <items-header
+            :title="dynamicTitle"
+            @handle-view="onViewAllEvents"
+            :hide-view-more="
+              !selectedEvents?.length ||
+              isFacilitiesLoading ||
+              isTrainingsLoading ||
+              isEventsLoading ||
+              isDropinsLoading
+            "
+          />
+          <template
+            v-if="
+              selectedEvents.length &&
+              !isTrainingsLoading &&
+              !isEventsLoading &&
+              !isFacilitiesLoading &&
+              !isDropinsLoading
+            "
+          >
+            <event-item
+              v-for="event in selectedEvents"
+              :key="event.id"
+              :item="event"
+              :rounded="activeTab === EntitiesEnum.Trainings"
+              :date-range="activeTab === EntitiesEnum.Facilities"
+              @click="openEvent(event.id)"
+            />
           </template>
-          <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
-            ">
+          <ion-spinner
+            name="lines"
+            class="spinner"
+            v-else-if="
+              isTrainingsLoading || isEventsLoading || isFacilitiesLoading
+            "
+          >
           </ion-spinner>
-          <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
-            :text="`Currently you have no booked ${bookingName}`" />
+          <empty-block
+            v-else
+            hide-button
+            icon="assets/icon/empty.svg"
+            :title="`Sorry, no ${bookingName} found`"
+            :text="`Currently you have no booked ${bookingName}`"
+          />
         </div>
-        <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+        <page-tabs-New
+          :tabs="tabs"
+          class="page-tabs"
+          :value="activeTab"
+          @change="tabsChanged"
+        />
       </div>
     </template>
   </base-layout>
@@ -109,7 +148,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
@@ -133,7 +171,6 @@ import {
   QueryMyFacilityItemPassesOrderByColumn,
   QueryMyEventsOrderByColumn,
   TrainingStatesEnum,
-  
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -333,50 +370,47 @@ const events = computed<EventPaginator["data"]>(() =>
 const trainings = computed(() =>
   trainingsResult?.value?.myTrainings?.data
     ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
+        ...training,
+        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+        address: training.trainer.address,
+        media: [{ pathUrl: training.trainer.avatarUrl }],
+      }))
     : []
 );
 
 const dropins = computed(() =>
   dropinsResult?.value?.myTrainings?.data
     ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
+        ...training,
+        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+        address: training.trainer.address,
+        media: [{ pathUrl: training.trainer.avatarUrl }],
+      }))
     : []
 );
 
 const facilities = computed<UserPaginator["data"]>(() =>
   facilitiesResult?.value?.myFacilityItemPasses?.data
     ? facilitiesResult.value.myFacilityItemPasses.data.map(
-      (facilityPass: FacilityItemPass) => ({
-        id: facilityPass.id,
-        title: facilityPass.facilityItem.facility.name,
-        end_date: facilityPass.end_date,
-        start_date: dayjs(facilityPass.end_date)
-          .subtract(
-            facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
-            "d"
-          )
-          .format("YYYY-MM-DD HH:mm:ss"),
-        media: facilityPass.facilityItem.facility.media,
-        address: facilityPass.facilityItem.facility.address,
-      })
-    )
+        (facilityPass: FacilityItemPass) => ({
+          id: facilityPass.id,
+          title: facilityPass.facilityItem.facility.name,
+          end_date: facilityPass.end_date,
+          start_date: dayjs(facilityPass.end_date)
+            .subtract(
+              facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
+              "d"
+            )
+            .format("YYYY-MM-DD HH:mm:ss"),
+          media: facilityPass.facilityItem.facility.media,
+          address: facilityPass.facilityItem.facility.address,
+        })
+      )
     : []
 );
 
 const selectedEvents = computed(() => {
-
-
   if (activeTab.value === EntitiesEnum.Events) {
-
     return events.value;
   }
 
@@ -392,19 +426,18 @@ const selectedEvents = computed(() => {
 
 const dynamicTitle = computed(() => {
   if (activeTab.value === EntitiesEnum.Events) {
-
-    return 'Upcoming Events';
+    return "Upcoming Events";
   }
 
   if (activeTab.value === EntitiesEnum.Facilities) {
-    return 'My Passes';
+    return "My Passes";
   }
 
   if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return 'My Drop-ins';
+    return "My Drop-ins";
   }
 
-  return 'Upcoming Trainings';
+  return "Upcoming Trainings";
 });
 
 const bookingName = computed(() => {
@@ -420,7 +453,7 @@ const bookingName = computed(() => {
 });
 
 const tabs: TabItemNew[] = [
-{
+  {
     name: EntitiesEnum.FacilityDropins,
     labelActive: "assets/icon/dropinsActive.png",
     labelInactive: "assets/icon/dropins.png",
@@ -430,7 +463,7 @@ const tabs: TabItemNew[] = [
     labelActive: "assets/icon/dumbbell.png",
     labelInactive: "assets/icon/dumbbellActive.png",
   },
-  
+
   {
     name: EntitiesEnum.Trainings,
     labelActive: "assets/icon/TrainerActive.png",
@@ -447,7 +480,7 @@ const selectedDate = ref<Dayjs | null>(dayjs());
 
 const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
-  EntitiesEnum.Facilities
+    EntitiesEnum.FacilityDropins
 );
 
 const tabsChanged = (ev: EntitiesEnum) => {
@@ -632,7 +665,6 @@ const openEvent = (id: string | number) => {
   --btn-min-width: 100px;
   padding: 12px 20px 12px 20px;
 }
-
 
 .empty-block {
   margin-top: 48px;
