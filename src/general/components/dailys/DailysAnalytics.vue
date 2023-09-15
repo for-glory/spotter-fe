@@ -2,7 +2,7 @@
   <div class="d-flex-col gap-24 content">
     <div class="block d-flex">
       <div class="d-flex-col gap-16 color-white w-70">
-        <ion-text class="font-light font-12">Latest daily. {{ "10 Aug 2023" }}</ion-text>
+        <ion-text class="font-light font-12">Latest daily. {{ dayjs(daily?.created_at).format('D MMMM YYYY') }}</ion-text>
         <ion-text class="font-light font-12">
           <span class="font-bold font-24">{{ daily?.total_revenue }}</span>
           Purchases
@@ -13,7 +13,7 @@
           </ion-text>
           <ion-text class="font-light font-14 color-gray-400 d-flex align-items-center">
             <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
-            {{ daily?.duration }} min • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
+            {{ getDurationText(daily?.duration) }} • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
           </ion-text>
         </div>
       </div>
@@ -32,10 +32,21 @@
 import { defineProps, computed, defineEmits } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
+import dayjs from "dayjs";
 
 defineProps<{
   daily: any;
 }>(); 
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return value / 60 + ' min ' + value % 60 + ' s';
+  } else {
+    return value / 3600 + ' h ' + (value % 3600) / 60 + ' min ' + ((value % 3600) % 60) + ' s';
+  }
+}
 
 const emits = defineEmits<{
   (e: "watch-daily"): void;

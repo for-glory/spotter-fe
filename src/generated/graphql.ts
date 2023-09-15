@@ -7590,6 +7590,7 @@ export const TrainingDocument = gql`
       }
       user {
         id
+        email
         first_name
         last_name
         avatarUrl
@@ -7820,42 +7821,44 @@ export const UsersDocument = gql`
   }
 `;
 export const WorkoutDocument = gql`
-  query workout($id: ID!) {
-    workout(id: $id) {
+    query workout($id: ID!) {
+  workout(id: $id) {
+    id
+    type {
       id
-      type {
-        id
-        name
-        icon
-      }
-      previewUrl
-      title
-      was_ordered_by_me
-      description
-      price
-      duration
-      exercises {
-        id
-        title
-        description
-        path
-        previewUrl
-        pathUrl
-      }
-      products {
-        product_id
-      }
-      trainer {
-        id
-        first_name
-        last_name
-        gender
-        role
-        score
-      }
+      name
+      icon
     }
+    previewUrl
+    title
+    was_ordered_by_me
+    description
+    price
+    duration
+    exercises {
+      id
+      title
+      description
+      path
+      previewUrl
+      pathUrl
+    }
+    products {
+      product_id
+    }
+    trainer {
+      id
+      first_name
+      last_name
+      gender
+      role
+      score
+    }
+    positive_reviews_count
+    negative_reviews_count
   }
-`;
+}
+    `;
 export const WorkoutsDocument = gql`
   query workouts(
     $dynamic_search: String!
@@ -7969,6 +7972,7 @@ export const WorkoutsByFacilityDocument = gql`
         price
         duration
         was_ordered_by_me
+        created_at
         exercises {
           id
           title
@@ -8576,37 +8580,33 @@ export const GetFacilitySubscriptionDocument = gql`
   }
 `;
 export const DailyViewsAndPurchasesDocument = gql`
-  query workout($id: ID!) {
-    workout(id: $id) {
+    query workout($id: ID!) {
+  workout(id: $id) {
+    id
+    recommended_users {
       id
-      orderItems {
-        id
-        order {
-          id
-          user {
-            id
-            first_name
-            last_name
-            email
-            avatarUrl
-          }
-        }
-        created_at
-      }
-      dailyViews {
-        id
-        user {
-          id
-          first_name
-          last_name
-          email
-          avatarUrl
-        }
-        workout {
-          id
-        }
-        created_at
-      }
+      first_name
+      last_name
+      email
+      avatarUrl
+      was_commented_by_self
+    }
+    purchased_users {
+      id
+      first_name
+      last_name
+      email
+      avatarUrl
+      was_commented_by_self
+    }
+    viewed_users {
+      id
+      first_name
+      last_name
+      email
+      avatarUrl
+      was_commented_by_self
     }
   }
+}
 `;

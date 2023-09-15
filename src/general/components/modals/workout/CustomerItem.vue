@@ -2,17 +2,14 @@
   <div class="common-style">
     <div class="d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-8">
-        <ion-img :src="avatarUrl" class="w-68 h-68" />
+        <ion-img :src="avatarUrl" class="" />
         <div class="d-flex-col gap-2">
           <ion-text class="font-medium font-16 color-white">
             {{ name }}
           </ion-text>
-          <ion-text class="font-medium font-12 color-gray">
-            {{ email }}
-          </ion-text>
         </div>
       </div>
-      <div v-if="reviewMessage">
+      <div v-if="hasMessage">
         <ion-icon src="assets/icon/messages.svg" class="w-24 h-24" @click="openDescriptionModal" />
       </div>
     </div>
@@ -28,12 +25,10 @@ withDefaults(
     name?: string;
     avatarUrl?: string;
     email?: string;
-    reviewMessage?: string;
+    hasMessage?: boolean;
   }>(),
   {
     name: 'Amina Sally',
-    email: 'aminasaliat@gmail.com',
-    reviewMessage: '',
     avatarUrl: 'assets/mock/profile.jpeg',
   }
 );
@@ -84,6 +79,8 @@ const openDescriptionModal = () => {
 ion-img{
   &::part(image) {
     border-radius: 100px;
+    width: 68px !important;
+    height: 68px !important;
   }
 }
 </style>

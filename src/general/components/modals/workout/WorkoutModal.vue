@@ -7,14 +7,25 @@
           {{ viewTitle }}
         </ion-label>
       </div>
-      <div class="description-field">
+      <div class="description-field d-flex align-items-center justify-content-between">
         <ion-text class="font-medium font-14">{{ viewDescription }}</ion-text>
+        <ion-text v-if="viewTitle === 'Purchases'" class="d-flex align-items-center">
+          <ion-icon src="assets/icon/dollar-circle.svg" style="width: 24px; height: 24px;" />
+          <span class="font-medium color-white font-14">{{ getPaymentNumber(totalRevenue) }}</span>
+        </ion-text>
       </div>
       <div v-if="total_count" class="customer-list">
-        <customer-item @open-description-modal="showReviewDescriptionModal(id)" />
+        <customer-item 
+          v-for="customer in customerList"
+          :key="customer.id"
+          :name="customer.first_name + ' ' + customer.last_name"
+          :avatarUrl="customer.avatarUrl"
+          :hasMessage="customer.was_commented_by_self"
+          @open-description-modal="showReviewDescriptionModal(id)" 
+        />
       </div>
       <div v-else class="d-flex align-items-center justify-content-center w-100 h-100">
-        <ion-text class="font-medium font-20 color-white">No customers</ion-text>
+        <ion-text class="font-medium font-20 color-white">No {{ viewTitle }}</ion-text>
       </div>
       <div v-if="isReviewDescriptionModalOpen" class="backdrop" />
     </div>
@@ -69,6 +80,12 @@ import {
   toastController,
   IonSpinner,
 } from "@ionic/vue";
+import {
+  ReviewTypeEnum,
+  FeedbackEntityEnum,
+  ReviewsDocument,
+} from "@/generated/graphql";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { defineExpose, defineEmits, ref, defineProps } from "vue";
 import { Capacitor } from '@capacitor/core';
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -85,24 +102,48 @@ const viewTitle = ref<string>("");
 const viewDescription = ref<string>("");
 const reviewDescription = ref<any>({});
 const total_count = ref<number>(0);
+const customerList = ref<Array<any>>([]);
+const totalRevenue = ref<number>(0);
 
 const present = ( props: any ) => {
   viewTitle.value = props.title;
   viewDescription.value = props.description;
   total_count.value = props.total_count;
+  customerList.value = props.customerList;
+  totalRevenue.value = props.totalRevenue || 0;
   workoutModal?.value?.$el.present();
 };
 
+const { result: reviewsResult, loading: reviewLoading, refetch, onResult: getReviews } = useQuery(
+  ReviewsDocument,
+  () => ({
+    id: route.params.id,
+    type: FeedbackEntityEnum.Workout,
+    user_id: 0,
+  })
+);
+
 const isReviewDescriptionModalOpen = ref<boolean>(false);
 const showReviewDescriptionModal = (id: any) => {
-  reviewDescription.value = {
-    reviewerName: 'Amina Sally',
-    reviewerAvatar: 'assets/mock/profile.jpeg',
-    reviewerEmail: 'aminasaliat@gmail.com',
-    reviewMessage: '',
-    date: '6 June, 2022'
+  refetch({ id: route.params.id, type: FeedbackEntityEnum.Workout, user_id: id})?.
+    then(() => {
+       reviewDescription.value = {
+        reviewerName: customerList.value[id]?.first_name + ' ' + customerList.value[id]?.last_name,
+        reviewerAvatar: customerList.value[id]?.avatarUrl,
+        reviewerEmail: customerList.value[id]?.email,
+        reviewMessage: reviewsResult.value.reviews?.data[0].review,
+        date: customerList.value[id]?.created_at,
+      }
+      isReviewDescriptionModalOpen.value = true;
+    })
+};
+
+const getPaymentNumber = (value: number) => {
+  if(value > 1e3){
+    return (value / 1e3).toFixed(0) + 'K';
+  } else {
+    return value;
   }
-  isReviewDescriptionModalOpen.value = true;
 };
 
 defineExpose({
