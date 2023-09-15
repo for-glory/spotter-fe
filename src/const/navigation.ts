@@ -47,10 +47,10 @@ export const navigationMenu: NavigationMenu = {
   ],
   TRAINER: [
     {
-      name: EntitiesEnum.TrainerWorkouts,
+      name: EntitiesEnum.Overview,
       label: "Overview",
-      icon: "assets/icon/dashboard.svg",
-      category: "/workout",
+      icon: "assets/icon/overview.svg",
+      category: "/overview",
     },
     {
       name: EntitiesEnum.CreateDailys,
