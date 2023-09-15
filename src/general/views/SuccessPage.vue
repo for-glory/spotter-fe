@@ -31,10 +31,16 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import useFacilityId from "@/hooks/useFacilityId";
-import { MyStripeConnectDocument, LinksDocument } from "@/generated/graphql";
+import {
+  MyStripeConnectDocument,
+  LinksDocument,
+  RoleEnum,
+} from "@/generated/graphql";
 import { onMounted } from "vue";
 import { Capacitor } from "@capacitor/core";
+import useRoles from "@/hooks/useRole";
 
+const { role } = useRoles();
 const router = useRouter();
 
 const { onResult: gotMyStripeConnect, loading } = useQuery(
@@ -56,10 +62,12 @@ gotMyStripeConnect(async (response) => {
       })
     );
     const { id: myFacilityId } = useFacilityId();
-    if (!myFacilityId) {
+
+    if (role === RoleEnum.FacilityOwner && !myFacilityId) {
       router.push({ name: EntitiesEnum.SuccessStripeConnect });
       return;
     }
+
     if (Capacitor.isNativePlatform()) {
       router.push({ name: EntitiesEnum.Overview });
       return;

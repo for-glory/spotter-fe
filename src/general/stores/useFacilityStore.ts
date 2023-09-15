@@ -6,18 +6,18 @@ export const useFacilityStore = defineStore("currentFacility", {
   state: (): FacilityState => {
     return {
       facility: {
-				created_at: null,
-				description: "",
-				id: "",
-				name: "",
-				organization: {
-					contact_phone: "",
-					email: "",
-					id: "",
-					name: "",
-				},
-				updated_at: null,
-			}
+        created_at: null,
+        description: "",
+        id: "",
+        name: "",
+        organization: {
+          contact_phone: "",
+          email: "",
+          id: "",
+          name: "",
+        },
+        updated_at: null,
+      },
     };
   },
   actions: {
@@ -26,18 +26,18 @@ export const useFacilityStore = defineStore("currentFacility", {
     },
     clearState() {
       this.facility = {
-				created_at: null,
-				description: "",
-				id: "",
-				name: "",
-				organization: {
-					contact_phone: "",
-					email: "",
-					id: "",
-					name: "",
-				},
-				updated_at: null,
-			};
+        created_at: null,
+        description: "",
+        id: "",
+        name: "",
+        organization: {
+          contact_phone: "",
+          email: "",
+          id: "",
+          name: "",
+        },
+        updated_at: null,
+      };
     },
   },
 });

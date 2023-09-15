@@ -13,7 +13,7 @@
             <div style="width: 100%; min-height: 50px">
               <div class="d-flex justify-content-between title">
                 <span>{{ title }}</span>
-                <span>${{ price }}</span>
+                <span>${{ formatNumber(price) }}</span>
               </div>
               <div class="d-flex justify-content-between">
                 <span class="subtitle">{{ getDate }}</span>
@@ -96,6 +96,9 @@ const props = withDefaults(
 const getDate = computed(() => {
   return dayjs(props.start_date).format("DD MMM") || "";
 });
+const formatNumber = (num: any) => {
+  return parseFloat(num).toFixed(2);
+};
 const getTime = computed(() => {
   return dayjs(props.start_date).format("HH:mm a") || "";
 });
@@ -170,7 +173,11 @@ ion-card-content {
 ion-icon {
   color: #ede8d7;
 }
-
+.break {
+  display: block;
+  width: 100px;
+  overflow-wrap: break-word;
+}
 .time {
   color: var(--white, #fff);
   /* yantra/body 2 */

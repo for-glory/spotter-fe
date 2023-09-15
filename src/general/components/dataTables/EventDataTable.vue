@@ -29,13 +29,13 @@
 					<ion-text class="gray">{{ event.title }}</ion-text>
 				</ion-col>
 				<ion-col size="1.7" class="table-td">
-					<ion-text class="gray">{{ event?.address?.street }}</ion-text>
+					<ion-text class="gray font-12">{{ event?.address?.street }}</ion-text>
 				</ion-col>
 				<ion-col size="1.7" class="table-td">
 					<ion-text class="gray">{{ event.max_participants - event.booked_count }}</ion-text>
 				</ion-col>
 				<ion-col size="1.7" class="table-td">
-					<ion-text>${{ event.price?event.price/100:0 }}</ion-text>
+					<ion-text>${{ formatNumber(event.price?event.price/100:0) }}</ion-text>
 				</ion-col>
 				<ion-col size="1.7" class="table-td">
 					<ion-text class="gray">{{ dayjs(event.start_date).format("DD/MM/YYYY") }}</ion-text>
@@ -69,6 +69,10 @@ withDefaults(
   }
 );
 
+const formatNumber = ((num: any) => {
+    return parseFloat(num).toFixed(2)
+  })
+
 // handle click event
 const onHandleDetailsPage = (pathName: string, id: string) => {
 	console.log(pathName, id)
@@ -93,6 +97,9 @@ const onHandleDetailsPage = (pathName: string, id: string) => {
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+}
+.font-12 {
+	    font-size: 12px;
 }
 .upcomingWhite {
     background-color: #EDE8D7;
