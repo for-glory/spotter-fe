@@ -178,7 +178,7 @@ import { Review as UserReview } from "@/ts/types/user";
 import { useQuery } from "@vue/apollo-composable";
 import PageTabs from "@/general/components/PageTabs.vue";
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
@@ -193,14 +193,16 @@ import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode } from "swiper";
 
-const currentFacility = useFacilityStore();
+const route = useRoute();
+
+const currentFacilityId = route.params.id;
 
 const filter = ref<string>('recent');
 
 const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
   GetFacilityDocument,
   {
-    id: currentFacility.facility.id,
+    id: currentFacilityId,
   }
 );
 
@@ -208,7 +210,7 @@ const { result: managerResult, loading: managerLoading } = useQuery(
   GetManagersByFacilityDocument,
   {
     role: RoleEnum.Manager,
-    facilities: [currentFacility.facility.id],
+    facilities: [currentFacilityId],
     first: 1,
     page: 1
   }
@@ -250,7 +252,7 @@ const {
   loading: reviewLoading,
   refetch,
 } = useQuery(ReviewsDocument, () => ({
-  id: currentFacility.facility.id,
+  id: currentFacilityId,
   type: FeedbackEntityEnum.Facility,
   review_type: activeTab.value,
 }));

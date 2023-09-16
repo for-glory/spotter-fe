@@ -110,7 +110,7 @@
 				</div>
 			</div>
 			<div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
-				<div :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)">
+				<div :class="getMenuItemClass(EntitiesEnum.DashboardListGyms)" @click="onHandleClickMenu(EntitiesEnum.DashboardListGyms)">
 					<ion-icon src="assets/icon/gym-icon.svg" />
 					<ion-text>Location</ion-text>
 				</div>

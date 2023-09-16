@@ -136,7 +136,8 @@
       </ion-button>
     </div>
   </div>
-  <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
+  <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
+  <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
   <equipment-and-amenities
     ref="equipmentAndAmenitiessModal"
     @cancel="equipmentAndAmenitiessSelected"
@@ -170,6 +171,9 @@ import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 
 const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
@@ -244,9 +248,12 @@ const onChooseAmenities = () => {
 };
 
 const onChooseLocation = () => {
-  router.push({
-    name: EntitiesEnum.ChooseLocation, 
-    params: { type: 'facility' }
+  // router.push({
+  //   name: EntitiesEnum.ChooseLocation, 
+  //   params: { type: 'facility' }
+  // });
+  chooseLocationModal.value?.present({
+    title: "Address",
   });
 }
 
