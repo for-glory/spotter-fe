@@ -69,13 +69,15 @@
             queryType="recent"
             @show="showDailysItem"
             @hide="hideDailysItem"
+            @changeFilter="handleSetFilter"
           />
           <workouts-swiper
             title="Trending"
             :workouts="trendingDailys"
-            queryType="hightest"
+            queryType="trending"
             @show="showDailysItem"
             @hide="hideDailysItem"
+            @changeFilter="handleSetFilter"
           />
           <workouts-swiper
             title="Most Liked"
@@ -83,18 +85,25 @@
             queryType="recommended"
             @show="showDailysItem"
             @hide="hideDailysItem"
+            @changeFilter="handleSetFilter"
           />
         </div>
         <div v-else>
           <div class="d-flex align-items-center justify-content-between" style="padding-bottom: 13px">
-            <ion-text class="font-light font-12 color-white">Showing all {{ filter }}</ion-text>
-            <ion-text class="font-medium font-14 color-gold"  @click="handleSetFilter('all')">Back</ion-text>
+            <ion-text class="font-light font-12 color-white">Showing all {{ filter === 'recent' ? 'recently uploaded' : filter === 'recommended' ? 'most liked' : 'trending' }}</ion-text>
+            <ion-text 
+              class="font-medium font-14 color-gold" 
+              style="cursor: pointer"  
+              @click="handleSetFilter('all')"
+            >
+              Back
+            </ion-text>
           </div>
           <div 
-            class="d-flex-col justify-content-center gap-16 "
+            class="justify-content-center gap-16 "
           >
             <workout-item
-              v-for="daily in (filter === 'recently uploaded' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)" 
+              v-for="daily in (filter === 'recent' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)" 
               :key="daily.id"
               :duration="daily.duration"
               :title="daily.title || ''"

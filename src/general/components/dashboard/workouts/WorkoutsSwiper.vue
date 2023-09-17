@@ -7,8 +7,8 @@
       <ion-title slot="start" class="title">{{ title }}</ion-title>
       <ion-text 
         class="font-medium font-14 color-gold" 
-        style="text-align: end"
-        @click="handleSetFilter('recently uploaded')"
+        style="text-align: end; cursor: pointer;"
+        @click="handleSetFilter(queryType)"
       >
         View All
       </ion-text>
@@ -70,7 +70,7 @@ withDefaults(
 const emits = defineEmits<{
   (e: "hide", id: number): void;
   (e: "show", id: number): void;
-  (e: "share"): void;
+  (e: "changeFilter", value: string): void;
   (e: "click"): void;
 }>();
 const hideDailysItem = (id: number) => {
@@ -79,6 +79,9 @@ const hideDailysItem = (id: number) => {
 const showDailysItem = (id: number) => {
   emits("show", id);
 };
+const handleSetFilter = (value: string) => {
+  emits("changeFilter", value);
+}
 </script>
 
 <style scoped lang="scss">
