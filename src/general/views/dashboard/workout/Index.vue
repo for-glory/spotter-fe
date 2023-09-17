@@ -129,16 +129,20 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
-        <dailys-summary :summaryData="summaryData"/>
-        <dailys-performance 
-          :performanceData="performanceData" 
-          :limit="performanceLimit"
-          :totalRevenue="summaryData.totalRevenue"
-          @change="setLimit"
-        />
-        <dailys-top :summaryData="summaryData"/>
+      <div v-else class="d-flex gap-16 common-style">
+        <div class="w-half d-flex-col gap-16">
+          <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
+          <dailys-performance 
+            :performanceData="performanceData" 
+            :limit="performanceLimit"
+            :totalRevenue="summaryData.totalRevenue"
+            @change="setLimit"
+          />
+        </div>
+        <div class="w-half d-flex-col gap-16">
+          <dailys-summary :summaryData="summaryData"/>
+          <dailys-top :summaryData="summaryData"/>
+        </div>
       </div>
     </div>
   </div>
@@ -418,14 +422,15 @@ const setLimit = (limit: string) => {
   .h-24 {
     height: 24px;
   }
-
+  .w-half {
+    width: 50%;
+  }
   .font-16 {
     font-size: 16px;
   }
   .font-12 {
     font-size: 12px;
   }
-
   .relative {
     position: relative;
   }
@@ -434,6 +439,9 @@ const setLimit = (limit: string) => {
   }
   .fixed {
     position: fixed;
+  }
+  .gap-16 {
+    gap: 16px;
   }
 }
 </style>
