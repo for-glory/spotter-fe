@@ -1,11 +1,6 @@
 <template>
   <div class="socials" :class="isNative && 'ion-padding'">
-    <ion-button
-      v-if="isSafari === 'safari' || isIos"
-      expand="block"
-      class="social-btn"
-      @click="loginWithApple"
-    >
+    <ion-button expand="block" class="social-btn" @click="loginWithApple">
       <ion-icon slot="icon-only" src="assets/icon/apple.svg"></ion-icon>
       Continue with Apple
     </ion-button>
@@ -163,18 +158,16 @@ const loginWithApple = async () => {
     })
       .then((res) => {
         // Successful sign-in
-        alert("success");
         console.log("Apple Sign-In Success:", JSON.stringify(res));
 
         if (res.identityToken) {
           login({
-            token: res.authorizationCode,
+            token: res.identityToken,
             provider: SocialProvidersEnum.Apple,
           });
         }
       })
       .catch((err) => {
-        alert("err");
         // Sign-in failed
         console.error("Apple Sign-In Error:", err);
       });
@@ -194,7 +187,7 @@ onError((error) => {
 <style lang="scss" scoped>
 .socials {
   width: 100%;
-  margin: 24px auto 0;
+  margin: auto 0;
 }
 
 .social-btn {
