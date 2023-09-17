@@ -266,7 +266,7 @@ import {
   WorkoutStatesEnum
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -337,12 +337,12 @@ const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetc
   }
 );
 
-onMounted(() => {
+onBeforeMount(() => {
   store.clearState();
   if(!currentFacility.facility?.id) {
     router.push({ name: EntitiesEnum.Overview });
   }
-})
+});
 
 const performanceData = ref<Array<any>>();
 const trendingDailys = computed(() => {
