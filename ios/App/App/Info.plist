@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>$LOCATION_WHEN_IN_USE_SAGE_DESCRIPTION</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Spotterfitness will use your camera</string>
+	<string>$CAMERA_USAGE_DESCRIPTION</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Spotterfitness will access to your library</string>
+	<string>$PHOTO_LIBRARY_USAGE_DESCRIPTION</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
