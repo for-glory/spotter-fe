@@ -32,6 +32,7 @@
               <div v-else class="dailys-container">
                 <daily-video-player 
                   :path="daily.video"
+                  :preview="daily.preview"
                   :play="dailysItems[activeIndex].id === daily.id"
                 />
                 <div class="d-flex-col justify-content-end align-items-start details details__left">
