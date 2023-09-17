@@ -102,28 +102,30 @@
           <div 
             class="justify-content-center gap-16 "
           >
-            <workout-item
-              v-for="daily in (filter === 'recent' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)" 
-              :key="daily.id"
-              :duration="daily.duration"
-              :title="daily.title || ''"
-              :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
-              :type="daily.type?.name || ''"
-              :trainer="
-                `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
-                ''
-              "
-              :id="daily.id"
-              :total_revenue="daily.total_revenue"
-              :reviews_count="daily.reviews_count"
-              :recommended_count="daily.recommended_count"
-              :share="true"
-              :hide="true"
-              :hidden="daily.state === WorkoutStatesEnum.Hidden"
-              @hide="hideDailysItem(daily.id)"
-              @show="showDailysItem(daily.id)"
-              @click="watchDailys(daily)"
-            />
+            <div class="d-flex flex-wrap">
+              <workout-item
+                v-for="daily in (filter === 'recent' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)"
+                :key="daily.id"
+                :duration="daily.duration"
+                :title="daily.title || ''"
+                :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
+                :type="daily.type?.name || ''"
+                :trainer="
+                  `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
+                  ''
+                "
+                :id="daily.id"
+                :total_revenue="daily.total_revenue"
+                :reviews_count="daily.views_count"
+                :recommended_count="daily.recommended_count"
+                :share="true"
+                :hide="true"
+                :hidden="daily.state === WorkoutStatesEnum.Hidden"
+                @hide="hideDailysItem(daily.id)"
+                @show="showDailysItem(daily.id)"
+                @click="watchDailys(daily)"
+              />
+            </div>
           </div>
         </div>
       </div>
