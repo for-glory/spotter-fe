@@ -196,7 +196,8 @@ a {
 }
 
 .error {
-  margin-top: 8px;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
 }
 
 .block {
