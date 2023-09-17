@@ -1,4 +1,10 @@
 <template>
+    <div class="top-buttons">
+      <ion-button class="dashboard-btn" @click="onBack" fill="clear">
+        <ion-icon src="assets/icon/arrow-back.svg" />
+        Back
+      </ion-button>
+    </div>
 		<ion-title class="title" color="primary">
 			Post dailys
 		</ion-title>
@@ -104,6 +110,14 @@
 			{{ errorMessage }}
 		</ion-note>
 	</transition>
+  <discard-changes
+    :is-open="isConfirmedModalOpen"
+    @close="discardModalClosed"
+    title="Do you want to discard changes?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Discard changes"
+  />
 </template>
 
 <script setup lang="ts">
@@ -142,6 +156,7 @@ import {
 } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const percentLoaded = ref<number | undefined>();
 
@@ -149,7 +164,7 @@ const router = useRouter();
 
 const store = useWorkoutsStore();
 const facilityStore = useFacilityStore();
-
+const isConfirmedModalOpen = ref(false);
 const errorMessage = ref("");
 
 const videoOnLoading = ref<boolean>(false);
@@ -314,13 +329,30 @@ const videoSelected = async (
     });
 };
 
+const onBack = () => {
+  if (titleValue.value ||
+    priceValue.value ||
+    store.workoutMuscleTypesIds?.length ||
+    store.workoutPreview ||
+    store.videoPath ||
+    store.workoutType || 
+    store.description) {
+    isConfirmedModalOpen.value = true;
+  } else {
+    router.go(-1);
+  }
+};
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
+    store.clearState();
+    router.go(-1);
+  }
+};
+
 const removeVideo = () => {
   store.setValue("videoPath", "");
   store.setValue("path", "");
-};
-
-const resetWorkout = () => {
-  store.clearState();
 };
 
 const options = minutesDuration(10, 240, 10);
