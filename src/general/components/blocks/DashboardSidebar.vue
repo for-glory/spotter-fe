@@ -283,7 +283,12 @@ const selectFacility = (id) => {
   );
   setSelectedGym(id);
   isOpenFacilityDropdown.value = false;
-  router.push({ path: "/dashboard/" });
+
+  router.push({
+    name: EntitiesEnum.DashboardOverview,
+  });
+
+  // router.push({ path: "/dashboard/" });
 };
 
 watch(
