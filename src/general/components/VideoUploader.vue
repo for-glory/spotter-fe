@@ -199,6 +199,7 @@ const videoErrors = {
     font-weight: 400;
     line-height: 1.5;
     color: var(--ion-color-secondary);
+    cursor: pointer;
   }
 
   &__progress {

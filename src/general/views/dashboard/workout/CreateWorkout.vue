@@ -54,6 +54,7 @@
               <choose-block
                 title="Workout type"
                 :value="workoutType"
+                style="cursor: pointer"
                 @handle-click="onHandleSelect(EntitiesEnum.DashboardWorkoutTypes)"
               />
             </div>
@@ -64,6 +65,7 @@
               <choose-block
                 title="Select Tags"
                 :value="muscleTypesValue"
+                style="cursor: pointer"
                 @handle-click="onHandleSelect(EntitiesEnum.DashboardMuscleTypes)"
               />
             </div>
@@ -91,7 +93,7 @@
               expand="block"
               :disabled="!isValidForm"
             >
-              Finish
+              Post Daily
             </ion-button>
           </div>
         </ion-row>
@@ -239,7 +241,8 @@ const isValidForm = computed(
     store.workoutMuscleTypesIds?.length &&
     store.workoutPreview &&
     store.videoPath &&
-    store.workoutType
+    store.workoutType && 
+    store.description
 );
 
 const { mutate: createWorkout, loading: createWorkoutLoading } =
@@ -330,6 +333,8 @@ const options = minutesDuration(10, 240, 10);
 .action-wrap {
   display: flex;
   justify-content: end;
+  align-items: flex-end;
+  width: 100%;
   margin-top: 20px;
 }
 .logo {

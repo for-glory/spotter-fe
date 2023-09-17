@@ -123,7 +123,6 @@
                 :hidden="daily.state === WorkoutStatesEnum.Hidden"
                 @hide="hideDailysItem(daily.id)"
                 @show="showDailysItem(daily.id)"
-                @click="watchDailys(daily)"
               />
             </div>
           </div>
