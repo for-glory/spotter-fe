@@ -13,23 +13,28 @@
     </div>
 		<div class="workout-list">
 			<div class="d-flex justify-content-between workout-list__top">
-				<div class="filter-tabs d-flex align-items-center justify-content-center">
-          <ion-button
-            :fill="tab === 'dailys' ? 'solid' : 'outline'"
-            :color="tab === 'dailys' ? '' : 'medium'"
-            @click="setTab('dailys')"
-          >
-            Dailys
-          </ion-button>
-          <ion-button 
-            :fill="tab === 'analytics' ? 'solid' : 'outline'"
-            :color="tab === 'analytics' ? '' : 'medium'"
-            @click="setTab('analytics')"
-          >
-            Analytics
-          </ion-button>
+				<div class="filter-tabs d-flex align-items-center justify-content-between">
+          <div>
+            <ion-button
+              id="rounded"
+              :fill="tab === 'dailys' ? 'solid' : 'outline'"
+              :color="tab === 'dailys' ? '' : 'medium'"
+              @click="setTab('dailys')"
+            >
+              Dailys
+            </ion-button>
+            <ion-button
+              id="rounded"
+              :fill="tab === 'analytics' ? 'solid' : 'outline'"
+              :color="tab === 'analytics' ? '' : 'medium'"
+              @click="setTab('analytics')"
+            >
+              Analytics
+            </ion-button>
+          </div>
           <ion-button
             fill="solid"
+            id="normal"
             @click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
           >
             Create Dailys
@@ -378,8 +383,12 @@ const setLimit = (limit: string) => {
   width: 100%;
   gap: 12px;
   
-  ion-button {
+  ion-button#rounded {
     --border-radius: 100px;
+    font: 500 14px/1 Lato;
+    height: 36px;
+  }
+  ion-button#normal {
     font: 500 14px/1 Lato;
     height: 36px;
   }
