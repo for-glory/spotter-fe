@@ -3,121 +3,129 @@
 		class="holder-content ion-padding-horizontal"
 	>
     <div class="banner">
-      <ion-title class="banner__title">All workout videos are stored here</ion-title>
+      <ion-title class="banner__title">All dailys are stored here</ion-title>
       <ion-text class="banner__text">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod 
+        A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
       </ion-text>
       <div class="banner__background-image">
-        <img src="assets/backgrounds/banner1.jpeg" alt="">
+        <img src="assets/backgrounds/Banner_3.png" alt="" class="w-100">
       </div>
     </div>
 		<div class="workout-list">
 			<div class="d-flex justify-content-between workout-list__top">
-				<div>
-					<ion-button class="button-rounded" :fill="filter === 'all'?'solid':'outline'" @click="handleWorkoutFilter('all')">
-						All
-					</ion-button>
-					<ion-button class="button-rounded" :fill="filter === 'most'?'solid':'outline'" @click="handleWorkoutFilter('most')">
-						Recommended
-					</ion-button>
-					<ion-button class="button-rounded" :fill="filter === 'level'?'solid':'outline'" @click="handleWorkoutFilter('level')">
-						Workout level
-					</ion-button>
-				</div>
-				<div>
-					<ion-button @click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })">
-						Create Workout plan
-					</ion-button>
-				</div>
-			</div>
-		</div>
-		<ion-spinner
-      v-if="
-        recommendedLoading ||
-        recommendedByTypeLoading ||
-        recommendedByBodyLoading
-      "
-			name="lines"
-			class="spinner"
-		/>
-		<div
-			class="empty-section"
-			v-else-if="!recommendedWorkouts.length"
-		>
-			<empty-block
-				title="Library Empty"
-				hideButton
-				text="You have not uploaded any videos yet..."
-				@button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
-			/>
-		</div>
-    <div class="" v-else>
-      <div v-if="filter === 'all'">
-        <ion-spinner
-          v-if="
-            recommendedLoading ||
-            recommendedByTypeLoading ||
-            recommendedByBodyLoading
-          "
-          name="lines"
-          class="spinner"
-        />
-        <div class="holder-content" v-else>
-          <workouts-swiper
-            title="Recommended"
-            :workouts="recommendedWorkouts"
-            queryType="recommended"
-          />
-          <workouts-swiper
-            title="Workout level"
-            :workouts="recommendedWorkoutsByType"
-            queryType="recommendedByType"
-          />
-          <workouts-swiper
-            title="Muscle group"
-            :workouts="recommendedWorkoutsByBody"
-            queryType="recommendedByBodyParts"
-          />
+				<div class="filter-tabs d-flex align-items-center justify-content-center">
+          <ion-button
+            :fill="tab === 'dailys' ? 'solid' : 'outline'"
+            :color="tab === 'dailys' ? '' : 'medium'"
+            @click="setTab('dailys')"
+          >
+            Dailys
+          </ion-button>
+          <ion-button 
+            :fill="tab === 'analytics' ? 'solid' : 'outline'"
+            :color="tab === 'analytics' ? '' : 'medium'"
+            @click="setTab('analytics')"
+          >
+            Analytics
+          </ion-button>
+          <ion-button
+            fill="solid"
+            @click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
+          >
+            Create Dailys
+          </ion-button>
         </div>
       </div>
-      <div v-else-if="filter === 'most'">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="12" size-md="4" v-for="workout in recommendedWorkouts" :key="workout.id">
-              <workout-item
-                :duration="workout.duration"
-                :title="workout.title || ''"
-                :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
-                :type="workout.type?.name || ''"
-                :trainer="
-                  `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
-                  ''
-                "
-              />
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+		</div>
+    <ion-spinner
+      v-if="dailysLoading || dailysAnalyticsLoading"
+      name="lines"
+      class="spinner"
+      @hide="hideDailysItem"
+    />
+    <div
+      class="empty-section"
+      v-else-if="!dailysData?.length"
+    >
+      <empty-block
+        title="Library Empty"
+        buttonText="Create Dailys"
+        text="You have not uploaded any videos yet..."
+        @button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
+      />
+    </div>
+    <div class="" v-else>
+      <div v-if="tab === 'dailys'">
+        <div v-if="filter==='all'">
+          <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
+          <workouts-swiper
+            title="Recently Uploaded"
+            :workouts="dailysData"
+            queryType="recent"
+            @show="showDailysItem"
+            @hide="hideDailysItem"
+          />
+          <workouts-swiper
+            title="Trending"
+            :workouts="trendingDailys"
+            queryType="hightest"
+            @show="showDailysItem"
+            @hide="hideDailysItem"
+          />
+          <workouts-swiper
+            title="Most Liked"
+            :workouts="recommendedDailys"
+            queryType="recommended"
+            @show="showDailysItem"
+            @hide="hideDailysItem"
+          />
+        </div>
+        <div v-else>
+          <div class="d-flex align-items-center justify-content-between" style="padding-bottom: 13px">
+            <ion-text class="font-light font-12 color-white">Showing all {{ filter }}</ion-text>
+            <ion-text class="font-medium font-14 color-gold"  @click="handleSetFilter('all')">Back</ion-text>
+          </div>
+          <div 
+            class="d-flex-col justify-content-center gap-16 "
+          >
+            <workout-item
+              v-for="daily in (filter === 'recently uploaded' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)" 
+              :key="daily.id"
+              :duration="daily.duration"
+              :title="daily.title || ''"
+              :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
+              :type="daily.type?.name || ''"
+              :trainer="
+                `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
+                ''
+              "
+              :id="daily.id"
+              :total_revenue="daily.total_revenue"
+              :reviews_count="daily.reviews_count"
+              :recommended_count="daily.recommended_count"
+              :share="true"
+              :hide="true"
+              :hidden="daily.state === WorkoutStatesEnum.Hidden"
+              @hide="hideDailysItem(daily.id)"
+              @show="showDailysItem(daily.id)"
+              @click="watchDailys(daily)"
+            />
+          </div>
+        </div>
       </div>
       <div v-else>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="12" size-md="4" v-for="workout in recommendedWorkoutsByType" :key="workout.id">
-              <workout-item
-                :duration="workout.duration"
-                :title="workout.title || ''"
-                :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
-                :type="workout.type?.name || ''"
-                :trainer="
-                  `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
-                  ''
-                "
-              />
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
+        <dailys-summary :summaryData="summaryData"/>
+        <dailys-performance 
+          :performanceData="performanceData" 
+          :limit="performanceLimit"
+          :totalRevenue="summaryData.totalRevenue"
+          @change="setLimit"
+        />
+        <dailys-top :summaryData="summaryData"/>
       </div>
     </div>
-	</div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -130,98 +138,176 @@ import {
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  RecommendedWorkoutsDocument,
-  RecommendedWorkoutsByBodyPartsDocument,
-  RecommendedWorkoutsByTypeDocument,
-  Workout,
+  WorkoutsByFacilityDocument,
+  QueryFacilityWorkoutsOrderByColumn,
+  SortOrder,
+  HideWorkoutDocument,
+  ShowWorkoutDocument,
+  DailyAnalyticsDocument,
+  DailyPerformanceDocument,
+  WorkoutStatesEnum
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
+import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
+import { useDailysStore } from "@/general/stores/useDailysStore";
 import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
+import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import WorkoutsSwiper from "@/general/components/dashboard/workouts/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
+import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
+import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
+import DailysTop from "@/general/components/dailys/DailysTop.vue";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
+const tab = ref<string>('dailys');
 const filter = ref<string>('all');
+const performanceLimit = ref<string>('7');
 
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
-
+const dailysItemsStore = useDailysItemsStore();
+const summaryData = ref<any>({
+  totalViews: 0,
+  subscribers: 0,
+  totalRevenue: 0,
+  viewsPerDaily: 0,
+  topDailys: [],
+});
 const router = useRouter();
+const store = useDailysStore();
 
-const handleWorkoutFilter = (workoutT: string) => {
-		filter.value = workoutT;
+const setTab = (workoutT: string) => {
+		tab.value = workoutT;
 }
 
-//////////////////////////////////////////////////////
-
-const { result: recommendedResult, loading: recommendedLoading } = useQuery(
-  RecommendedWorkoutsDocument,
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
+  WorkoutsByFacilityDocument,
   {
     page: 1,
     first: 1000,
-    facility_id: currentFacility.facility?.id,
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Asc,
   },
   {
     fetchPolicy: "no-cache",
   }
 );
-
-const recommendedWorkouts = computed(
-  () => 
-    recommendedResult.value?.recommendedWorkouts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
+const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
+  DailyAnalyticsDocument,
+  {
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    limit: performanceLimit.value
+  }
 );
-
-const {
-  result: recommendedByBodyPartsResult,
-  loading: recommendedByBodyLoading,
-} = useQuery(
-  RecommendedWorkoutsByBodyPartsDocument,
+const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
+  DailyPerformanceDocument,
   {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
-  },
-  {
-    fetchPolicy: "no-cache",
+    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    limit: 7
   }
 );
 
-const recommendedWorkoutsByBody = computed(
-  () =>
-    recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data?.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
+onMounted(() => {
+  store.clearState();
+});
+
+const performanceData = ref<Array<any>>();
+const trendingDailys = computed(() => {
+  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+   dailys.sort((a: any, b: any) => {
+    return b.views_count - a.views_count;
+  });
+  return dailys;
+});
+const recommendedDailys = computed(() => {
+  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+  dailys.sort((a: any, b: any) => {
+    return b.recommended_count - a.recommended_count;
+  });
+  return dailys;
+});
+
+
+gotDailysData(({ data }) => {
+  let dailys = [ ...data.facilityWorkouts.data ];
+  dailys.sort((a: any, b: any) => {
+    return a.total_revenue - b.total_revenue;
+  });
+  summaryData.value.topDailys = dailys.slice(0, 10);
+  let recentDailys = [ ...data.facilityWorkouts.data ];
+  recentDailys.sort((a: any, b: any) => {
+    const dateFirst = dayjs(a, "h:mm A");
+    const dateLast = dayjs(b, "h:mm A");
+    return dateFirst.isBefore(dateLast) ? 1 : -1;
+  });
+  dailysItemsStore.setData(recentDailys);
+});
+
+gotDailysAnalyticsData(({ data }) => {
+  summaryData.value.totalViews = data.dailyAnalytics.views;
+  summaryData.value.subscribers = data.dailyAnalytics.purchases;
+  summaryData.value.totalRevenue = data.dailyAnalytics.total_revenue;
+  summaryData.value.viewsPerDaily = data.dailyAnalytics.per_daily_views;
+});
+
+gotDailysPerformanceData(({ data }) => {
+  performanceData.value = data.dailyPerformance;
+});
+
+const dailysData = computed(
+  () => dailysItemsStore.dailysData
 );
 
-const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
-  useQuery(
-    RecommendedWorkoutsByTypeDocument,
-    {
-      page: 1,
-      first: 1000,
-      facility_id: currentFacility.facility?.id,
-    },
-    {
-      fetchPolicy: "no-cache",
-    }
-  );
+const { mutate: showDailys, loading: dailysShowLoading } =
+  useMutation(ShowWorkoutDocument);
+const { mutate: hidedailys, loading: dailysHideLoading } =
+  useMutation(HideWorkoutDocument);
+const hideDailysItem = (id: number) => {
+  hidedailys({ id }).then(() => {
+    refetchDailys();
+  });
+}
+const showDailysItem = (id: number) => {
+  showDailys({ id }).then(() => {
+    refetchDailys();
+  });
+}
 
-const recommendedWorkoutsByType = computed(
-  () =>
-    recommendedByTypeResult.value?.recommendedWorkoutsByType?.data.filter(
-      (workout: Workout) => !workout?.was_ordered_by_me
-    ) || []
-);
+const watchDailys = (daily: any) => {
+  router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
+}
+
+const handleSetFilter = (value: string) => {
+  filter.value = value;
+}
+
+const setLimit = (limit: string) => {
+  if(limit === 'all') {
+    refetchDailyPerformance({ 
+      facility_id: currentFacility.facility.id,
+      limit: 0
+    })?.then(() => {
+      performanceLimit.value = limit;
+    })
+  } else {
+    refetchDailyPerformance({ 
+      facility_id: currentFacility.facility.id,
+      limit: parseInt(limit)
+    })?.then(() => {
+      performanceLimit.value = limit;
+    });
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -286,6 +372,48 @@ const recommendedWorkoutsByType = computed(
     font-weight: 500;
     line-height: 150%;
     letter-spacing: 0.1px;
+  }
+}
+.filter-tabs {
+  width: 100%;
+  gap: 12px;
+  
+  ion-button {
+    --border-radius: 100px;
+    font: 500 14px/1 Lato;
+    height: 36px;
+  }
+  
+  .selected {
+    color: var(--main-color);
+  }
+  .normal {
+    color: var(--grey-text);
+  }
+}
+.common-style {
+  .w-24 {
+    width: 24px;
+  }
+  .h-24 {
+    height: 24px;
+  }
+
+  .font-16 {
+    font-size: 16px;
+  }
+  .font-12 {
+    font-size: 12px;
+  }
+
+  .relative {
+    position: relative;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .fixed {
+    position: fixed;
   }
 }
 </style>
