@@ -15,13 +15,13 @@ export default function useFacilityId() {
   const facility =
     myRole === RoleEnum.Manager ? facilities[0] : owned_facilities[0];
 
-  const {id: currentFacilityId} = JSON.parse(
+  const { id: currentFacilityId } = JSON.parse(
     localStorage.getItem("currentFacility") || "{}"
   );
 
   return {
     id: facility?.id,
     facility: facility,
-    currentFacilityId
+    currentFacilityId,
   };
 }

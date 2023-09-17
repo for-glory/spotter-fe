@@ -1,11 +1,12 @@
 <template>
   <ion-text v-if="!isNative">
     Don't have an account?
-    <a :href="'#'" @click.prevent="openModal">
-      Sign up
-    </a>
+    <a :href="'#'" @click.prevent="openModal"> Sign up </a>
   </ion-text>
-  <div class="mt-2" :class="isNative && 'native login-form-container ion-padding'">
+  <div
+    class="mt-2"
+    :class="isNative && 'native login-form-container ion-padding'"
+  >
     <base-form class="authentication-form" @submit.prevent="onSubmit">
       <base-input
         v-model:value="usernameInput"
@@ -30,18 +31,23 @@
 
       <div class="alternate-auth-container" v-if="isNative">
         <ion-text class="ion-margin-bottom">
-        No account?
-        <router-link class="signup-link-native" :to="{ name: EntitiesEnum.Register }">
-          Sign up
-        </router-link>
-      </ion-text>
+          No account?
+          <router-link
+            class="signup-link-native"
+            :to="{ name: EntitiesEnum.Register }"
+          >
+            Sign up
+          </router-link>
+        </ion-text>
 
-      <ion-text class="ion-margin-bottom">
-        
-        <router-link class="forgot-link-native" :to="{ name: EntitiesEnum.ForgotPassword }">
-          Forgot password?
-        </router-link>
-      </ion-text>
+        <ion-text class="ion-margin-bottom">
+          <router-link
+            class="forgot-link-native"
+            :to="{ name: EntitiesEnum.ForgotPassword }"
+          >
+            Forgot password?
+          </router-link>
+        </ion-text>
       </div>
       <ion-button
         :disabled="isLoading"
@@ -58,26 +64,27 @@
       </transition>
     </base-form>
   </div>
-  
+
   <ion-modal :is-open="isModalOpen" @didDismiss="closeModal">
     <ion-content class="block">
-        <div style="padding: 5% ">
-          <p>
-            To ensure the safety of our trainers and users, we need to verify your identity.
-            <br>
-            Enter Your full name as it appears on your government-issued ID.
-          </p>
-          <router-link :to="{ name: EntitiesEnum.Register }">
-            <ion-button
-              class="button--submit"
-              expand="block"
-              @click="closeModal"
-              tag="router-link"
-            >
-              Register
-            </ion-button>
-          </router-link>
-        </div>
+      <div style="padding: 5%">
+        <p>
+          To ensure the safety of our trainers and users, we need to verify your
+          identity.
+          <br />
+          Enter Your full name as it appears on your government-issued ID.
+        </p>
+        <router-link :to="{ name: EntitiesEnum.Register }">
+          <ion-button
+            class="button--submit"
+            expand="block"
+            @click="closeModal"
+            tag="router-link"
+          >
+            Register
+          </ion-button>
+        </router-link>
+      </div>
     </ion-content>
   </ion-modal>
 </template>
@@ -93,7 +100,7 @@ import { passwordSchema, userNameSchema } from "@/validations/authValidations";
 import { ApolloError } from "@apollo/client";
 import { EntitiesEnum } from "@/const/routes";
 import { humanizeString } from "@/utils/textUtils";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 let isNative = Capacitor.isNativePlatform();
 // isNative = true;
@@ -144,12 +151,12 @@ const onSubmit = () => {
 
 let isModalOpen = ref(false),
   openModal = () => {
-    console.log("Entra en modal")
-    isModalOpen.value = true
+    console.log("Entra en modal");
+    isModalOpen.value = true;
   },
   closeModal = () => {
-    isModalOpen.value = false
-  }
+    isModalOpen.value = false;
+  };
 </script>
 
 <style scoped>
@@ -162,7 +169,7 @@ let isModalOpen = ref(false),
 
 .button--submit {
   margin-top: 8px;
-  margin-bottom: 0;
+  margin-bottom: 2rem;
 }
 
 .form-info {
