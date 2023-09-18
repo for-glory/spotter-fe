@@ -118,7 +118,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.TrainerUserProfile,
-    path: "/user/profile/:id(\\d+)",
+    path: "/user/profile/:id(\\d+)/:type(\\d+)",
     component: () => import("@/general/views/UserProfile.vue"),
     meta: {
       middleware: [auth],

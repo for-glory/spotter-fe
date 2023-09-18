@@ -1,5 +1,5 @@
 <template>
-  <div class="base-input-container">
+  <div class="base-input-container" :class="role === RoleEnum.Trainer ? 'form-row__input' : ''">
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
     <transition name="border">
       <ion-item
@@ -44,6 +44,8 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 import {
   IonItem,
   IonInput,
@@ -86,7 +88,7 @@ const props = withDefaults(
     autoGrow: false,
   }
 );
-
+const { role } = useRoles();
 const emits = defineEmits<{
   (e: "update:value", updatedValue: string): void;
   (e: "change", updatedValue: string | undefined | null): void;
@@ -190,6 +192,8 @@ ion-note {
     ion-input {
       font-family: "Yantramanav";
       font-weight: 300;
+      --placeholder-opacity: 1;
+      --color: var(--fitnesswhite);
     }
   }
 }

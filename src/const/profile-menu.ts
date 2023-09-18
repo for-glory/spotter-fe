@@ -35,7 +35,7 @@ export const profileMenu: ProfileMenu = {
       icon: "edit",
     },
     {
-      name: "View Profile",
+      name: EntitiesEnum.TrainerUserProfile,
       label: "View profile",
       icon: 'profile'
     },

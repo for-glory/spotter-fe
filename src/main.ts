@@ -44,7 +44,7 @@ import Vue3TouchEvents from "vue3-touch-events";
 
 /* Theme variables */
 import "./theme/variables.css";
-import "./theme/core.scss";
+import "./theme/core.scss"
 import { Capacitor } from '@capacitor/core';
 
 const pinia = createPinia();
