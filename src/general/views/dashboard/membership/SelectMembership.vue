@@ -77,7 +77,7 @@
               </ion-item>
             </ion-radio-group>
           </div>
-          <!-- <div class="checkbox">
+          <div class="checkbox">
             <ion-checkbox
               mode="ios"
               :modelValue="isAgreed"
@@ -96,7 +96,7 @@
                 >Terms of Use</a
               >
             </ion-label>
-          </div> -->
+          </div>
           <div class="buttons">
             <ion-button
               expand="block"
@@ -161,7 +161,7 @@ const selectedPlan = ref<any>({});
 const selectedItem = ref<any>({});
 const errorMessage = ref("");
 const products = ref<any[]>([]);
-const isAgreed = ref<boolean>(true);
+const isAgreed = ref<boolean>(false);
 const selectedProductId = ref<string | number | boolean | undefined>(undefined);
 
 const backendStripe = new BackendStripe(

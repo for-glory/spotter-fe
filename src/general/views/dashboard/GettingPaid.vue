@@ -1,10 +1,6 @@
 <template>
   <div v-if="!Capacitor.isNativePlatform()">
-    <ion-spinner
-      v-if="loading"
-      name="lines"
-      class="spinner"
-    />
+    <ion-spinner v-if="loading" name="lines" class="spinner" />
     <div v-else>
       <div class="flex-row">
         <ion-text class="page">Getting Paid</ion-text>
@@ -20,7 +16,9 @@
                   >Your available balance is
                   <span class="fund">${{ revenue?.year_earn }}</span>
                 </ion-text>
-                <IonButton class="get" @click="handleGet">Get paid now</IonButton>
+                <IonButton class="get" @click="handleGet"
+                  >Get paid now</IonButton
+                >
               </div>
             </div>
             <div class="box2">
@@ -97,7 +95,9 @@
                   >Your available balance is
                   <span class="fund">$3,689,076</span>
                 </ion-text>
-                <IonButton class="get" @click="handleGet">Get paid now</IonButton>
+                <IonButton class="get" @click="handleGet"
+                  >Get paid now</IonButton
+                >
               </div>
             </div>
             <div class="box2__native">
@@ -123,7 +123,10 @@
                       <div class="period">Today</div>
                       <div class="percent">
                         0.8%
-                        <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+                        <ion-icon
+                          class="arrow"
+                          src="assets/icon/call_made.svg"
+                        />
                       </div>
                       <div class="chain">$3,689,076</div>
                     </div>
@@ -150,7 +153,10 @@
                       <div class="period">This year</div>
                       <div class="percent">
                         0.8%
-                        <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+                        <ion-icon
+                          class="arrow"
+                          src="assets/icon/call_made.svg"
+                        />
                       </div>
                       <div class="chain">$689,076</div>
                     </div>
@@ -174,31 +180,27 @@ import {
   IonTitle,
   IonButton,
   IonIcon,
-  toastController
+  toastController,
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
-import {
-  PayoutDocument,
-  getRevenuesDocument,
-} from "@/generated/graphql";
+import { PayoutDocument, getRevenuesDocument } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const currentFacility = useFacilityStore();
 
-const { mutate: payout, onDone: afterPayout } = useMutation(
-  PayoutDocument
-);
+const { mutate: payout, onDone: afterPayout } = useMutation(PayoutDocument);
 
 const handleGet = () => {
   console.log("get");
   payout({
-    id: currentFacility.facility.id
-  }).then(async () => {
+    id: currentFacility.facility.id,
+  })
+    .then(async () => {
       const toast = await toastController.create({
         message: "Payout success",
         duration: 2000,
@@ -224,12 +226,9 @@ const onBack = () => {
   router.go(-1);
 };
 
-const { result: revenueRes, loading } = useQuery(
-  getRevenuesDocument,
-  {
-    id: currentFacility.facility.id,
-  }
-);
+const { result: revenueRes, loading } = useQuery(getRevenuesDocument, {
+  id: currentFacility.facility.id,
+});
 
 const revenue = computed(() => {
   return revenueRes.value?.facilityDashboardWidget;
@@ -329,7 +328,7 @@ const revenue = computed(() => {
   margin-right: 0.5rem;
 
   &__native {
-    background-color: #54534E;
+    background-color: #54534e;
     padding: 20px 20px 8px 20px;
   }
 }
@@ -342,7 +341,7 @@ const revenue = computed(() => {
 
   &__native {
     margin-top: 30px;
-    background-color: #54534E;
+    background-color: #54534e;
     padding: 20px 20px 8px 20px;
   }
 }
@@ -381,7 +380,7 @@ const revenue = computed(() => {
   font-size: 25px;
   margin-bottom: 70px;
   display: block;
-  
+
   &__native {
     font-size: 25px;
     display: block;
