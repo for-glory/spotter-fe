@@ -553,8 +553,17 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardEditWorkout,
+        path: "workout/edit/:id",
+        component: () =>
+          import("@/general/views/dashboard/workout/EditWorkout.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardWorkoutTypes,
-        path: "workout/create/type",
+        path: "workout/type",
         component: () => import("@/general/views/dashboard/workout/Types.vue"),
         meta: {
           middleware: [gymOwnerSubscription],
@@ -562,7 +571,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardMuscleTypes,
-        path: "workout/create/muscle-type",
+        path: "workout/muscle-type",
         component: () =>
           import("@/general/views/dashboard/workout/MuscleTypes.vue"),
         meta: {

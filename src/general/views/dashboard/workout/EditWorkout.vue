@@ -6,7 +6,7 @@
       </ion-button>
     </div>
 		<ion-title class="title" color="primary">
-			Post dailys
+			Edit dailys
 		</ion-title>
     <div>
       <ion-grid class="post-container">
@@ -99,7 +99,7 @@
               expand="block"
               :disabled="!isValidForm"
             >
-              Post Daily
+              Update Daily
             </ion-button>
           </div>
         </ion-row>
@@ -132,7 +132,7 @@ import {
 	IonRow,
 	IonCol
 } from "@ionic/vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
 import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
@@ -148,8 +148,8 @@ import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
 import {
   VideoPreloadDocument,
-  CreateDailyDocument,
-  CreateDailyInput,
+  UpdateDailyDocument,
+  UpdateDailyInput,
   Workout,
   WorkoutDocument,
   WorkoutVideosInput,
@@ -161,6 +161,7 @@ import DiscardChanges from "@/general/components/modals/confirmations/DiscardCha
 const percentLoaded = ref<number | undefined>();
 
 const router = useRouter();
+const route = useRoute();
 
 const store = useWorkoutsStore();
 const facilityStore = useFacilityStore();
@@ -260,8 +261,9 @@ const isValidForm = computed(
     store.description
 );
 
-const { mutate: createWorkout, loading: createWorkoutLoading } =
-  useMutation<CreateDailyInput>(CreateDailyDocument);
+const { mutate: updateWorkout, loading: updatingWorkout } = useMutation(
+  UpdateDailyDocument
+);
 
 const params = computed(() => ({
   preview: store.workoutPath,
@@ -277,7 +279,18 @@ const params = computed(() => ({
 
 const handleSubmit = () => {
   if (isValidForm.value) {
-    createWorkout(params.value)
+    updateWorkout({
+      id: route.params.id,
+      input: {
+        title: store.workoutTitle,
+        description: store.exercises?.description,
+        price: getSumForPayment(store.workoutPrice as number),
+        level: store.workoutType?.id,
+        body_parts: store.workoutMuscleTypesIds,
+        video: store.path ?? '',
+        preview: store.path ? store.workoutPath : ''
+      }
+    })
     .then(() => {
       store.clearState();
       router.push({
