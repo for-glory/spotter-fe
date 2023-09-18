@@ -3,12 +3,15 @@
 		class="holder-content ion-padding-horizontal"
 	>
     <div class="banner">
-      <ion-title class="banner__title">All dailys are stored here</ion-title>
-      <ion-text class="banner__text">
-        A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
-      </ion-text>
       <div class="banner__background-image">
         <img src="assets/backgrounds/Banner_3.png" alt="" class="w-100">
+      </div>
+      <div class="banner__background-shadow"/>
+      <div class="banner__background-text">
+        <ion-title class="banner__title">All dailys are stored here</ion-title>
+        <ion-text class="banner__text">
+          A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
+        </ion-text>
       </div>
     </div>
 		<div class="workout-list">
@@ -380,16 +383,33 @@ const openViewModal = (daily: any) => {
 .banner {
   padding: 32px;
   min-height: 160px;
+  max-height: 160px;
   width: 100%;
   border-radius: 12px;
-  background: linear-gradient(180deg, #F0E2AE 0%, rgba(251, 248, 234, 0.00) 100%);
   position: relative;
   overflow: hidden;
 
   &__background-image {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    img {
+      margin-top: -10%;
+    }
+  }
+  &__background-shadow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(17, 17, 18, 0) 0%,
+        rgba(17, 17, 18, 0.88) 100%,
+        rgba(17, 17, 18, 0.88) 100%
+      );
+  }
+  &__background-text {
+    position: absolute;
+    inset: 0;
+    padding: 32px;
   }
 
   &__title {
