@@ -40,6 +40,7 @@
           :hidden="workout.state === WorkoutStatesEnum.Hidden"
           @hide="hideDailysItem(workout.id)"
           @show="showDailysItem(workout.id)"
+          @click="openViewModal(workout)"
         />
       </swiper-slide>
     </swiper>
@@ -71,7 +72,7 @@ const emits = defineEmits<{
   (e: "hide", id: number): void;
   (e: "show", id: number): void;
   (e: "changeFilter", value: string): void;
-  (e: "click"): void;
+  (e: "click", daily: any): void;
 }>();
 const hideDailysItem = (id: number) => {
   emits("hide", id);
@@ -81,6 +82,9 @@ const showDailysItem = (id: number) => {
 };
 const handleSetFilter = (value: string) => {
   emits("changeFilter", value);
+}
+const openViewModal = (daily: any) => {
+  emits("click", daily);
 }
 </script>
 

@@ -136,13 +136,6 @@
         Edit Dailys
       </ion-button>
     </div>
-    <ion-button
-      id="cancel"
-      @click="isSettingModalOpen = false"
-      expand="block"
-    >
-      Cancel
-    </ion-button>
   </ion-modal>
   <confirmation
     :is-visible="showConfirmationModal"

@@ -70,6 +70,7 @@
             @show="showDailysItem"
             @hide="hideDailysItem"
             @changeFilter="handleSetFilter"
+            @click="openViewModal"
           />
           <workouts-swiper
             title="Trending"
@@ -78,6 +79,7 @@
             @show="showDailysItem"
             @hide="hideDailysItem"
             @changeFilter="handleSetFilter"
+            @click="openViewModal"
           />
           <workouts-swiper
             title="Most Liked"
@@ -86,6 +88,7 @@
             @show="showDailysItem"
             @hide="hideDailysItem"
             @changeFilter="handleSetFilter"
+            @click="openViewModal"
           />
         </div>
         <div v-else>
