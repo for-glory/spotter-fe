@@ -13,7 +13,7 @@
         <ion-row>
           <ion-col size="12">
             <div class="form-row">
-              <ion-label class="label"> Choose cover for workout </ion-label>
+              <ion-label class="label"> Choose video for daily </ion-label>
               <video-uploader
                 :video="videoPath"
                 @delete="removeVideo"
