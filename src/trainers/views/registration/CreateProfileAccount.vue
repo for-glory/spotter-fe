@@ -37,7 +37,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="holder-button">
+      <div class="buttons">
         <ion-button
           expand="block"
           @click="saveAddress"
@@ -140,19 +140,21 @@ settingsUpdated(() => {
 
 <style scoped lang="scss">
 .page {
-  padding: 56px 24px 16px;
+  display: grid;
+  justify-content: center;
+  padding: 32px 24px 16px;
+  width: 100%;
 
   &__head {
     font-size: 14px;
     font-weight: 300;
     line-height: 1.5;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 56px;
 
     ion-text {
       display: block;
       margin: 0 auto;
-      max-width: 260px;
     }
   }
 
@@ -165,11 +167,24 @@ settingsUpdated(() => {
   }
 }
 
-.holder-button {
-  padding: 8px 24px calc(20px + var(--ion-safe-area-bottom));
+.buttons {
+  margin-top: 1rem;
+  width: 30%;
+  margin: 0 auto;
+  padding: 0 24px calc(32px + var(--ion-safe-area-bottom));
+
+  @media (max-width: 992px) {
+    width: 100%;
+  }
 
   .button {
-    margin: 0;
+    margin: 0 auto;
+    text-align: center;
+    font-family: Lato;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%;
   }
 }
 </style>

@@ -178,8 +178,6 @@ onResult(({ data }) => {
 });
 
 onMounted(async () => {
-  backendStripe.init();
-
   onPlansResult(async ({ data }) => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
@@ -207,6 +205,8 @@ onMounted(async () => {
       }
       return acc;
     }, []);
+
+    backendStripe.init();
     console.log("currentSubscriptionUser", currentStripeSubscription.value);
   });
 });
