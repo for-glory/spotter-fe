@@ -287,8 +287,6 @@ const selectFacility = (id) => {
   router.push({
     name: EntitiesEnum.DashboardOverview,
   });
-
-  // router.push({ path: "/dashboard/" });
 };
 
 watch(

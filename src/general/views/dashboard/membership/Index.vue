@@ -170,6 +170,7 @@ const { loading: subscriptionUserLoading, onResult } = useQuery(
 
 onResult(({ data }) => {
   currentStripeSubscription.value = data?.subscriptionUser;
+
   if (!data?.subscriptionUser) {
     router.push({
       name: EntitiesEnum.DashboardStartMembership,
