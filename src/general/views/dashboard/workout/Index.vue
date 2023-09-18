@@ -409,7 +409,7 @@ const openViewModal = (daily: any) => {
   &__background-text {
     position: absolute;
     inset: 0;
-    padding: 32px;
+    padding: 42px 62px 31px 61px;
   }
 
   &__title {
@@ -424,7 +424,7 @@ const openViewModal = (daily: any) => {
   &__text {
     color: #FFF;
     font-family: Lato;
-    font-size: 12px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 500;
     line-height: 150%;
