@@ -16,3 +16,8 @@ export const TrainerSelectOptions = [
     name: "Last Year"
   }
 ]
+
+export enum TrainerProfileViewEnum {
+  CurrentUser = "user",
+  BookingUser = "book",
+}

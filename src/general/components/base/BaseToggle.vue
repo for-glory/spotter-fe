@@ -1,7 +1,7 @@
 <template>
   <div
     class="base-toggle-container"
-    :class="{ 'base-toggle-container--loading': loading }"
+    :class="{ 'base-toggle-container--loading': loading, 'base-toggle-trainer': role === RoleEnum.Trainer }"
   >
     <ion-spinner v-if="loading" name="lines" class="spinner" />
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
@@ -24,9 +24,12 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 import { IonText, IonToggle, IonLabel, IonSpinner } from "@ionic/vue";
 import { defineProps, defineEmits, computed } from "vue";
 
+const { role } = useRoles();
 const props = defineProps<{
   label?: string;
   value?: boolean;
@@ -103,5 +106,14 @@ ion-toggle {
   bottom: 10px;
   margin-left: -14px;
   position: absolute;
+}
+.base-toggle-trainer {
+  ion-toggle {
+      padding-right: 0;
+  }
+  .toggle-content {
+    color: var(--fitnesswhite);
+    font-family: "Yantramanav";
+  }
 }
 </style>
