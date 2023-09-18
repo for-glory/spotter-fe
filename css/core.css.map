@@ -6,7 +6,8 @@
         "../src/theme/partials/_fonts.scss",
         "../src/theme/partials/_buttons.scss",
         "../src/theme/partials/_searchbar.scss",
-        "../src/theme/partials/_action-sheet.scss"
+        "../src/theme/partials/_action-sheet.scss",
+        "../src/theme/partials/_alert.scss"
     ],
     "names": [],
     "file": "core.css"

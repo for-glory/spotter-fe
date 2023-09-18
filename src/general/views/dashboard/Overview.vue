@@ -315,19 +315,19 @@
             </div>
           </div>
           <div class="event-ring">
-            <doughnut
-              :data="eventPieChartData"
-              :options="chartOptions"
-              :width="null"
-              :height="null"
-            />
-            <span class="pie-chart-title completed-chart-title">{{
-              pichartTitle
-            }}</span>
-            <!-- <div> -->
-            <!-- event chart -->
-
-            <!-- <div style="position: relative; width: 100%; height: 250px">
+            <template v-if="role === RoleEnum.Trainer">
+                <doughnut 
+                :data="eventPieChartData"
+                :options="chartOptions"
+                :width="null"
+                :height="null"
+                />
+                <span class="pie-chart-title completed-chart-title">{{ pichartTitle }}</span>
+            </template>
+            <div v-else>
+              <!-- event chart -->
+            
+              <div style="position: relative; width: 100%; height: 250px">
                 <pie-chart
                   :chartData="pieChartDataDanger"
                   :chart-options="pieChartOptionsDanger"
@@ -349,7 +349,7 @@
                   />
                 </div>
               </div>
-            </div> -->
+            </div>
           </div>
           <div class="completed">
             <div class="flex-container">
@@ -386,22 +386,24 @@
               :dateTime="dayjs(event.end_date).format('dddd D MMMM | HH:mm')"
               status="Closed"
             />
-            <event-item
+            <template v-if="role === RoleEnum.Trainer">
+              <event-item
               :title="'Swimming & Cycling'"
               :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
               status="Closed"
-            />
-            <event-item
+              />
+              <event-item
               :title="'Swimming & Cycling'"
               :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
               status="Closed"
-            />
-            <event-item
+              />
+              <event-item
               :title="'Swimming & Cycling'"
               :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
               status="Closed"
-            />
-          </div>
+              />
+            </template>
+            </div>
           <div class="upcoming">
             <div class="flex-container header">
               <div
@@ -450,7 +452,7 @@
               status="Upcoming"
               :isLast="index + 1 === upcomingevents?.length"
             />
-            <upcoming-event-item
+            <upcoming-event-item v-if="role === RoleEnum.Trainer"
               :title="'Run competition'"
               :street="'Light Street, 1'"
               :price="'100'"

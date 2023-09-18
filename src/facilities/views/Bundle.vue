@@ -33,6 +33,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { computed } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import { Query, TrainingDocument } from "@/generated/graphql";
+import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 
 const router = useRouter();
 
@@ -52,7 +53,7 @@ const training = computed(() => {
 const openProfile = (id: number | string) => {
   router.push({
     name: EntitiesEnum.TrainerUserProfile,
-    params: { id },
+    params: { id, type: TrainerProfileViewEnum.BookingUser },
   });
 };
 </script>

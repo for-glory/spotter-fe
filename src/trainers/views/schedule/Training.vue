@@ -70,6 +70,7 @@ import {
 } from "@/generated/graphql";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 
 const router = useRouter();
 
@@ -130,7 +131,7 @@ const training = computed(() => {
 const openProfile = (id: number | string) => {
   router.push({
     name: EntitiesEnum.TrainerUserProfile,
-    params: { id },
+    params: { id, type: TrainerProfileViewEnum.BookingUser },
   });
 };
 

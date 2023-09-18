@@ -163,6 +163,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileAddSocialLink,
+    path: "/profile/edit/add-social-link",
+    component: () => import("@/general/views/profile/AddSocialLink.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileLocation,
     path: "/profile/edit/location",
     component: () => import("@/general/views/profile/Location.vue"),

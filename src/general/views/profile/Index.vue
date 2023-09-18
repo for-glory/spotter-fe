@@ -191,6 +191,7 @@ import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import WorkingSchedule from "./WorkingSchedule.vue";
+import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 
 const router = useRouter();
 const route = useRoute();
@@ -413,8 +414,15 @@ const goTo = async (name: EntitiesEnum) => {
           },
         });
 
-        await modal.present();
-      }
+          await modal.present();
+        }
+        break;
+
+      case EntitiesEnum.TrainerUserProfile:        
+        router.push({
+          name: EntitiesEnum.TrainerUserProfile,
+          params: { id: result.value?.user?.id, type: TrainerProfileViewEnum.CurrentUser },
+        });
       break;
     default:
       router.push({

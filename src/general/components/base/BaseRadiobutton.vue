@@ -5,6 +5,7 @@
     :class="{
       'radiobutton--checked': isChecked,
       'radiobutton--light': light,
+      'radiobutton__trainer': role === RoleEnum.Trainer
     }"
   >
     <slot name="icon"></slot>
@@ -14,9 +15,12 @@
 </template>
 
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 import { IonItem, IonRadio, IonLabel } from "@ionic/vue";
 import { defineProps, withDefaults } from "vue";
 
+const { role } = useRoles();
 withDefaults(
   defineProps<{
     title: string;
@@ -80,6 +84,12 @@ withDefaults(
       height: calc(100% + var(--border-width));
       background-size: var(--mark-width) var(--mark-height);
       background-image: url(/public/assets/icon/check-mark.svg);
+    }
+  }
+  &__trainer {
+    .radiobutton__label {
+      font-family: "Yantramanav";
+      color: var(--fitnesswhite);
     }
   }
 }

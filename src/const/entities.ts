@@ -8,6 +8,7 @@ export enum EntitiesEnum {
   ProfilePreferences = "PROFILE_PREFERENCES",
   ProfileNotifications = "PROFILE_NOTIFICATIONS",
   ProfileLocation = "PROFILE_LOCATION",
+  ProfileAddSocialLink = "PROFILE_ADD_SOCIAL_LINK",
   ProfileIdentityVerification = "PROFILE_IDENTITY_VERIFICATION",
   VerifyPersonalInfo = "PROFILE_VERIFY_PERSONAL_INFO",
   ProfilePaymentMethods = "PROFILE_PAYMENT_METHODS",
