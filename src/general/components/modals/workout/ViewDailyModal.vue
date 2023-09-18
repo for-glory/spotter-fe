@@ -123,6 +123,7 @@
           </div>
         </div>
       </div>
+      <ion-icon src="assets/icon/close.svg" class="close-btn" @click="closeModal" />
     </div>
   </ion-modal>
   <ion-modal
@@ -351,6 +352,10 @@ const shareWorkout = async (daily: any) => {
   });
 };
 
+const closeModal = () => {
+  workoutModal.value?.$el.dismiss();
+}
+
 const getDurationText = (value: number) => {
   if(value < 60) {
     return value + ' s';
@@ -432,6 +437,7 @@ defineExpose({
   max-height: 100%;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 .left-section {
   border-radius: 12px;
@@ -448,6 +454,7 @@ defineExpose({
 
   video {
     max-height: 100%;
+    cursor: pointer;
   }
 }
 
@@ -587,5 +594,11 @@ ion-button#cancel {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.close-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
 }
 </style>
