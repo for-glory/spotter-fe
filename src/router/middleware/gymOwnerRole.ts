@@ -1,9 +1,7 @@
 import { Middleware } from "@/ts/types/router";
 import { EntitiesEnum } from "@/const/entities";
 import useRoles from "@/hooks/useRole";
-import {
-  RoleEnum,
-} from "@/generated/graphql";
+import { RoleEnum } from "@/generated/graphql";
 
 const { role } = useRoles();
 

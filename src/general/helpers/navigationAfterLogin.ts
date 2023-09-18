@@ -72,15 +72,15 @@ const navigationAfterAuth = (user: User) => {
 
       if (subscriptionType === SubscriptionsTierEnum.Basic) {
         if (Capacitor.isNativePlatform()) {
-          router.push({ name: EntitiesEnum.Profile });
-          break;
+          router.push({ name: EntitiesEnum.SelectMembership });
+        } else {
+          router.push({ name: EntitiesEnum.DashboardMembership });
         }
-        router.push({ name: EntitiesEnum.DashboardSettings });
         break;
       }
 
       if (Capacitor.isNativePlatform()) {
-        router.push({ name: EntitiesEnum.Dashboard });
+        router.push({ name: EntitiesEnum.Overview });
       } else {
         router.push({ name: EntitiesEnum.DashboardOverview });
       }
