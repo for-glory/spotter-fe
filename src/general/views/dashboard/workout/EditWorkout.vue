@@ -1,4 +1,5 @@
 <template>
+  <div v-if="!updatingWorkout">
     <div class="top-buttons">
       <ion-button class="dashboard-btn" @click="onBack" fill="clear">
         <ion-icon src="assets/icon/arrow-back.svg" />
@@ -121,6 +122,12 @@
         </ion-row>
       </ion-grid>
     </div>
+  </div>
+  <ion-spinner
+    v-else
+    name="lines"
+    class="spinner"
+  />
 	<transition>
 		<ion-note v-if="errorMessage">
 			{{ errorMessage }}
@@ -148,7 +155,8 @@ import {
 	IonRow,
 	IonCol,
   IonSelect,
-  IonSelectOption
+  IonSelectOption,
+  toastController
 } from "@ionic/vue";
 import { useRouter, useRoute } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
@@ -321,7 +329,14 @@ const handleSubmit = () => {
         preview: store.path ? store.workoutPath : ''
       }
     })
-    .then(() => {
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
       store.clearState();
       router.push({
         name: EntitiesEnum.DashboardWorkout,
@@ -486,5 +501,10 @@ const options = minutesDuration(10, 240, 10);
   &__icon--start {
     padding-right: 8px;
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
