@@ -1,5 +1,5 @@
 <template>
-  <base-layout hide-navigation-menu>
+  <base-layout :class="{ 'trainer-gym': role === RoleEnum.Trainer }" hide-navigation-menu>
     <template #header>
       <ion-back-button
         class="back-btn"
@@ -10,7 +10,9 @@
       <search-form
         ref="searchForm"
         :type="EntitiesEnum.Facilities"
+        :placeholder="role=== RoleEnum.Trainer ? 'Enter name or adress of gym...' : undefined"
         hide-results
+        extraPadding
         @search="search"
         hidden-cancel
       />
@@ -22,10 +24,16 @@
           :item="facility"
           :key="facility.id"
           :showRating="false"
-          v-for="facility in facilities"
-          @click="onResultItemClick(facility)"
+          :is-selected="facility.isSelected"
+          v-for="(facility, index) in facilities"
+          @click="onResultItemClick(facility, index)"
           v-else-if="!facilityLoading && facilities?.length"
-        />
+        >
+        <template v-if="facility.isSelected" #check-box>
+          <IonCheckbox :checked="facility.isSelected" class="search-check-box" mode="ios" />
+        </template>
+        
+      </search-result>
         <ion-item v-else>
           <ion-label>No results found...</ion-label>
         </ion-item>
@@ -35,30 +43,36 @@
 </template>
 
 <script setup lang="ts">
-import { IonBackButton, IonLabel, IonSpinner, IonItem } from "@ionic/vue";
+import { IonBackButton, IonLabel, IonSpinner, IonItem, IonCheckbox } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import {
   FacilitiesDocument,
   FacilitiesQuery,
   FacilitiesQueryVariables,
+  RoleEnum,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { FacilitySearchResult } from "@/interfaces/FacilitySearchResult";
 import SearchResult from "@/users/views/facilities/SearchResult.vue";
 import { useSelectedAddressStore } from "@/trainers/store/selected-address";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
-
+const { role } = useRoles();
 const handleBack = () => {
+  if(role === RoleEnum.Trainer){
+    store.setAssignedFacility(selectFacilities);
+  }
   router.go(-1);
 };
 const searchForm = ref<typeof SearchForm | null>(null);
 
 const searchQuery = ref<string>("");
+let selectFacilities:any = null;
 const facilitiesParams: FacilitiesQueryVariables = {
   first: 10,
   page: 0,
@@ -67,9 +81,19 @@ const facilitiesParams: FacilitiesQueryVariables = {
 
 const store = useSelectedAddressStore();
 
-const onResultItemClick = (facility: FacilitySearchResult) => {
-  store.setAssignedFacility(facility);
-  handleBack();
+const onResultItemClick = (facility: FacilitySearchResult, index:number) => {
+  if(role === RoleEnum.Trainer)  {
+    facilities.value?.map((e, i)=>{
+      if(i !== index){
+        e.isSelected = false
+      }
+    })
+    facility.isSelected = !facility.isSelected;
+    selectFacilities = facility.isSelected ? facility : null;    
+  }else {
+    store.setAssignedFacility(facility);
+    handleBack();
+  }
 };
 
 const search = (query?: string) => {
@@ -81,16 +105,25 @@ const search = (query?: string) => {
 };
 
 const {
-  result: facilityResult,
+  // result: facilityResult,
   loading: facilityLoading,
   refetch: facilityRefetch,
+  onResult: onFacilityResult
 } = useQuery<FacilitiesQuery>(FacilitiesDocument, facilitiesParams);
+//   const facilities = computed(
+//   () => facilityResult.value?.facilities?.data as FacilitySearchResult[]
+// );
+const facilities = ref<FacilitySearchResult[]>();
 
-const facilities = computed(
-  () => facilityResult.value?.facilities?.data as FacilitySearchResult[]
-);
-
-onMounted(() => {
+onFacilityResult(async ({ data }) => {
+  facilities.value = data.facilities?.data.map((e)=> {
+    if(e.id === store.assignedFacility?.id){ 
+      return {...e, isSelected: true}
+    }
+    return {...e, isSelected: false}
+  });
+});
+onMounted(() => {  
   setTimeout(() => {
     searchForm.value?.setFocus();
   }, 500);
@@ -140,4 +173,20 @@ onMounted(() => {
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
 }
+
+.trainer-gym {
+  ion-searchbar {
+    font-family: Yantramanav;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+  }
+}
+
+  .search-check-box {
+    position: absolute;
+    right: 24px;
+    --size: 24px;
+  }
+
 </style>

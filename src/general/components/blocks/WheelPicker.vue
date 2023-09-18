@@ -6,7 +6,10 @@
 import { withDefaults, defineProps, inject, onUnmounted } from "vue";
 import { pickerController, PickerOptions } from "@ionic/vue";
 import { Emitter, EventType } from "mitt";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
+const { role } = useRoles();
 const props = withDefaults(
   defineProps<{
     options: PickerOptions;
@@ -40,6 +43,7 @@ const openPicker = async () => {
     buttons: props.options.buttons,
     mode: "ios",
     columns,
+    cssClass: role === RoleEnum.Trainer ? "trainer-picker" : ""
   });
   await picker.present();
 };
