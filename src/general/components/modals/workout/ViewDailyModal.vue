@@ -195,6 +195,8 @@ import { useLazyQuery } from "@vue/apollo-composable";
 import { useRoute, useRouter } from "vue-router";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { Share } from "@capacitor/share";
+import { useWorkoutsStore } from "@/trainers/store/workouts";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import CustomerItem from "@/general/components/modals/workout/CustomerItem.vue";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
@@ -205,6 +207,7 @@ const workoutModal = ref<typeof IonModal | null>(null);
 const daily = ref<any>();
 const videoRef = ref<any>();
 const viewType = ref<string>('revenue');
+const store = useWorkoutsStore();
 
 const {
   mutate: deleteDailys,
@@ -297,6 +300,13 @@ const isSettingModalOpen = ref<boolean>(false);
 const showSettingsModal = () => {
   isSettingModalOpen.value = true;
 };
+
+const handleEdit = () => {
+  isSettingModalOpen.value = false;
+  store.setWorkout({ ...daily.value, price: getSumForPayment(daily.value.price as number, true) });
+  workoutModal.value?.$el.dismiss();
+  router.push({ name: EntitiesEnum.DashboardEditWorkout, params: { id: daily.value?.id } });
+}
 
 const handleDelete = () => {
   isSettingModalOpen.value = false;
