@@ -319,7 +319,7 @@
             :width="null"
             :height="null"
           />
-          <span class="pie-chart-title completed-chart-title">{{ pichartTitle }}</span>
+          <span class="pie-chart-title completed-chart-title" style="margin-left: 22%;">{{ pichartTitle }}</span>
             <!-- <div> -->
               <!-- event chart -->
             
@@ -1424,6 +1424,8 @@ ion-col.col-gap.test {
     font-size: 26px;
     font-weight: 600;
   }
+
+
 
   .completed-chart-title {
     bottom: 20px;

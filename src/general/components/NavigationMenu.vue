@@ -12,8 +12,9 @@
         'navigation-btn--active': Boolean(
           route.path.match(item.category ?? '')
         ),
-      }"
-      :disabled=" role !== RoleEnum.Trainer &&
+      }">
+
+         <!-- :disabled=" role !== RoleEnum.Trainer &&
         (item.name === EntitiesEnum.TrainerWorkouts &&
           subscriptionType === SubscriptionsTierEnum.Basic) ||
         (item.name === EntitiesEnum.TrainerEvents &&
@@ -26,8 +27,8 @@
           subscriptionType === SubscriptionsTierEnum.Bronze) ||
         (item.name === EntitiesEnum.FacilitiesEvents &&
           subscriptionType !== SubscriptionsTierEnum.Gold)
-      "
-    >
+      " -->
+
       <div class="navigation-btn__inner">
         <div class="navigation-btn__icon" :class="{ 
           'hover-icon': Boolean(

@@ -91,6 +91,7 @@ export interface facilityPhoto {
   id?: string;
   url: string;
   path?: string;
+  pathUrl: string;
 }
 
 export interface ProductableTrainer extends User {
