@@ -102,7 +102,7 @@
           <div 
             class="justify-content-center gap-16 "
           >
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap align-items-center gap-16">
               <workout-item
                 v-for="daily in (filter === 'recent' ? dailysData : filter === 'trending' ? trendingDailys : recommendedDailys)"
                 :key="daily.id"
@@ -123,6 +123,7 @@
                 :hidden="daily.state === WorkoutStatesEnum.Hidden"
                 @hide="hideDailysItem(daily.id)"
                 @show="showDailysItem(daily.id)"
+                @click="openViewModal(daily)"
               />
             </div>
           </div>
@@ -145,6 +146,7 @@
       </div>
     </div>
   </div>
+  <view-daily-modal ref="dailyModal" />
 </template>
 
 <script setup lang="ts">
@@ -184,6 +186,7 @@ import DailysAnalytics from "@/general/components/dailys/DailysAnalytics.vue";
 import DailysSummary from "@/general/components/dailys/DailysSummary.vue";
 import DailysPerformance from "@/general/components/dailys/DailysPerformance.vue";
 import DailysTop from "@/general/components/dailys/DailysTop.vue";
+import ViewDailyModal from "@/general/components/modals/workout/ViewDailyModal.vue"
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('dailys');
@@ -203,6 +206,8 @@ const summaryData = ref<any>({
 });
 const router = useRouter();
 const store = useDailysStore();
+const dailyModal = ref<typeof ViewDailyModal | null>(null);
+
 
 const setTab = (workoutT: string) => {
 		tab.value = workoutT;
@@ -295,20 +300,20 @@ const hideDailysItem = (id: number) => {
   hidedailys({ id }).then(() => {
     refetchDailys();
   });
-}
+};
 const showDailysItem = (id: number) => {
   showDailys({ id }).then(() => {
     refetchDailys();
   });
-}
+};
 
 const watchDailys = (daily: any) => {
   router.push({ name: EntitiesEnum.WorkoutView, params: { id: daily.id } });
-}
+};
 
 const handleSetFilter = (value: string) => {
   filter.value = value;
-}
+};
 
 const setLimit = (limit: string) => {
   if(limit === 'all') {
@@ -326,7 +331,12 @@ const setLimit = (limit: string) => {
       performanceLimit.value = limit;
     });
   }
-}
+};
+
+const openViewModal = (daily: any) => {
+  dailyModal.value?.present({ ...daily });
+};
+
 </script>
 
 <style scoped lang="scss">

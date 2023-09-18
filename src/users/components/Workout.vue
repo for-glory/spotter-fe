@@ -201,10 +201,6 @@ const getDurationText = (value: number) => {
     width: 280px;
   }
 
-  &:not(:first-child) {
-    margin-top: 16px;
-  }
-
   &__inner {
     width: 100%;
     height: 100%;
