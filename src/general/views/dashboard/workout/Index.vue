@@ -16,8 +16,11 @@
     </div>
 		<div class="workout-list">
 			<div class="d-flex justify-content-between workout-list__top">
-				<div class="filter-tabs d-flex align-items-center justify-content-between">
-          <div>
+				<div 
+          class="filter-tabs d-flex align-items-center"
+          :class="dailysData?.length ? 'justify-content-between' : 'justify-content-end'"
+        >
+          <div v-if="dailysData?.length">
             <ion-button
               id="rounded"
               :fill="tab === 'dailys' ? 'solid' : 'outline'"
