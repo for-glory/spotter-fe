@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div class="d-flex-col gap-8">
+      <div class="d-flex-col gap-8" style="min-width: 40%">
         <div>
           <ion-segment 
             :value="viewType || 'revenue'" 
@@ -107,7 +107,7 @@
             name="lines"
             class="spinner"
           />
-          <div>
+          <div class="h-100">
             <ion-text>
               {{ reviewDescription }}
             </ion-text>
@@ -427,7 +427,7 @@ defineExpose({
   padding: 24px;
   display: flex;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px;
   max-width: 100%;
   max-height: 100%;
   width: 100%;
@@ -442,10 +442,11 @@ defineExpose({
   .video-container {
     max-height: calc(100% - 90px);
     z-index: 1;
+    border: 3px solid #262626;
+    border-radius: 12px;
   }
 
   video {
-    border-radius: 12px;
     max-height: 100%;
   }
 }
@@ -501,12 +502,12 @@ defineExpose({
   &::-webkit-scrollbar {
     width: 5px;
     height: 10px;
-    background-color: #aaa;
+    background-color: #262626;
     border-radius: 12px;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 12px;
-    background: #000;
+    background: #aaa;
   }
 }
 .customer-content {
