@@ -146,7 +146,7 @@
       </div>
     </div>
   </div>
-  <view-daily-modal ref="dailyModal" />
+  <view-daily-modal ref="dailyModal" @delete="onDelete" />
 </template>
 
 <script setup lang="ts">
@@ -261,6 +261,11 @@ const recommendedDailys = computed(() => {
   return dailys;
 });
 
+const onDelete = () => {
+  refetchDailyPerformance();
+  refetchDailysAnalytics();
+  refetchDailys();
+}
 
 gotDailysData(({ data }) => {
   let dailys = [ ...data.facilityWorkouts.data ];

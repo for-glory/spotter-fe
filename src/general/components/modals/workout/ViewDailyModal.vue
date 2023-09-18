@@ -146,8 +146,8 @@
   </ion-modal>
   <confirmation
     :is-visible="showConfirmationModal"
-    :title="'Do you want to delete' + (type === 'PASS' ? ' Passes' : ' drop-in?') + '?'"
-    :description="(type === 'PASS' ? 'Passes' : 'Drop-in') + ' will be deleted'"
+    :title="'Do you want to delete this daily?'"
+    description="Your daily will be deleted"
     button-text="Delete"
     @discard="onDelete"
     @decline="hideModal"
@@ -191,6 +191,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { Share } from "@capacitor/share";
 import CustomerItem from "@/general/components/modals/workout/CustomerItem.vue";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -211,6 +212,10 @@ const {
   hideModal,
   showModal: showModal,
 } = useConfirmationModal();
+
+const emits = defineEmits<{
+  (e: "delete"): void;
+}>();
 
 const customerList = computed(() => {
   switch(viewType.value) {
@@ -285,24 +290,39 @@ const tooglePlay = () => {
 };
 const isSettingModalOpen = ref<boolean>(false);
 const showSettingsModal = () => {
-  // let daily = dailysItems.value[activeIndex.value];
-  // store.setWorkout({
-  //   title: daily.title,
-  //   type: daily.type.id,
-  //   duration: daily.duration,
-  //   bodyParts: daily.workoutMuscleTypesIds,
-  //   price: getSumForPayment(daily.price, true),
-  //   trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
-  //   exercise: {
-  //     videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
-  //     description: daily.description
-  //   }
-  // });
-  // store.setValue('path', daily.video);
-  // store.setValue('workoutPreview', `${process.env.VUE_APP_MEDIA_URL}${daily.preview}`);
-  // console.log('store.path: ', store.path);
   isSettingModalOpen.value = true;
 };
+
+const handleDelete = () => {
+  isSettingModalOpen.value = false;
+  showModal();
+};
+
+const onDelete = () => {
+  hideModal();
+  deleteDailys({ id: daily.value?.id })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      emits('delete');
+      workoutModal.value?.$el.dismiss();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
+};
+
 const segmentChanged = (event: SegmentCustomEvent) => {
   if (!event.detail.value) return;
   viewType.value = event.detail.value;

@@ -121,8 +121,8 @@
     </ion-modal>
     <confirmation
       :is-visible="showConfirmationModal"
-      :title="'Do you want to delete' + (type === 'PASS' ? ' Passes' : ' drop-in?') + '?'"
-      :description="(type === 'PASS' ? 'Passes' : 'Drop-in') + ' will be deleted'"
+      :title="'Do you want to delete this daily?'"
+    description="Your daily will be deleted"
       button-text="Delete"
       @discard="onDelete"
       @decline="hideModal"
