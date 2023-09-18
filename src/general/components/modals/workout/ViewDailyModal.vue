@@ -10,7 +10,7 @@
       class="spinner"
     />
     <div v-else class="modal-content">
-      <div class="left-section d-flex-col w-199 gap-16">
+      <div class="left-section d-flex-col w-100 gap-16">
         <div class="video-container relative">
           <video 
             autoplay 
@@ -124,6 +124,7 @@
         </div>
       </div>
       <ion-icon src="assets/icon/close.svg" class="close-btn" @click="closeModal" />
+      <div v-if="isSettingModalOpen" class="shadow" />
     </div>
   </ion-modal>
   <ion-modal
@@ -449,7 +450,9 @@ defineExpose({
     max-height: calc(100% - 90px);
     z-index: 1;
     border: 3px solid #262626;
+    background-color: #262626;
     border-radius: 12px;
+    flex: 1;
   }
 
   video {
@@ -600,5 +603,11 @@ ion-button#cancel {
   right: 10px;
   top: 10px;
   cursor: pointer;
+}
+.shadow {
+  position: absolute;
+  inset: 0;
+  background-color: #0000006a;
+  z-index: 100;
 }
 </style>
