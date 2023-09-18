@@ -94,7 +94,7 @@ const submit = () => {
 .spinner {
   display: block;
   pointer-events: none;
-  margin: calc(50% - 60px) auto 0;
+  margin: calc(30% - 60px) auto 0;
 }
 .submit-btn {
   margin-top: 24px;
