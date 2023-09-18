@@ -4,7 +4,12 @@
     class="modal"
     swipeToClose 
   >
-    <div class="modal-content">
+    <ion-spinner
+      v-if="deleting"
+      name="lines"
+      class="spinner"
+    />
+    <div v-else class="modal-content">
       <div class="left-section d-flex-col w-199 gap-16">
         <div class="video-container relative">
           <video 
@@ -97,17 +102,24 @@
           </ion-segment>
         </div>
         <div class="box customer-content">
-          <ion-text>
-            {{ reviewDescription }}
-          </ion-text>
-          <div class="customer-list">
-            <customer-item 
-              v-for="customer in customerList"
-              :key="customer.id"
-              :name="customer.first_name + ' ' + customer.last_name"
-              :avatarUrl="customer.avatarUrl"
-              :hasMessage="customer.was_commented_by_self"
-            />
+          <ion-spinner
+            v-if="dailysStatusLoading || reviewLoading"
+            name="lines"
+            class="spinner"
+          />
+          <div>
+            <ion-text>
+              {{ reviewDescription }}
+            </ion-text>
+            <div class="customer-list">
+              <customer-item 
+                v-for="customer in customerList"
+                :key="customer.id"
+                :name="customer.first_name + ' ' + customer.last_name"
+                :avatarUrl="customer.avatarUrl"
+                :hasMessage="customer.was_commented_by_self"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -196,7 +208,7 @@ const viewType = ref<string>('revenue');
 
 const {
   mutate: deleteDailys,
-  loading,
+  loading: deleting,
   onDone: dailysDeleted,
 } = useMutation(DeleteDailyDocument);
 
@@ -559,5 +571,10 @@ ion-button#cancel {
 .split {
   height: 1px;
   background-color: #3D3D3D;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
