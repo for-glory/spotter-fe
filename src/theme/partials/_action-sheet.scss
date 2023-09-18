@@ -63,7 +63,8 @@
     height: 300px;
 
     .picker-toolbar {
-      contain: initial;
+      contain: initial; 
+      font-family: Yantramanav;
     }
 
     .picker-toolbar div:nth-child(2) {
@@ -77,7 +78,6 @@
         background: var(--gold);
         color: var(--main-color);
         text-align: center;
-        font-family: Yantramanav;
         font-size: 16px;
         font-style: normal;
         font-weight: 700;
@@ -119,4 +119,20 @@ ion-popover{
     --width: 140px;
     margin-top: 18px;
   }
+}
+
+.trainer-sheet {
+  font-family: Yantramanav;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.success-tr-sheet-btn {
+  color: var(--fitnesswhite) !important;
+}
+.danger-tr-sheet-btn {
+  color: var(--ion-color-danger-tint) !important;
+}
+.cancel-tr-sheet-btn {
+  color: rgba(255, 255, 255, 0.60) !important;
 }

@@ -1,31 +1,50 @@
 <template>
   <ion-modal ref="chooseModal" class="modal" swipeToClose cssClass="auto-height">
-    <div class="modal__content">
+    <div class="modal__content" :class="{ 'address-content-tr': forAddress }">
       <span class="modal__closed"></span>
       <ion-label class="modal__title">
         {{ title || "Location" }}
       </ion-label>
       <template v-if="type !== EntitiesEnum.Address">
-        <div class="address-container">
-          <ion-text class="address-content">
-            Enter address name
-          </ion-text>
-          <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
-            {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
-            {{ `${selectedAddress?.locality}` }},
-            {{ `${selectedAddress?.administrativeArea}` }},
-            {{ `${selectedAddress?.countryName}` }}
-          </ion-text>
-        </div>
-        <GMapAutocomplete
-          placeholder="Enter your address"
-          class="search-form__control"
-          :class="{
-            'search-form__control--on-focus': isFocused,
-          }"
-          @place_changed="setPlace"
-        >
-        </GMapAutocomplete>
+        <template v-if="forAddress">
+          <search-form placeholder="Enter address name" hide-results hidden-cancel></search-form>
+          <div class="address-list">
+            <ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+          </div>
+        </template>
+        <template v-else>
+          <div class="address-container">
+            <ion-text class="address-content">
+              Enter address name
+            </ion-text>
+            <ion-text class="address-content" v-if="selectedAddress?.thoroughfare">
+              {{ `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` }},
+              {{ `${selectedAddress?.locality}` }},
+              {{ `${selectedAddress?.administrativeArea}` }},
+              {{ `${selectedAddress?.countryName}` }}
+            </ion-text>
+          </div>
+          <GMapAutocomplete
+            placeholder="Enter your address"
+            class="search-form__control"
+            :class="{
+              'search-form__control--on-focus': isFocused,
+            }"
+            @place_changed="setPlace"
+          >
+          </GMapAutocomplete>
+        </template>
       </template>
     </div>
   </ion-modal>
@@ -42,49 +61,28 @@
 <script setup lang="ts">
 import {
   IonModal,
-  IonButton,
-  IonContent,
-  IonRadio,
-  IonRadioGroup,
-  IonItem,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  InfiniteScrollCustomEvent,
-  IonSearchbar,
-  IonIcon,
   IonLabel,
-  toastController,
-  IonSpinner,
+  IonItem,
+  IonIcon
 } from "@ionic/vue";
 import { defineExpose, defineEmits, ref } from "vue";
-import { Capacitor } from '@capacitor/core';
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import {
-  ChooseAddresModalOptions,
-  ChooseAddresModalResult,
-} from "@/interfaces/ChooseAddressModalOption";
+import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { EntitiesEnum } from "@/const/entities";
-import { MapStyles } from "@/constants/map-styles";
-import VueGoogleMaps from "@fawmi/vue-google-maps";
-import { PositionLatLng } from "@/ts/types/map";
 import {
   City,
   State,
-  StatesDocument,
   CitiesDocument,
 } from "@/generated/graphql";
 import {
-  NativeGeocoder,
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 import { useLazyQuery } from "@vue/apollo-composable";
-import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { useNewFacilityStore } from "../store/new-facility";
 import { useNewEventStore } from "@/general/stores/new-event";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import SearchForm from "@/general/components/forms/SearchForm.vue";
 
-const router = useRouter();
 const route = useRoute();
 
 const chooseModal = ref<typeof IonModal | null>(null);
@@ -92,6 +90,12 @@ const selectedState = ref<State | null>(null);
 const selectedCity = ref<City | null>(null);
 const selectedAddress = ref<NativeGeocoderResult | null>(null);
 const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
+
+withDefaults(defineProps<{
+    forAddress?:boolean
+  }>(),  {
+    forAddress: false
+  });
 
 const emits = defineEmits<{
   (e: "cancel"): void;
@@ -315,5 +319,46 @@ defineExpose({
   font-weight: 300;
   font-size: 14px;
   color: var(--ion-color-white);
+}
+.address-content-tr {
+  padding: 24px 24px calc(16px + var(--ion-safe-area-bottom)) !important;
+  .modal__title {
+    color: #FFF;
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+  }
+
+  .address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 15px;
+    ion-item {
+
+      &::part(native){
+        border-bottom: 0.8px solid var(--gray-600);
+      }
+      ion-icon {
+        color: var(--gray-500);
+        margin-inline-end: 12px;
+      }
+
+      .address {
+        font-family: Lato;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: 150%;
+        color: var(--grey-text);
+
+        span {
+          font-weight: 500;
+        }
+      }
+    }
+  }
 }
 </style>

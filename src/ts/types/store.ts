@@ -61,6 +61,7 @@ export interface selectedAddressStoreTypes {
   useTrainerLocation: boolean;
   workingInGym: boolean;
   edit?: boolean;
+  isSelected?:boolean
 }
 
 export interface newFacilityStoreTypes {

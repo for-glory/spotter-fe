@@ -1,5 +1,5 @@
 <template>
-  <div class="search-result">
+  <div class="search-result" :class="{ 'search-active': isSelected, 'tr-search-result': role === RoleEnum.Trainer }">
     <ion-thumbnail class="search-result__photo">
       <img v-if="photo?.length" :src="photo" class="search-result__img" />
       <template v-else>
@@ -32,27 +32,32 @@
         {{ item?.type }}
       </workout-type-item>
     </div>
+    <slot name="check-box"></slot>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps, withDefaults } from "vue";
-import { IonLabel, IonThumbnail } from "@ionic/vue";
+import { IonCheckbox, IonLabel, IonThumbnail } from "@ionic/vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import WorkoutTypeItem from "@/general/components/WorkoutTypeItem.vue";
 import { FacilitySearchResult } from "@/interfaces/FacilitySearchResult";
 import RatingNumber from "@/general/components/RatingNumber.vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const props = withDefaults(
   defineProps<{
     item: FacilitySearchResult;
     showRating?: boolean;
+    isSelected?:boolean;
   }>(),
   {
     showRating: false,
+    isSelected: false
   }
 );
-
+const { role } = useRoles()
 const photo = computed(() => {
   return props.item.media?.length ? props.item.media[0]?.pathUrl : "";
 });
@@ -69,6 +74,7 @@ const photo = computed(() => {
   margin-bottom: 15px;
   justify-content: flex-start;
   background: var(--gray-700);
+  box-sizing: border-box;
 
   &__photo {
     flex-shrink: 0;
@@ -87,7 +93,7 @@ const photo = computed(() => {
 
   &__header {
     display: flex;
-    margin-bottom: 14px;
+    margin-bottom: 15px;
     align-items: center;
     justify-content: space-between;
 
@@ -120,5 +126,19 @@ const photo = computed(() => {
   &__rating {
     margin-left: 12px;
   }
+}
+
+.tr-search-result {
+  padding: 12px 16px;
+  .search-result__title {
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+
+.search-active {
+  box-shadow: inset 0px 0px 0px 0.8px #E1DBC5 !important;
 }
 </style>

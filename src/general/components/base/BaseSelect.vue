@@ -3,7 +3,7 @@
     <IonText >{{ title }}</IonText>
     <IonIcon src="assets/icon/arrow-down-light.svg"></IonIcon>
   </div>
-  <IonPopover :trigger="id" reference="event"  side="bottom" alignment="start" dismiss-on-select>
+  <IonPopover v-if="role === RoleEnum.Trainer" :trigger="id" reference="event"  side="bottom" alignment="start" dismiss-on-select>
       <IonContent>
         <IonList>
           <IonItem v-for="option in options" :key="option.value" @click="title = option.name"  button>
@@ -23,12 +23,13 @@ interface SelectProps {
     value: any
   }[],
  }
+import { RoleEnum } from '@/generated/graphql';
+import useRoles from '@/hooks/useRole';
  import { IonIcon, IonPopover, IonText, IonContent, IonList, IonItem } from '@ionic/vue';
 import { ref } from 'vue';
 
 const props = defineProps<SelectProps>()
-console.log('props', props);
-
+const { role } = useRoles()
 const title = ref(props.defualtCheck)
 
 </script>
