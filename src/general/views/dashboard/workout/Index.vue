@@ -134,7 +134,7 @@
       </div>
       <div v-else class="d-flex gap-16 common-style">
         <div class="w-half d-flex-col gap-16">
-          <dailys-analytics :daily="dailysData[0]" @watch-daily="watchDailys(dailysData[0])" />
+          <dailys-analytics :daily="dailysData[0]" @watch-daily="openViewModal(dailysData[0])" />
           <dailys-performance 
             :performanceData="performanceData" 
             :limit="performanceLimit"
