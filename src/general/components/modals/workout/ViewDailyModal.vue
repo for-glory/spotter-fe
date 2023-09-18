@@ -6,15 +6,20 @@
   >
     <div class="modal-content">
       <div class="left-section d-flex-col w-199 gap-16">
-        <div class="video-container">
+        <div class="video-container relative">
           <video 
             autoplay 
             :src="daily.video" 
             :poster="daily.preview"
             ref="videoRef"
-            @click="tooglePlay"
+            @click.stop="tooglePlay"
             class="w-100 h-100"
           />
+          <div class="absolute top-buttons w-100 d-flex justify-content-end">
+            <span @click.stop="showSettingsModal">
+              <ion-icon src="assets/icon/three-dot.svg" />
+            </span>
+          </div>
         </div>
         <div class="box d-flex align-items-center justify-content-between description">
           <div class="d-flex-col align-items-start  w-100">
@@ -107,6 +112,37 @@
         </div>
       </div>
     </div>
+  </ion-modal>
+  <ion-modal
+    ref="modal"
+    :is-open="isSettingModalOpen"
+    class="settings-modal"
+    @willDismiss="isSettingModalOpen = false"
+  >
+    <div class="main-buttons">
+      <ion-button
+        id="delete"
+        @click="handleDelete"
+        expand="block"
+      >
+        Delete Dailys
+      </ion-button>
+      <div class="split"/>
+      <ion-button
+        id="create"
+        @click="handleEdit"
+        expand="block"
+      >
+        Edit Dailys
+      </ion-button>
+    </div>
+    <ion-button
+      id="cancel"
+      @click="isSettingModalOpen = false"
+      expand="block"
+    >
+      Cancel
+    </ion-button>
   </ion-modal>
   <confirmation
     :is-visible="showConfirmationModal"
@@ -247,7 +283,26 @@ const tooglePlay = () => {
   }
   videoRef.value.blur();
 };
-
+const isSettingModalOpen = ref<boolean>(false);
+const showSettingsModal = () => {
+  // let daily = dailysItems.value[activeIndex.value];
+  // store.setWorkout({
+  //   title: daily.title,
+  //   type: daily.type.id,
+  //   duration: daily.duration,
+  //   bodyParts: daily.workoutMuscleTypesIds,
+  //   price: getSumForPayment(daily.price, true),
+  //   trainer: `${daily.trainer?.first_name} ${daily.trainer?.last_name}` || '',
+  //   exercise: {
+  //     videoPath: `${process.env.VUE_APP_MEDIA_URL}${daily.video}`,
+  //     description: daily.description
+  //   }
+  // });
+  // store.setValue('path', daily.video);
+  // store.setValue('workoutPreview', `${process.env.VUE_APP_MEDIA_URL}${daily.preview}`);
+  // console.log('store.path: ', store.path);
+  isSettingModalOpen.value = true;
+};
 const segmentChanged = (event: SegmentCustomEvent) => {
   if (!event.detail.value) return;
   viewType.value = event.detail.value;
@@ -333,33 +388,6 @@ defineExpose({
     color: var(--ion-color-white);
   }
 }
-.common-style {
-  .w-24 {
-    width: 24px;
-  }
-  .h-24 {
-    height: 24px;
-  }
-
-  .font-12 {
-    font-size: 12px;
-  }
-  .font-14 {
-    font-size: 14px;
-  }
-  .font-16 {
-    font-size: 16px;
-  }
-  .font-20 {
-    font-size: 20px;
-  }
-  .gap-16 {
-    gap: 16px;
-  }
-  .gap-8 {
-    gap: 8px;
-  }
-}
 .modal-content {
   padding: 24px;
   display: flex;
@@ -378,6 +406,7 @@ defineExpose({
 
   .video-container {
     max-height: calc(100% - 90px);
+    z-index: 1;
   }
 
   video {
@@ -449,5 +478,73 @@ defineExpose({
   max-height: calc(100% - 52px);
   height: calc(100% - 52px);
   padding: 20px 9px 9px 16px;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.top-buttons {
+  left: 0px;
+  bottom: 0px;
+  cursor: pointer;
+  z-index: 10;
+
+  span {
+    background-color: #0000002a;
+    border-radius: 100px;
+    padding: 4px;
+    max-height: 32px;
+
+    ion-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+.settings-modal {
+  --height: auto;
+  align-items: flex-end;
+  --backdrop-opacity: 0.6;
+  --background: none;
+  --ion-backdrop-color: var(--ion-color-black);
+
+  &::part(content) {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border-radius: 20px 20px 0 0;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 24px calc(16px + var(--ion-safe-area-bottom));
+    max-height: calc(
+      100vh - 136px - var(--ion-safe-area-top) - var(--ion-safe-area-bottom)
+    );
+  }
+}
+.main-buttons {
+  border-radius: 8px;
+  background: #262626;
+
+  ion-button#create {
+    --color: #EFEFEF;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+  ion-button#delete {
+    --color: #EB4336;
+    --background: none;
+    font: 500 16px/1 Lato;
+  }
+}
+ion-button#cancel {
+  --color: #FFFFFF6a;
+  --background: #262626;
+  font: 500 16px/1 Lato;
+  margin-top: 16px;
+}
+.split {
+  height: 1px;
+  background-color: #3D3D3D;
 }
 </style>
