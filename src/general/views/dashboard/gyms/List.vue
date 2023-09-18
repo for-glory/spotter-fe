@@ -8,9 +8,9 @@
             })">Add new gym</ion-button>
     </div>
     <div class="list-container" v-for="(item, index) in facilities">
-        <ion-card >
+        <ion-card class="background-grey">
             <ion-card-content>
-                <div class="d-flex ion-align-items-center ion-justify-content-center" style="gap: 10px">
+                <div class="d-flex ion-align-items-center ion-justify-content-center background-grey" style="gap: 10px">
                     <div>
                         <ion-thumbnail>
                             <img alt="" :src="item.media && item.media.length ? item.media[0]?.pathUrl : null" />
@@ -30,7 +30,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="delete-icon">
+                    <div class="delete-icon ion-margin-end">
                         <ion-icon src="assets/icon/delete.svg"></ion-icon>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ const goToGymDetails = (gym:any) => {
     width: 84.7%;
     border-radius: 8px;
     border: 1px solid #E1DBC5;
-    background-color: #262626;
+    background-color: #262626 !important;
     ion-card {
         margin: 0;
         border-radius: 10px;
@@ -148,5 +148,8 @@ const goToGymDetails = (gym:any) => {
     ion-button {
       height: 40px;
     }
-  }
+}
+.background-grey {
+    background-color: #262626 !important;
+}
 </style>
