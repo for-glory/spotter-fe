@@ -16,24 +16,34 @@
             class="w-100 h-100"
           />
         </div>
-        <div class="d-flex-col align-items-start box description w-100">
-          <ion-label class="font-20 font-medium"> {{ daily.title }}</ion-label>
-          <ion-label class="d-flex align-items-center justify-content-start">
-            <ion-icon class="clock-icon" icon="assets/icon/time.svg" />
-            <span>
-              <template v-if="daily.duration >= 0">
+        <div class="box d-flex align-items-center justify-content-between description">
+          <div class="d-flex-col align-items-start  w-100">
+            <ion-label class="font-20 font-medium"> {{ daily.title }}</ion-label>
+            <ion-label class="d-flex align-items-center justify-content-start">
+              <ion-icon class="clock-icon" icon="assets/icon/time.svg" />
+              <span>
+                <template v-if="daily.duration >= 0">
+                  <ion-text color="light" class="workout-item__info-dot">
+                    &nbsp;&#183;&nbsp;
+                  </ion-text>
+                  {{ getDurationText(daily.duration) }}
+                </template>
+                {{ type }}
                 <ion-text color="light" class="workout-item__info-dot">
                   &nbsp;&#183;&nbsp;
                 </ion-text>
-                {{ getDurationText(daily.duration) }}
-              </template>
-              {{ type }}
-              <ion-text color="light" class="workout-item__info-dot">
-                &nbsp;&#183;&nbsp;
-              </ion-text>
-              {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
-            </span>
-          </ion-label>
+                {{ daily.trainer?.first_name + ' ' + daily.trainer?.last_name }}
+              </span>
+            </ion-label>
+          </div>
+          <div class="d-flex align-items-bottom gap-12 justify-content-end h-100">
+            <ion-icon 
+              @click.stop="shareWorkout(daily)"
+              icon="assets/icon/share.svg" 
+              class="color-gold" 
+              style="width: 24px; height: 24px; cursor: pointer;"
+            />
+          </div>
         </div>
       </div>
       <div class="d-flex-col gap-8">
@@ -143,6 +153,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { useRoute, useRouter } from "vue-router";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { Share } from "@capacitor/share";
 import CustomerItem from "@/general/components/modals/workout/CustomerItem.vue";
 
 const router = useRouter();
@@ -242,6 +253,14 @@ const segmentChanged = (event: SegmentCustomEvent) => {
   viewType.value = event.detail.value;
 }
 
+const shareWorkout = async (daily: any) => {
+  await Share.share({
+    title: daily.title,
+    url: `${process.env.VUE_APP_URL}/users/workouts/${daily.id}`,
+    dialogTitle: "Share",
+  });
+};
+
 const getDurationText = (value: number) => {
   if(value < 60) {
     return value + ' s';
@@ -315,11 +334,11 @@ defineExpose({
   }
 }
 .common-style {
-  .w-68 {
-    width: 68px;
+  .w-24 {
+    width: 24px;
   }
-  .h-68 {
-    height: 68px;
+  .h-24 {
+    height: 24px;
   }
 
   .font-12 {
