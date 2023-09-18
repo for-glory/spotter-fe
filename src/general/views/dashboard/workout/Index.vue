@@ -54,7 +54,7 @@
     >
       <empty-block
         title="Library Empty"
-        buttonText="Create Dailys"
+        hideButton
         text="You have not uploaded any videos yet..."
         @button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
       />
