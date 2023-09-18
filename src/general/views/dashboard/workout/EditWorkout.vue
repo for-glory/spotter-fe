@@ -283,7 +283,7 @@ const handleSubmit = () => {
       id: route.params.id,
       input: {
         title: store.workoutTitle,
-        description: store.exercises?.description,
+        description: store.description,
         price: getSumForPayment(store.workoutPrice as number),
         level: store.workoutType?.id,
         body_parts: store.workoutMuscleTypesIds,
