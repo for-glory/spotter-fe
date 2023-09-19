@@ -696,8 +696,16 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardManageGyms,
-        path: "gyms",
+        path: "gyms/:id?",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardListGyms,
+        path: "list-gyms",
+        component: () => import("@/general/views/dashboard/gyms/List.vue"),
         meta: {
           middleware: [gymOwnerSubscription, gymOwnerRole],
         },

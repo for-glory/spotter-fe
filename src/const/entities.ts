@@ -193,6 +193,7 @@ export enum EntitiesEnum {
   DashboardGymManager = "DASHBOARD_GYM_MANAGER",
   DashboardGymManagerProfile = "DASHBOARD_GYM_MANAGER_PROFILE",
   DashboardManageGyms = "DASHBOARD_MANAGE_GYMS",
+  DashboardListGyms = "DASHBOARD_LIST_GYMS",
   DashboardGymCreate = "DASHBOARD_GYM_CREATE",
   DashboardMessage = "DASHBOARD_MESSAGE",
   Overview = "Overview",
