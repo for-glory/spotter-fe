@@ -3,18 +3,24 @@
 		class="holder-content ion-padding-horizontal"
 	>
     <div class="banner">
-      <ion-title class="banner__title">All dailys are stored here</ion-title>
-      <ion-text class="banner__text">
-        A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
-      </ion-text>
       <div class="banner__background-image">
         <img src="assets/backgrounds/Banner_3.png" alt="" class="w-100">
+      </div>
+      <div class="banner__background-shadow"/>
+      <div class="banner__background-text">
+        <ion-title class="banner__title">All dailys are stored here</ion-title>
+        <ion-text class="banner__text">
+          A centralized space where all your daily workout videos are securely stored. Accessible, organized, and always ready to inspire your others.
+        </ion-text>
       </div>
     </div>
 		<div class="workout-list">
 			<div class="d-flex justify-content-between workout-list__top">
-				<div class="filter-tabs d-flex align-items-center justify-content-between">
-          <div>
+				<div 
+          class="filter-tabs d-flex align-items-center"
+          :class="dailysData?.length ? 'justify-content-between' : 'justify-content-end'"
+        >
+          <div v-if="dailysData?.length">
             <ion-button
               id="rounded"
               :fill="tab === 'dailys' ? 'solid' : 'outline'"
@@ -54,7 +60,7 @@
     >
       <empty-block
         title="Library Empty"
-        buttonText="Create Dailys"
+        hideButton
         text="You have not uploaded any videos yet..."
         @button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
       />
@@ -380,16 +386,33 @@ const openViewModal = (daily: any) => {
 .banner {
   padding: 32px;
   min-height: 160px;
+  max-height: 160px;
   width: 100%;
   border-radius: 12px;
-  background: linear-gradient(180deg, #F0E2AE 0%, rgba(251, 248, 234, 0.00) 100%);
   position: relative;
   overflow: hidden;
 
   &__background-image {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    img {
+      margin-top: -10%;
+    }
+  }
+  &__background-shadow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(17, 17, 18, 0) 0%,
+        rgba(17, 17, 18, 0.88) 100%,
+        rgba(17, 17, 18, 0.88) 100%
+      );
+  }
+  &__background-text {
+    position: absolute;
+    inset: 0;
+    padding: 42px 62px 31px 61px;
   }
 
   &__title {
@@ -404,7 +427,7 @@ const openViewModal = (daily: any) => {
   &__text {
     color: #FFF;
     font-family: Lato;
-    font-size: 12px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 500;
     line-height: 150%;

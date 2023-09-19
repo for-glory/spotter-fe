@@ -7,6 +7,7 @@
   </div>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
   <div v-else>
+    <ion-text class="title">Fitness Tags</ion-text>
     <checkbox-group
       class="list-content"
       @change="onChange"
@@ -133,5 +134,15 @@ const submit = () => {
 .submit-btn {
   margin-top: 24px;
   width: 60%;
+}
+.font-16 {
+  font-size: 16px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(Lato);
+  color: #E1DBC5;
+  margin-left: 24px;
 }
 </style>

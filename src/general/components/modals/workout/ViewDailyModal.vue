@@ -10,7 +10,7 @@
       class="spinner"
     />
     <div v-else class="modal-content">
-      <div class="left-section d-flex-col w-199 gap-16">
+      <div class="left-section d-flex-col w-100 gap-16">
         <div class="video-container relative">
           <video 
             autoplay 
@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div class="d-flex-col gap-8">
+      <div class="d-flex-col gap-8" style="min-width: 40%">
         <div>
           <ion-segment 
             :value="viewType || 'revenue'" 
@@ -107,7 +107,7 @@
             name="lines"
             class="spinner"
           />
-          <div>
+          <div class="h-100">
             <ion-text>
               {{ reviewDescription }}
             </ion-text>
@@ -123,6 +123,8 @@
           </div>
         </div>
       </div>
+      <ion-icon src="assets/icon/close.svg" class="close-btn" @click="closeModal" />
+      <div v-if="isSettingModalOpen" class="shadow" />
     </div>
   </ion-modal>
   <ion-modal
@@ -351,6 +353,10 @@ const shareWorkout = async (daily: any) => {
   });
 };
 
+const closeModal = () => {
+  workoutModal.value?.$el.dismiss();
+}
+
 const getDurationText = (value: number) => {
   if(value < 60) {
     return value + ' s';
@@ -427,11 +433,12 @@ defineExpose({
   padding: 24px;
   display: flex;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px;
   max-width: 100%;
   max-height: 100%;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 .left-section {
   border-radius: 12px;
@@ -442,11 +449,15 @@ defineExpose({
   .video-container {
     max-height: calc(100% - 90px);
     z-index: 1;
+    border: 3px solid #262626;
+    background-color: #262626;
+    border-radius: 12px;
+    flex: 1;
   }
 
   video {
-    border-radius: 12px;
     max-height: 100%;
+    cursor: pointer;
   }
 }
 
@@ -501,12 +512,12 @@ defineExpose({
   &::-webkit-scrollbar {
     width: 5px;
     height: 10px;
-    background-color: #aaa;
+    background-color: #262626;
     border-radius: 12px;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 12px;
-    background: #000;
+    background: #aaa;
   }
 }
 .customer-content {
@@ -586,5 +597,17 @@ ion-button#cancel {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.close-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+.shadow {
+  position: absolute;
+  inset: 0;
+  background-color: #0000006a;
+  z-index: 100;
 }
 </style>
