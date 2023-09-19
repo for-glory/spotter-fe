@@ -1,7 +1,8 @@
 <template>
   <div class="register__container">
     <div class="welcome-text">
-    <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />  <ion-text> Sign up and Create Your Profile</ion-text>
+      <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />
+      <ion-text> Sign up and Create Your Profile</ion-text>
     </div>
     <registration-form
       :is-loading="loading"
@@ -77,23 +78,19 @@ loginDone(({ data, errors }) => {
 });
 </script>
 
-
-
 <style scoped lang="scss">
 .register__container {
   display: grid;
   grid-template-rows: auto 1fr;
   height: calc(100% - 337px - var(--ion-safe-area-top));
-  padding: 24px;
 }
 .welcome-text {
   color: var(--gold);
-  margin-top:12%;
+  margin-top: 12%;
   font-family: Lato;
   font-size: 25px;
   font-style: normal;
   font-weight: 500;
   line-height: 130%;
 }
-
 </style>

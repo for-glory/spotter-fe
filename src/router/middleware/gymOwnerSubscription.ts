@@ -29,7 +29,7 @@ export const setSelectedGym = (id: number) => {
 };
 
 const gymOwnerSubscription: Middleware = async ({ next, router }) => {
-  if (role !== RoleEnum.Manager && role !== RoleEnum.User) {
+  if (role === RoleEnum.FacilityOwner && role === RoleEnum.Trainer) {
     await getFacilitySubscription()
       .then((data) => {
         if (data) {
