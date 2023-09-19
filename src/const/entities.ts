@@ -1,6 +1,7 @@
 export enum EntitiesEnum {
   Profile = "PROFILE",
   ProfileEdit = "PROFILE_EDIT",
+  ProfileGettingPaid = "PROFILE_GETTING_PAID",
   ProfileEmail = "PROFILE_EMAIL",
   ProfilePassword = "PROFILE_PASSWORD",
   ProfileLanguages = "PROFILE_LANGUAGEs",

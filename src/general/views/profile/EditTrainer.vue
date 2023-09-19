@@ -1011,6 +1011,7 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
   }
 }
 .holder-button-web {
+  margin-top: 16px;
   ion-button {
     min-width: 90px;
   }

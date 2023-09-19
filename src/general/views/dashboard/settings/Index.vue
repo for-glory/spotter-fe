@@ -35,7 +35,7 @@
     </div>
 	</div>
   <div v-else class="h-100">
-    <edit :is-web-view="true" class="h-100"></edit>
+    <edit class="h-100"></edit>
   </div>
   <confirmation
     :is-visible="showConfirmationModal"
@@ -49,15 +49,15 @@
 
 <script setup lang="ts">
 import {
-  IonButton,
-  IonSpinner,
+  IonTitle,
+  IonIcon
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
   DeleteProfileDocument, RoleEnum,
 } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
-import { ref, onMounted, computed } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import useFacilityId from "@/hooks/useFacilityId";
@@ -69,7 +69,7 @@ import Profile from "@/general/views/dashboard/settings/Profile.vue";
 import Security from "@/general/views/dashboard/settings/Security.vue";
 import Services from "@/general/views/dashboard/settings/Services.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
-import Edit from "../../profile/Edit.vue";
+import Edit from "./Edit.vue";
 
 
 const filter = ref<string>('profile');
