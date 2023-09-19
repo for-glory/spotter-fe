@@ -274,6 +274,12 @@ const avatarUrl = computed(() => {
 });
 
 const openFacilityDropdown = () => {
+  if(role === RoleEnum.Trainer) {
+    router.push({
+      name: EntitiesEnum.DashboardUserProfilePreview,
+    });
+  return
+  }
   isOpenFacilityDropdown.value = !isOpenFacilityDropdown.value;
 };
 
