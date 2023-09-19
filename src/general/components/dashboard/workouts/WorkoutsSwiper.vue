@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <ion-item style="padding-top: 16px; padding-bottom: 16px;">
+  <div :class="{ 'native': !Capacitor.isNativePlatform() }">
+    <ion-item class="toolbar-item" style="padding-top: 16px; padding-bottom: 16px;">
       <div 
         class="swiper-header d-flex align-items-center justify-content-between w-100"
       >
@@ -61,6 +61,7 @@ import { defineProps, withDefaults, ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Workout, WorkoutStatesEnum } from "@/generated/graphql";
 import WorkoutItem from "@/users/components/Workout.vue";
+import { Capacitor } from '@capacitor/core';
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 
@@ -118,8 +119,10 @@ const openViewModal = (daily: any) => {
   }
 }
 
-.swiper-slide {
-  width: 30%;
+.native {
+  .swiper-slide {
+    width: 30%;
+  }
 }
 
 .title {
@@ -130,5 +133,8 @@ const openViewModal = (daily: any) => {
   padding: 20px;
   font-size: 16px;
   width: 100%;
+}
+.toolbar-item {
+  --background: #262626;
 }
 </style>

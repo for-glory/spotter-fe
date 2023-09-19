@@ -198,10 +198,6 @@ const getDurationText = (value: number) => {
   --padding-bottom: 0;
   --background: var(--gray-600);
 
-  &__native {
-    width: 280px;
-  }
-
   &__inner {
     width: 100%;
     height: 100%;
