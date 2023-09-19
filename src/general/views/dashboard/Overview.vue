@@ -322,7 +322,7 @@
                 :width="null"
                 :height="null"
               />
-              <span class="pie-chart-title completed-chart-title" style="margin-left: 22%;">{{
+              <span class="pie-chart-title completed-chart-title" style="margin-right: 22%;">{{
                 pichartTitle
               }}</span>
             </template>
