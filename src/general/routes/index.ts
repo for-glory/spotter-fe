@@ -115,6 +115,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileGettingPaid,
+    path: "/profile/getting-paid",
+    component: () => import("@/general/views/profile/GettingPaid.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileEmail,
     path: "/profile/edit/email",
     component: () => import("@/general/views/profile/Email.vue"),

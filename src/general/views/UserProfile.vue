@@ -93,8 +93,7 @@
         <div class="offerings" v-if="route?.params?.type == TrainerProfileViewEnum.CurrentUser">
           <ion-text class="section-title">Offerings</ion-text>
           <ion-segment mode="ios"
-            @ionChange="segmentChanged"
-            :value="value || 'trainer'"
+            v-model="segmentValue"
           >
             <ion-segment-button value="trainer">
               <ion-icon src="assets/icon/trainers.svg"></ion-icon>
@@ -106,8 +105,17 @@
               <ion-icon src="assets/icon/events.svg"></ion-icon>
             </ion-segment-button>
           </ion-segment>
-          
-          <div class="offer-card">
+          <div class="ion-margin-top info" v-if="segmentValue == 'trainer'">
+            <div class="info-item">
+              <strong class="info-item__title">$50.00</strong>
+              <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__title">$30.00</strong>
+              <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
+            </div>
+          </div>
+          <div class="offer-card" v-else-if="segmentValue == 'daily'">
             <div class="offer-item" :key="item.id" v-for="item in offerList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
@@ -127,13 +135,35 @@
               </div>
             </div>
           </div>
+          <div class="offer-card" v-else-if="segmentValue == 'events'">
+            <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+              <div class="header-section events">
+                <div class="name">{{ item.name }}</div>
+                <div class="event-time">
+                  <ion-icon src="assets/icon/time.svg"></ion-icon>
+                  <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                </div>
+              </div>
+              <ion-label class="date-label">{{item.date}}</ion-label>
+              <div class="detail-section">
+                <div class="time">
+                  <ion-icon src="assets/icon/location.svg"></ion-icon>
+                  <ion-text>{{ item.address }}</ion-text>
+                </div>
+                <div class="total">
+                  <ion-icon src="assets/icon/profile.svg"></ion-icon>
+                  <ion-text>{{ item.totalUser }}</ion-text>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="document-cards" v-if="route?.params?.type == TrainerProfileViewEnum.CurrentUser">
           <ion-text class="section-title">Certifications</ion-text>
           <div class="doc-items">
             <ion-button :class="index==0? 'active' : ''" 
               fill="outline" :key="item" v-for="(item, index) in docList">
-              <ion-icon slot="start" src="assets/icon/certificate.svg"></ion-icon>
+              <ion-icon src="assets/icon/certificate.svg"></ion-icon>
               {{ item }}
             </ion-button>
           </div>
@@ -143,7 +173,7 @@
           <div class="doc-items">
             <ion-button :class="index==0? 'active' : ''" 
               fill="outline" :key="item" v-for="(item, index) in docList">
-              <ion-icon slot="start" src="assets/icon/certificate.svg"></ion-icon>
+              <ion-icon src="assets/icon/certificate.svg"></ion-icon>
               {{ item }}
             </ion-button>
           </div>
@@ -154,14 +184,24 @@
 </template>
 
 <script setup lang="ts">
-import { IonImg, IonIcon, IonText, actionSheetController, SegmentCustomEvent } from "@ionic/vue";
+import {
+  IonImg,
+  IonIcon,
+  IonText,
+  actionSheetController,
+  IonSegment,
+  IonSegmentButton,
+  IonButton,
+  IonBadge,
+  IonLabel
+} from "@ionic/vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
 import { UserDocument } from "@/generated/graphql";
 import dayjs from "dayjs";
-import { computed, defineProps, defineEmits } from "vue";
+import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 import { ellipse } from "ionicons/icons";
@@ -170,17 +210,7 @@ import { Share } from "@capacitor/share";
 dayjs.extend(relativeTime);
 
 const router = useRouter();
-const props = defineProps<{
-  value?: string;
-}>();
-const emit = defineEmits<{
-  (e: "change", value: string): void;
-}>();
-
-const segmentChanged = (event: SegmentCustomEvent) => {
-  if (!event.detail.value) return;
-  emit("change", event.detail.value as string);
-};
+const segmentValue = ref('trainer');
 
 const handleBack = () => {
   router.go(-1);
@@ -190,6 +220,7 @@ const handleMore = async () => {
   console.log("call more");
   const actionSheet = await actionSheetController.create({
     mode: "ios",
+    cssClass: 'profile-action-sheet',
     buttons: [
       {
         text: "Edit profile",
@@ -224,7 +255,6 @@ const { result } = useQuery(UserDocument, {
   id: route.params.id
 });
 
-console.log("result", route.params.type);
 const offerList = [{
   id: 1,
   name: "Full Body Stretching",
@@ -248,6 +278,32 @@ const offerList = [{
   type: "Expert",
   totalUser: 30,
 
+}]
+const offerEvents = [{
+  id: 1,
+  name: "Run competition",
+  trainer: "Tamra Dae",
+  time: "8 min",
+  totalUser: 30,
+  date: "17 June",
+  address: "Light Street, 1",
+}, {
+  id: 2,
+  name: "Run competition",
+  trainer: "Tamra Dae",
+  time: "8 min",
+  totalUser: 30,
+  date: "17 June",
+  address: "Light Street, 1",
+
+}, {
+  id: 3,
+  name: "Run competition",
+  trainer: "Tamra Dae",
+  time: "8 min",
+  totalUser: 30,
+  date: "17 June",
+  address: "Light Street, 1",
 }]
 
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
@@ -519,6 +575,9 @@ const specialNeeds = computed<string | null>(() => {
       justify-content: space-between;
       width: 100%;
       margin-bottom: 10px;
+      &.events {
+        margin-bottom: 0;
+      }
       .name {
         font-size: 16px;
         font-weight: 500;
@@ -532,6 +591,14 @@ const specialNeeds = computed<string | null>(() => {
         color: var(--grey-text);
       }
     }
+    .date-label {
+        font-size: 14px;
+        color: var(--grey-text);
+        margin-top: 2px;
+        margin-bottom: 4px;
+        display: block;
+        line-height: 21px;
+      }
     .detail-section {
       display: flex;
       align-items: center;
@@ -580,21 +647,39 @@ const specialNeeds = computed<string | null>(() => {
   margin-top: 16px;
   .doc-items {
     margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
     ion-button {
       font-family: "Yantramanav";
       --border-width: 0.8px;
       --border-style: solid;
       --border-color: var(--gray-600);
       --border-radius: 8px;
-      margin-left: 12px;
-      margin-bottom: 12px;
       font-size: 14px;
       font-weight: 400;
-      line-height: 150%;
+      margin: 0;
+      height: 42px;
+      ion-icon {
+        margin-right: 8px;
+      }
       &.active {
         --border-color: var(--gold);
       }
     }
+  }
+}
+.event-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  ion-icon {
+    color: var(--gold);
+    font-size: 24px;
+  }
+  .fs-14 {
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 </style>
