@@ -27,6 +27,7 @@
                 <div class="edit-profile-component-content d-flex-col h-100">
                     <Email v-if="filter === EntitiesEnum.ProfileEmail"/>
                     <ChangePassword v-else-if="filter === EntitiesEnum.ProfilePassword"></ChangePassword>
+                    <Location v-else-if="filter === EntitiesEnum.ProfileLocation" />
                 </div>
             </div>
         </div>
@@ -59,8 +60,9 @@ import { IonSpinner } from "@ionic/vue";
 import EditTrainer from "../../profile/EditTrainer.vue";
 import Email from "./Email.vue";
 import ChangePassword from "./ChangePassword.vue";
+import Location from "./Location.vue";
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         isWebView?: boolean;
     }>(),
@@ -215,8 +217,10 @@ const menuType =
         ? EntitiesEnum.Facility
         : role;
 const menu = editProfileMenu[menuType];
+console.log("menu1", menu);
 
 const webItemClick = (name: EntitiesEnum) => {
+    console.log("name", name);    
     filter.value = name;
 };
 

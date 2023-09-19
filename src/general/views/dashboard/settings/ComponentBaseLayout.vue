@@ -1,7 +1,7 @@
 <template>
     <div class="edit-profile-component-header">
         <h3>{{ title }}</h3>
-        <p v-if="subTitle">{{ subTitle }}</p>
+        <p :class="{ 'light-title': lightSubtitle }" v-if="subTitle">{{ subTitle }}</p>
         <hr>
     </div>
     <slot name="content"></slot>
@@ -18,6 +18,7 @@ const props = defineProps<{
     title: string;
     subTitle?: string;
     disabled?: boolean;
+    lightSubtitle?:boolean
 }>();
 defineEmits<{
     (e: "cancel"): void;
@@ -57,6 +58,9 @@ defineEmits<{
         min-width: 77px;
         height: 40px;
     }
+}
+.light-title {
+    color: rgba(255, 255, 255, 0.60) !important;
 }
 </style>
   
