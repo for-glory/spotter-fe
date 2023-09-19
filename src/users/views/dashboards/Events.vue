@@ -17,8 +17,247 @@
         <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
           ">
         </ion-spinner>
-        <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
-          :text="`Currently you have no booked ${bookingName}`" />
+        <div class="upper_head" style="margin:20px;display:flex;">
+          <router-link to="/users/dashboard"><img src="assets/backgrounds/arrback.svg" style="margin-top:18px;width:30px;"/></router-link><h2>My Drop-ins</h2>
+        </div>
+        <div class="item_cont_flex" style="display:flex;justify-content:space-between;">
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> 2 days left </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(225, 219, 197);font-size:15px;">7 Days</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_1.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --></div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+        </div>
+        <div class="item_cont_flex" style="display:flex;justify-content:space-between;">
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> 3 days left </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(225, 219, 197);font-size:15px;">5 Days</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_3.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+        </div>
+        <div class="item_cont_flex" style="display:flex;justify-content:space-between;">
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> 6 days left </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(225, 219, 197);font-size:15px;">9 Days</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_1.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --></div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_3.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --></div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+        </div>
+        <div class="item_cont_flex" style="display:flex;justify-content:space-between;">
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> 2 days left</div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(225, 219, 197);font-size:15px;">4 Days</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_3.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+          <ion-item data-v-136129e6="" class="event item md item-lines-default item-fill-none item-label mob_tab"
+            style="padding: 0px;width:100%;margin:20px;"><ion-thumbnail data-v-136129e6="" class="event__photo md"><img data-v-136129e6=""
+                src="assets/backgrounds/Gym_2.png" class="event__img"></ion-thumbnail>
+            <div data-v-136129e6="" class="event__holder"><ion-label data-v-136129e6=""
+                class="event__title sc-ion-label-md-h sc-ion-label-md-s md">Diamond Gym</ion-label>
+              <div data-v-136129e6="" class="event__time my_txt2">
+                <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> --> </div><!-- <ion-text class="event__date">
+            &nbsp;
+            <template> </template>
+          </ion-text> -->
+              <div data-v-136129e6="" class="d-flex align-items-center justify-content-between" style="margin-top: 14px;">
+                <address-item data-v-136129e6="" class="event__address">
+                  <div data-v-136129e6="" class="mid_txt" style="display: flex; align-items: center;"><img
+                      data-v-136129e6="" src="assets/icon/pin_loc.png" class="img-fluid" style="width: 15px;"><span
+                      data-v-136129e6="" style="padding-left: 10px;">Light Street, 24</span></div>
+                </address-item><ion-text data-v-136129e6="" class="status-text md txt_sd"><span data-v-136129e6=""
+                    style="color: rgb(193, 68, 68);font-size:15px;">Expired</span></ion-text></div>
+            </div>
+          </ion-item>
+        </div>
+        <!-- <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
+          :text="`Currently you have no booked ${bookingName}`" /> -->
         <ion-infinite-scroll threshold="100px" class="infinite-scroll" @ionInfinite="loadData" v-if="(activeTab === EntitiesEnum.Facilities &&
             facilities &&
             facilities?.length < totalFacilities) ||
@@ -33,7 +272,7 @@
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
       </div>
-      <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+      
     </template>
   </base-layout>
 </template>
@@ -42,7 +281,8 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
-import { TabItem } from "@/interfaces/TabItem";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
+import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, ref } from "vue";
 import EventItem from "@/general/components/EventItem.vue";
@@ -71,22 +311,27 @@ import dayjs from "dayjs";
 
 const router = useRouter();
 
-const tabs: TabItem[] = [
-  {
-    name: EntitiesEnum.Facilities,
-    label: "assets/icon/dumbbellActive.png",
-  },
+const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.FacilityDropins,
-    label: "assets/icon/dropins.png",
+    labelActive: "assets/icon/dropinsActive.png",
+    labelInactive: "assets/icon/dropins.png",
   },
   {
+    name: EntitiesEnum.Facilities,
+    labelActive: "assets/icon/dumbbell.png",
+    labelInactive: "assets/icon/dumbbellActive.png",
+  },
+
+  {
     name: EntitiesEnum.Trainings,
-    label: "assets/icon/Trainer.png",
+    labelActive: "assets/icon/TrainerActive.png",
+    labelInactive: "assets/icon/Trainer.png",
   },
   {
     name: EntitiesEnum.Events,
-    label: "assets/icon/facilities.png",
+    labelActive: "assets/icon/facilitiesActive.png",
+    labelInactive: "assets/icon/facilities.png",
   },
 ];
 
@@ -464,4 +709,119 @@ const bookingName = computed(() => {
   margin-left: -16px;
   margin-right: -16px;
 }
+
+.txt_sd{
+
+  position: absolute;
+  right:0;
+  padding:0 !important;
+}
+
+.mob_tab{
+
+  
+}
+
+
+@media only screen and (max-width: 900px){
+
+
+  .item_cont_flex{
+
+    display: block !important;
+  }
+
+
+  .mob_tab{
+
+  margin:16px 0 !important;
+
+  }
+  
+
+}
+
+.event {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  position: relative;
+  --border-radius: 8px;
+  --min-height: 73px;
+  --padding-top: 13px;
+  --padding-bottom: 13px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --background: var(--gray-700);
+
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+
+  &__photo {
+    flex-shrink: 0;
+    --size: 68px;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 68px;
+    text-align: center;
+    width: var(--size);
+    margin: 0 16px 0 0;
+    height: var(--size);
+    color: var(--gray-700);
+    background: var(--gray-600);
+    --border-radius: 8px;
+
+    &--rounded {
+      --border-radius: 50%;
+    }
+  }
+
+  &__holder {
+    min-height: 73px;
+    width: calc(100% - 68px);
+
+    .event--time-hidden & {
+      display: flex;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 2px;
+    max-width: calc(100% - 86px);
+    color: var(--ion-color-white);
+
+    .event--time-hidden & {
+      max-width: none;
+    }
+  }
+
+  &__date {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  &__time {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 0;
+    right: 0;
+    color: var(--ion-color-white);
+
+    ion-icon {
+      line-height: 1;
+      font-size: 24px;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
 </style>
