@@ -168,4 +168,18 @@ const emits = defineEmits<{
   --min-height: 30px;
   --min-width: 30px;
 }
+
+.header__title{
+
+
+  text-align: center;
+  font-family: Lato;
+font-size: 24px;
+font-weight: 400;
+line-height: 31px;
+letter-spacing: 0em;
+color:#E1DBC5;
+
+}
+
 </style>

@@ -1,825 +1,536 @@
 <template>
-  <base-layout>
-    <template #header>
-      <page-header title="Dashboard">
-        <template #custom-btn>
-          <ion-button @click="onViewChat" class="header-btn">
-            <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
-          </ion-button>
-          <ion-button @click="onViewFavourites" class="header-btn">
-            <ion-icon src="assets/icon/heart.svg" />
-          </ion-button>
-        </template>
-      </page-header>
-    </template>
-    <template #content>
-      <div class="dashboard">
-        <div class="dashboards-items">
-          <dashboard-item :items="activityItems">
-            <template #title>
-              <ion-icon src="public/assets/icon/activity.svg" class="activity-icon" />
-              Activity
-            </template>
-          </dashboard-item>
-          <dashboard-item :items="ratingItems">
-            <template #title>
-              <ion-icon src="assets/icon/trophy.svg" class="trophy-icon" />
-              My Ratings
-            </template>
-            <template #bottom>
-              <div class="rating__container">
-                <ion-text class="rating-likes">
-                  {{ widgetInfo?.positive_reviews_count || 0 }}
-                  <ion-icon class="like-icon" src="assets/icon/like.svg" />
-                </ion-text>
-                <ion-text class="rating-dislikes">
-                  {{ widgetInfo?.negative_reviews_count || 0 }}
-                  <ion-icon class="dislike-icon" src="assets/icon/dislike.svg" />
-                </ion-text>
-              </div>
-            </template>
-          </dashboard-item>
-        </div>
-        <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" />
-        <div class="events__container">
-          <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
-            isFacilitiesLoading ||
-            isTrainingsLoading ||
-            isEventsLoading || isDropinsLoading
-            " />
-          <template v-if="selectedEvents.length &&
-            !isTrainingsLoading &&
-            !isEventsLoading &&
-            !isFacilitiesLoading &&
-            !isDropinsLoading
-            ">
-            <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)" />
-          </template>
-          <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
-            ">
-          </ion-spinner>
-          <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
-            :text="`Currently you have no booked ${bookingName}`" />
-        </div>
-        <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+  <ion-page
+    class="base-layout"
+    :class="{ 'has-fixed-header': headerFixed }"
+    :style="{
+      '--breakpoint': initialBreakpoint * 100 + 'vh',
+      '--offset': offsetTop + 'px',
+    }"
+  >
+    <div class="header-section">
+      <ion-header
+        class="header ion-no-border"
+        :class="{ 'header--fixed': headerFixed }"
+      >
+        <slot name="header"></slot>
+      </ion-header>
+    </div>
+    <!-- <div class="content-section"> -->
+    <div class="dashboard-container" v-if="getPlatform == 'desktop'">
+      <div class="dashboard-container__sidebar">
+        <dashboard-sidebar />
       </div>
-    </template>
-    <template>
-      <ion-item
-        lines="none"
-        class="event">
-        <ion-thumbnail class="event__photo">
-          <img src=""
-            class="event__img"
-          />
-          <template>
+      <div class="dashboard-container__right-section abc">
+        <!-- <slot name="right-section"> -->
+        <ion-content
+          ref="content"
+          :fullscreen="true"
+          :scroll-events="draggable"
+          @ionScroll="onContentScroll"
+          @touchend="onContentTouchEnd"
+          :scroll-y="initialBreakpoint < 1"
+          @touchstart="onContentTouchStart"
+          @ionScrollEnd="onContentScrollEnd"
+          @ionScrollStart="onContentScrollStart"
+          class="page-content has-footer has-header"
+          :class="{
+            'page-content--full-height': contentFullHeight,
+            'page-content--fullscreen': isFullscreenView,
+            'top-24': isPlatform('ios'),
+          }"
+        >
+          <template v-if="draggable">
+            <ion-backdrop
+              :visible="true"
+              :tappable="false"
+              :style="{
+                opacity:
+                  1 - scrollPercents < 0
+                    ? 0
+                    : 1 - scrollPercents > 1
+                    ? 1
+                    : 1 - scrollPercents,
+              }"
+            >
+            </ion-backdrop>
+            <div
+              class="fixed-content"
+              :class="{
+                'fixed-content--fullheight': initialBreakpoint === 1,
+              }"
+            >
+              <slot name="static"></slot>
+            </div>
+
+            <div
+              class="draggable-content"
+              :style="{
+                background: draggableBackground,
+                '--background': draggableBackground,
+              }"
+            >
+              <span
+                draggable="true"
+                class="draggable-content__drag-handle"
+                :style="{ '--offset': offsetTop + 'px' }"
+                :class="{
+                  'draggable-content__drag-handle--fixed': isFullscreenView,
+                }"
+              >
+              </span>
+              <slot name="draggable"></slot>
+            </div>
           </template>
-        </ion-thumbnail>
-        <div class="event__holder">
-          <ion-label class="event__title"></ion-label>
-          <div class="event__time">
-            <ion-icon src="assets/icon/time.svg" class="time-icon" />
-          </div>
-          <ion-text class="event__date">
-            <template></template>
-          </ion-text>
-          <div class="d-flex align-items-center justify-content-between">
-            <address-item class="event__address">
-            </address-item>
-            <ion-text 
-              class="status-text">
-            </ion-text>
-          </div>
+
+          <slot v-else name="content"></slot>
+        </ion-content>
+        <!-- </slot> -->
+      </div>
+    </div>
+    <ion-content
+      v-if="getPlatform == 'ios' || getPlatform == 'android'"
+      ref="content"
+      :fullscreen="true"
+      :scroll-events="draggable"
+      @ionScroll="onContentScroll"
+      @touchend="onContentTouchEnd"
+      :scroll-y="initialBreakpoint < 1"
+      @touchstart="onContentTouchStart"
+      @ionScrollEnd="onContentScrollEnd"
+      @ionScrollStart="onContentScrollStart"
+      class="page-content has-footer has-header"
+      :class="{
+        'page-content--full-height': contentFullHeight,
+        'page-content--fullscreen': isFullscreenView,
+        'top-24': isPlatform('ios'),
+      }"
+    >
+      <template v-if="draggable">
+        <ion-backdrop
+          :visible="true"
+          :tappable="false"
+          :style="{
+            opacity:
+              1 - scrollPercents < 0
+                ? 0
+                : 1 - scrollPercents > 1
+                ? 1
+                : 1 - scrollPercents,
+          }"
+        >
+        </ion-backdrop>
+        <div
+          class="fixed-content"
+          :class="{
+            'fixed-content--fullheight': initialBreakpoint === 1,
+          }"
+        >
+          <slot name="static"></slot>
         </div>
-      </ion-item>
-    </template>
-    
-    
-  </base-layout>
+
+        <div
+          class="draggable-content"
+          :style="{
+            background: draggableBackground,
+            '--background': draggableBackground,
+          }"
+        >
+          <span
+            draggable="true"
+            class="draggable-content__drag-handle"
+            :style="{ '--offset': offsetTop + 'px' }"
+            :class="{
+              'draggable-content__drag-handle--fixed': isFullscreenView,
+            }"
+          >
+          </span>
+          <slot name="draggable"></slot>
+        </div>
+      </template>
+
+      <slot v-else name="content"></slot>
+    </ion-content>
+    <!-- </div> -->
+    <ion-footer
+      v-if="!hideNavigationMenu"
+      :class="{ 'page-footer--content-width': !fullWidthFooter }"
+      collapse="fade"
+      no-border
+      class="page-footer ion-no-border"
+    >
+      <slot name="footer">
+        <navigation-menu :items="menu" />
+      </slot>
+    </ion-footer>
+  </ion-page>
 </template>
 
 <script lang="ts">
 export default {
-  name: "Dashboard",
-  // data() {
-  //   return {
-  //     tabs: [
-  //       {
-  //         name: "Facilities",
-  //         labelActive: "assets/icon/dumbbellActive.png",
-  //         labelInactive: "assets/icon/dumbbellActive.png",
-  //       },
-  //       {
-  //         name: "FacilityDropins",
-  //         labelActive: "assets/icon/dropinsActive.png",
-  //         labelInactive: "assets/icon/dropinsInactive.png",
-  //       },
-  //       {
-  //         name: "Trainings",
-  //         labelActive: "assets/icon/trainerActive.png",
-  //         labelInactive: "assets/icon/trainerInactive.png",
-  //       },
-  //       {
-  //         name: "Events",
-  //         labelActive: "assets/icon/facilitiesActive.png",
-  //         labelInactive: "assets/icon/facilitiesInactive.png",
-  //       },
-  //     ],
-  //     activeTab: "Facilities", // Initialize the active tab
-  //   };
-  // },
-  // methods: {
-  //   tabsChanged(tabName: string) {
-  //     this.activeTab = tabName;
-  //   },
-  // },
+  name: "BaseLayout",
 };
 </script>
 
 <script setup lang="ts">
-
-import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import DashboardItem from "@/general/components/DashboardItem.vue";
-import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
-import { TabItemNew } from "@/interfaces/TabItemNew";
-import { EntitiesEnum } from "@/const/entities";
-import { computed, onMounted, ref } from "vue";
-
-import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import {
-  EventPaginator,
-  MyEventsDocument,
-  MyFacilityItemPassesDocument,
-  FacilityItemPass,
-  UserPaginator,
-  MyTrainingsDocument,
-  DashboardWidgetDocument,
-  UserAvailabilityDocument,
-  Training,
-  QueryMyTrainingsOrderByColumn,
-  SortOrder,
-  QueryMyFacilityItemPassesOrderByColumn,
-  QueryMyEventsOrderByColumn,
-  TrainingStatesEnum,
-  
-} from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
-import EventItem from "@/general/components/EventItem.vue";
-import ItemsHeader from "@/general/components/blocks/headers/ItemsHeader.vue";
-import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
-import dayjs, { Dayjs } from "dayjs";
-import { useRouter } from "vue-router";
-import useId from "@/hooks/useId";
-import { onValue } from "firebase/database";
-import { chatsRef } from "@/firebase/db";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
+  computed,
+  defineExpose,
+  defineProps,
+  onMounted,
+  onUnmounted,
+  ref,
+  withDefaults,
+} from "vue";
+import {
+  IonHeader,
+  IonPage,
+  IonContent,
+  IonFooter,
+  IonBackdrop,
+  isPlatform,
+} from "@ionic/vue";
+import NavigationMenu from "@/general/components/NavigationMenu.vue";
+import DashboardSidebar from "@/general/components/blocks/DashboardSidebar.vue";
+import useRoles from "@/hooks/useRole";
+import { navigationMenu as navigation } from "@/const/navigation";
+import { IonContentCustomEvent, ScrollDetail } from "@ionic/core";
+import { RoleEnum } from "@/generated/graphql";
+import { EntitiesEnum } from "@/const/entities";
+import { Capacitor } from "@capacitor/core";
 
-const router = useRouter();
-const { id } = useId();
-const unreadMessages = ref<number[]>([]);
-
-const {
-  result: eventsResult,
-  loading: isEventsLoading,
-  refetch: refetchEvents,
-} = useQuery(
-  MyEventsDocument,
+const props = withDefaults(
+  defineProps<{
+    hideNavigationMenu?: boolean;
+    headerFixed?: boolean;
+    contentFullHeight?: boolean;
+    fullWidthFooter?: boolean;
+    initialBreakpoint?: number;
+    draggable?: boolean;
+    offsetTop?: number;
+    draggableBackground?: string;
+  }>(),
   {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyEventsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
+    hideNavigationMenu: false,
+    headerFixed: false,
+    fullWidthFooter: true,
+    contentFullHeight: false,
+    initialBreakpoint: 0.5,
+    draggable: false,
+    offsetTop: 42,
+    draggableBackground: "",
   }
 );
 
-const {
-  result: trainingsResult,
-  loading: isTrainingsLoading,
-  refetch: refetchTrainings,
-} = useQuery(
-  MyTrainingsDocument,
-  {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyTrainingsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
+const content = ref<typeof IonContent | null>(null);
+const { role } = useRoles();
+
+const menuType =
+  role === RoleEnum.OrganizationOwner ||
+  role === RoleEnum.FacilityOwner ||
+  role === RoleEnum.Manager
+    ? EntitiesEnum.Facility
+    : role;
+const menu = navigation[menuType];
+
+const scrollToBottom = () => {
+  if (content.value) {
+    content.value.$el.scrollToBottom(500);
   }
-);
+};
 
-const {
-  result: dropinsResult,
-  loading: isDropinsLoading,
-  refetch: refetchDropins,
-} = useQuery(
-  MyTrainingsDocument,
-  {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyTrainingsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
+const showDraggable = () => {
+  content?.value?.$el.scrollToPoint(
+    0,
+    breakpoint.value - props.offsetTop - safeArea.top,
+    draggableOptions.duration
+  );
+};
 
-const {
-  result: facilitiesResult,
-  loading: isFacilitiesLoading,
-  refetch: refetchFacilities,
-} = useQuery(
-  MyFacilityItemPassesDocument,
-  {
-    page: 1,
-    first: 4,
-    orderBy: [
-      {
-        column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-// Dashboard widgets - Activity + My Ratings widgets info
-const { result: dashboardWidgetResult } = useQuery(DashboardWidgetDocument);
-
-// Calendar info
-const { result: calendarWidgetResult } = useQuery(
-  UserAvailabilityDocument,
-  {
-    id,
-    from: dayjs().startOf("d").format("YYYY-MM-DD HH:mm:ss"),
-    to: dayjs().day(6).endOf("d").format("YYYY-MM-DD HH:mm:ss"),
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const bookings = computed(() => {
-  const availability = [];
-  if (calendarWidgetResult && calendarWidgetResult?.value) {
-    const userAvailability = calendarWidgetResult?.value?.userAvailability;
-
-    if (userAvailability && userAvailability?.events) {
-      const { events } = userAvailability;
-      const bookedEvents = events.map((event: any) => ({
-        start_date: event?.start_date || null,
-      }));
-
-      availability.push(...bookedEvents);
-    }
-    if (userAvailability && userAvailability?.trainings) {
-      const { trainings } = userAvailability;
-      const bookedTrainings = trainings
-        .filter(
-          (training: Training) => training.state === TrainingStatesEnum.Accepted
-        )
-        .map((training: Training) => ({
-          start_date: training?.start_date || null,
-        }));
-      availability.push(...bookedTrainings);
-    }
-  }
-  return availability;
+defineExpose({
+  scrollToBottom,
+  showDraggable,
 });
 
-const fetchChats = () => {
-  if (unreadMessages.value.length) unreadMessages.value = [];
-  onValue(chatsRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      const chat = childSnapshot.val();
-      if (chat.unread && chat.unread[id]) {
-        unreadMessages.value.push(chat.unread[id]);
-      }
-    });
-  });
+const getBreakpoint = (): number => {
+  return window.innerHeight * props.initialBreakpoint;
+};
+
+if (props.draggable) {
+  window.addEventListener("resize", getBreakpoint);
+}
+
+const scrollTop = ref<number>(0);
+const isDraggableTouched = ref<boolean>(false);
+const isOnMove = ref<boolean>(false);
+const breakpoint = ref<number>(getBreakpoint());
+const isDirectionTop = ref<boolean>(true);
+const isOnAutoScroll = ref<boolean>(false);
+const isFullscreen = ref<boolean>(scrollTop.value > breakpoint.value);
+const isFullscreenView = ref<boolean>(scrollTop.value > breakpoint.value);
+const scrollPercents = ref<number>(
+  (breakpoint.value - scrollTop.value - props.offsetTop) / breakpoint.value
+);
+const safeArea = {
+  top: parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue(
+      "--ion-safe-area-top"
+    )
+  ),
+  bottom: parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue(
+      "--ion-safe-area-bottom"
+    )
+  ),
+  // top: 50,
+  // bottom: 50,
 };
 
 onMounted(() => {
-  fetchChats();
-});
-
-const widgetInfo = computed(() => dashboardWidgetResult?.value?.me || []);
-
-const ratingItems = computed(() => [
-  {
-    value: widgetInfo?.value?.reviews_count || 0,
-    description: "total feedbacks",
-  },
-]);
-
-const activityItems = computed(() => [
-  {
-    value: widgetInfo?.value?.checkins_count || 0,
-    description: "gym check-ins",
-  },
-  {
-    value: widgetInfo?.value?.completed_trainings_count || 0,
-    description: "trainings done",
-  },
-]);
-
-const events = computed<EventPaginator["data"]>(() =>
-  eventsResult?.value?.myEvents?.data ? eventsResult.value.myEvents.data : []
-);
-
-const trainings = computed(() =>
-  trainingsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
-    : []
-);
-
-const dropins = computed(() =>
-  dropinsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
-    : []
-);
-
-const facilities = computed<UserPaginator["data"]>(() =>
-  facilitiesResult?.value?.myFacilityItemPasses?.data
-    ? facilitiesResult.value.myFacilityItemPasses.data.map(
-      (facilityPass: FacilityItemPass) => ({
-        id: facilityPass.id,
-        title: facilityPass.facilityItem.facility.name,
-        end_date: facilityPass.end_date,
-        start_date: dayjs(facilityPass.end_date)
-          .subtract(
-            facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
-            "d"
-          )
-          .format("YYYY-MM-DD HH:mm:ss"),
-        media: facilityPass.facilityItem.facility.media,
-        address: facilityPass.facilityItem.facility.address,
-      })
-    )
-    : []
-);
-
-const selectedEvents = computed(() => {
-
-
-  if (activeTab.value === EntitiesEnum.Events) {
-
-    return events.value;
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return facilities.value;
-  }
-
-  if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return dropins.value;
-  }
-  return trainings.value;
-});
-
-const dynamicTitle = computed(() => {
-  if (activeTab.value === EntitiesEnum.Events) {
-
-    return 'Upcoming Events';
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return 'My Passes';
-  }
-
-  if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return 'My Drop-ins';
-  }
-
-  return 'Upcoming Trainings';
-});
-
-const bookingName = computed(() => {
-  if (activeTab.value === EntitiesEnum.Events) {
-    return "events";
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return "gyms";
-  }
-
-  return "trainings";
-});
-
-const tabs: TabItemNew[] = [
-{
-    name: EntitiesEnum.FacilityDropins,
-    labelActive: "assets/icon/dropinsActive.png",
-    labelInactive: "assets/icon/dropins.png",
-  },
-  {
-    name: EntitiesEnum.Facilities,
-    labelActive: "assets/icon/dumbbell.png",
-    labelInactive: "assets/icon/dumbbellActive.png",
-  },
-  
-  {
-    name: EntitiesEnum.Trainings,
-    labelActive: "assets/icon/TrainerActive.png",
-    labelInactive: "assets/icon/Trainer.png",
-  },
-  {
-    name: EntitiesEnum.Events,
-    labelActive: "assets/icon/facilitiesActive.png",
-    labelInactive: "assets/icon/facilities.png",
-  },
-];
-
-const selectedDate = ref<Dayjs | null>(dayjs());
-
-const activeTab = ref<EntitiesEnum>(
-  (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
-  EntitiesEnum.Facilities
-);
-
-const tabsChanged = (ev: EntitiesEnum) => {
-  if (!ev) return;
-  activeTab.value = ev;
-  localStorage.setItem("dashboard_active_tab", activeTab.value);
-  refetchBooking();
-};
-
-const refetchBooking = () => {
-  switch (activeTab.value) {
-    case EntitiesEnum.Events:
-      refetchEvents();
-      break;
-
-    case EntitiesEnum.FacilityDropins:
-      refetchDropins();
-      break;
-
-    case EntitiesEnum.Trainings:
-      refetchTrainings();
-      break;
-
-    case EntitiesEnum.Facilities:
-      refetchFacilities();
-      break;
-
-    default:
-      break;
-  }
-};
-
-const onViewAllEvents = () => {
-  router.push({ name: EntitiesEnum.DashboardEvents });
-};
-
-const onViewChat = () => {
-  router.push({ name: EntitiesEnum.ChatList });
-};
-const onViewFavourites = () => {
-  router.push({ name: EntitiesEnum.Favourites });
-};
-
-const onViewCalendar = () => {
-  router.push({ name: EntitiesEnum.DashboardCalendar });
-};
-
-const openEvent = (id: string | number) => {
-  switch (activeTab.value) {
-    case EntitiesEnum.Facilities:
-      return router.push({
-        name: EntitiesEnum.BookedTraining,
-        params: { id },
-        query: {
-          type: EntitiesEnum.Facility,
-        },
-      });
-
-    case EntitiesEnum.Trainings:
-      return router.push({
-        name: EntitiesEnum.BookedTraining,
-        params: { id },
-        query: {
-          type: EntitiesEnum.Training,
-        },
-      });
-
-    case EntitiesEnum.Events:
-      return router.push({
-        name: EntitiesEnum.BookedTraining,
-        params: { id },
-        query: {
-          type: EntitiesEnum.Event,
-        },
-      });
-
-    default:
-      break;
-  }
-};
-
-
-
-   
-    const props = withDefaults(
-      defineProps<{
-        item: Event;
-        rounded?: boolean;
-        dateRange?: boolean;
-        hideTime?: boolean;
-      }>(),
-      {
-        rounded: false,
-      }
-    );
-    const date = computed(() =>
-      dayjs(props.item.start_date).format(
-        props.dateRange &&
-          dayjs(props.item.start_date).year() !== dayjs(props.item.end_date).year()
-          ? "D MMM YYYY"
-          : "D MMMM"
+  setTimeout(() => {
+    safeArea.top = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--ion-safe-area-top"
       )
     );
-    const endDate = computed(() =>
-      dayjs(props.item.end_date).format(
-        props.dateRange &&
-          dayjs(props.item.start_date).year() !== dayjs(props.item.end_date).year()
-          ? "D MMM YYYY"
-          : "D MMMM"
+    safeArea.bottom = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--ion-safe-area-bottom"
       )
     );
-    const time = computed(() => dayjs(props.item.start_date).format("hh:mm A"));
-    const formatTime = (date: number, time: string): string => {
-      return dayjs(date)
-        .hour(0)
-        .minute(0)
-        .second(0)
-        .millisecond(0)
-        .format("YYYY-MM-DD HH:mm:ss");
-    };
-    
-  
+  }, 500);
+});
 
+const draggableOptions = {
+  edges: breakpoint.value / 3,
+  duration: 350,
+};
+
+const onContentScroll = (event: IonContentCustomEvent<ScrollDetail>) => {
+  scrollPercents.value =
+    (breakpoint.value - scrollTop.value) / breakpoint.value;
+  isDirectionTop.value =
+    scrollTop.value < event.detail.scrollTop + props.offsetTop;
+  scrollTop.value = event.detail.scrollTop + props.offsetTop;
+  isFullscreenView.value =
+    scrollTop.value + 2 + safeArea.top >= breakpoint.value;
+};
+
+const onContentScrollEnd = () => {
+  isOnMove.value = false;
+  if (!isDraggableTouched.value && !isOnAutoScroll.value) {
+    alignDraggableContent();
+  }
+};
+
+const onContentScrollStart = () => {
+  isOnMove.value = true;
+};
+
+const onContentTouchEnd = () => {
+  isDraggableTouched.value = false;
+
+  if (!isOnMove.value) {
+    alignDraggableContent();
+  }
+};
+
+const onContentTouchStart = () => {
+  isDraggableTouched.value = true;
+};
+
+const alignDraggableContent = async () => {
+  if (!isDirectionTop.value && scrollTop.value < breakpoint.value) {
+    // down
+    isOnAutoScroll.value = true;
+    await content?.value?.$el.scrollToPoint(
+      0,
+      scrollTop.value - props.offsetTop + safeArea.top <
+        breakpoint.value - draggableOptions.edges
+        ? 0
+        : breakpoint.value - props.offsetTop - safeArea.top,
+      draggableOptions.duration
+    );
+    setTimeout(() => {
+      isOnAutoScroll.value = false;
+    }, 200);
+  } else if (
+    isDirectionTop.value &&
+    scrollTop.value > props.offsetTop &&
+    breakpoint.value >= scrollTop.value
+  ) {
+    // up
+    isOnAutoScroll.value = true;
+    await content?.value?.$el.scrollToPoint(
+      0,
+      scrollTop.value > draggableOptions.edges
+        ? breakpoint.value - props.offsetTop - safeArea.top
+        : 0,
+      draggableOptions.duration
+    );
+    setTimeout(() => {
+      isOnAutoScroll.value = false;
+    }, 200);
+  }
+
+  isFullscreen.value =
+    scrollTop.value + 1 >= breakpoint.value - props.offsetTop;
+};
+
+onUnmounted(() => {
+  if (props.draggable) {
+    window.removeEventListener("resize", getBreakpoint);
+  }
+});
+
+const getPlatform = computed(() => {
+  if (Capacitor.isNativePlatform()) {
+    if (isPlatform("android")) {
+      return "android";
+    }
+    if (isPlatform("ios")) {
+      return "ios";
+    }
+  } else {
+    return "desktop";
+  }
+});
 </script>
 
 <style scoped lang="scss">
-.dashboard {
-  padding: 24px 16px 78px;
+.has-fixed-header {
+  z-index: initial;
+  contain: size style;
 }
 
-.header-btn {
-  height: 32px;
-  margin: 0 5px;
-  font-size: 24px;
-  display: block;
-  min-width: 32px;
-  --border-radius: 50% !important;
-  --icon-font-size: 24px;
-  --padding-bottom: 0;
-  --padding-end: 0;
-  --padding-start: 0;
-  --padding-top: 0;
-  --icon-padding-bottom: 0;
-  --icon-padding-end: 0;
-  --icon-padding-start: 0;
-  --icon-padding-top: 0;
-  --min-height: 32px;
-  --min-width: 32px;
+.header {
+  flex-shrink: 0;
 
-  ion-icon {
-    font-size: 1em;
-  }
-
-  &__badge {
-    top: 50%;
-    left: 50%;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+  &--fixed {
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1500;
     position: absolute;
-    margin: -12px 0 0 4px;
-    background: var(--ion-color-danger-tint);
   }
 }
 
-.dashboards-items {
-  display: flex;
-  justify-content: space-between;
-}
+.page-content {
+  overflow: hidden;
+  padding-bottom: calc(32px + var(--ion-safe-area-bottom));
+  --padding-start: 0;
+  --padding-end: 0;
 
-.rating {
-  &__container {
-    display: flex;
-    align-items: flex-end;
-    font-family: "Yantramanav", serif;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
+  &::part(scroll) {
+    margin-right: -15px;
+    padding-right: 15px;
   }
 
-  &-likes {
-    color: var(--ion-color-success-tint);
+  &::part(scroll)::-webkit-scrollbar {
+    display: none;
   }
 
-  &-dislikes {
-    color: var(--ion-color-danger-tint);
-  }
-
-  &-likes,
-  &-dislikes {
-    display: flex;
-    align-items: center;
-    gap: 2px;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-.like-icon,
-.dislike-icon {
-  font-size: 24px;
+.page-footer {
+  flex-shrink: 0;
+
+  &--content-width {
+    padding: 0 24px calc(20px + var(--ion-safe-area-bottom));
+
+    &:deep(ion-button) {
+      margin: 0;
+    }
+  }
 }
 
-.trophy-icon {
-  font-size: 18px;
-  padding-right: 6px;
-  padding-left: 4px;
-  padding-bottom: 4px;
+.base-layout {
+  background-color: var(--gray-800);
 }
 
-.activity-icon {
-  font-size: 24px;
-  padding-right: 4px;
-}
-
-.page-tabs {
+.fixed-content {
+  top: 0;
   left: 0;
   right: 0;
-  display: flex;
-  z-index: 21000;
-  position: fixed;
-  align-items: center;
-  pointer-events: none;
-  flex-direction: column;
-  justify-content: center;
-  bottom: calc(84px + var(--ion-safe-area-bottom));
-  --btn-min-width: 100px;
-  padding: 12px 20px 12px 20px;
+  position: absolute;
+  transition: height 0.35s ease;
+  height: calc(var(--breakpoint) + 20px);
+
+  &--fullheight {
+    height: 100%;
+  }
 }
 
-
-.empty-block {
-  margin-top: 48px;
-}
-
-.spinner {
-  display: block;
-  margin: 64px auto;
-}
-
-.event {
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 400;
+.draggable-content {
+  z-index: 50;
+  padding-top: 24px;
   position: relative;
-  --border-radius: 8px;
-  --min-height: 73px;
-  --padding-top: 13px;
-  --padding-bottom: 13px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --background: var(--gray-700);
+  border-radius: 20px 20px 0 0;
+  margin-top: var(--breakpoint);
+  transition: margin-top 0.35s ease;
+  background: var(--ion-background-color);
+  min-height: calc(100% - var(--offset) - var(--ion-safe-area-top));
 
-  &:not(:first-child) {
-    margin-top: 16px;
-  }
-
-  &__photo {
-    flex-shrink: 0;
-    --size: 68px;
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 68px;
-    text-align: center;
-    width: var(--size);
-    margin: 0 16px 0 0;
-    height: var(--size);
-    color: var(--gray-700);
-    background: var(--gray-600);
-    --border-radius: 8px;
-
-    &--rounded {
-      --border-radius: 50%;
-    }
-  }
-
-  &__holder {
-    min-height: 73px;
-    width: calc(100% - 68px);
-
-    .event--time-hidden & {
-      display: flex;
-      padding-top: 4px;
-      padding-bottom: 4px;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-  }
-
-  &__title {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.5;
-    margin-bottom: 2px;
-    max-width: calc(100% - 86px);
-    color: var(--ion-color-white);
-
-    .event--time-hidden & {
-      max-width: none;
-    }
-  }
-
-  &__date {
-    display: block;
-    margin-bottom: 2px;
-  }
-
-  &__time {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    top: 0;
+  .modal-handle,
+  &__drag-handle {
+    left: 0;
     right: 0;
-    color: var(--ion-color-white);
+    z-index: 15;
+    height: 20px;
+    display: block;
+    position: absolute;
+    pointer-events: none;
+    bottom: calc(100% - 20px);
+    transition-duration: 0.2s;
+    border-radius: 20px 20px 0 0;
+    transition-timing-function: ease;
+    transition-property: border-radius;
+    background: var(--ion-background-color);
 
-    ion-icon {
-      line-height: 1;
-      font-size: 24px;
-      color: var(--ion-color-primary);
+    &:after {
+      left: 50%;
+      content: "";
+      bottom: 4px;
+      width: 48px;
+      height: 4px;
+      margin-left: -24px;
+      border-radius: 2px;
+      position: absolute;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    &--fixed {
+      position: fixed;
+      border-radius: 0;
+      height: calc(var(--offset) + var(--ion-safe-area-top) + 20px);
+      bottom: calc(100% - var(--offset) - var(--ion-safe-area-top) - 20px);
     }
   }
 }
 
-.time-icon {
-  font-size: 22px;
-  padding-right: 4px;
+.backdrop-no-tappable {
+  pointer-events: none;
 }
-.status-text {
-  font: 12px/1 Lato;
-  padding: 2px 8px 2px 8px;
-  border-radius: 16px;
-}
-.ongoing {
-  background-color: #E1DBC5;
-  color: #19191B;
-}
-.finished {
-  background: none;
-  border: 1px #AFAFAF;
-  color: #AFAFAF;
+.top-24 {
+  padding-top: 24px;
 }
 
+.dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
 
+  &__sidebar {
+    width: 256px;
+    box-shadow: 6px 0px 18px 0px rgba(0, 0, 0, 0.25);
+    background: var(--gray-700);
+  }
 
+  &__right-section {
+    width: calc(100% - 256px);
+  }
+}
 </style>
