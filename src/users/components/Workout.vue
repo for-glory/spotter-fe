@@ -185,6 +185,7 @@ const getDurationText = (value: number) => {
 
 <style lang="scss" scoped>
 .workout-item {
+  cursor: pointer;
   --border-radius: 8px;
   --padding-start: 0;
   --padding-end: 0;

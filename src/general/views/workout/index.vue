@@ -63,7 +63,7 @@
             <div v-if="filter==='all'">
               <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
               <div>
-                <div 
+                <!-- <div 
                   class="d-flex align-items-center justify-content-between w-100"
                   style="padding-top: 16px; padding-bottom: 16px;"
                 >
@@ -104,7 +104,16 @@
                       @click="watchDailys(daily)"
                     />
                   </swiper-slide>
-                </swiper>
+                </swiper> -->
+                <workouts-swiper
+                  title="Recently Uploaded"
+                  :workouts="dailysData"
+                  queryType="recent"
+                  @show="showDailysItem"
+                  @hide="hideDailysItem"
+                  @changeFilter="handleSetFilter"
+                  @click="openViewModal"
+                />
               </div>
               <div>
                 <div 
@@ -277,7 +286,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { useDailysStore } from "@/general/stores/useDailysStore";
 import dayjs from "dayjs";
-import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
+import WorkoutsSwiper from "@/general/components/dashboard/workouts/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
