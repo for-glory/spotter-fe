@@ -120,7 +120,7 @@
           </div>
 
           <div class="form-row">
-            <ion-label class="label">
+            <ion-label class="label native-app">
               Please set your travel or distance radius (1-15 miles)
             </ion-label>
             <wheel-picker :options="startTimeOptions" name="radiusDistance">
@@ -594,7 +594,7 @@ const startTimeOptions = {
   columns: radiusPickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "Select radius",
       role: "cancel",
     },
     {
@@ -667,6 +667,7 @@ const chosenGym = computed(() => store.assignedFacility);
     --box-shadow: inset 0 0 0 0.8px var(--gray-600);
   }
 }
+
 .address-container {
   display: flex;
   min-height: 48px;

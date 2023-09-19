@@ -36,6 +36,7 @@ import {
   EventDocument,
 } from "@/generated/graphql";
 import { useMutation, useQuery } from "@vue/apollo-composable";
+import dayjs from "dayjs";
 
 const router = useRouter();
 const route = useRoute();
@@ -55,10 +56,18 @@ const { result: eventResult, loading: eventLoading } = useQuery(
 );
 
 const eventData = computed(() => {
+  console.log(eventResult.value, 'ssddsdsåß');
   if (!eventResult.value) return;
   return {
     title: eventResult.value?.event.title,
-    description: eventResult.value?.event.description,
+     price: eventResult.value?.event.price,
+     max_participants: eventResult.value?.event.max_participants,
+     description: eventResult.value?.event.description,
+    start_date: eventResult.value?.event.start_date,
+    start_time: dayjs(eventResult.value?.event.start_date).format("HH:mm"),
+     end_time: dayjs(eventResult.value?.event.end_time).format("HH:mm"),
+    end_date: eventResult.value?.event.end_date,
+    address: eventResult.value?.event.address,
     photos: eventResult.value?.event.media.map((media: any) => {
       return {
         id: media.id,

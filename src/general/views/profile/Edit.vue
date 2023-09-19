@@ -130,7 +130,7 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
-import { toastController } from "@ionic/vue";
+import { IonTitle, toastController, IonIcon } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { computed, ref } from "vue";

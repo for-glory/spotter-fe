@@ -8,13 +8,14 @@
         <div class="page">
           <choose-block
             title="Choose your gym location"
-            class="form-row__control"
+            class="form-row__control tr-class"
             @handle-click="chooseGymLocation"
             :value="
               selectedAddress
                 ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
                 : ''
             "
+             :isLightItem="role === RoleEnum.Trainer ? true : false"
           />
           <!-- <choose-block
             title="State"
@@ -73,22 +74,17 @@
 import {
   IonPage,
   IonButton,
-  IonLabel,
-  IonIcon,
-  IonItem,
-  IonTextarea,
-  toastController,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed } from "vue";
-import { EntitiesEnum } from "@/const/entities";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import { State, IState, City, ICity } from "country-state-city";
-import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
 import { useNewFacilityStore } from "@/facilities/store/new-facility";
 import { useNewEventStore } from "@/general/stores/new-event";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const router = useRouter();
 const route = useRoute();
@@ -104,7 +100,8 @@ const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilit
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
-console.log({ store });
+
+const { role } = useRoles()
 
 const onBack = () => {
   store.setAddress(selectedState, selectedCity, selectedAddress);

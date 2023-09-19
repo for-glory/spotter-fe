@@ -248,7 +248,7 @@ const getUploadedImg = (image: string) => {
 
   &__file {
     flex: 0 0 88px;
-    width: 88px;
+    width: 100%;
     height: 88px;
     margin: 0;
     margin-right: 8px;

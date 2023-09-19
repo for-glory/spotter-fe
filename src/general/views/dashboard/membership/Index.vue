@@ -162,11 +162,15 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
 
 const { loading: subscriptionUserLoading, onResult } = useQuery(
   SubscriptionUserDocument,
-  { facility_id: currentFacility.facility?.id }
+  {
+    facility_id: currentFacility.facility?.id,
+    unique_identifier: currentStripeSubscription?.value?.unique_identifier,
+  }
 );
 
 onResult(({ data }) => {
   currentStripeSubscription.value = data?.subscriptionUser;
+
   if (!data?.subscriptionUser) {
     router.push({
       name: EntitiesEnum.DashboardStartMembership,
@@ -175,7 +179,6 @@ onResult(({ data }) => {
 });
 
 onMounted(async () => {
-  backendStripe.init();
   onPlansResult(async ({ data }) => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
@@ -190,7 +193,7 @@ onMounted(async () => {
               ? subscriptionPlan[0]
               : {},
         });
-        if (currentStripeSubscription.value.plan_id === cur.id) {
+        if (currentStripeSubscription.value?.plan_id === cur.id) {
           currentPlan.value = {
             ...cur,
             owned: currentStripeSubscription.value.plan_id === cur.id,
@@ -203,6 +206,8 @@ onMounted(async () => {
       }
       return acc;
     }, []);
+
+    backendStripe.init();
     console.log("currentSubscriptionUser", currentStripeSubscription.value);
   });
 });

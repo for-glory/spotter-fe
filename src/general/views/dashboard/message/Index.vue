@@ -1,12 +1,9 @@
 <template>
-  <div class="container">
-    <div class="message">
-      <ion-grid>
-        <ion-row>
-          <ion-col size-md="4" size-lg="4" size="4" class="border">
-            <ion-searchbar class="search"></ion-searchbar>
+    <div class="web-chatroom d-flex">
+      <div class="flex-1 hide-scrollbar">
+        <ion-searchbar class="search"></ion-searchbar>
             <div>
-              <div class="tabs">
+              <div class="tabs ion-margin-bottom">
                 <div
                   :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
                   @click="handleTab(RoomType.Chat)">
@@ -36,12 +33,50 @@
                       <transition-group name="list" tag="ion-item-sliding">
                         <template v-for="room in data.chats" :key="room.key">
                           <room
+                            v-if="room.type == RoomType.Chat"
                             :last-message="room.lastMessage"
                             :room-id="room.roomId"
                             :room-name="room.roomName"
                             :avatar-url="room.avatar"
                             :time="room.lastTime"
-                            :is-online="isOnline(room.participantId)"
+                            :is-online="isOnline(parseInt(room.participantId))"
+                            :type="room.type"
+                            @open="onOpen($event, room)"
+                            @delete="onDelete($event, room.roomId)"
+                            :symbols="room.symbols"
+                            :unread="room.unread"
+                            class="room-item__container mb-8"
+                          />
+                        </template>
+                      </transition-group>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <template v-if="activeTab === RoomType.Request">
+                <div class="listRoom">
+                  <ion-spinner
+                    v-if="loading"
+                    name="lines"
+                    class="spinner"
+                  />
+                  <div class="rooms__container" v-else>
+                    <list-empty
+                      v-if="!data.chats.length"
+                      :title="currenTab"
+                      :chats="false"
+                    />
+                    <template v-else>
+                      <transition-group name="list" tag="ion-item-sliding">
+                        <template v-for="room in data.chats" :key="room.key">
+                          <room
+                            v-if="room.type == RoomType.Request"
+                            :last-message="room.lastMessage"
+                            :room-id="room.roomId"
+                            :room-name="room.roomName"
+                            :avatar-url="room.avatar"
+                            :time="room.lastTime"
+                            :is-online="isOnline(parseInt(room.participantId))"
                             :type="room.type"
                             @open="onOpen($event, room)"
                             @delete="onDelete($event, room.roomId)"
@@ -53,52 +88,19 @@
                       </transition-group>
                     </template>
                   </div>
-                  <!-- <chat-list
-                    name="Alice James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="Whukiuulrecises"
-                    time="10 min"
-                    count="1"
-                    :status="true"
-                  />
-                  <chat-list
-                    name="anfkfh James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="What about other exercises"
-                    time="now"
-                    count="1"
-                    class="enable"
-                    :status="true"
-                  />
-                  <chat-list
-                    name="Alika"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="What about other exercises"
-                    time="20 min"
-                    :status="false"
-                  />
-                  <chat-list
-                    name="Alice James"
-                    avatar="assets/backgrounds/avatar1.png"
-                    content="What about other exercises"
-                    time="30 min"
-                    :status="true"
-                  /> -->
                 </div>
               </template>
-              <template v-if="activeTab === RoomType.Request">
-              </template>
             </div>
-          </ion-col>
-          <ion-col size-md="8" size-lg="8" size="8" class="chatRoom">
-            <div class="box" v-if="selectedRoom.id">
+      </div>
+      <div class="flex-2">
+        <div class="box" v-if="selectedRoom.id">
               <div class="header">
                 <img class="chatImage" :src="selectedRoom.avatar" />
                 <span class="username">{{ selectedRoom.roomName }}</span>
                 <img class="ellipse" src="assets/Ellipse.svg" v-if="selectedRoom.participantId ? isOnline(selectedRoom.participantId) : false" />
               </div>
-              <div class="chat">
-                <personal :id="roomId"/>
+              <!-- <div class="chat"> -->
+                <personal class="chat" :id="roomId"/>
                 <!-- <chat-message
                   content="your what do youe ant is nice!"
                   avatar="assets/backgrounds/avatar1.png"
@@ -134,7 +136,7 @@
                     <time class="time">Typing a message...</time>
                   </div>
                 </div> -->
-              </div>
+              <!-- </div> -->
               <!-- <div class="typing">
                 <div class="inputbox">
                   <input
@@ -150,15 +152,19 @@
                 </div>
               </div> -->
             </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+            <div v-else class="d-flex align-items-center justify-content-center h-100">
+              <div class="d-flex-col align-items-center m-auto">
+                <ion-icon src="assets/icon/dashboard/email.svg" class="form-row fs-48"></ion-icon>
+                <ion-label class="label fs-24 font-medium">Message Empty</ion-label>
+                <ion-text class="label fs-16 font-light">You have no active message</ion-text>
+              </div>
+            </div>
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner } from "@ionic/vue";
+import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner, IonIcon, IonLabel, IonText } from "@ionic/vue";
 import ChatList from "@/general/components/dashboard/chat/list.vue";
 import ChatFooter from "@/general/components/dashboard/chat/list.vue";
 import Message from "@/general/components/dashboard/chat/message.vue";
@@ -200,10 +206,70 @@ const roomId = ref('');
 const selectedRoom = ref({
   avatar: "",
   roomName: "",
+  id: "",
+  participantId: 0
 });
 const data = reactive({
-  chats: [],
-  activeUsers: [],
+  chats: [
+  {
+      id: 1,
+      lastMessage: "hi",
+      roomName: "John Deo",
+      lastTime: "now",
+      roomId: "1",
+      isOnline: true,
+      time: "now",
+      type: RoomType.Chat,
+      symbols: 'test',
+      unread: 2,
+      participantId: "1",
+      avatar: "https://picsum.photos/200/300"
+    },
+    {
+      id: 2,
+      lastMessage: "What about other exercises?",
+      roomName: "Daniel Will",
+      lastTime: "20 min",
+      roomId: "1",
+      isOnline: false,
+      time: "now",
+      type: RoomType.Chat,
+      symbols: 'test',
+      unread: 0,
+      avatar: "https://picsum.photos/200/300",
+      participantId: "1",
+    },
+    {
+      id: 2,
+      lastMessage: {
+        address: "Home, Wall Street, 24"
+      },
+      roomName: "Daniel Will",
+      lastTime: "20 min",
+      roomId: "1",
+      isOnline: false,
+      time: "now",
+      type: RoomType.Request,
+      symbols: 'test',
+      unread: 0,
+      avatar: "https://picsum.photos/200/300",
+      participantId: "2",
+    }
+  ],
+  activeUsers: [
+  {
+      id: 1,
+      lastMessage: "hi",
+      roomName: "John Deo",
+      lastTime: "now",
+      roomId: "1",
+      isOnline: true,
+      time: "now",
+      type: RoomType.Request,
+      symbols: 'test',
+      unread: 2,
+    },
+  ],
 });
 
 const activeTab = ref<RoomType | string>("CHAT");
@@ -225,20 +291,20 @@ const requests = computed(
 watch(
   () => requests.value,
   () => {
-    fetchChats();
+    // fetchChats();
   }
 );
 
 
 const isOnline = (id: number) => {
-  return !!data.activeUsers.find((user) => user === id);
+  return !!data.activeUsers.find((user) => user.id === id);
 };
 
-const onOpen = (event: CustomEvent, room: any) => {
+const onOpen = (event: any, room: any) => {
   selectedRoom.value = room;
 };
 
-const onDelete = (e: CustomEvent, roomId: string) => {
+const onDelete = (e: any, roomId: string) => {
   mutate({
     id: roomId,
   })
@@ -316,7 +382,7 @@ onBeforeMount(() => {
 
 onMounted(() => {
   fetchActiveUsers();
-  fetchChats();
+  // fetchChats();
 });
 </script>
 
@@ -346,7 +412,7 @@ onMounted(() => {
 }
 .box {
   border-radius: 5px;
-  background: #262626;
+  // background: #262626;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -364,7 +430,7 @@ onMounted(() => {
 }
 .header {
   padding: 20px;
-  border-bottom: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gray-60);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -400,7 +466,7 @@ onMounted(() => {
   align-items: center;
 }
 .tab-item {
-  width: 30%;
+  width: 34.5%;
   text-align: center;
   font-size: 16px;
   border-bottom: 1px solid #efefef;
@@ -461,5 +527,37 @@ onMounted(() => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.flex-1 {
+  flex: 1;
+  padding: 16px;
+  position: relative;
+  max-width: 375px;
+  &::before {
+    content: "";
+    border-right: 0.5px solid var(--gray-60);
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.flex-2 {
+  flex: 2;
+  padding: 0 30px;
+}
+.web-chatroom {
+  height: 100%;
+  overflow: hidden;
+  .flex-1, .flex-2 {
+    overflow: auto;
+  }
+}
+.mb-8 {
+  margin-bottom: 8px;
+}
+.fs-48 {
+  font-size: 48px;
 }
 </style>

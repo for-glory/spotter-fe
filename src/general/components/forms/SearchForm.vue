@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': rmPadding }"
   >
     <ion-back-button
       v-if="backBtn"
@@ -22,6 +22,7 @@
         'search-form__control--on-focus': isFocused,
         'search-form__control--with-back-btn': backBtn,
         'search-form__control--with-cancel-btn': !hiddenCancel,
+        'tr-search': role === RoleEnum.Trainer
       }"
     >
     </ion-searchbar>
@@ -161,7 +162,6 @@ import {
   inject,
   watch,
 } from "vue";
-import { IonContent, PickerColumnOption } from "@ionic/vue";
 import {
   IonSearchbar,
   SearchbarCustomEvent,
@@ -172,6 +172,8 @@ import {
   IonIcon,
   IonModal,
   toastController,
+  IonContent,
+  PickerColumnOption
 } from "@ionic/vue";
 import {
   FacilitiesDocument,
@@ -197,6 +199,9 @@ import {
 import { hoursDuration } from "@/const/hours-durations";
 import { minutesDuration } from "@/const/minutes-durations";
 import { Emitter, EventType } from "mitt";
+import useRoles from "@/hooks/useRole";
+
+const { role }= useRoles()
 
 const props = withDefaults(
   defineProps<{
@@ -210,11 +215,13 @@ const props = withDefaults(
     filters?: any;
     noFoundMsg?: string;
     filtersBtn?: boolean;
+    extraPadding?:boolean
   }>(),
   {
     backBtn: false,
     hiddenCancel: false,
     visibleResult: false,
+    extraPadding: false,
     placeholder: "Enter name or address...",
     hideResults: false,
     customNavigation: false,
@@ -525,7 +532,6 @@ defineExpose({
   display: flex;
   position: relative;
   align-items: center;
-  padding: calc(16px + var(--ion-safe-area-top)) 24px 0 12px;
   justify-content: flex-end;
   transition: background-color 0.35s ease;
   gap: 12px;
@@ -641,6 +647,10 @@ defineExpose({
   }
 }
 
+.search-form-padding {
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0 12px;
+}
+
 .no-found-msg {
   width: 100%;
   margin: 20vh 0;
@@ -694,5 +704,12 @@ defineExpose({
       margin-top: 16px;
     }
   }
+}
+.tr-search {
+  font-family: Yantramanav;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  --box-shadow: inset 0 0 0 0.8px var(--gray-500);
 }
 </style>

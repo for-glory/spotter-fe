@@ -2,14 +2,18 @@
   <ion-item 
     lines="none" 
     style="z-index: -5"
+    class="relative"
   >
     <video 
+      v-show="shouldPlay"
       :src="videoPath" 
-      @click="handlePlay"
+      :poster="preview"
       ref="videoRef"
       autoplay
-      style="max-width: 100%; width: 100%; max-height: 100%; height: 100%"
+      style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
+      class="shadow"
     />
+    <div @click="handlePlay" class="shadow w-100 h-100 absolute" />
   </ion-item>
 </template>
 
@@ -34,11 +38,16 @@ const props = defineProps({
   play: {
     type: Boolean,
     default: true,
-  }
+  },
+  preview: {
+    type: String,
+    required: true,
+  },
 });
 
 const videoPath = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.path}`);
 const videoRef = ref<any>();
+const preview = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.preview}`);
 
 const shouldPlay = computed(() => props.play);
 
@@ -94,5 +103,8 @@ const handlePlay = () => {
   .fixed {
     position: fixed;
   }
+}
+.shadow {
+  background-image: linear-gradient(to bottom, #1818181a, #181818ba);
 }
 </style>

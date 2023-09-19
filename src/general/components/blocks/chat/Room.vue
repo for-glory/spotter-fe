@@ -8,15 +8,15 @@
         :symbols="symbols"
       />
       <div class="user-item__inner">
-        <div>
-          <div class="user-item__head">
+        <div class="w-100">
+          <div class="user-item__head" :class="lastMessage && typeof lastMessage === 'string' ? 'mb-6' : ''">
             <ion-label class="user-item__title">
               {{ roomName }}
             </ion-label>
             <ion-text class="user-item__time">{{ time }}</ion-text>
           </div>
-          <div
-            v-if="lastMessage && typeof lastMessage === 'string'"
+          <ion-label class="last-message-container" v-if="lastMessage && typeof lastMessage === 'string'">
+            <div
             :class="{
               'user-item__last-message--highlighted': type === RoomType.Request,
             }"
@@ -24,9 +24,13 @@
           >
             {{ lastMessage }}
           </div>
+          <ion-text v-if="unread" class="user-item__unread">{{
+            unread
+          }}</ion-text>
+          </ion-label>
           <!-- class="user-item__last-message" -->
           <div
-            v-else-if="lastMessage"
+          v-else-if="lastMessage"
             class="user-item__last-message--highlighted"
           >
             <div class="last-msg-wrap">
@@ -39,15 +43,12 @@
             <div class="last-msg-wrap">
               <ion-icon class="time-icon" src="assets/icon/time.svg" />
               <ion-text class="user-item__last-message">{{
-                lastMessage?.time
+                lastMessage?.time || "Training on Jul 17, 8:30 PM"
               }}</ion-text>
             </div>
           </div>
         </div>
         <div>
-          <ion-text v-if="unread" class="user-item__unread">{{
-            unread
-          }}</ion-text>
         </div>
       </div>
     </ion-item>
@@ -101,6 +102,7 @@ defineProps<{
   type: RoomType;
   symbols: string;
   unread?: number;
+  currentTab?: string;
 }>();
 
 defineEmits<{
@@ -148,9 +150,11 @@ defineEmits<{
 
   &__head {
     display: flex;
-    margin-bottom: 6px;
     align-items: center;
     justify-content: space-between;
+  }
+  .mb-6 {
+    margin-bottom: 6px;
   }
 
   &__unread {
@@ -165,6 +169,7 @@ defineEmits<{
     text-align: center;
     display: flex;
     justify-content: center;
+    font-family: "Yantramanav";
   }
 
   &__title {
@@ -173,7 +178,8 @@ defineEmits<{
     font-weight: 500;
     line-height: 1.5;
     margin-right: 12px;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
+    font-family: "Yantramanav";
   }
 
   &__time {
@@ -183,6 +189,7 @@ defineEmits<{
     color: var(--gray-500);
     margin-left: auto;
     justify-self: flex-end;
+    font-family: "Yantramanav";
   }
 
   &__last-message {
@@ -193,6 +200,8 @@ defineEmits<{
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 170px;
+    font-family: "Yantramanav";
+    color: var(--fitnesswhite);
 
     &--highlighted {
       color: var(--gold);
@@ -227,13 +236,18 @@ defineEmits<{
   text-align: center;
 }
 
-.time-icon {
-  font-size: 24px;
+.time-icon, .address-icon {
+  font-size: 18px;
   margin-right: 5px;
 }
 
-.address-icon {
-  font-size: 24px;
-  margin-left: 5px;
+// .address-icon {
+//   font-size: 24px;
+//   margin-left: 5px;
+// }
+.last-message-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

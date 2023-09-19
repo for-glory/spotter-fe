@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <ion-page
     class="base-layout"
     :class="{ 'has-fixed-header': headerFixed }"
@@ -19,6 +20,113 @@
     <div class="dashboard-container" v-if="getPlatform == 'desktop'">
       <div class="dashboard-container__sidebar">
         <dashboard-sidebar />
+=======
+  <base-layout>
+    <template #header>
+      <page-header title="Dashboard">
+        <template #custom-btn>
+          <ion-button @click="onViewChat" class="header-btn">
+            <ion-icon src="assets/icon/chat.svg" />
+            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+          </ion-button>
+          <ion-button @click="onViewFavourites" class="header-btn">
+            <ion-icon src="assets/icon/heart.svg" />
+          </ion-button>
+        </template>
+      </page-header>
+    </template>
+    <template #content>
+      <div class="dashboard">
+        <div class="dashboards-items">
+          <dashboard-item :items="activityItems">
+            <template #title>
+              <ion-icon
+                src="public/assets/icon/activity.svg"
+                class="activity-icon"
+              />
+              Activity
+            </template>
+          </dashboard-item>
+          <dashboard-item :items="ratingItems">
+            <template #title>
+              <ion-icon src="assets/icon/trophy.svg" class="trophy-icon" />
+              My Ratings
+            </template>
+            <template #bottom>
+              <div class="rating__container">
+                <ion-text class="rating-likes">
+                  {{ widgetInfo?.positive_reviews_count || 0 }}
+                  <ion-icon class="like-icon" src="assets/icon/like.svg" />
+                </ion-text>
+                <ion-text class="rating-dislikes">
+                  {{ widgetInfo?.negative_reviews_count || 0 }}
+                  <ion-icon
+                    class="dislike-icon"
+                    src="assets/icon/dislike.svg"
+                  />
+                </ion-text>
+              </div>
+            </template>
+          </dashboard-item>
+        </div>
+        <week-calendar
+          v-model="selectedDate"
+          :bookings="bookings"
+          @handle-view="onViewCalendar"
+        />
+        <div class="events__container">
+          <items-header
+            :title="dynamicTitle"
+            @handle-view="onViewAllEvents"
+            :hide-view-more="
+              !selectedEvents?.length ||
+              isFacilitiesLoading ||
+              isTrainingsLoading ||
+              isEventsLoading ||
+              isDropinsLoading
+            "
+          />
+          <template
+            v-if="
+              selectedEvents.length &&
+              !isTrainingsLoading &&
+              !isEventsLoading &&
+              !isFacilitiesLoading &&
+              !isDropinsLoading
+            "
+          >
+            <event-item
+              v-for="event in selectedEvents"
+              :key="event.id"
+              :item="event"
+              :rounded="activeTab === EntitiesEnum.Trainings"
+              :date-range="activeTab === EntitiesEnum.Facilities"
+              @click="openEvent(event.id)"
+            />
+          </template>
+          <ion-spinner
+            name="lines"
+            class="spinner"
+            v-else-if="
+              isTrainingsLoading || isEventsLoading || isFacilitiesLoading
+            "
+          >
+          </ion-spinner>
+          <empty-block
+            v-else
+            hide-button
+            icon="assets/icon/empty.svg"
+            :title="`Sorry, no ${bookingName} found`"
+            :text="`Currently you have no booked ${bookingName}`"
+          />
+        </div>
+        <page-tabs-New
+          :tabs="tabs"
+          class="page-tabs"
+          :value="activeTab"
+          @change="tabsChanged"
+        />
+>>>>>>> 4a2c5a8c19259eb9e5a712aeeb4b130357980cf1
       </div>
       <div class="dashboard-container__right-section abc">
         <!-- <slot name="right-section"> -->
@@ -172,6 +280,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+<<<<<<< HEAD
 import {
   computed,
   defineExpose,
@@ -197,6 +306,42 @@ import { IonContentCustomEvent, ScrollDetail } from "@ionic/core";
 import { RoleEnum } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
 import { Capacitor } from "@capacitor/core";
+=======
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import DashboardItem from "@/general/components/DashboardItem.vue";
+import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
+import { TabItemNew } from "@/interfaces/TabItemNew";
+import { EntitiesEnum } from "@/const/entities";
+import { computed, onMounted, ref } from "vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
+import {
+  EventPaginator,
+  MyEventsDocument,
+  MyFacilityItemPassesDocument,
+  FacilityItemPass,
+  UserPaginator,
+  MyTrainingsDocument,
+  DashboardWidgetDocument,
+  UserAvailabilityDocument,
+  Training,
+  QueryMyTrainingsOrderByColumn,
+  SortOrder,
+  QueryMyFacilityItemPassesOrderByColumn,
+  QueryMyEventsOrderByColumn,
+  TrainingStatesEnum,
+} from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
+import EventItem from "@/general/components/EventItem.vue";
+import ItemsHeader from "@/general/components/blocks/headers/ItemsHeader.vue";
+import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
+import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from "vue-router";
+import useId from "@/hooks/useId";
+import { onValue } from "firebase/database";
+import { chatsRef } from "@/firebase/db";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
+>>>>>>> 4a2c5a8c19259eb9e5a712aeeb4b130357980cf1
 
 const props = withDefaults(
   defineProps<{
@@ -326,6 +471,7 @@ const onContentScrollStart = () => {
   isOnMove.value = true;
 };
 
+<<<<<<< HEAD
 const onContentTouchEnd = () => {
   isDraggableTouched.value = false;
 
@@ -370,6 +516,53 @@ const alignDraggableContent = async () => {
     setTimeout(() => {
       isOnAutoScroll.value = false;
     }, 200);
+=======
+const trainings = computed(() =>
+  trainingsResult?.value?.myTrainings?.data
+    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
+        ...training,
+        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+        address: training.trainer.address,
+        media: [{ pathUrl: training.trainer.avatarUrl }],
+      }))
+    : []
+);
+
+const dropins = computed(() =>
+  dropinsResult?.value?.myTrainings?.data
+    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
+        ...training,
+        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+        address: training.trainer.address,
+        media: [{ pathUrl: training.trainer.avatarUrl }],
+      }))
+    : []
+);
+
+const facilities = computed<UserPaginator["data"]>(() =>
+  facilitiesResult?.value?.myFacilityItemPasses?.data
+    ? facilitiesResult.value.myFacilityItemPasses.data.map(
+        (facilityPass: FacilityItemPass) => ({
+          id: facilityPass.id,
+          title: facilityPass.facilityItem.facility.name,
+          end_date: facilityPass.end_date,
+          start_date: dayjs(facilityPass.end_date)
+            .subtract(
+              facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
+              "d"
+            )
+            .format("YYYY-MM-DD HH:mm:ss"),
+          media: facilityPass.facilityItem.facility.media,
+          address: facilityPass.facilityItem.facility.address,
+        })
+      )
+    : []
+);
+
+const selectedEvents = computed(() => {
+  if (activeTab.value === EntitiesEnum.Events) {
+    return events.value;
+>>>>>>> 4a2c5a8c19259eb9e5a712aeeb4b130357980cf1
   }
 
   isFullscreen.value =
@@ -382,6 +575,7 @@ onUnmounted(() => {
   }
 });
 
+<<<<<<< HEAD
 const getPlatform = computed(() => {
   if (Capacitor.isNativePlatform()) {
     if (isPlatform("android")) {
@@ -394,6 +588,145 @@ const getPlatform = computed(() => {
     return "desktop";
   }
 });
+=======
+const dynamicTitle = computed(() => {
+  if (activeTab.value === EntitiesEnum.Events) {
+    return "Upcoming Events";
+  }
+
+  if (activeTab.value === EntitiesEnum.Facilities) {
+    return "My Passes";
+  }
+
+  if (activeTab.value === EntitiesEnum.FacilityDropins) {
+    return "My Drop-ins";
+  }
+
+  return "Upcoming Trainings";
+});
+
+const bookingName = computed(() => {
+  if (activeTab.value === EntitiesEnum.Events) {
+    return "events";
+  }
+
+  if (activeTab.value === EntitiesEnum.Facilities) {
+    return "gyms";
+  }
+
+  return "trainings";
+});
+
+const tabs: TabItemNew[] = [
+  {
+    name: EntitiesEnum.FacilityDropins,
+    labelActive: "assets/icon/dropinsActive.png",
+    labelInactive: "assets/icon/dropins.png",
+  },
+  {
+    name: EntitiesEnum.Facilities,
+    labelActive: "assets/icon/dumbbell.png",
+    labelInactive: "assets/icon/dumbbellActive.png",
+  },
+
+  {
+    name: EntitiesEnum.Trainings,
+    labelActive: "assets/icon/TrainerActive.png",
+    labelInactive: "assets/icon/Trainer.png",
+  },
+  {
+    name: EntitiesEnum.Events,
+    labelActive: "assets/icon/facilitiesActive.png",
+    labelInactive: "assets/icon/facilities.png",
+  },
+];
+
+const selectedDate = ref<Dayjs | null>(dayjs());
+
+const activeTab = ref<EntitiesEnum>(
+  (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
+    EntitiesEnum.FacilityDropins
+);
+
+const tabsChanged = (ev: EntitiesEnum) => {
+  if (!ev) return;
+  activeTab.value = ev;
+  localStorage.setItem("dashboard_active_tab", activeTab.value);
+  refetchBooking();
+};
+
+const refetchBooking = () => {
+  switch (activeTab.value) {
+    case EntitiesEnum.Events:
+      refetchEvents();
+      break;
+
+    case EntitiesEnum.FacilityDropins:
+      refetchDropins();
+      break;
+
+    case EntitiesEnum.Trainings:
+      refetchTrainings();
+      break;
+
+    case EntitiesEnum.Facilities:
+      refetchFacilities();
+      break;
+
+    default:
+      break;
+  }
+};
+
+const onViewAllEvents = () => {
+  router.push({ name: EntitiesEnum.DashboardEvents });
+};
+
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
+};
+const onViewFavourites = () => {
+  router.push({ name: EntitiesEnum.Favourites });
+};
+
+const onViewCalendar = () => {
+  router.push({ name: EntitiesEnum.DashboardCalendar });
+};
+
+const openEvent = (id: string | number) => {
+  switch (activeTab.value) {
+    case EntitiesEnum.Facilities:
+      return router.push({
+        name: EntitiesEnum.BookedTraining,
+        params: { id },
+        query: {
+          type: EntitiesEnum.Facility,
+        },
+      });
+
+    case EntitiesEnum.Trainings:
+      return router.push({
+        name: EntitiesEnum.BookedTraining,
+        params: { id },
+        query: {
+          type: EntitiesEnum.Training,
+        },
+      });
+
+    case EntitiesEnum.Events:
+      return router.push({
+        name: EntitiesEnum.BookedTraining,
+        params: { id },
+        query: {
+          type: EntitiesEnum.Event,
+        },
+      });
+
+    default:
+      break;
+  }
+};
+>>>>>>> 4a2c5a8c19259eb9e5a712aeeb4b130357980cf1
 </script>
 
 <style scoped lang="scss">
@@ -518,6 +851,7 @@ const getPlatform = computed(() => {
   padding-top: 24px;
 }
 
+<<<<<<< HEAD
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
@@ -528,6 +862,11 @@ const getPlatform = computed(() => {
     box-shadow: 6px 0px 18px 0px rgba(0, 0, 0, 0.25);
     background: var(--gray-700);
   }
+=======
+.empty-block {
+  margin-top: 48px;
+}
+>>>>>>> 4a2c5a8c19259eb9e5a712aeeb4b130357980cf1
 
   &__right-section {
     width: calc(100% - 256px);

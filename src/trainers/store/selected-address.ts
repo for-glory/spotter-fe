@@ -12,6 +12,7 @@ export const useSelectedAddressStore = defineStore("seleted-address", {
       useTrainerLocation: false,
       workingInGym: false,
       edit: false,
+      isSelected: false,
     };
   },
   actions: {

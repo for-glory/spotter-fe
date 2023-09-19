@@ -77,6 +77,7 @@ const getTabImage = (tabName: EntitiesEnum) => {
     --padding-end: 16px;
     --color-checked: var(--gray-700);
     --indicator-color: var(--ion-color-primary);
+    font-family: "Yantramanav";
 
     &::part(indicator) {
       padding: 0;

@@ -1,56 +1,69 @@
 <template>
   <div class="create-event">
-    <div class="form-row">
-      <ion-label class="label"> Choose cover for event </ion-label>
-      <photos-loader
-        @upload="uploadPhoto"
-        @delete="deletePhoto"
-        @change="uploadPhoto"
-        :circle-shape="false"
-        :photos="eventPhotos"
-        :loading="photoOnLoad"
-        :progress="percentPhotoLoaded"
-        :disabled="mediaDeleting || loading"
-      />
-    </div>
-
-    <div class="form-row">
-      <base-input
-        required
-        :disabled="loading"
-        @change="eventTitleChange"
-        v-model:value="eventTitle"
-        label="Event name"
-        placeholder="Enter event name"
-      />
-    </div>
-
-    <div class="form-row">
-      <base-input
-        type="number"
-        :disabled="loading"
-        @change="eventPriceChange"
-        v-model:value="eventPrice"
-        label="Entry fee(USD $)"
-        placeholder="Set entry fee"
-      />
-    </div>
-
-    <div class="form-row">
-      <ion-label class="label"> Choose equioment and amenitites </ion-label>
-      <choose-block
-        :disabled="loading"
-        title="Equipment and amenities"
-        @handle-click="onChooseAmenities"
-        :value="
-          eventEquipments.length + eventAmenities.length > 0
-            ? String(eventEquipments.length + eventAmenities.length)
-            : ''
-        "
-      />
-    </div>
-
-    <template v-if="!edit">
+    <ion-grid>
+      <ion-row>
+        <ion-col offset="2">
+          <div class="form-row">
+            <ion-label class="label"> Choose cover for event </ion-label>
+            <photos-loader
+              @upload="uploadPhoto"
+              @delete="deletePhoto"
+              @change="uploadPhoto"
+              :circle-shape="false"
+              :photos="eventPhotos"
+              :loading="photoOnLoad"
+              :progress="percentPhotoLoaded"
+              :disabled="mediaDeleting || loading"
+            />
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        
+        <ion-col offset="2" size="4">
+          <div class="form-row">
+            <base-input
+              required
+              :disabled="loading"
+              @change="eventTitleChange"
+              v-model:value="eventTitle"
+              label="Event name"
+              placeholder="Enter event name"
+            />
+          </div>
+        </ion-col>
+        
+        <ion-col  size="4">
+          <div class="form-row">
+            <base-input
+              type="text"
+              :disabled="loading"
+              @change="eventPriceChange"
+              v-model:value="eventPrice"
+              label="Entry fee(USD $)"
+              placeholder="Set entry fee"
+            />
+          </div>
+        </ion-col>
+        <ion-col  offset="2" size="4">
+          <div class="form-row">
+            <ion-label class="label"> Choose equioment and amenitites </ion-label>
+            <choose-block
+              :disabled="loading"
+              title="Equipment and amenities"
+              @handle-click="onChooseAmenities"
+              :value="
+                eventEquipments.length + eventAmenities.length > 0
+                  ? String(eventEquipments.length + eventAmenities.length)
+                  : ''
+              "
+            />
+          </div>
+        </ion-col>
+        <ion-col  size="4">
+           <template v-if="true">
+            
+            <ion-label class="label"> Venus </ion-label>
       <div class="form-row">
         <choose-block
           title="Venue"
@@ -64,11 +77,14 @@
         />
       </div>
     </template>
+        </ion-col>
 
-    <template v-if="!edit">
+        
+    <template v-if="true"> 
+        <ion-col offset="2" size="4">
       <div class="form-row">
         <base-input
-          type="number"
+          type="text"
           :disabled="loading"
           @change="eventMaxParticipantsChange"
           v-model:value="eventMaxParticipants"
@@ -76,18 +92,22 @@
           label="Set the max participants for event"
         />
       </div>
+            </ion-col>
+        <ion-col  size="4">
 
       <div class="form-row">
         <base-input
-          type="number"
+          type="text"
           :disabled="loading"
-          label="Discount"
+          label="Discount (optional)"
           placeholder="Enter discount value"
         />
       </div>
+            </ion-col>
+        <ion-col offset="2"  size="4">
 
       <div class="form-row">
-        <ion-label class="label"> Start date </ion-label>
+        <ion-label class="label"> Choose date of event </ion-label>
         <choose-block
           title="Start date"
           :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
@@ -99,22 +119,10 @@
           :disabled="loading"
         />
       </div>
+            </ion-col>
+        <ion-col  size="4">
 
-      <div class="form-row">
-        <ion-label class="label"> Choose time of event </ion-label>
-        <wheel-picker :options="startTimeOptions" name="startTime">
-          <template #button>
-            <choose-block
-              title="Start time"
-              :value="eventStartTime"
-              :disabled="!eventStartDate || loading"
-              @handle-click="openPicker('startTime')"
-            />
-          </template>
-        </wheel-picker>
-      </div>
-
-      <div class="form-row">
+            <div class="form-row">
         <ion-label class="label"> End date </ion-label>
         <choose-block
           title="End date"
@@ -129,8 +137,28 @@
         />
       </div>
 
-      <div class="form-row">
+            </ion-col>
+        <ion-col  offset="2" size="4">
+    
+    <div class="form-row">
         <ion-label class="label"> Choose time of event </ion-label>
+        <wheel-picker :options="startTimeOptions" name="startTime">
+          <template #button>
+            <choose-block
+              title="Start time"
+              :value="eventStartTime"
+              :disabled="!eventStartDate || loading"
+              @handle-click="openPicker('startTime')"
+            />
+          </template>
+        </wheel-picker>
+      </div>
+     
+            </ion-col>
+        <ion-col  size="4">
+
+      <div class="form-row">
+        <ion-label class="label"> Choose end time </ion-label>
         <wheel-picker :options="endTimeOptions" name="endTime">
           <template #button>
             <choose-block
@@ -142,6 +170,8 @@
           </template>
         </wheel-picker>
       </div>
+            </ion-col>
+        <ion-col offset="2" size="8">
 
       <div class="form-row">
         <base-input
@@ -154,13 +184,22 @@
           placeholder="Enter a description"
         />
       </div>
+            </ion-col>
+            
     </template>
-
-    <div
+ 
+        
+      </ion-row>
+   
+<ion-row class="btn">
+    <!-- <div
       class="actions-wrapper"
       :class="{ 'actions-wrapper--fixed': footerFixed }"
-    >
-      <ion-button
+    > -->
+    <ion-button @click="onBack" >
+      Cancel
+    </ion-button>
+      <ion-button style="margin-right: 14px;"
         expand="block"
         class="secondary"
         @click="submitEvent('exit')"
@@ -169,7 +208,7 @@
           !eventTitle?.length || !eventPhotos?.length || !selectedAddress
         "
       >
-        {{ saveButtonText }}
+        {{ saveButtonText || 'Save' }}
       </ion-button>
       <ion-button
         expand="block"
@@ -179,10 +218,19 @@
           !eventTitle?.length || !eventPhotos?.length || !selectedAddress
         "
       >
-        {{ nextButtonText }}
+        {{ nextButtonText || 'Next' }}
       </ion-button>
-    </div>
+    <!-- </div> -->
+    </ion-row>
+     </ion-grid>
+
+
+     
   </div>
+    <discard-changes
+    :is-open="isConfirmedModalOpen"
+    @close="discardModalClosed"
+  />
   <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
   <equipment-and-amenities
@@ -242,12 +290,23 @@ import {
 } from "@awesome-cordova-plugins/native-geocoder";
 import { Capacitor } from '@capacitor/core';
 import { useRouter } from "vue-router";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 enum DateFieldsEnum {
   StartDate = "START_DATE",
   EndDate = "END_DATE",
 }
+const isConfirmedModalOpen = ref(false);
+const onBack = () => {
+  isConfirmedModalOpen.value = true;
+};
 
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
+    router.go(-1);
+  }
+};
 const emits = defineEmits<{
   (e: "submit", data?: any, type?: string): void;
 }>();
@@ -269,6 +328,13 @@ watch(
   (newVal) => {
     if (!newVal) return;
     store.setTitle(newVal.title ?? "");
+    store.setPrice(newVal.price ?? "");
+   // store.setAddress(newVal.address.state,newVal.address.city, newVal.address.address);
+    store.setMaxParticipants(newVal.max_participants ?? "")
+    store.setStartDate(newVal.start_date ?? "")
+     store.setStartTime(newVal.start_time ?? "")
+     store.setEndDate(newVal.end_date ?? "")
+      store.setEndTime(newVal.end_time ?? "")
     store.setDescription(newVal.description ?? "");
     store.setPhotos(newVal.photos ?? []);
     store.setEquipments(newVal.equipments ?? []);
@@ -305,6 +371,7 @@ const eventDescriptionChange = (value: string) => {
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
+console.log(selectedAddress.value?.thoroughfare , 'address')
 console.log({selectedCity});
 console.log({selectedState});
 
@@ -565,20 +632,20 @@ const submitEvent = async (type: string) => {
         end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
         price: Number(store.price),
         address: {
-          lat: selectedAddress.value?.address?.latitude
-            ? Number(selectedAddress.value?.address.latitude)
+          lat: selectedAddress.value?.latitude
+            ? Number(selectedAddress.value?.latitude)
             : 34.034744,
-          lng: selectedAddress.value?.address?.longitude
-            ? Number(selectedAddress.value?.address.longitude)
+          lng: selectedAddress.value?.longitude
+            ? Number(selectedAddress.value?.longitude)
             : -118.2381,
           street: `${
-            selectedAddress.value?.address?.thoroughfare
-              ? selectedAddress.value?.address?.thoroughfare + ", "
+            selectedAddress.value?.thoroughfare
+              ? selectedAddress.value?.thoroughfare + ", "
               : ""
-          }${selectedAddress.value?.address?.subThoroughfare || ""}`,
+          }${selectedAddress.value?.subThoroughfare || ""}`,
           city_id: selectedCity.value?.id,
         },
-        max_participants: store.max_participants,
+        max_participants: parseInt(eventMaxParticipants.value),
         equipments: eventEquipments.value.map((equipment) => equipment.id),
         amenities: eventAmenities.value.map((amenity) => amenity.id),
         media: eventPhotos.value?.map((photo, index) => {
@@ -617,20 +684,20 @@ const submitEvent = async (type: string) => {
         end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
         price: Number(store.price),
         address: {
-          lat: selectedAddress.value?.address?.latitude
-            ? Number(selectedAddress.value?.address.latitude)
+          lat: selectedAddress.value?.latitude
+            ? Number(selectedAddress.value?.latitude)
           : 34.034744,
-        lng: selectedAddress.value?.address?.longitude
-          ? Number(selectedAddress.value?.address.longitude)
+        lng: selectedAddress.value?.longitude
+          ? Number(selectedAddress.value?.longitude)
           : -118.2381,
         street: `${
-          selectedAddress.value?.address?.thoroughfare
-            ? selectedAddress.value?.address?.thoroughfare + ", "
+          selectedAddress.value?.thoroughfare
+            ? selectedAddress.value?.thoroughfare + ", "
             : ""
-        }${selectedAddress.value?.address?.subThoroughfare || ""}`,
+        }${selectedAddress.value?.subThoroughfare || ""}`,
         city_id: selectedCity.value?.id,
       },
-      max_participants: store.max_participants,
+      max_participants: parseInt(eventMaxParticipants.value),
       equipments: eventEquipments.value.map((equipment) => equipment.id),
       amenities: eventAmenities.value.map((amenity) => amenity.id),
       media: eventPhotos.value?.map((photo, index) => {
@@ -699,5 +766,28 @@ defineExpose({
   ion-button {
     width: 100%;
   }
+}
+.create-event {
+    background: #333;;
+    border-radius: 10px;
+    padding: 20px;
+    height: 1000px;
+}
+.btn {
+  float: right;
+  margin-right: 16%;
+}
+.label {
+ color: var(--ion-color-white) !important;
+}
+ion-item.input-container {
+
+  --border-color: var(--white-1000) !important;
+
+}
+
+.choose-place {
+  border: 1px solid #fff !important;;
+  border-radius: 8px  !important;
 }
 </style>

@@ -1,20 +1,21 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header title="Schedule" />
+      <page-header :scan-btn="true" :chat-btn="true" title-class="header_trainer__title" title="Schedule" @chat-click="onViewChat" @scan="onViewScan">
+      </page-header>
     </template>
     <template #content>
       <div class="dashboard">
         <div class="dashboards-items">
-          <dashboard-item :items="activityItems">
+          <dashboard-item :items="activityItems" class="trainer-item">
             <template #title>
               <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
               Activity
             </template>
           </dashboard-item>
-          <dashboard-item :items="ratingItems">
+          <dashboard-item :items="ratingItems" class="trainer-item">
             <template #title>
-              <ion-icon src="assets/icon/trophy.svg" class="trophy-icon" />
+              <ion-icon src="assets/icon/award.svg" class="trophy-icon" />
               Rating
             </template>
             <template #bottom>
@@ -42,7 +43,7 @@
         <div class="events__container">
           <items-header
             :title="`Upcoming ${
-              activeTab === EntitiesEnum.Events ? 'events' : 'trainings'
+              activeTab === EntitiesEnum.Events ? 'events' : 'Sessions'
             }`"
             @handle-view="onViewAllEvents"
             :hide-view-more="
@@ -77,6 +78,7 @@
                 :key="training.id"
                 :item="training"
                 rounded
+                class="trainer-event-item"
                 @click="
                   openTraining(training.id, training.state, training.userId)
                 "
@@ -92,12 +94,12 @@
             </template>
           </template>
         </div>
-        <page-tabs
+        <!-- <page-tabs
           :tabs="tabs"
           class="page-tabs"
           :value="activeTab"
           @change="tabsChanged"
-        />
+        /> -->
       </div>
     </template>
   </base-layout>
@@ -107,7 +109,7 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
-import { IonIcon, IonText, IonSpinner } from "@ionic/vue";
+import { IonIcon, IonText, IonSpinner, IonButton } from "@ionic/vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, ref } from "vue";
@@ -123,6 +125,7 @@ import {
   SortOrder,
   QueryTrainerTrainingsOrderByColumn,
   TrainingStatesEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -248,17 +251,42 @@ const events = computed<EventPaginator["data"]>(() =>
 
 const trainings = computed(() =>
   trainingsResult?.value?.trainerTrainings?.data
-    ? trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
-        id: training.id,
-        title: `${training.user.first_name} ${training.user.last_name}`,
+    ? 
+    // trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
+    //     id: training.id,
+    //     title: `${training.user.first_name} ${training.user.last_name}`,
+    //     address: {
+    //       street: training.user.address?.street,
+    //     },
+    //     media: training.user.media,
+    //     start_date: training.start_date,
+    //     state: training.state,
+    //     userId: training.user.id,
+    //   }))
+    [
+      {
+        id: 1,
+        title: "John John Dee",
         address: {
-          street: training.user.address?.street,
+          street: "Summer Gym, Wall Street, 24",
         },
-        media: training.user.media,
-        start_date: training.start_date,
-        state: training.state,
-        userId: training.user.id,
-      }))
+        media: "",
+        start_date: new Date(),
+        state: new Date(),
+        userId: 1,
+      },
+      {
+        id: 2,
+        title: "Nick Fox",
+        address: {
+          street: "Summer Gym, Wall Street, 24",
+        },
+        media: "",
+        start_date: new Date(),
+        state: new Date(),
+        userId: 2,
+      }
+    ]
     : []
 );
 
@@ -324,6 +352,14 @@ const onViewCalendar = () => {
   router.push({ name: EntitiesEnum.TrainerScheduleCalendar });
 };
 
+const onViewChat = () => {
+  router.push({ name: EntitiesEnum.ChatList });
+};
+
+const onViewScan = () => {
+  router.push({ name: EntitiesEnum.ProfileScan });
+};
+
 const openTraining = (
   id: number,
   state?: TrainingStatesEnum,
@@ -387,14 +423,15 @@ const openEvent = (id: string) => {
     font-style: normal;
     font-weight: 500;
     font-size: 20px;
+    gap: 4px;
   }
 
   &-likes {
-    color: var(--ion-color-success-tint);
+    color: var(--gold);
   }
 
   &-dislikes {
-    color: var(--ion-color-danger-tint);
+    color: var(--gold);
   }
 
   &-likes,
@@ -411,10 +448,8 @@ const openEvent = (id: string) => {
 }
 
 .trophy-icon {
-  font-size: 18px;
-  padding-right: 6px;
-  padding-left: 4px;
-  padding-bottom: 4px;
+  font-size: 24px;
+  margin-right: 4px;
 }
 
 .activity-icon {

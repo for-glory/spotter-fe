@@ -1,18 +1,18 @@
 <template>
   <div>
-    <ion-toolbar class="swiper-header">
+    <div 
+      class="swiper-header d-flex align-items-center justify-content-between w-100"
+      style="padding-top: 16px; padding-bottom: 16px;"
+    >
       <ion-title slot="start" class="title">{{ title }}</ion-title>
-      <!-- <ion-button slot="end" fill="clear" color="primary" class="header__btn">
-        <router-link
-          :to="{
-            name: EntitiesEnum.UserWorkoutList,
-            query: { type: queryType },
-          }"
-        >
-          View All
-        </router-link>
-      </ion-button> -->
-    </ion-toolbar>
+      <ion-text 
+        class="font-medium font-14 color-gold" 
+        style="text-align: end; cursor: pointer;"
+        @click="handleSetFilter(queryType)"
+      >
+        View All
+      </ion-text>
+    </div>
     <swiper
       free-mode
       slidesPerView="auto"
@@ -25,12 +25,22 @@
         <workout-item
           :duration="workout.duration"
           :title="workout.title || ''"
-          :pathUrl="`${workout.previewUrl}` || ''"
+          :pathUrl="`${VUE_APP_CDN}${workout.preview}` || ''"
           :type="workout.type?.name || ''"
           :trainer="
             `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
             ''
           "
+          :id="workout.id"
+          :total_revenue="workout.total_revenue"
+          :reviews_count="workout.views_count"
+          :recommended_count="workout.recommended_count"
+          :share="true"
+          :hide="true"
+          :hidden="workout.state === WorkoutStatesEnum.Hidden"
+          @hide="hideDailysItem(workout.id)"
+          @show="showDailysItem(workout.id)"
+          @click="openViewModal(workout)"
         />
       </swiper-slide>
     </swiper>
@@ -43,7 +53,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { FreeMode } from "swiper";
 import { defineProps, withDefaults, ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Workout } from "@/generated/graphql";
+import { Workout, WorkoutStatesEnum } from "@/generated/graphql";
 import WorkoutItem from "@/users/components/Workout.vue";
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
@@ -58,6 +68,24 @@ withDefaults(
     title: "",
   }
 );
+const emits = defineEmits<{
+  (e: "hide", id: number): void;
+  (e: "show", id: number): void;
+  (e: "changeFilter", value: string): void;
+  (e: "click", daily: any): void;
+}>();
+const hideDailysItem = (id: number) => {
+  emits("hide", id);
+};
+const showDailysItem = (id: number) => {
+  emits("show", id);
+};
+const handleSetFilter = (value: string) => {
+  emits("changeFilter", value);
+}
+const openViewModal = (daily: any) => {
+  emits("click", daily);
+}
 </script>
 
 <style scoped lang="scss">

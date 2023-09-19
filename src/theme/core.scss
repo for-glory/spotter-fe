@@ -6,6 +6,7 @@
 @import 'partials/swiper';
 @import 'partials/toast';
 @import './variables.css';
+@import 'partials/alert';
 
 /* For responsiveness across screens */
 html {
@@ -149,6 +150,14 @@ a {
   font-weight: 300;
 }
 
+.fs-24 {
+  font-size: 24px;
+}
+
+.fs-16 {
+  font-size: 16px;
+}
+
 .white-text {
   color: var(--ion-color-white);
 }
@@ -173,6 +182,9 @@ a {
 }
 .color-fitness-white {
   color: #EFEFEF;
+}
+.color-black {
+  color: black;
 }
 
 .scrolled-page {
@@ -398,4 +410,13 @@ html:not(.plt-capacitor) .show-if-web {
 
 .ios-app-top {
   padding-top: 64px !important;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

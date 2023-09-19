@@ -47,16 +47,16 @@ export const navigationMenu: NavigationMenu = {
   ],
   TRAINER: [
     {
-      name: EntitiesEnum.TrainerWorkouts,
+      name: EntitiesEnum.Overview,
       label: "Overview",
-      icon: "assets/icon/dashboard.svg",
-      category: "/workout",
+      icon: "assets/icon/overview.svg",
+      category: "/overview",
     },
     {
       name: EntitiesEnum.CreateDailys,
       label: "Dailys",
       icon: "assets/icon/daily.svg",
-      category: "/events",
+      category: "/create-dailys",
     },
     {
       name: EntitiesEnum.TrainerSchedule,
@@ -67,10 +67,10 @@ export const navigationMenu: NavigationMenu = {
       category: "/schedule",
     },
     {
-      name: EntitiesEnum.ChatList,
+      name: EntitiesEnum.TrainerEvents,
       label: "Events",
       icon: "assets/icon/events.svg",
-      category: "/chat",
+      category: "/events",
     },
     {
       name: EntitiesEnum.Profile,

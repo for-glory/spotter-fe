@@ -52,7 +52,7 @@ const currentFacility = useFacilityStore();
 
 if (currentFacility?.facility?.id) {
   router.push({
-    name: EntitiesEnum.DashboardMembership,
+    name: EntitiesEnum.DashboardOverview,
   });
 }
 

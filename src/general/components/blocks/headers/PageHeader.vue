@@ -14,6 +14,9 @@
       <ion-button v-if="closeBtn" class="close-btn" @click="$emit('back')">
         <ion-icon src="assets/icon/close.svg" />
       </ion-button>
+      <ion-button v-if="scanBtn" class="back-btn" @click="$emit('scan')">
+        <ion-icon src="assets/icon/scan.svg" />
+      </ion-button>
       <slot name="avatar-field"></slot>
     </ion-buttons>
     <ion-buttons slot="end">
@@ -26,6 +29,13 @@
         @click="emits('skip')"
       >
         Skip
+      </ion-button>
+      <ion-button v-if="chatBtn" class="chat-btn" shape="round" @click="emits('chat-click')">
+        <ion-icon src="assets/icon/chat.svg" />
+        <span class="chat-btn__badge"></span>
+      </ion-button>
+      <ion-button v-if="moreBtn" class="chat-btn" @click="$emit('more-click')">
+        <ion-icon :icon="ellipsisVertical" />
       </ion-button>
     </ion-buttons>
     <ion-title :class="titleClass">{{ title }}</ion-title>
@@ -48,6 +58,7 @@ import {
   isPlatform
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
+import { ellipsisVertical } from "ionicons/icons";
 
 withDefaults(
   defineProps<{
@@ -56,6 +67,9 @@ withDefaults(
     backBtn?: boolean;
     skipBtn?: boolean;
     closeBtn?: boolean;
+    scanBtn?: boolean;
+    chatBtn?: boolean;
+    moreBtn?: boolean;
     title?: string | null;
     titleClass?: string;
   }>(),
@@ -65,6 +79,9 @@ withDefaults(
     backBtn: false,
     skipBtn: false,
     closeBtn: false,
+    scanBtn: false,
+    chatBtn: false,
+    moreBtn: false,
     title: null,
     titleClass: "header__title",
   }
@@ -73,6 +90,9 @@ withDefaults(
 const emits = defineEmits<{
   (e: "back"): void;
   (e: "skip"): void;
+  (e: "scan"): void;
+  (e: "chat-click"): void;
+  (e: "more-click"): void;
 }>();
 </script>
 
@@ -107,7 +127,7 @@ const emits = defineEmits<{
 
   &__title {
     padding: 0;
-    font-family: "Yantramanav", serif;
+    font-family: "Lato";
     font-size: 20px;
     line-height: 1.5;
     font-weight: 500;
@@ -119,6 +139,14 @@ const emits = defineEmits<{
     font-style: normal;
     font-weight: 500;
     color: var(--gold);
+  }
+  &_overview__title {
+    font-family: Lato;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: 0.216px;
   }
 }
 
@@ -168,18 +196,20 @@ const emits = defineEmits<{
   --min-height: 30px;
   --min-width: 30px;
 }
-
-.header__title{
-
-
-  text-align: center;
-  font-family: Lato;
-font-size: 24px;
-font-weight: 400;
-line-height: 31px;
-letter-spacing: 0em;
-color:#E1DBC5;
-
+.chat-btn {
+  margin: 0 !important;
+  ion-icon {
+    font-size: 24px;
+  }
 }
-
+.chat-btn__badge {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  margin: -12px 0 0 4px;
+  background: var(--alert-red);
+}
 </style>

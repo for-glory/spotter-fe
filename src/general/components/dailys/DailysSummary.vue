@@ -1,46 +1,60 @@
 <template>
-  <div class="content">
+  <div 
+    class="common-style"
+    :class="{ 
+      'block': !isNative,
+      'content': isNative
+    }"
+  >
     <ion-title class="title font-bold font-20 color-white">Dailys Summary</ion-title>
-    <div class="d-flex justify-content-between">
-      <div class="d-flex-col gap-24">
-        <div class="d-flex-col gap-4">
-          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
-            Views
-            <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
-          </ion-text>
-          <ion-text class="font-semibold font-18 color-white">
-            {{ formatNumber(summaryData?.totalViews) }}
-          </ion-text>
-        </div>
-        <div class="d-flex-col gap-4">
-          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
-            Subscribers
-            <ion-icon src="assets/icon/add-user.svg" class="normal-icon"></ion-icon>
-          </ion-text>
-          <ion-text class="font-semibold font-18 color-white">
-            {{ formatNumber(summaryData?.subscribers) }}
-          </ion-text>
-        </div>
+    <div class="d-flex justify-content-between flex-wrap">
+      <div 
+        class="d-flex-col gap-4"
+        :class="{ 'w-50': isNative }"
+      >
+        <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+          Views
+          <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
+        </ion-text>
+        <ion-text class="font-semibold font-18 color-white">
+          {{ formatNumber(summaryData?.totalViews) }}
+        </ion-text>
       </div>
-      <div class="d-flex-col gap-24">
-        <div class="d-flex-col gap-4">
-          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
-            Views per daily
-            <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
-          </ion-text>
-          <ion-text class="font-semibold font-18 color-white">
-            {{ formatNumber(summaryData?.viewsPerDaily) }}
-          </ion-text>
-        </div>
-        <div class="d-flex-col gap-4">
-          <ion-text class="font-light font-12 d-flex align-items-center gap-4">
-            Total Revenue 
-            <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
-          </ion-text>
-          <ion-text class="font-semibold font-18 color-white">
-            {{ formatNumber(summaryData?.totalRevenue) }}
-          </ion-text>
-        </div>
+      <div 
+        class="d-flex-col gap-4"
+        :class="{ 'w-50': isNative }"
+      >
+        <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+          Subscribers
+          <ion-icon src="assets/icon/add-user.svg" class="normal-icon"></ion-icon>
+        </ion-text>
+        <ion-text class="font-semibold font-18 color-white">
+          {{ formatNumber(summaryData?.subscribers) }}
+        </ion-text>
+      </div>
+      <div 
+        class="d-flex-col gap-4"
+        :class="{ 'w-50': isNative }"
+      >
+        <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+          Views per daily
+          <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
+        </ion-text>
+        <ion-text class="font-semibold font-18 color-white">
+          {{ formatNumber(summaryData?.viewsPerDaily) }}
+        </ion-text>
+      </div>
+      <div 
+        class="d-flex-col gap-4"
+        :class="{ 'w-50': isNative }"
+      >
+        <ion-text class="font-light font-12 d-flex align-items-center gap-4">
+          Total Revenue 
+          <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
+        </ion-text>
+        <ion-text class="font-semibold font-18 color-white">
+          {{ formatNumber(summaryData?.totalRevenue) }}
+        </ion-text>
       </div>
     </div>
   </div>
@@ -50,10 +64,13 @@
 import { defineProps, computed } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonTitle } from "@ionic/vue";
+import { Capacitor } from "@capacitor/core";
 
 defineProps<{
   summaryData: any;
 }>(); 
+
+let isNative = Capacitor.isNativePlatform();
 
 const formatNumber = (num: number) => {
   if(num <= 9) {
@@ -83,12 +100,16 @@ const formatNumber = (num: number) => {
 
 .content {
   margin: 24px 0;
-
+}
+.common-style {
   .w-70 {
     width: 70%;
   }
   .w-30 {
     width: 30%;
+  }
+  .w-50 {
+    width: 50%;
   }
 
   .d-flex-col {
@@ -150,5 +171,10 @@ const formatNumber = (num: number) => {
   .color-white {
     color: white;
   }  
+}
+.block {
+  padding: 11px 27px;
+  background-color: #262626;
+  width: 100%;
 }
 </style>

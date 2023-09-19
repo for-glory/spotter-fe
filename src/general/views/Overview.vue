@@ -1,7 +1,11 @@
 <template>
-  <base-layout content-full-height>
+  <base-layout 
+    content-full-height 
+    :hideNavigationMenu="loadingUser || loadingDashboarData" 
+    :class="{ 'trainer-overview': role === RoleEnum.Trainer }" 
+  >
     <template #header>
-      <page-header title="Overview">
+      <page-header title="Overview" title-class="header_overview__title">
         <template #avatar-field>
           <ion-avatar v-if="!loadingUser || !loadingDashboarData" class="header__photo" @click="openSettings">
             <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
@@ -13,7 +17,7 @@
         <template #custom-btn>
           <ion-button v-if="!loadingUser || !loadingDashboarData" @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge" v-if="unreadMessages.length"></span>
+            <span v-if="unreadMessages.length || role === RoleEnum.Trainer" class="header-btn__badge"></span>
           </ion-button>
           <ion-button v-if="!loadingUser || !loadingDashboarData" @click="openQR" class="header-btn">
             <ion-icon src="assets/icon/scan.svg" />
@@ -29,10 +33,11 @@
       />
       <div v-else class="profile">
         <fitness-center-stats :overviewData="overviewData"  />
-        <revenue :overviewData="overviewData" />
-        <attendance-trend :overviewData="overviewData" />
+        <revenue v-if="role !== RoleEnum.Trainer" :overviewData="overviewData" />
+        <attendance-trend v-if="role !== RoleEnum.Trainer" :overviewData="overviewData" />
         <market-stats />
         <event-status />
+        <event-status :title="'Training Status'" />
       </div>
     </template>
   </base-layout>
@@ -174,7 +179,7 @@ watch(
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
     });
-    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal));
+    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal) as Facility);
   }
 );
 
@@ -207,13 +212,21 @@ gotUser(({ data }) => {
       : null;
 
   if(!localStorage.getItem("selected_facility")) {
-    facilityStore.setFacility(facilities.value?.at(0));
+    facilityStore.setFacility(facilities.value?.at(0) as Facility);
     localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
   } else {
     activeFacilityId.value = localStorage.getItem("selected_facility");
+    let facilityValue = facilities.value?.find((facility) => facility?.id === activeFacilityId.value);
     console.log(activeFacilityId.value);
-    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
+    if(!facilityValue && facilities.value?.length){
+      facilityStore.setFacility(facilities.value?.at(0) as Facility);
+      localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
+    } else {
+      facilityStore.setFacility(facilityValue as Facility);
+    }
   }
+  console.log("facilityStore.facility", facilityStore.facility);
+  
   refetch( { id: facilityStore?.facility?.id } );
 
   userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
@@ -249,7 +262,7 @@ const fetchChats = () => {
 
 const openQR = () => {
   router.push({
-    name: EntitiesEnum.ProfileScan,
+    name: EntitiesEnum.TrainersUpcomingTrainings,
   });
 };
 
@@ -655,5 +668,11 @@ img#cover {
 .time-icon {
   width: 12px;
   height: 12px;
+}
+
+.trainer-overview {
+  .header-btn__badge {
+    background: var(--color-red);
+  }
 }
 </style>

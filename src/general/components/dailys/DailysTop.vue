@@ -1,5 +1,10 @@
 <template>
-  <div class="common container">
+  <div 
+    class="common-style container"
+    :class="{
+      'block': !isNative
+    }"
+  >
     <ion-title class="title font-bold font-20 color-white">Top 10 dailys</ion-title>
     <div>
       <div class="color-gray font-medium font-14 color-gray d-flex align-items-center">
@@ -23,11 +28,13 @@ import { defineProps, computed, ref } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel } from "@ionic/vue";
 import RankingChart from "@/general/components/RankingChart.vue";
+import { Capacitor } from "@capacitor/core";
 
 const props = defineProps<{
   summaryData: any;
 }>(); 
 const graphDuration = ref<string>('7');
+let isNative = Capacitor.isNativePlatform();
 
 const handleSetDuration = ( value: string ) => {
   graphDuration.value = value;
@@ -69,7 +76,7 @@ const getWidth = (value: number) => {
   padding: 24px 0;
 }
 
-.common {
+.common-style {
   .w-70 {
     width: 70%;
   }
@@ -139,7 +146,6 @@ const getWidth = (value: number) => {
   padding-top: 14px;
 
   .tabs-group {
-
     ion-button {
       --border-radius: 100px;
       font: 400 10px/1 Lato;
@@ -147,7 +153,9 @@ const getWidth = (value: number) => {
     }
   }
 }
-.chart-container {
-  padding: 10px 0;
+.block {
+  padding: 17px 23px;
+  background-color: #262626;
+  width: 100%;
 }
 </style>

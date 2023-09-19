@@ -25,18 +25,18 @@ export const getFacilitySubscription = () => {
 };
 
 export const setSelectedGym = (id: number) => {
-  localStorage.setItem('selectedGym', id.toString());
+  localStorage.setItem("selectedGym", id.toString());
 };
 
 const gymOwnerSubscription: Middleware = async ({ next, router }) => {
-  if (localStorage.getItem("selectedGym") && role !== RoleEnum.Manager) {
+  if (role !== RoleEnum.Manager && role !== RoleEnum.User) {
     await getFacilitySubscription()
       .then((data) => {
-				console.log("data--->", data);
-				if(data || role === RoleEnum.Trainer) {
-					return next();
-				}
-				else return router.push({ name: EntitiesEnum.DashboardStartMembership });
+        if (data) {
+          return next();
+        } else {
+          return router.push({ name: EntitiesEnum.DashboardStartMembership });
+        }
       })
       .catch(() => {
         return router.push({ name: EntitiesEnum.DashboardStartMembership });

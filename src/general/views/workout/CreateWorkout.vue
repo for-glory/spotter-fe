@@ -62,6 +62,7 @@ const createDailys = () => {
     title: store.workoutTitle,
     description: store.exercises?.description,
     price: getSumForPayment(store.workoutPrice as number),
+    duration: store.workoutDuration,
   })
     .then(async () => {
       const toast = await toastController.create({

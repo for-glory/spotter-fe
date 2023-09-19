@@ -81,7 +81,6 @@ import {
   defineEmits,
   defineExpose,
 } from "vue";
-import { IonContent } from "@ionic/vue";
 import {
   IonSearchbar,
   SearchbarCustomEvent,
@@ -90,6 +89,7 @@ import {
   IonItem,
   IonLabel,
   IonSpinner,
+  IonContent
 } from "@ionic/vue";
 import {
   FacilitiesQueryVariables,

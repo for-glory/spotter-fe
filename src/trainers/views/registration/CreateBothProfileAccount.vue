@@ -62,7 +62,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="holder-button">
+      <div class="buttons">
         <ion-button
           expand="block"
           @click="saveAddress"
@@ -246,7 +246,22 @@ const startTimeOptions = {
 
 <style scoped lang="scss">
 .page {
-  padding: 56px 24px 16px;
+  padding: 32px 24px 16px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .form-row {
+    padding: 0 2rem;
+    width: 30%;
+    align-self: center;
+
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+  }
 
   &__head {
     font-size: 14px;
@@ -256,9 +271,13 @@ const startTimeOptions = {
     margin-bottom: 32px;
 
     ion-text {
-      display: block;
+      flex: 1;
       margin: 0 auto;
-      max-width: 260px;
+
+      width: 100%;
+      @media (max-width: 992px) {
+        max-width: 260px;
+      }
     }
   }
 
@@ -271,11 +290,24 @@ const startTimeOptions = {
   }
 }
 
-.holder-button {
-  padding: 8px 24px calc(20px + var(--ion-safe-area-bottom));
+.buttons {
+  margin-top: 1rem;
+  width: 30%;
+  margin: 0 auto;
+  padding: 0 24px calc(32px + var(--ion-safe-area-bottom));
+
+  @media (max-width: 992px) {
+    width: 100%;
+  }
 
   .button {
-    margin: 0;
+    margin: 0 auto;
+    text-align: center;
+    font-family: Lato;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%;
   }
 }
 </style>

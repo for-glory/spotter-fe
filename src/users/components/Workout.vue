@@ -1,13 +1,15 @@
 <template>
   <ion-item
     class="workout-item common-style"
-    :class="{ 'workout-item--hidden': hidden }"
+    :class="{ 
+      'workout-item--hidden': hidden,
+      'workout-item__native': !isNative
+    }"
     @click="emits('click')"
   >
-  <div class="workout-item__photo">
+    <div class="workout-item__photo">
       <ion-img :src="pathUrl"></ion-img>
     </div>
-
     <div class="d-flex justify-content-between workout-item__inner">
       <div class="d-flex-col align-items-start" :class="hidden ?  'justify-content-end' : 'justify-content-between'">
         <ion-button
@@ -28,7 +30,7 @@
             <ion-icon icon="assets/icon/time.svg" />
             <span>
               <template v-if="duration">
-                {{ timeConvertToHuman(duration) }}
+                {{ getDurationText(duration) }}
                 <ion-text color="light" class="workout-item__info-dot"
                   >&nbsp;&#183;&nbsp;</ion-text
                 >
@@ -97,6 +99,7 @@ import { timeConvertToHuman } from "@/helpers/date-formater";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { Share } from "@capacitor/share";
+import { Capacitor } from "@capacitor/core";
 
 const props = withDefaults(
   defineProps<{
@@ -134,6 +137,7 @@ const toggleWorkout = () => {
     showHideConfirmationModal();
   }
 };
+let isNative = Capacitor.isNativePlatform();
 
 const {
   showConfirmationModal,
@@ -165,8 +169,17 @@ const formatNumber = (num: number) => {
   } else {
     return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
   }
-}
+};
 
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
 
 </script>
 
@@ -184,8 +197,8 @@ const formatNumber = (num: number) => {
   --padding-bottom: 0;
   --background: var(--gray-600);
 
-  &:not(:first-child) {
-    margin-top: 16px;
+  &__native {
+    width: 280px;
   }
 
   &__inner {

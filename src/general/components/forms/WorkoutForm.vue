@@ -252,6 +252,7 @@ const videoSelected = async (
         `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.thumbnail_path}`
       );
       store.setValue("workoutPath", res?.data.videoPreload.thumbnail_path);
+      store.setValue("workoutDuration", res?.data.videoPreload.duration);
       store.setExercise({
         description: exerciseDescription.value,
         videoPath: `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.path}`,
@@ -259,7 +260,7 @@ const videoSelected = async (
         videoSize: size,
         videoName: name,
       });
-      store.setValue("updates", { video: store.path, preview: store.workoutPath });
+      store.setValue("updates", { video: store.path, preview: store.workoutPath, duration: store.workoutDuration });
     })
     .catch((error) => {
       abort();

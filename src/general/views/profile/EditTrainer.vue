@@ -200,7 +200,7 @@
               class="primary-outline font-yantramanav"
               fill="outline"
               expand="block"
-              @click="uploadFile(DocumentsTypeEnum.Certificate)"
+              @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)"
             >
               Upload certificate
             </ion-button>
@@ -390,6 +390,7 @@ import {
   actionSheetController,
   toastController,
   modalController,
+  ActionSheetController
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -407,6 +408,7 @@ import {
   DeleteDocumentDocument,
   DeleteMediaDocument,
   SubscriptionsTierEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { Browser } from "@capacitor/browser";
 import useId from "@/hooks/useId";
@@ -425,6 +427,7 @@ import useSubscription from "@/hooks/useSubscription";
 import { defineProps, withDefaults } from "vue";
 import { Capacitor } from "@capacitor/core";
 import WorkingSchedule from "./WorkingSchedule.vue";
+import useRoles from "@/hooks/useRole";
 
 const store = useSelectedAddressStore();
 
@@ -433,6 +436,7 @@ const { id } = useId();
 const percentFileLoaded = ref<number | undefined>();
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
+const { role } = useRoles();
 const media = ref<
   Array<{
     __typename?: "Media";
@@ -874,7 +878,7 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   },
 });
 
-const onEdit = async (key: DocumentsTypeEnum, id: string) => {
+const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) => {
   const actionSheet = await actionSheetController.create({
     mode: "ios",
     buttons: [
@@ -883,23 +887,27 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
         data: {
           type: actionTypesEnum.UploadFile,
         },
+        cssClass: "success-tr-sheet-btn"
       },
-      {
+      ...(!fromUpload ? [{
         text: "View file",
         data: {
           type: actionTypesEnum.ViewFile,
         },
-      },
+        cssClass: "success-tr-sheet-btn"
+      }]: []),      
       {
         text: "Delete file",
         role: "destructive",
         data: {
           type: actionTypesEnum.DeleteEvent,
         },
+        cssClass: "danger-tr-sheet-btn"
       },
       {
         text: "Cancel",
         role: "cancel",
+        cssClass: "cancel-tr-sheet-btn"
       },
     ],
   });
@@ -907,7 +915,9 @@ const onEdit = async (key: DocumentsTypeEnum, id: string) => {
   await actionSheet.present();
 
   const { data } = await actionSheet.onWillDismiss();
-  const type: actionTypesEnum = data.type;
+  console.log("data====", data);
+  
+  const type: actionTypesEnum = data?.type;
 
   const actions = {
     [actionTypesEnum.UploadFile]: () => uploadFile(key, id),

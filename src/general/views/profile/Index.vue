@@ -3,23 +3,16 @@
     <template #header>
       <page-header
         :back-btn="true"
-        :title-class="role === RoleEnum.Trainer ? 'header_trainer__title' : 'header__title'"
+        :title-class="
+          role === RoleEnum.Trainer ? 'header_trainer__title' : 'header__title'
+        "
+        :chat-btn="role === RoleEnum.Trainer ? true : false"
         title="Settings"
       >
-        <template v-if="role === RoleEnum.Trainer" #custom-btn>
-          <ion-button class="header-btn" shape="round">
-            <ion-icon src="assets/icon/chat.svg" />
-            <span class="header-btn__badge"></span>
-          </ion-button>
-        </template>
       </page-header>
     </template>
     <template #content>
-      <ion-spinner
-        v-if="loadingUser"
-        name="lines"
-        class="spinner"
-      />
+      <ion-spinner v-if="loadingUser" name="lines" class="spinner" />
       <div v-else class="profile">
         <progress-avatar
           :src="avatarUrl || ''"
@@ -37,8 +30,12 @@
         />
         <div class="profile__head">
           <ion-title
-            @click="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner && showGymModal()"
-            class="profile__fullname" :class="{'profile__fullname-gold': role === RoleEnum.Trainer }"
+            @click="
+              role === RoleEnum.OrganizationOwner ||
+                (role === RoleEnum.FacilityOwner && showGymModal())
+            "
+            class="profile__fullname"
+            :class="{ 'profile__fullname-gold': role === RoleEnum.Trainer }"
           >
             <template
               v-if="role === RoleEnum.User || role === RoleEnum.Trainer"
@@ -51,7 +48,10 @@
             <ion-icon
               class="profile__fullname-icon"
               src="assets/icon/arrow-down-light.svg"
-              v-if="role === RoleEnum.OrganizationOwner || role === RoleEnum.FacilityOwner"
+              v-if="
+                role === RoleEnum.OrganizationOwner ||
+                role === RoleEnum.FacilityOwner
+              "
             />
           </ion-title>
           <div class="profile__address">
@@ -160,7 +160,8 @@ import {
   IonIcon,
   IonModal,
   IonTitle,
-  modalController
+  modalController,
+  IonSpinner,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -190,6 +191,7 @@ import { Capacitor } from "@capacitor/core";
 import useSubscription from "@/hooks/useSubscription";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import WorkingSchedule from "./WorkingSchedule.vue";
+import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 
 const router = useRouter();
 const route = useRoute();
@@ -205,7 +207,7 @@ const { role } = useRoles();
 const { type: currentSubscriptionType } = useSubscription();
 
 const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
-console.log('defaultAddress', defaultAddress);
+console.log("defaultAddress", defaultAddress);
 
 const currentFacility = useFacilityStore();
 
@@ -215,14 +217,14 @@ const {
   loading: loadingUser,
   onResult: gotUser,
 } = useQuery<Pick<Query, "user">>(UserDocument, { id });
-const progress = ref<string | number>("");
+const progress = ref<string | number>(0);
 
 const isTrusted = computed(() =>
   role === RoleEnum.User ? Number(progress.value) >= 100 : true
 );
 
 onMounted(() => {
-  console.log('on mounted currentfacilityid: ', currentFacility.facility?.id);
+  console.log("on mounted currentfacilityid: ", currentFacility.facility?.id);
   router.push({
     name: router?.currentRoute?.value?.name,
     query: { facilityId: currentFacility.facility?.id },
@@ -250,13 +252,11 @@ const activeFacilityId = ref<string | null>(null);
 watch(
   () => activeFacilityId.value,
   (newVal) => {
-    console.log('********watch*********');
-    console.log('activeFacilityId: ', activeFacilityId.value);
-    console.log('currentFacilityId: ', currentFacility.facility?.id);
-    console.log('facilities: ', facilities.value);
-    console.log('search result: ', facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
-    currentFacility.setFacility(facilities.value?.find((facility) => facility?.id === activeFacilityId.value));
-    console.log('*****after selection****');
+    console.log("********watch*********");
+    console.log("activeFacilityId: ", activeFacilityId.value);
+    console.log("currentFacilityId: ", currentFacility.facility?.id);
+    console.log("facilities: ", facilities.value);
+    console.log("*****after selection****");
     console.log(currentFacility.facility?.id);
     localStorage.setItem("selected_facility", activeFacilityId.value as string);
     router.push({
@@ -301,7 +301,6 @@ const facilityAddress = computed<string>(
       (focility: any) => focility.id === activeFacilityId.value
     )?.address?.street ?? defaultAddress
 );
-console.log('facilityAddress', facilityAddress.value);
 
 const symbols = computed<string>(() => {
   switch (role) {
@@ -354,11 +353,9 @@ const menuType =
     ? EntitiesEnum.Facility
     : role;
 const menu = profileMenu[menuType];
-console.log('menu', menu);
-
+console.log("menu", menu);
 
 const goTo = async (name: EntitiesEnum) => {
-  
   switch (name) {
     case EntitiesEnum.Facility:
       router.push({
@@ -379,9 +376,8 @@ const goTo = async (name: EntitiesEnum) => {
 
       break;
     case EntitiesEnum.ProfileMembership:
-      console.log({currentSubscriptionType});
-      if(Capacitor.isNativePlatform()) {
-        if(currentSubscriptionType === 'BASIC') {
+      if (Capacitor.isNativePlatform()) {
+        if (currentSubscriptionType === "BASIC") {
           router.push({
             name: EntitiesEnum.StartMembership,
           });
@@ -404,15 +400,13 @@ const goTo = async (name: EntitiesEnum) => {
 
       break;
 
-      case EntitiesEnum.ProfileWorkingSchedule:
-        
-        
-        if(Capacitor.isNativePlatform()){
-            router.push({
-             name,
-            });
-        }else{
-          const modal = await modalController.create({
+    case EntitiesEnum.ProfileWorkingSchedule:
+      if (Capacitor.isNativePlatform()) {
+        router.push({
+          name,
+        });
+      } else {
+        const modal = await modalController.create({
           component: WorkingSchedule,
           cssClass: "web-working-schedule",
           componentProps: {
@@ -423,6 +417,13 @@ const goTo = async (name: EntitiesEnum) => {
           await modal.present();
         }
         break;
+
+      case EntitiesEnum.TrainerUserProfile:        
+        router.push({
+          name: EntitiesEnum.TrainerUserProfile,
+          params: { id: result.value?.user?.id, type: TrainerProfileViewEnum.CurrentUser },
+        });
+      break;
     default:
       router.push({
         name,
@@ -495,7 +496,7 @@ profileDeleted(() => {
     color: var(--ion-color-white);
   }
 
-  &__fullname-gold{
+  &__fullname-gold {
     color: var(--gold);
   }
 
@@ -559,21 +560,5 @@ profileDeleted(() => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
-}
-
-.header-btn{
-  ion-icon{
-    font-size: 24px;
-  }
-}
-.header-btn__badge {
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  position: absolute;
-  margin: -12px 0 0 4px;
-  background: var(--alert-red);
 }
 </style>
