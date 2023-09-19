@@ -1,14 +1,14 @@
 <template>
-  <ion-modal ref="chooseModal" class="modal" swipeToClose cssClass="auto-height">
-    <div class="modal__content" :class="{ 'address-content-tr': forAddress }">
-      <span class="modal__closed"></span>
+  <ion-modal ref="chooseModal" class="modal hide-scrollbar" :class="{ 'web-location-modal': isWebView  }" swipeToClose cssClass="auto-height">
+    <div class="modal__content" :class="{ 'address-content-tr': forAddress}">
+      <span v-if="!isWebView" class="modal__closed"></span>
       <ion-label class="modal__title">
         {{ title || "Location" }}
       </ion-label>
       <template v-if="type !== EntitiesEnum.Address">
         <template v-if="forAddress">
           <search-form placeholder="Enter address name" hide-results hidden-cancel></search-form>
-          <div class="address-list">
+          <div class="address-list hide-scrollbar">
             <ion-item lines="full">
                 <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
                 <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
@@ -21,6 +21,40 @@
                 <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
                 <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
             </ion-item>
+
+            <template v-if="isWebView">
+              <ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item><ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            <ion-item lines="full">
+                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+            </ion-item>
+            </template>
           </div>
         </template>
         <template v-else>
@@ -92,9 +126,11 @@ const selectedAddress = ref<NativeGeocoderResult | null>(null);
 const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 
 withDefaults(defineProps<{
-    forAddress?:boolean
+    forAddress?:boolean,
+    isWebView?:boolean
   }>(),  {
-    forAddress: false
+    forAddress: false,
+    isWebView: false
   });
 
 const emits = defineEmits<{
@@ -358,6 +394,32 @@ defineExpose({
           font-weight: 500;
         }
       }
+    }
+  }
+}
+
+.web-location-modal {
+  align-items: center;
+  --width: 375px;
+  --height: 100%;
+
+  &::part(content){
+    max-height: 531px;
+  }
+
+  .modal__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .address-list {
+    overflow: auto;
+    height: 100%;
+
+    ion-item {
+      min-height: 51px;
     }
   }
 }

@@ -345,7 +345,7 @@
           class="primary-outline font-yantramanav"
           fill="outline"
           expand="block"
-          @click="uploadFile(DocumentsTypeEnum.Certificate)"
+          @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)"
         >
           Upload certificate
         </ion-button>
@@ -428,6 +428,7 @@ import { defineProps, withDefaults } from "vue";
 import { Capacitor } from "@capacitor/core";
 import WorkingSchedule from "./WorkingSchedule.vue";
 import useRoles from "@/hooks/useRole";
+import ChooseGymAccount from "@/trainers/views/registration/ChooseGymAccount.vue";
 
 const store = useSelectedAddressStore();
 
@@ -501,10 +502,21 @@ const { type: subscriptionType } = useSubscription();
 
 const chosenGym = computed(() => store.assignedFacility);
 
-const openChooseGym = () => {
-  router.push({
-    name: EntitiesEnum.ChooseGymAccount,
-  });
+const openChooseGym = async () => {
+  if (isNativePlatform) {
+    router.push({
+      name: EntitiesEnum.ChooseGymAccount,
+    });
+  }else{
+      const modal = await modalController.create({
+        component: ChooseGymAccount,
+        cssClass: 'tr-choose-gym-modal',
+        componentProps: {
+          fromModal: true
+        }
+      })
+      modal.present()
+  }
 };
 
 const uploadPhoto = async (photo: string) => {

@@ -1,21 +1,28 @@
 <template>
   <base-layout :class="{ 'trainer-gym': role === RoleEnum.Trainer }" hide-navigation-menu>
     <template #header>
-      <ion-back-button
-        class="back-btn"
-        icon="assets/icon/arrow-back.svg"
-        @click="handleBack"
-      >
-      </ion-back-button>
-      <search-form
-        ref="searchForm"
-        :type="EntitiesEnum.Facilities"
-        :placeholder="role=== RoleEnum.Trainer ? 'Enter name or adress of gym...' : undefined"
-        hide-results
-        extraPadding
-        @search="search"
-        hidden-cancel
-      />
+      <IonToolbar :class="['gym-toolbar',  { 'web-toolbar': fromModal }]">
+        <ion-back-button slot="start"
+          class="back-btn" 
+          icon="assets/icon/arrow-back.svg"
+          @click="handleBack"
+          v-if="!fromModal"
+        >
+        </ion-back-button>
+        <IonTitle v-if="fromModal">
+          Address
+        </IonTitle>
+        <search-form
+          ref="searchForm"
+          :type="EntitiesEnum.Facilities"
+          :placeholder="role=== RoleEnum.Trainer ? 'Enter name or adress of gym...' : undefined"
+          hide-results
+          extraPadding
+          @search="search"
+          hidden-cancel
+        />
+      </IonToolbar>
+
     </template>
     <template #content>
       <div class="holder-content ion-padding-horizontal">
@@ -43,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonBackButton, IonLabel, IonSpinner, IonItem, IonCheckbox } from "@ionic/vue";
+import { IonBackButton, IonLabel, IonSpinner, IonItem, IonCheckbox, IonTitle, IonToolbar } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -60,6 +67,14 @@ import { FacilitySearchResult } from "@/interfaces/FacilitySearchResult";
 import SearchResult from "@/users/views/facilities/SearchResult.vue";
 import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 import useRoles from "@/hooks/useRole";
+
+
+const props = defineProps<{
+  fromModal?:boolean
+}>();
+console.log("props", props);
+
+
 
 const router = useRouter();
 const { role } = useRoles();
@@ -148,7 +163,7 @@ onMounted(() => {
   margin-left: 12px;
   vertical-align: top;
   display: inline-block;
-  margin-top: calc(24px + var(--ion-safe-area-top));
+  margin-top: calc(18px + var(--ion-safe-area-top));
   border-radius: 50%;
   --icon-font-size: 24px;
   --padding-bottom: 0;
@@ -187,6 +202,23 @@ onMounted(() => {
     position: absolute;
     right: 24px;
     --size: 24px;
+  }
+
+  .gym-toolbar {
+    ion-title {
+      color:  #FFF;
+      font-family: Yantramanav;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 150%;
+      padding-top: 25px;
+    }
+  }
+
+  .web-toolbar {
+    --padding-start: 18px;
+    --padding-end: 14px;
   }
 
 </style>
