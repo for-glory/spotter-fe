@@ -6,6 +6,8 @@
 	<string>LOCATION_WHEN_IN_USE_SAGE_DESCRIPTION</string>
 	<key>NSCameraUsageDescription</key>
 	<string>CAMERA_USAGE_DESCRIPTION</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>PHOTO_LIBRARY_USAGE_DESCRIPTION</string>
 	<key>CFBundleDevelopmentRegion</key>

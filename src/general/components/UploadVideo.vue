@@ -128,8 +128,8 @@ const videoOptions: VideoOptions = {
   saveToGallery: true,
   source: CameraVideoSource.Camera,
   promptLabelHeader: 'Upload video',
-  promptLabelLibrary: '',
-  promptLabelVideo: 'Click here to start recording a video'
+  promptLabelLibrary: 'Upload from video library',
+  promptLabelVideo: 'Record a video'
 };
 
 const isUploadModalOpen = ref<boolean>(false);
