@@ -2,8 +2,7 @@
 
   <base-layout :hide-navigation-menu="isSearchOnFocus">
     <template #header>
-      <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
-        @handle-blur="isSearchOnFocus = false" />
+
 
       <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
@@ -655,7 +654,7 @@ import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
+
 import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
 import { ActivityItem } from "@/interfaces/ActivityItem";
 
