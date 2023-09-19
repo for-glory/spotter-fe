@@ -1,19 +1,30 @@
 <template>
     <div class="dashboard web-bookings">
         <div class="d-flex align-items-center page-header">
-          <ion-button class="common-back-btn" fill="clear">
-            <ion-icon src="assets/icon/arrow-back.svg" />
-          </ion-button>
-          <ion-title class="banner__title">Bookings</ion-title>
+            <ion-button class="common-back-btn" fill="clear">
+                <ion-icon src="assets/icon/arrow-back.svg" />
+            </ion-button>
+            <ion-title class="banner__title">Bookings</ion-title>
         </div>
         <div class="dashboards-items">
-            <dashboard-item :items="activityItems" :is-web="true" class="trainer-item">
+            <dashboard-item
+                :items="activityItems"
+                :is-web="true"
+                class="trainer-item"
+            >
                 <template #title>
-                    <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
+                    <ion-icon
+                        src="assets/icon/activity.svg"
+                        class="activity-icon"
+                    />
                     Activity
                 </template>
             </dashboard-item>
-            <dashboard-item :items="ratingItems" :is-web="true" class="trainer-item">
+            <dashboard-item
+                :items="ratingItems"
+                :is-web="true"
+                class="trainer-item"
+            >
                 <template #title>
                     <ion-icon src="assets/icon/award.svg" class="trophy-icon" />
                     Rating
@@ -22,41 +33,81 @@
                     <div class="rating__container">
                         <ion-text class="rating-likes">
                             {{ widgetInfo?.positive_reviews_count || 0 }}
-                            <ion-icon class="like-icon" src="assets/icon/like.svg" />
+                            <ion-icon
+                                class="like-icon"
+                                src="assets/icon/like.svg"
+                            />
                         </ion-text>
                         <ion-text class="rating-dislikes">
                             {{ widgetInfo?.negative_reviews_count || 0 }}
-                            <ion-icon class="dislike-icon" src="assets/icon/dislike.svg" />
+                            <ion-icon
+                                class="dislike-icon"
+                                src="assets/icon/dislike.svg"
+                            />
                         </ion-text>
                     </div>
                 </template>
             </dashboard-item>
         </div>
-        <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" />
+        <week-calendar
+            v-model="selectedDate"
+            :bookings="bookings"
+            @handle-view="onViewCalendar"
+        />
         <div class="events__container">
-            <items-header :title="`Upcoming ${activeTab === EntitiesEnum.Events ? 'events' : 'Sessions'
-                }`" @handle-view="onViewTrainings" :hide-view-more="trainingsLoading ||
-        eventsLoading ||
-        (activeTab === EntitiesEnum.Trainings && !trainings?.length) ||
-        (activeTab === EntitiesEnum.Events && !events?.length)
-        " />
-            <ion-spinner name="lines" class="spinner" v-if="(activeTab === EntitiesEnum.Trainings && trainingsLoading) ||
-                (activeTab === EntitiesEnum.Events && eventsLoading)
-                " />
-            <empty-block hide-button icon="assets/icon/empty.svg" v-else-if="(activeTab === EntitiesEnum.Trainings && !trainings.length) ||
-                (activeTab === EntitiesEnum.Events && !events.length)
-                " :title="`Sorry, no ${activityName} found`" :text="`Currently you have no booked ${activityName}`" />
+            <items-header
+                :title="`Upcoming ${
+                    activeTab === EntitiesEnum.Events ? 'events' : 'Sessions'
+                }`"
+                @handle-view="onViewTrainings"
+                :hide-view-more="
+                    trainingsLoading ||
+                    eventsLoading ||
+                    (activeTab === EntitiesEnum.Trainings &&
+                        !trainings?.length) ||
+                    (activeTab === EntitiesEnum.Events && !events?.length)
+                "
+            />
+            <ion-spinner
+                name="lines"
+                class="spinner"
+                v-if="
+                    (activeTab === EntitiesEnum.Trainings &&
+                        trainingsLoading) ||
+                    (activeTab === EntitiesEnum.Events && eventsLoading)
+                "
+            />
+            <empty-block
+                hide-button
+                icon="assets/icon/empty.svg"
+                v-else-if="
+                    (activeTab === EntitiesEnum.Trainings &&
+                        !trainings.length) ||
+                    (activeTab === EntitiesEnum.Events && !events.length)
+                "
+                :title="`Sorry, no ${activityName} found`"
+                :text="`Currently you have no booked ${activityName}`"
+            />
             <template v-else>
                 <template v-if="activeTab === EntitiesEnum.Trainings">
                     <div class="bookings-items">
-                        <event-item v-for="training in trainings" :key="training.id" :item="(training as any)" rounded
-                        class="trainer-event-item" @click="
-                            onViewCalendar
-                            " />
+                        <event-item
+                            v-for="training in trainings"
+                            :key="training.id"
+                            :item="(training as any)"
+                            rounded
+                            class="trainer-event-item"
+                            @click="onViewCalendar"
+                        />
                     </div>
                 </template>
                 <template v-if="activeTab === EntitiesEnum.Events">
-                    <event-item v-for="event in events" :key="event.id" :item="event" @click="openEvent(event.id)" />
+                    <event-item
+                        v-for="event in events"
+                        :key="event.id"
+                        :item="event"
+                        @click="openEvent(event.id)"
+                    />
                 </template>
             </template>
         </div>
@@ -65,10 +116,18 @@
         <TrainerInfo></TrainerInfo>
     </IonModal> -->
 </template>
-  
+
 <script setup lang="ts">
 import DashboardItem from "@/general/components/DashboardItem.vue";
-import { IonIcon, IonText, IonSpinner, IonButton, IonTitle, IonModal, IonLabel } from "@ionic/vue";
+import {
+    IonIcon,
+    IonText,
+    IonSpinner,
+    IonButton,
+    IonTitle,
+    IonModal,
+    IonLabel,
+} from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, ref } from "vue";
 import {
@@ -160,16 +219,22 @@ const widgetInfo = computed(() => dashboardWidgetResult?.value?.me || []);
 
 const activityItems = computed(() => [
     {
-        value: `+$${widgetInfo?.value?.trainer_dashboard_stats?.earn_last_thirty_days || 0
-            }`,
+        value: `+$${
+            widgetInfo?.value?.trainer_dashboard_stats?.earn_last_thirty_days ||
+            0
+        }`,
         description: "last 30 days",
     },
     {
-        value: `+$${widgetInfo?.value?.trainer_dashboard_stats?.total_earn || 0}`,
+        value: `+$${
+            widgetInfo?.value?.trainer_dashboard_stats?.total_earn || 0
+        }`,
         description: "total earnings",
     },
     {
-        value: `${widgetInfo?.value?.trainer_dashboard_stats?.total_bookings || 0}`,
+        value: `${
+            widgetInfo?.value?.trainer_dashboard_stats?.total_bookings || 0
+        }`,
         description: "total bookings",
     },
 ]);
@@ -180,9 +245,10 @@ const ratingItems = computed(() => [
         description: "total feedbacks",
     },
     {
-        value: `${(widgetInfo?.value?.positive_reviews_count * 5) /
-            widgetInfo?.value?.reviews_count || 0
-            } / 5`,
+        value: `${
+            (widgetInfo?.value?.positive_reviews_count * 5) /
+                widgetInfo?.value?.reviews_count || 0
+        } / 5`,
         description: "general rating",
     },
 ]);
@@ -205,119 +271,118 @@ const events = computed<EventPaginator["data"]>(() =>
 
 const trainings = computed(() =>
     trainingsResult?.value?.trainerTrainings?.data
-        ?
-        // trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
-        //     id: training.id,
-        //     title: `${training.user.first_name} ${training.user.last_name}`,
-        //     address: {
-        //       street: training.user.address?.street,
-        //     },
-        //     media: training.user.media,
-        //     start_date: training.start_date,
-        //     state: training.state,
-        //     userId: training.user.id,
-        //   }))
-        [
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 1,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 2,
-            },
-            {
-                id: 3,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Accepted,
-                userId: 3,
-            },
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitForReschedule,
-                userId: 1,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitingForApproval,
-                userId: 2,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 2,
-            },
-            {
-                id: 3,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Accepted,
-                userId: 3,
-            },
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitForReschedule,
-                userId: 1,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitingForApproval,
-                userId: 2,
-            },
-        ]
+        ? // trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
+          //     id: training.id,
+          //     title: `${training.user.first_name} ${training.user.last_name}`,
+          //     address: {
+          //       street: training.user.address?.street,
+          //     },
+          //     media: training.user.media,
+          //     start_date: training.start_date,
+          //     state: training.state,
+          //     userId: training.user.id,
+          //   }))
+          [
+              {
+                  id: 1,
+                  title: "John John Dee",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.Started,
+                  userId: 1,
+              },
+              {
+                  id: 2,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.Started,
+                  userId: 2,
+              },
+              {
+                  id: 3,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.Accepted,
+                  userId: 3,
+              },
+              {
+                  id: 1,
+                  title: "John John Dee",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.WaitForReschedule,
+                  userId: 1,
+              },
+              {
+                  id: 2,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.WaitingForApproval,
+                  userId: 2,
+              },
+              {
+                  id: 2,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.Started,
+                  userId: 2,
+              },
+              {
+                  id: 3,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.Accepted,
+                  userId: 3,
+              },
+              {
+                  id: 1,
+                  title: "John John Dee",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.WaitForReschedule,
+                  userId: 1,
+              },
+              {
+                  id: 2,
+                  title: "Nick Fox",
+                  address: {
+                      street: "Summer Gym, Wall Street, 24",
+                  },
+                  media: "",
+                  start_date: new Date(),
+                  state: TrainingStatesEnum.WaitingForApproval,
+                  userId: 2,
+              },
+          ]
         : []
 );
 
@@ -338,7 +403,8 @@ const bookings = computed(() => {
             const { trainings } = userAvailability;
             const bookedTrainings = trainings
                 .filter(
-                    (training: Training) => training.state === TrainingStatesEnum.Accepted
+                    (training: Training) =>
+                        training.state === TrainingStatesEnum.Accepted
                 )
                 .map((training: Training) => ({
                     start_date: training?.start_date || null,
@@ -349,11 +415,10 @@ const bookings = computed(() => {
     return availability;
 });
 
-
 const selectedDate = ref<Dayjs | null>(null);
 const activeTab = ref<EntitiesEnum>(
     (localStorage.getItem("trainer_schedule_active_tab") as EntitiesEnum) ??
-    EntitiesEnum.Trainings
+        EntitiesEnum.Trainings
 );
 
 const tabsChanged = (ev: EntitiesEnum) => {
@@ -417,7 +482,7 @@ const openEvent = (id: string) => {
     });
 };
 </script>
-  
+
 <style scoped lang="scss">
 .dashboard {
     padding: 24px 16px 64px;
@@ -510,22 +575,23 @@ const openEvent = (id: string) => {
 }
 
 .web-bookings {
-  padding: 0 64px;
+    padding: 0 64px;
 }
-.page-header{
-  padding-top: 21px;
-  margin-bottom: 26px;
-  ion-title {
-    font-size: 24px;
-    padding-left: 7px;
-    color: var(--gold);
-  }
-  ion-icon {
-    color: var(--gray-500);
-    font-size: 20px;
-  }
+.page-header {
+    padding-top: 21px;
+    margin-bottom: 26px;
+    ion-title {
+        font-size: 24px;
+        padding-left: 7px;
+        color: var(--gold);
+    }
+    ion-icon {
+        color: var(--gray-500);
+        font-size: 20px;
+    }
 }
-.bookings-items,.dashboards-items {
+.bookings-items,
+.dashboards-items {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(343px, 1fr));
     gap: 16px;
@@ -534,11 +600,11 @@ const openEvent = (id: string) => {
     }
 }
 :deep {
-    .week-calendar__container, .events__container {
+    .week-calendar__container,
+    .events__container {
         .items-header {
             --background: transparent;
         }
     }
 }
 </style>
-  
