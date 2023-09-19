@@ -5,11 +5,10 @@
       <div class="content">
         <ion-row>
           <ion-col size="12" class="col-gap">
-            <h4 @click="handleBack"  fill="outline">
-              
+            <button class="btn-back" @click="handleBack"  fill="outline">
               <img class="white" src="assets/icon/arrow-back.svg" />
               {{eventData?.title}}
-            </h4>  
+            </button>  
           </ion-col>
           <ion-col size="3" class="col-gap">
             
@@ -20,7 +19,10 @@
             <ion-card-header class="d-flex">
               <div>
                 <ion-card-title class="ion-padding-bottom" v-html="eventData?.title || ''"> </ion-card-title>
-                <ion-card-subtitle class="ionic-padding-bottom" v-html="eventData?.address || ''"></ion-card-subtitle>
+                <div class="event-address" >
+                  <img src="assets/location.svg" />
+                  <span> {{eventData?.address || ''}} </span>
+                </div>
               </div>
               <div class="stack d-flex">
                 <div>
@@ -44,13 +46,13 @@
             
               <h4 class="ion-padding-top">Amenities</h4>
               
-              <ion-button  class="ion-padding-top"
+              <ion-button  class="ion-padding-top btn-feat"
                 color="default" fill="outline">
                   <img src="assets/icon/drink.svg" />
                  Drink
               </ion-button>
               
-              <ion-button  class="ion-padding-top"
+              <ion-button  class="ion-padding-top btn-feat" 
                 color="default" fill="outline">
                   <img src="assets/icon/snackBar.svg" />
                 Snack Bar
@@ -62,18 +64,20 @@
           <ion-col size="3" class="col-gap">
             <ion-button
               expand="block"
-              class="primary" style="margin-bottom: 20px;"  @click="shareEvent">
-              Share Event
+              class="primary btn-event" style="margin-bottom: 20px;"  @click="shareEvent">
+              Share Event 
+              <img src="assets/icon/export.svg" />
             </ion-button>
 
             <ion-button
               expand="block"
-              class="primary" style="margin-bottom: 20px;" @click="editEvent">
+              class="primary btn-event" style="margin-bottom: 20px;" @click="editEvent">
               Edit
             </ion-button>
 
             <ion-button
               expand="block"
+              class="btn-event"
               color="danger" fill="outline" @click="showModal">
               Delete
             </ion-button>
@@ -286,8 +290,27 @@ const onBack = () => {
 </script>
 
 <style scoped lang="scss">
+.btn-event {
+    width: 170px;
+    margin: 0 auto;
+}
+.btn-back {
+    background: transparent;
+    color: var(--ion-color-primary);
+    font-size: 20px;
+    margin: 10px 10px;
+}
+.content {
+  overflow: auto;
+  max-height: calc(100vh - 90px);
+}
+.event-address {
+    display: flex;
+    align-items: center;
+}
 img.white {
-  filter: invert(1);
+  filter: invert(0.6);
+  width: 20px;
 }
 ion-title {
   font-family: "Yantramanav", serif;
@@ -317,32 +340,59 @@ line-height: normal;
 .cardImage {
   width: 100%;
   height: 290px;
+  object-fit: cover;
 }
 .stack {
   display: flex; 
-height: 78px;
-padding: 16px 43px; 
-justify-content: center;
-align-items: center;
-gap: 10px;
-    flex-direction: row;
-background-color: #3b3b3b;
-    border-radius: 10px;
-    
-    margin-left: auto;
-    width: 80%;
+  height: 78px;
+  padding: 16px 20px; 
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row;
+  background-color: #3b3b3b;
+  border-radius: 10px; 
+  margin-left: auto;
+  width: 350px;
+  margin-left: 10px;
+}
+.stack>div {
+width: 33%;
+    float: left;
+    height: 50px;
+    padding-inline: 10px;
+    min-width: 120px;    display: flex;
+    flex-direction: column;
+    min-width: 110px;
+}
+ 
+.stack > div:not(:last-child) {
+    position: relative;
+}
+
+.stack > div:not(:last-child):after {
+    content: " ";
+    position: absolute;
+    height: 30px;
+    width: 1px;
+    background: var(--ion-color-primary);;
+    right: -10px;
+    top: 10px;
 }
 
 .stack h4 {
+    margin: 0;
+    white-space: nowrap;
   color: var(--FITNESS-WHITE, var(--Spotter-new, #EFEFEF));
 text-align: center;
 font-family: Lato;
-font-size: 16px;
+font-size: 15px;
 font-style: normal;
 font-weight: 500;
 line-height: 150%; /* 24px */
 }
 .stack p {
+    margin: 0;
   color: var(--Grey-text, #AFAFAF);
 text-align: center;
 font-family: Lato;

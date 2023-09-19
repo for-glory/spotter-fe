@@ -1,17 +1,18 @@
 <template>
-  <div class="dashboard-item__container">
+  <div class="dashboard-item__container" style="display:block;">
     <div class="dashboard-item">
       <ion-text class="dashboard-item__title">
         <slot name="title"></slot>
       </ion-text>
-      <div class="align-items-center gap-16" :class="isWeb ? 'd-flex' : ''">
+      <div class="align-items-center gap-16 flex-dd">
         <div
         v-for="item in itemsWithIds"
         :key="item._id"
         class="dashboard-item__content d-flex align-items-center"
         >
         <ion-text class="dashboard-item__content-value">
-          {{ item.value }}
+          <!-- {{ item.value }} -->
+          12K+
         </ion-text>
         <ion-text class="dashboard-item__content-descr">
           {{ item.description }}
@@ -87,5 +88,27 @@ const itemsWithIds = computed(() =>
   .dashboard-item__title {
     font-family: "Yantramanav";
   }
+}
+
+
+.flex-dd{
+  display:flex;
+  width:100%;
+  justify-content:space-between;
+}
+
+@media only screen and (max-width: 900px) {
+
+  .flex-dd{
+    display:block;
+    width:100%;
+   
+  }
+
+  .dashboard-item__container{
+
+    display: flex;
+  }
+
 }
 </style>

@@ -27,11 +27,13 @@
                 <div class="edit-profile-component-content d-flex-col h-100">
                     <Email v-if="filter === EntitiesEnum.ProfileEmail"/>
                     <ChangePassword v-else-if="filter === EntitiesEnum.ProfilePassword"></ChangePassword>
+
                     <Languages v-else-if="filter === EntitiesEnum.ProfileLanguages"></Languages>
                     <AppMode v-else-if="filter === EntitiesEnum.ProfileAppMode"></AppMode>
                     <Notifications v-else-if="filter === EntitiesEnum.ProfileNotifications"></Notifications>
                     <SocialMedia v-else-if="filter === EntitiesEnum.ProfileAddSocialLink"></SocialMedia>
                     <OrderConfirmation v-else-if="filter === EntitiesEnum.ProfileOrderConfirmation"></OrderConfirmation>
+                    <Location v-else-if="filter === EntitiesEnum.ProfileLocation" />
                 </div>
             </div>
         </div>
@@ -64,13 +66,15 @@ import { IonSpinner } from "@ionic/vue";
 import EditTrainer from "../../profile/EditTrainer.vue";
 import Email from "./Email.vue";
 import ChangePassword from "./ChangePassword.vue";
+
 import Languages from "./Languages.vue";
 import AppMode from "./AppMode.vue";
 import Notifications from "./Notifications.vue";
 import SocialMedia from "./SocialMedia.vue";
 import OrderConfirmation from "./OrderConfirmation.vue";
+import Location from "./Location.vue";
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         isWebView?: boolean;
     }>(),
@@ -225,8 +229,10 @@ const menuType =
         ? EntitiesEnum.Facility
         : role;
 const menu = editProfileMenu[menuType];
+console.log("menu1", menu);
 
 const webItemClick = (name: EntitiesEnum) => {
+    console.log("name", name);    
     filter.value = name;
 };
 

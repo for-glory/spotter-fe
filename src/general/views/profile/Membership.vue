@@ -1,7 +1,7 @@
 <template>
-  <base-layout :class="{ 'tr-membership': role === RoleEnum.Trainer }" >
+  <base-layout>
     <template #header>
-      <page-header back-btn :title="role === RoleEnum.Trainer ? 'Change Membership' : 'Membership'" @back="onBack" />
+      <page-header back-btn title="Membership" @back="onBack" />
     </template>
     <template #content>
       <ion-spinner
@@ -14,7 +14,7 @@
           <ion-item
             lines="none"
             class="radiobutton"
-            v-for="(plan, index) in plans"
+            v-for="plan in plans"
             :key="plan.id"
             @click="selectProduct(plan)"
             :class="{
@@ -23,68 +23,52 @@
             }"
             :disabled="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
           >
-          <div>
-            <div class="content d-flex">
-              <!-- <div class="radiobutton__block"> -->
-                <div class="radiobutton__icon">
-                  <ion-icon :class="plan.tier" src="assets/icon/medal.svg" />
-                </div>
-                <div class="radiobutton__description">
-                  <div class="title d-flex">
-                    <ion-label class="radiobutton__label">
-                      {{ plan.title }}
-                    </ion-label>
-                    <ion-badge mode="ios" class="badge current-badge" v-if="plan.tier === currentSubscriptionType">Current</ion-badge>
-                    <ion-badge mode="ios" class="badge top-badge" v-if="index === plans.length - 1">TOP</ion-badge>
-                  </div>
-                    
-                  <ion-text class="radiobutton__cost"
-                    >{{ role === RoleEnum.Trainer ? plan.prices[0].price / 100 : plan?.price }}
-                    <span
-                      v-if="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
-                    >
-                      / Expire: {{ dayjs(plan.expiryDate).format("MM/DD/YY") }}
-                    </span>
-                    <span v-else-if="plan.billingPeriodUnit">
-                      /
-                      {{ plan.billingPeriodUnit }}
-                    </span>
-                    <span class="plan-unit" v-else-if="role === RoleEnum.Trainer">
-                      /per month
-                    </span>
-                  </ion-text>
-                  <ul>
-                    <li
-                      class="accessibility" :class="{ 'radiobutton__label':  plan.tier === currentSubscriptionType}"
-                      v-for="(benefit, idx) in plan?.benefits"
-                      :key="idx"
-                    >
-                      <ion-icon src="assets/icon/accessibility.svg" />
-                      {{ benefit?.description }}
-                    </li>
-                    <!-- TODO add inaccessible features -->
-                    <!-- <li>
-                      <ion-icon src="assets/icon/inaccessible.svg" />
-                      Top Features
-                    </li> -->
-                  </ul>
-                </div>
-              <!-- </div> -->
-              <div class="radio">
-                <ion-radio :value="plan.id" slot="end"></ion-radio>
+            <div class="radiobutton__block">
+              <div class="radiobutton__icon">
+                <ion-icon src="assets/icon/medal.svg" />
+              </div>
+              <div class="radiobutton__description">
+                <ion-label class="radiobutton__label">
+                  {{ plan.title }}
+                </ion-label>
+
+                <ion-text class="radiobutton__cost"
+                  >{{ plan?.price }}
+                  <span
+                    v-if="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
+                  >
+                    / Expire: {{ dayjs(plan.expiryDate).format("MM/DD/YY") }}
+                  </span>
+                  <span v-else-if="plan.billingPeriodUnit">
+                    /
+                    {{ plan.billingPeriodUnit }}
+                  </span>
+                </ion-text>
+                <ul>
+                  <li
+                    class="accessibility"
+                    v-for="(benefit, idx) in plan?.benefits"
+                    :key="idx"
+                  >
+                    <ion-icon src="assets/icon/accessibility.svg" />
+                    {{ benefit?.description }}
+                  </li>
+                  <!-- TODO add inaccessible features -->
+                  <!-- <li>
+                    <ion-icon src="assets/icon/inaccessible.svg" />
+                    Top Features
+                  </li> -->
+                </ul>
               </div>
             </div>
-            <div class="helper" v-if="plan.tier === currentSubscriptionType">
-              * Short “workout of the day” videos Trainers can post for Clients/Users to purchase and download
-            </div>
-          </div>
+            <ion-radio :value="plan.id" slot="end"></ion-radio>
           </ion-item>
         </ion-radio-group>
       </div>
     </template>
     <template #footer>
       <div class="holder-button">
-        <div class="checkbox" v-if="role !== RoleEnum.Trainer">
+        <div class="checkbox">
           <ion-checkbox
             mode="ios"
             :modelValue="isAgreed"
@@ -119,22 +103,15 @@
         <ion-button
           expand="block"
           @click="purchase"
-          :disabled="role !== RoleEnum.Trainer && (!isAgreed || isLoading)"
+          :disabled="!isAgreed || isLoading"
         >
           <ion-spinner name="lines" v-if="isLoading"></ion-spinner>
-          <template v-else>{{ role !== RoleEnum.Trainer ? "Subscribe now" : "Continue"}}</template>
+          <template v-else>Subscribe now</template>
         </ion-button>
       </div>
       <div>
         {{ errorMessage }}
       </div>
-
-      <ChangeMembership class="tr-membership-modal"
-                        :is-visible="showChangeConfirmModal" 
-                        :current-plan="currentPlan" 
-                        :new-plan="selectedPlan" 
-                        @confirm="handleChangeMembership" 
-                        @cancel="hideChangeModal" />
     </template>
   </base-layout>
 </template>
@@ -152,7 +129,6 @@ import {
   IonSpinner,
   onIonViewDidLeave,
   IonCheckbox,
-  IonBadge
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -176,8 +152,6 @@ import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
 import { EntitiesEnum } from "@/const/entities";
-import ChangeMembership from "@/general/components/modals/confirmations/ChangeMembership.vue";
-import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 
 const router = useRouter();
 const route = useRoute();
@@ -190,14 +164,6 @@ const products = ref<any[]>([]);
 const selectedPlanId = ref<string | number | boolean | undefined>(undefined);
 const isAgreed = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
-const selectedPlan = ref({});
-const currentPlan = ref({});
-
-const {
-  showConfirmationModal: showChangeConfirmModal,
-  hideModal: hideChangeModal,
-  showModal: showChangeModal,
-} = useConfirmationModal();
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -211,14 +177,13 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
   PlansDocument,
   { type: typeValue.value as SubscriptionsTypeEnum, first: 100, page: 1 }
 );
-onMounted(async () => {  
+onMounted(async () => {
   InAppPurchase2.validator =
     process.env.VUE_APP_IAP_RECEIPT_VALIDATION_URL + `/${id}`;
   // InAppPurchase2.validator = validationUrl;
   InAppPurchase2.applicationUsername = () => id;
 
   onPlansResult(async ({ data }) => {
-    
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
         const subscriptionPlan = cur.subscriptionPlans.filter(
@@ -232,19 +197,13 @@ onMounted(async () => {
               : {},
         });
       }
-      if(currentSubscriptionType === cur.tier){
-        currentPlan.value = cur;
-      }
       return acc;
     }, []);
-    
     InAppPurchase2.ready(() => {
       products.value = InAppPurchase2.products;
       console.log("set up listeners after ready");
     });
-    if (role !== RoleEnum.Trainer) { 
-      await registerProducts();
-    }
+    await registerProducts();
   });
 });
 // Get the real product information
@@ -265,11 +224,6 @@ onIonViewDidLeave(() => {
   InAppPurchase2.off(updatedEvent);
   InAppPurchase2.off(ownedEvent);
 });
-
-const handleChangeMembership = () => {
-  console.log('call handleChangeMembership');
-  hideChangeModal(); 
-}
 
 const updatedEvent = (data: any) => {
   console.log(data);
@@ -333,10 +287,6 @@ const setupListeners = async () => {
   InAppPurchase2.error(errorEvent);
 };
 const purchase = () => {
-  if(role === RoleEnum.Trainer){
-    showChangeModal();
-    return;
-  }
   isLoading.value = true;
   if (Capacitor.isNativePlatform()) {
     InAppPurchase2.order(selectedItem.value)
@@ -373,10 +323,6 @@ const selectProduct = (plan: any) => {
     console.log('Web platform');
     console.log('plan.subscriptionPlan', plan.subscriptionPlan);
     selectedItem.value = plan.subscriptionPlan
-  }
-
-  if(role === RoleEnum.Trainer){
-    selectedPlan.value = plans.value.find((e)=> e?.subscriptionPlan?.id === plan.subscriptionPlan?.id);
   }
 };
 
@@ -443,31 +389,6 @@ const showAgreement = async (url: string) => {
   --border-style: solid;
   --border-color: var(--gray-600);
 
-  @media (max-width: 320px){
-    .title {
-        flex-direction: column;
-      .badge {
-        width: 51px;
-      }
-    }
-  }
-
-  .radio {
-    flex: 1 1 23px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .helper {
-    color: rgba(255, 255, 255, 0.60);
-    font-family: Lato;
-    font-size: 10px;
-    font-style: italic;
-    font-weight: 400;
-    margin-top: 8px;
-  }
-
   &:not(:last-child) {
     margin-bottom: 16px;
   }
@@ -514,10 +435,6 @@ const showAgreement = async (url: string) => {
     color: var(--ion-color-white);
     box-shadow: inset 0 0 0 0.8px var(--gray-600);
 
-    @media (max-width: 320px){
-      width: 35px;
-      height: 35px;
-    }
     .radiobutton:nth-last-child(1) & {
       color: var(--ion-color-primary);
     }
@@ -632,62 +549,6 @@ const showAgreement = async (url: string) => {
   ion-label {
     margin: 0;
     white-space: normal;
-  }
-}
-
-.tr-membership {
-  .radiobutton {
-      &__icon {
-        .BRONZE {
-          color: var(--bronze);
-        }
-        .SILVER{
-          color: var(--gray-500);
-        }
-        .GOLD{
-          color: var(--new-gold);
-        }
-      }
-      &__label {
-        color: var(--fitnesswhite) !important;
-      }
-      &__cost {
-        .plan-unit {
-          font-size: 12px;
-        }
-      }
-      &__description {
-        .badge {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 20px;
-          color: var(--gray-700);
-          font-family: Lato;
-          font-style: normal;
-          font-weight: 500;
-          line-height: 150%;
-          height: 19px;
-        }
-
-        .current-badge {
-          font-size: 10px;
-        }
-
-        .top-badge {
-          font-size: 12px;
-        }
-
-        .accessibility {
-          font-size: 10px;
-        }
-      }
-  }
-
-  .holder-button {
-    ion-button {
-      color: var(--gray-700) !important;
-    }
   }
 }
 </style>
