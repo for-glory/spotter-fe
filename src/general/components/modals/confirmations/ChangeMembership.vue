@@ -1,5 +1,5 @@
 <template>
-	<ion-modal id="modal" ref="modal" :is-open="isVisible"  :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :class="{'tr-membership-modal': role === RoleEnum.Trainer }" :is-open="isVisible"  :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
 				<ion-title>Change Membership Plan</ion-title>
@@ -102,9 +102,9 @@
 		</div>
     <div v-else class="ion-padding">
       <div class="current-plan">
-        <ion-text>Current Plan</ion-text>
+        <ion-text class="plan-title">Current Plan</ion-text>
         <div class="paragraph">
-          <ion-text>{{currentPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text
+          <ion-text class="tier">{{currentPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="price"
             >${{currentPlan?.prices[0].price / 100}}</ion-text
           >
           <span class="location">/{{currentPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
@@ -135,9 +135,9 @@
         <div class="split" />
       </div>
       <div class="new-plan">
-        <ion-text class="text-golden">New Plan</ion-text>
+        <ion-text class="plan-title text-golden">New Plan</ion-text>
         <div class="paragraph">
-          <ion-text class="text-golden">{{newPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="text-golden"
+          <ion-text class="tier text-golden">{{newPlan?.tier}}</ion-text>&nbsp; &nbsp;<ion-text class="price text-golden"
             >${{newPlan?.prices[0].price / 100}}</ion-text
           >
           <span class="location">/{{newPlan?.tier === 'GOLD' ? 'for first location' : 'per location'}}</span>
@@ -147,7 +147,7 @@
             <ion-icon
               src="assets/icon/medal.svg"
               class="grade-image"
-              :class="newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
+              :class="[newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze', newPlan.tier]"
             />
           </div>
           <div>
@@ -189,8 +189,10 @@ import {
 } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
 import { Capacitor } from '@capacitor/core';
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
-withDefaults(
+const  props = withDefaults(
   defineProps<{
     currentPlan: any;
     newPlan: any;
@@ -200,10 +202,15 @@ withDefaults(
   }
 );
 
+console.log("props", props);
+
+
 const emits = defineEmits<{
   (e: "confirm", isConfirmed: boolean): void;
   (e: "cancel", isConfirmed: boolean): void;
 }>();
+
+const { role } = useRoles();
 
 const handleConfirm = () => {
   emits("confirm", true);
@@ -317,4 +324,127 @@ ion-modal#modal {
 	color: var(--gold);
 	text-align: center;
 }
+.tr-membership-modal {
+  &::part(content){
+    --width: 87%;
+  }
+
+  .title {
+    border-top: 2px solid var(--gold);
+    border-left: 2px solid var(--gold);
+    border-right: 2px solid var(--gold);
+
+    ion-toolbar {
+      --background: var(--gray-700);
+    }
+
+    ion-title {
+      color: var(--Spotter-new, #EFEFEF);
+      font-family: Yantramanav;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 150%;
+    }
+
+    ion-icon {
+      color: var(--gold);
+    }
+  }
+
+  .BRONZE {
+    color: var(--bronze) !important;
+  }
+  .SILVER{
+    color: var(--gray-500) !important; 
+  }
+  .GOLD{
+    color: var(--new-gold) !important;
+  }
+
+  .ion-padding {
+    border: 2px solid var(--gold);
+    padding: 23px;
+    background: var(--main-color);
+  }
+  .grade-image {
+     width: 4rem;
+     height: 4rem;
+  }
+
+  .split {
+    width: 77px;
+    height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+    margin: 30px 0;
+  }
+
+  .accessibility {
+    padding-bottom: 2px;
+    ion-text {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  .paragraph {
+    padding: 12px 0;
+    font-weight: 500; 
+    .tier {
+      font-size: 16px;
+      text-transform: capitalize;
+    }
+    .price {
+      font-size: 14px;
+    }
+    .location {
+      font-size: 12px;
+    }
+  }
+  .current-plan {
+      color: var(--gray-500);
+      font-family: Lato;
+
+      .plan-title {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+      }
+  }
+
+  .new-plan {
+    .plan-title {
+      color: var(--gold);
+      font-family: Yantramanav;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tier, .price {
+      color: var(--gold);
+    }
+    .location {
+      color: var(--gray-500);
+    }
+  }
+
+  .buttons {
+    align-items: flex-start;
+    gap: 21px;
+    ion-button {
+      height: 41px;
+      color: var(--Black, #0D2023);
+      font-family: Yantramanav;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    #cancel {
+      --background: rgba(255, 255, 255, 0.60);
+      width: 110px;
+    }
+  }
+}
 </style>
+ 
