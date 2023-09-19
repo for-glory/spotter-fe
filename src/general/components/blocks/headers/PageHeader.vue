@@ -34,6 +34,9 @@
         <ion-icon src="assets/icon/chat.svg" />
         <span class="chat-btn__badge"></span>
       </ion-button>
+      <ion-button v-if="moreBtn" class="chat-btn" @click="$emit('more-click')">
+        <ion-icon :icon="ellipsisVertical" />
+      </ion-button>
     </ion-buttons>
     <ion-title :class="titleClass">{{ title }}</ion-title>
   </ion-toolbar>
@@ -55,6 +58,7 @@ import {
   isPlatform
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
+import { ellipsisVertical } from "ionicons/icons";
 
 withDefaults(
   defineProps<{
@@ -65,6 +69,7 @@ withDefaults(
     closeBtn?: boolean;
     scanBtn?: boolean;
     chatBtn?: boolean;
+    moreBtn?: boolean;
     title?: string | null;
     titleClass?: string;
   }>(),
@@ -76,6 +81,7 @@ withDefaults(
     closeBtn: false,
     scanBtn: false,
     chatBtn: false,
+    moreBtn: false,
     title: null,
     titleClass: "header__title",
   }
@@ -86,6 +92,7 @@ const emits = defineEmits<{
   (e: "skip"): void;
   (e: "scan"): void;
   (e: "chat-click"): void;
+  (e: "more-click"): void;
 }>();
 </script>
 
@@ -140,6 +147,14 @@ const emits = defineEmits<{
     font-weight: 500;
     line-height: 150%;
     letter-spacing: 0.216px;
+  }
+  .title-ytmn-20 {
+    font-family: Yantramanav;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    text-align: center;
+    color: var(--fitnesswhite);
   }
 }
 

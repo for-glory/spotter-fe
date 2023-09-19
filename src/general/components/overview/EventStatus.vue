@@ -6,13 +6,10 @@
       <!-- <div class="view-option"> -->
         <!-- <ion-text id="trigger-button">This Month</ion-text>
         <ion-img src="assets/icon/arrow-down-light.svg"></ion-img> -->
-        <!-- <ion-popover trigger="trigger-button">
-          <ion-content>Hello Styled World!</ion-content>
-        </ion-popover> -->
       <!-- </div> -->
     </div>
     <div class="block" @click="goToUpcoming">
-      <div class="chart-title">{{ chartTitle }}</div>
+      <div v-if="role === RoleEnum.Trainer" class="chart-title">{{ chartTitle }}</div>
       <div class="perform">
         <doughnut 
           :data="chartData"
@@ -124,6 +121,7 @@ const screenWidth = window.innerWidth;
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
 const goToUpcoming = () => {
+  if(role !== RoleEnum.Trainer) return;
   const tab = props.title.split(' ')[0] === "Event" ? EntitiesEnum.Events : EntitiesEnum.Trainings;
   localStorage.setItem("trainer_schedule_active_tab", tab);
   router.push({

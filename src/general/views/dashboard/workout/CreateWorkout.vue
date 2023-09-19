@@ -1,4 +1,11 @@
 <template>
+  <div v-if="!createWorkoutLoading">
+    <div class="top-buttons">
+      <ion-button class="dashboard-btn" @click="onBack" fill="clear">
+        <ion-icon src="assets/icon/arrow-back.svg" />
+        Back
+      </ion-button>
+    </div>
 		<ion-title class="title" color="primary">
 			Post dailys
 		</ion-title>
@@ -7,7 +14,7 @@
         <ion-row>
           <ion-col size="12">
             <div class="form-row">
-              <ion-label class="label"> Choose cover for workout </ion-label>
+              <ion-label class="label"> Choose video for daily </ion-label>
               <video-uploader
                 :video="videoPath"
                 @delete="removeVideo"
@@ -49,13 +56,30 @@
         </ion-row>
         <ion-row>
           <ion-col size="12" size-md="6">
-            <div class="form-row">
-              <ion-label class="label"> Choose intensity level </ion-label>
-              <choose-block
-                title="Workout type"
-                :value="workoutType"
-                @handle-click="onHandleSelect(EntitiesEnum.DashboardWorkoutTypes)"
-              />
+            <div class="form-row d-flex-col gap-8">
+              <ion-text class="select-label color-gray">Choose intensity level</ion-text>
+              <ion-item class="choose-place">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                  <ion-text class="select-label color-white">Choose intensity level</ion-text>
+                  <ion-select
+                    class="always-flip"
+                    toggleIcon="caret-down-sharp"
+                    interface="popover"
+                    label="Choose intensity level"
+                    placeholder="Select"
+                    @ionChange="onChange"
+                    :value="selectedType"
+                  >
+                    <ion-select-option 
+                      v-for="(workoutType, id) in workoutTypes"
+                      :key="id"
+                      :value="workoutType.id"
+                    >
+                      {{ workoutType.name }}
+                    </ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
             </div>
           </ion-col>
           <ion-col size="12" size-md="6">
@@ -64,6 +88,7 @@
               <choose-block
                 title="Select Tags"
                 :value="muscleTypesValue"
+                style="cursor: pointer"
                 @handle-click="onHandleSelect(EntitiesEnum.DashboardMuscleTypes)"
               />
             </div>
@@ -91,17 +116,31 @@
               expand="block"
               :disabled="!isValidForm"
             >
-              Finish
+              Post Daily
             </ion-button>
           </div>
         </ion-row>
       </ion-grid>
     </div>
+  </div>
+  <ion-spinner
+    v-else
+    name="lines"
+    class="spinner"
+  />
 	<transition>
 		<ion-note v-if="errorMessage">
 			{{ errorMessage }}
 		</ion-note>
 	</transition>
+  <discard-changes
+    :is-open="isConfirmedModalOpen"
+    @close="discardModalClosed"
+    title="Do you want to discard changes?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Discard changes"
+  />
 </template>
 
 <script setup lang="ts">
@@ -114,7 +153,10 @@ import {
   PickerOptions,
 	IonGrid,
 	IonRow,
-	IonCol
+	IonCol,
+  IonSelect,
+  IonSelectOption,
+  toastController
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
@@ -125,7 +167,7 @@ import { requiredFieldSchema } from "@/validations/authValidations";
 import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
 import VideoUploader from "@/general/components/VideoUploader.vue";
 import { v4 as uuidv4 } from "uuid";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
@@ -137,9 +179,13 @@ import {
   Workout,
   WorkoutDocument,
   WorkoutVideosInput,
+  WorkoutTypesQuery,
+  WorkoutTypesDocument,
+  WorkoutType
 } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const percentLoaded = ref<number | undefined>();
 
@@ -147,7 +193,7 @@ const router = useRouter();
 
 const store = useWorkoutsStore();
 const facilityStore = useFacilityStore();
-
+const isConfirmedModalOpen = ref(false);
 const errorMessage = ref("");
 
 const videoOnLoading = ref<boolean>(false);
@@ -163,6 +209,16 @@ const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
   requiredFieldSchema
 );
+const { result: workoutTypesResult, loading } = useQuery<WorkoutTypesQuery>(WorkoutTypesDocument, {
+  first: 100,
+  page: 1,
+});
+const workoutTypes = computed(() => workoutTypesResult.value?.workoutTypes?.data);
+const onChange = (value: any) => {
+  let type = workoutTypes.value?.find((workout: any) => workout?.id === value.detail.value);
+  store.setValue("workoutType", type as WorkoutType);
+};
+
 
 let abort: any;
 
@@ -194,6 +250,8 @@ const dailyDescriptionChange = (value: string) => {
 };
 
 const workoutType = computed(() => store.workoutType?.name || "");
+
+const selectedType = computed(() => store.workoutType?.id);
 
 const muscleTypesValue = computed(() =>
   store.workoutMuscleTypes?.length > 1
@@ -239,7 +297,8 @@ const isValidForm = computed(
     store.workoutMuscleTypesIds?.length &&
     store.workoutPreview &&
     store.videoPath &&
-    store.workoutType
+    store.workoutType && 
+    store.description
 );
 
 const { mutate: createWorkout, loading: createWorkoutLoading } =
@@ -260,7 +319,14 @@ const params = computed(() => ({
 const handleSubmit = () => {
   if (isValidForm.value) {
     createWorkout(params.value)
-    .then(() => {
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
       store.clearState();
       router.push({
         name: EntitiesEnum.DashboardWorkout,
@@ -311,13 +377,30 @@ const videoSelected = async (
     });
 };
 
+const onBack = () => {
+  if (titleValue.value ||
+    priceValue.value ||
+    store.workoutMuscleTypesIds?.length ||
+    store.workoutPreview ||
+    store.videoPath ||
+    store.workoutType || 
+    store.description) {
+    isConfirmedModalOpen.value = true;
+  } else {
+    router.go(-1);
+  }
+};
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
+    store.clearState();
+    router.go(-1);
+  }
+};
+
 const removeVideo = () => {
   store.setValue("videoPath", "");
   store.setValue("path", "");
-};
-
-const resetWorkout = () => {
-  store.clearState();
 };
 
 const options = minutesDuration(10, 240, 10);
@@ -330,6 +413,8 @@ const options = minutesDuration(10, 240, 10);
 .action-wrap {
   display: flex;
   justify-content: end;
+  align-items: flex-end;
+  width: 100%;
   margin-top: 20px;
 }
 .logo {
@@ -352,5 +437,64 @@ const options = minutesDuration(10, 240, 10);
 }
 .dashboard-btn {
   margin-top: 10px;
+}
+.gap-8 {
+  gap: 8px;
+}
+.select-label {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-inline-end: 4px;
+}
+.choose-place {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+  --background: var(--gray-700);
+  --border-radius: 8px;
+  --inner-padding-start: 14px;
+  --inner-padding-end: 14px;
+  font-family: "Yantramanav";
+  &.web-item {
+    --background: transparent;
+    --border-color: var(--gold);
+  }
+
+  &__label {
+    margin-inline-end: 4px;
+    color: var(--ion-color-white);
+  }
+
+  &__value {
+    flex: 1 1 100%;
+    display: block;
+    overflow: hidden;
+    text-align: right;
+    white-space: nowrap;
+    align-items: center;
+    color: var(--gray-400);
+    text-overflow: ellipsis;
+    margin-inline-start: 4px;
+  }
+
+  &__icon {
+    width: 1em;
+    flex-shrink: 0;
+    line-height: 1;
+    font-size: 24px;
+    margin-right: 2px;
+    margin-left: 4px;
+    color: var(--gray-400);
+  }
+
+  &__icon--start {
+    padding-right: 8px;
+  }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>

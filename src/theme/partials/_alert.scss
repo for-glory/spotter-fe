@@ -1,0 +1,31 @@
+.dark-confirmation-alert {
+    --background: var(--gray-700);
+
+    .alert-wrapper {
+        border-radius: 14px;
+    }
+
+    .alert-title {
+        font-size: 17px;
+        font-weight: 900;
+        line-height: 22px;
+        letter-spacing: -0.408px;
+        color: var(--ion-color-white);
+    }
+
+    .alert-message {
+        font-size: 13px;
+        line-height: 18px;
+        letter-spacing: -0.078px;
+        color: var(--ion-color-white);
+    }
+
+    .alert-button {
+        color: var(--blue-text);
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 22px;
+        letter-spacing: -0.408px;
+        border-color: rgba(84, 84, 88, 0.65);
+    }
+}

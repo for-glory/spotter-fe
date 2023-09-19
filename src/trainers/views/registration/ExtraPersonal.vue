@@ -30,7 +30,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="action-wrapper">
+      <div class="buttons">
         <ion-button @click="handleSubmit" type="submit" expand="block">
           Next
         </ion-button>
@@ -61,7 +61,7 @@ const router = useRouter();
 const store = useStore();
 
 const { id } = useId();
-const { first_name,last_name, } = useUser();
+const { first_name, last_name } = useUser();
 const { mutate: updateUser } = useMutation(UpdateUserNameDocument);
 
 let { value: firstName, errorMessage: firstNameError } = useField<string>(
@@ -69,14 +69,14 @@ let { value: firstName, errorMessage: firstNameError } = useField<string>(
   requiredFieldSchema
 );
 
-firstName.value = first_name
+firstName.value = first_name;
 
 let { value: lastName, errorMessage: lastNameError } = useField<string>(
   "lastName",
   requiredFieldSchema
 );
 
-lastName.value = last_name
+lastName.value = last_name;
 
 const isValidForm = computed(
   () =>
@@ -145,7 +145,7 @@ const onBack = () => {
 
 <style scoped lang="scss">
 .main-title {
-  margin-top: 48px;
+  margin-top: 32px;
 }
 
 .subtitle {
@@ -153,14 +153,42 @@ const onBack = () => {
 }
 
 .inputs-form {
-  margin: 0 24px;
+  padding: 32px 24px 16px;
+  justify-content: center;
+  width: 100%;
+  display: grid;
+
+  .base-input-container {
+    display: grid;
+    align-self: center;
+    flex: 1;
+
+    .ion-item {
+      flex: 1;
+      align-self: center;
+      width: 100%;
+    }
+  }
 }
 
-.action-wrapper {
+.buttons {
+  margin-top: 1rem;
+  width: 30%;
+  margin: 0 auto;
   padding: 0 24px calc(32px + var(--ion-safe-area-bottom));
 
+  @media (max-width: 992px) {
+    width: 100%;
+  }
+
   .button {
-    margin: 0;
+    margin: 0 auto;
+    text-align: center;
+    font-family: Lato;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%;
   }
 }
 </style>

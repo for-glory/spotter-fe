@@ -35,7 +35,7 @@ export const profileMenu: ProfileMenu = {
       icon: "edit",
     },
     {
-      name: "View Profile",
+      name: EntitiesEnum.TrainerUserProfile,
       label: "View profile",
       icon: 'profile'
     },
@@ -57,7 +57,7 @@ export const profileMenu: ProfileMenu = {
     //   isTrusted: true,
     // },
     {
-      name: EntitiesEnum.ProfilePaymentMethods,
+      name: EntitiesEnum.ProfileGettingPaid,
       label: "Getting Paid",
       icon: "paid",
       isTrusted: true,

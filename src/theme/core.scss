@@ -6,6 +6,7 @@
 @import 'partials/swiper';
 @import 'partials/toast';
 @import './variables.css';
+@import 'partials/alert';
 
 /* For responsiveness across screens */
 html {
@@ -182,6 +183,9 @@ a {
 .color-fitness-white {
   color: #EFEFEF;
 }
+.color-black {
+  color: black;
+}
 
 .scrolled-page {
   height: 100%;
@@ -309,7 +313,12 @@ ion-modal.auto-height {
 .flex-wrap {
   flex-wrap: wrap;
 }
-
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
+}
 .gap-24 {
   gap: 1.5rem;
 }
@@ -415,4 +424,7 @@ html:not(.plt-capacitor) .show-if-web {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.profile-action-sheet {
+  --button-color: var(--gold);
 }

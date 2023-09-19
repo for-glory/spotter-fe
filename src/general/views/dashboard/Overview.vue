@@ -246,13 +246,13 @@
             </div>
           </div>
           <div class="ts-chart-container">
-            <doughnut 
-            :data="traningPieChartData"
-            :options="chartOptions"
-            :width="null"
-            :height="null"
-          />
-          <span class="pie-chart-title">{{ pichartTitle }}</span>
+            <doughnut
+              :data="traningPieChartData"
+              :options="chartOptions"
+              :width="null"
+              :height="null"
+            />
+            <span class="pie-chart-title">{{ pichartTitle }}</span>
 
             <!-- <div style="position: relative; width: 100%; height: 250px">
               <pie-chart
@@ -285,7 +285,9 @@
               Upcoming
             </div>
             <div class="d-flex ion-align-items-center" style="gap: 9.34px">
-              <div class="view-all" @click="gotoUpcoming('tranings')">View All</div>
+              <div class="view-all" @click="gotoUpcoming('tranings')">
+                View All
+              </div>
               <ion-icon
                 style="width: 12px; height: 12px"
                 src="assets/icon/arrow-right-light.svg"
@@ -313,17 +315,21 @@
             </div>
           </div>
           <div class="event-ring">
-            <doughnut 
-            :data="eventPieChartData"
-            :options="chartOptions"
-            :width="null"
-            :height="null"
-          />
-          <span class="pie-chart-title completed-chart-title" style="margin-left: 22%;">{{ pichartTitle }}</span>
-            <!-- <div> -->
+            <template v-if="role === RoleEnum.Trainer">
+              <doughnut
+                :data="eventPieChartData"
+                :options="chartOptions"
+                :width="null"
+                :height="null"
+              />
+              <span class="pie-chart-title completed-chart-title" style="margin-left: 22%;">{{
+                pichartTitle
+              }}</span>
+            </template>
+            <div v-else>
               <!-- event chart -->
-            
-              <!-- <div style="position: relative; width: 100%; height: 250px">
+
+              <div style="position: relative; width: 100%; height: 250px">
                 <pie-chart
                   :chartData="pieChartDataDanger"
                   :chart-options="pieChartOptionsDanger"
@@ -345,17 +351,34 @@
                   />
                 </div>
               </div>
-            </div> -->
+            </div>
           </div>
           <div class="completed">
             <div class="flex-container">
               <div class="title white-text">Completed</div>
-              <div class="d-flex ion-align-items-center" style="gap: 9.34px"  v-if="role !== RoleEnum.Trainer">
-                <div class="view-all" @click="onHandleClickMenu(EntitiesEnum.DashboardEvent, 'finished')">View All</div>
-                <ion-icon style="width: 12px; height: 12px;" src="assets/icon/arrow-right-light.svg"></ion-icon>
+              <div
+                class="d-flex ion-align-items-center"
+                style="gap: 9.34px"
+                v-if="role !== RoleEnum.Trainer"
+              >
+                <div
+                  class="view-all"
+                  @click="
+                    onHandleClickMenu(EntitiesEnum.DashboardEvent, 'finished')
+                  "
+                >
+                  View All
+                </div>
+                <ion-icon
+                  style="width: 12px; height: 12px"
+                  src="assets/icon/arrow-right-light.svg"
+                ></ion-icon>
               </div>
             </div>
-            <div v-if="!events?.length && role !== RoleEnum.Trainer" class="no-events">
+            <div
+              v-if="!events?.length && role !== RoleEnum.Trainer"
+              class="no-events"
+            >
               <ion-text>No Closed Events</ion-text>
             </div>
             <event-item
@@ -365,21 +388,23 @@
               :dateTime="dayjs(event.end_date).format('dddd D MMMM | HH:mm')"
               status="Closed"
             />
-            <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
-            />
-            <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
-            />
-            <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
-            />
+            <template v-if="role === RoleEnum.Trainer">
+              <event-item
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
+              />
+              <event-item
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
+              />
+              <event-item
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
+              />
+            </template>
           </div>
           <div class="upcoming">
             <div class="flex-container header">
@@ -390,31 +415,52 @@
                 Upcoming
               </div>
               <div class="d-flex ion-align-items-center" style="gap: 9.34px">
-                <div class="view-all" @click="role === RoleEnum.Trainer ? gotoUpcoming('events') : onHandleClickMenu(EntitiesEnum.DashboardEvent, 'upcoming')">View All</div>
-                <ion-icon style="width: 12px; height: 12px;" src="assets/icon/arrow-right-light.svg"></ion-icon>
+                <div
+                  class="view-all"
+                  @click="
+                    role === RoleEnum.Trainer
+                      ? gotoUpcoming('events')
+                      : onHandleClickMenu(
+                          EntitiesEnum.DashboardEvent,
+                          'upcoming'
+                        )
+                  "
+                >
+                  View All
+                </div>
+                <ion-icon
+                  style="width: 12px; height: 12px"
+                  src="assets/icon/arrow-right-light.svg"
+                ></ion-icon>
               </div>
             </div>
-            <div v-if="!upcomingevents?.length && role !== RoleEnum.Trainer" class="no-events">
+            <div
+              v-if="!upcomingevents?.length && role !== RoleEnum.Trainer"
+              class="no-events"
+            >
               <ion-text>No Closed Upcoming Events</ion-text>
             </div>
             <upcoming-event-item
               v-for="(event, index) in upcomingevents"
-              @click="onHandleDetailsPage(EntitiesEnum.EventsDetailed, event.id)"
+              @click="
+                onHandleDetailsPage(EntitiesEnum.EventsDetailed, event.id)
+              "
               :key="event.id"
               :title="event.title"
               :street="event?.address?.street"
-              :price ="event.price"
-              :start_date = "event.start_date"
-              :media = "event?.media[0]?.pathUrl"
+              :price="event.price"
+              :start_date="event.start_date"
+              :media="event?.media[0]?.pathUrl"
               status="Upcoming"
               :isLast="index + 1 === upcomingevents?.length"
             />
             <upcoming-event-item
+              v-if="role === RoleEnum.Trainer"
               :title="'Run competition'"
               :street="'Light Street, 1'"
-              :price ="'100'"
-              :start_date = "'10 July'"
-              :media = "'/assets/gym.png'"
+              :price="'100'"
+              :start_date="'10 July'"
+              :media="'/assets/gym.png'"
               status="Upcoming"
             />
           </div>
@@ -477,19 +523,22 @@ import { getFacilitySubscription } from "@/router/middleware/gymOwnerSubscriptio
 import _default from "chart.js/dist/plugins/plugin.legend";
 import useRoles from "@/hooks/useRole";
 import labels = _default.defaults.labels;
-import { Chart as ChartJS,
+import {
+  Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
   CategoryScale,
-  ArcElement, ChartData, ChartOptions } from "chart.js";
-import { Doughnut } from 'vue-chartjs';
+  ArcElement,
+  ChartData,
+  ChartOptions,
+} from "chart.js";
+import { Doughnut } from "vue-chartjs";
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
-
 
 const router = useRouter();
 const selected = "February";
-const pichartTitle = '60%';
+const pichartTitle = "60%";
 const currentFacility = useFacilityStore();
 const { role } = useRoles();
 
@@ -564,44 +613,51 @@ const marketStatsData = computed<ChartData>(() => {
   });
 
   return {
-    labels: ["05 Mon", "06 Tue", "07 Wed", "08 Thur", "09 Fri", "10 Sat","11 Sun"], 
-          datasets:  [
-            {
-              label: "Daily",
-              backgroundColor: '#FFB946',
-              data: [3, 7, 4, 3, 7, 2, 4],
-              barPercentage: .6,
-              borderRadius: Number.MAX_VALUE,
-              borderSkipped: false
-            },
-            {
-              label: "Gym Pass",
-              backgroundColor: '#2ED47A',
-              data: [4, 3, 5, 3, 7, 4, 9],
-              barPercentage: .6,
-              borderRadius: Number.MAX_VALUE,
-              borderSkipped: false
-            },
-            {
-              label: "Drop-Ins ",
-               backgroundColor: '#F7685B',
-              data: [7, 2, 6, 3, 7, 6, 4],
-              barPercentage: .6,
-              borderRadius: Number.MAX_VALUE,
-              borderSkipped: false
-            },
-            {
-              label: "Event Pass",
-              backgroundColor: '#FFB946',
-              data: [4, 3, 5, 3, 7, 4, 9],
-              barPercentage: .6,
-              borderRadius: Number.MAX_VALUE,
-              borderSkipped: false
-            },
-          ]
-  }
+    labels: [
+      "05 Mon",
+      "06 Tue",
+      "07 Wed",
+      "08 Thur",
+      "09 Fri",
+      "10 Sat",
+      "11 Sun",
+    ],
+    datasets: [
+      {
+        label: "Daily",
+        backgroundColor: "#FFB946",
+        data: [3, 7, 4, 3, 7, 2, 4],
+        barPercentage: 0.6,
+        borderRadius: Number.MAX_VALUE,
+        borderSkipped: false,
+      },
+      {
+        label: "Gym Pass",
+        backgroundColor: "#2ED47A",
+        data: [4, 3, 5, 3, 7, 4, 9],
+        barPercentage: 0.6,
+        borderRadius: Number.MAX_VALUE,
+        borderSkipped: false,
+      },
+      {
+        label: "Drop-Ins ",
+        backgroundColor: "#F7685B",
+        data: [7, 2, 6, 3, 7, 6, 4],
+        barPercentage: 0.6,
+        borderRadius: Number.MAX_VALUE,
+        borderSkipped: false,
+      },
+      {
+        label: "Event Pass",
+        backgroundColor: "#FFB946",
+        data: [4, 3, 5, 3, 7, 4, 9],
+        barPercentage: 0.6,
+        borderRadius: Number.MAX_VALUE,
+        borderSkipped: false,
+      },
+    ],
+  };
 });
-
 
 const pieChartOptionsDanger = {
   responsive: true,
@@ -670,68 +726,60 @@ const pieChartOptionsPrimary = {
   },
 };
 
-const traningPieChartData:ChartData = {
-  labels: [
-    'Completed',
-    'Upcoming events',
+const traningPieChartData: ChartData = {
+  labels: ["Completed", "Upcoming events"],
+  datasets: [
+    {
+      data: [60, 40],
+      backgroundColor: ["#E1DBC5", "#F7685B"],
+      circumference: 180,
+      rotation: -90,
+      borderJoinStyle: "rounded",
+      cutout: 75,
+      borderWidth: 0,
+      borderRadius: 20,
+      spacing: -30,
+      pointStyle: "circle",
+    },
   ],
-  datasets: [{
-    data: [60, 40],
-    backgroundColor: [
-      '#E1DBC5',
-      '#F7685B',
-    ],
-    circumference: 180,
-    rotation: -90,
-    borderJoinStyle: 'rounded',
-    cutout:75,
-    borderWidth: 0,
-    borderRadius: 20,
-    spacing: -30,
-    pointStyle: 'circle'
-  }]
 };
 const eventPieChartData = {
-  labels: [
-    'Completed',
-    'Upcoming events',
+  labels: ["Completed", "Upcoming events"],
+  datasets: [
+    {
+      data: [60, 40],
+      backgroundColor: ["#E1DBC5", "#F7685B"],
+      circumference: 180,
+      rotation: -90,
+      borderJoinStyle: "rounded",
+      cutout: 75,
+      borderWidth: 0,
+      borderRadius: 20,
+      spacing: -30,
+      pointStyle: "circle",
+    },
   ],
-  datasets: [{
-    data: [60, 40],
-    backgroundColor: [
-      '#E1DBC5',
-      '#F7685B',
-    ],
-    circumference: 180,
-    rotation: -90,
-    borderJoinStyle: 'rounded',
-    cutout: 75,
-    borderWidth: 0,
-    borderRadius: 20,
-    spacing: -30,
-    pointStyle: 'circle'
-  }]
 };
-const chartOptions:ChartOptions = {
+const chartOptions: ChartOptions = {
   responsive: false,
   aspectRatio: 2,
   plugins: {
     legend: {
-      position: 'right',
+      position: "right",
       labels: {
         usePointStyle: true,
         boxHeight: 6,
         filter(item, data) {
-            item.fontColor = item.fillStyle;
-            return true;
+          item.fontColor = item.fillStyle;
+          return true;
         },
-        font :{
-          family :"Lato",
+        font: {
+          family: "Lato",
           size: 10,
-        }
+        },
       },
     },
-  }
+  },
 };
 
 const piechartDataPrimary = computed(() => {
@@ -770,15 +818,13 @@ const pieChartDataDanger = computed<ChartData>(() => {
   };
 });
 
-
 // handle click event
 const onHandleDetailsPage = (pathName: string, id: string) => {
-	console.log(pathName, id)
+  console.log(pathName, id);
   router.push({
-     name: pathName, 
-      params: { id: id } 
-    
-    });
+    name: pathName,
+    params: { id: id },
+  });
 };
 
 const handleDay = () => {
@@ -791,14 +837,14 @@ const handleWee = () => {
   console.log("Wee");
 };
 
-const gotoUpcoming =(type:string) => {
+const gotoUpcoming = (type: string) => {
   router.push({
     name: EntitiesEnum.Upcoming,
     params: {
-      type: type
-    }
-  })
-}
+      type: type,
+    },
+  });
+};
 
 const {
   result: dashboardWidgetResult,
@@ -1007,17 +1053,14 @@ const upcomingevents = computed(() => {
   return upcomingeventRes.value?.events?.data;
 });
 
-
 // handle click event
 const onHandleClickMenu = (pathName: string, status: string) => {
-	console.log(pathName, status)
+  console.log(pathName, status);
   router.push({
-     name: pathName, 
-      query: { status: status } 
-    
-    });
+    name: pathName,
+    query: { status: status },
+  });
 };
-
 
 watch(
   () => currentFacility.facility.id,
@@ -1026,7 +1069,7 @@ watch(
       await getFacilitySubscription()
         .then((data) => {
           if (!data) {
-            return router.push({ name: EntitiesEnum.DashboardStartMembership });
+            return router.push({ name: EntitiesEnum.DashboardMembership });
           } else {
             refetch({
               id: currentFacility.facility.id,
@@ -1446,38 +1489,38 @@ ion-col.col-gap.test {
     flex-direction: column;
   }
 
-  @media (max-width: 1400px){
+  @media (max-width: 1400px) {
     .event-ring {
       margin-left: 35px;
       canvas {
-        scale: .9;
+        scale: 0.9;
       }
     }
   }
-  @media (max-width: 1350px){
-     .completed-chart-title {
+  @media (max-width: 1350px) {
+    .completed-chart-title {
       left: 76px;
     }
   }
-  @media (max-width: 1300px){
+  @media (max-width: 1300px) {
     .event-ring {
       margin-left: 10px;
 
       canvas {
-        scale: .8;
+        scale: 0.8;
       }
     }
     .completed-chart-title {
       bottom: 23px;
       left: 82px;
-     }     
+    }
   }
 
-  @media only screen and (max-width: 1400px) and (min-width: 1200px){
+  @media only screen and (max-width: 1400px) and (min-width: 1200px) {
     .completed {
       margin: 0 10px;
-     }
-    .upcoming{
+    }
+    .upcoming {
       margin: 0;
     }
   }
@@ -1487,9 +1530,9 @@ ion-col.col-gap.test {
       padding: 0;
     }
     .completed {
-      margin: 20px 20px 0 20px
+      margin: 20px 20px 0 20px;
     }
-    .upcoming { 
+    .upcoming {
       margin: 19px 14px;
     }
     .event-ring {
@@ -1518,11 +1561,10 @@ ion-col.col-gap.test {
     }
   }
 
-  @media (max-width: 320px){
+  @media (max-width: 320px) {
     .ts-chart-container {
-
       canvas {
-        scale: .9;
+        scale: 0.9;
       }
     }
   }

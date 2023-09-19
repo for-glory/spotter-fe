@@ -1,5 +1,5 @@
 <template>
-  <div class="buttons__container">
+  <div class="buttons__container" :class="role === RoleEnum.Trainer ? 'buttons__container__trainer' : ''">
     <ion-button
       @click="$emit('handle-click')"
       class="submit-btn"
@@ -18,9 +18,12 @@
 </template>
 
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 import { IonButton } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
 
+const { role } = useRoles();
 withDefaults(
   defineProps<{
     mainButtonText: string;
@@ -49,5 +52,10 @@ defineEmits<{
 .secondary-btn {
   margin: 0;
   width: 100%;
+}
+.buttons__container__trainer {
+  ion-button {
+    font-family: "Yantramanav";
+  }
 }
 </style>

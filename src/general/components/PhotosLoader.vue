@@ -6,7 +6,7 @@
       expand="block"
       :disabled="loading"
     >
-      <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" /> &nbsp; &nbsp; Drag and Drop file or Choose file
+      <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" />
       <div class="add-photo__file__loader" v-if="loading">
         <circle-progress :percent="progress" class="add-photo__img__progress" />
       </div>

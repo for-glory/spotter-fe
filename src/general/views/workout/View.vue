@@ -32,6 +32,7 @@
               <div v-else class="dailys-container">
                 <daily-video-player 
                   :path="daily.video"
+                  :preview="daily.preview"
                   :play="dailysItems[activeIndex].id === daily.id"
                 />
                 <div class="d-flex-col justify-content-end align-items-start details details__left">
@@ -121,8 +122,8 @@
     </ion-modal>
     <confirmation
       :is-visible="showConfirmationModal"
-      :title="'Do you want to delete' + (type === 'PASS' ? ' Passes' : ' drop-in?') + '?'"
-      :description="(type === 'PASS' ? 'Passes' : 'Drop-in') + ' will be deleted'"
+      :title="'Do you want to delete this daily?'"
+    description="Your daily will be deleted"
       button-text="Delete"
       @discard="onDelete"
       @decline="hideModal"
