@@ -227,7 +227,7 @@
       </template>
     </base-layout>
   </ion-page>
-  <div class="web-trainer-edit" v-else>
+  <div class="web-trainer-edit hide-scrollbar" v-else>
     <ion-spinner
       v-if="loading || updateUserLoading"
       name="lines"

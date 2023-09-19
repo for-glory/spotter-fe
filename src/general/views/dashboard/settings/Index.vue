@@ -75,6 +75,7 @@ import Security from "@/general/views/dashboard/settings/Security.vue";
 import Services from "@/general/views/dashboard/settings/Services.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import Edit from "./Edit.vue";
+import UserProfile from "./UserProfile.vue";
 
 const filter = ref<string>("profile");
 
