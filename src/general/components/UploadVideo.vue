@@ -9,7 +9,7 @@
         <div class="video__actions">
           <ion-button
             class="video__action"
-            @click="isUploadModalOpen = true"
+            @click="chooseVideo"
             fill="clear"
             expand="block"
             color="medium"
@@ -32,7 +32,7 @@
       v-else
       fill="clear"
       expand="block"
-      @click="isUploadModalOpen = true"
+      @click="chooseVideo"
       class="upload-video__upload-btn"
     >
       <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
@@ -135,39 +135,12 @@ const videoOptions: VideoOptions = {
 const isUploadModalOpen = ref<boolean>(false);
 
 const chooseVideo = (mode: string) => {
-  isUploadModalOpen.value = false;
-  if (mode === 'record') {
-    CameraPro.getVideo(videoOptions)
-      .then(async (video: Video) => {
-        preloading.value = true;
-        const blobFile = (video?.path && (await readFile(video.path))) || "";
-        const mimeType = (video?.path && mime.getType(video?.path)) || "";
-        const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
-        const videoDuration = await getVideoDuration(file);
-        if (file.size > maxVideoSize.value) {
-          alertModalError.value = EntitiesEnum.MaxVideoSize;
-        }
-
-        preloading.value = false;
-
-        if (alertModalError.value?.length) return;
-
-        const fileSize = bytesToSize(file.size);
-        const fileName = `${video.path?.split("/")?.slice(-1) || ""}`;
-        emits("change", file, fileSize, fileName);
-      })
-      .catch(async (error) => {
-        console.error("camera error: ", error);
-        preloading.value = false;
-      });
-  } else {
-    const input: HTMLInputElement = document.createElement("input");
-    input.type = "file";
-    input.accept = "video/mp4,video/x-m4v,video/*";
-    document.body.appendChild(input);
-    input.onchange = async (event) => {
-      const file = event.target?.files[0];
-
+  CameraPro.getVideo(videoOptions)
+    .then(async (video: Video) => {
+      preloading.value = true;
+      const blobFile = (video?.path && (await readFile(video.path))) || "";
+      const mimeType = (video?.path && mime.getType(video?.path)) || "";
+      const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
       const videoDuration = await getVideoDuration(file);
       if (file.size > maxVideoSize.value) {
         alertModalError.value = EntitiesEnum.MaxVideoSize;
@@ -178,13 +151,63 @@ const chooseVideo = (mode: string) => {
       if (alertModalError.value?.length) return;
 
       const fileSize = bytesToSize(file.size);
-      console.log(file.size);
-      const fileName = file.name;
+      const fileName = `${video.path?.split("/")?.slice(-1) || ""}`;
       emits("change", file, fileSize, fileName);
-      input.remove();
-    };
-    input.click();
-  }
+    })
+    .catch(async (error) => {
+      console.error("camera error: ", error);
+      preloading.value = false;
+    });
+  // isUploadModalOpen.value = false;
+  // if (mode === 'record') {
+  //   CameraPro.getVideo(videoOptions)
+  //     .then(async (video: Video) => {
+  //       preloading.value = true;
+  //       const blobFile = (video?.path && (await readFile(video.path))) || "";
+  //       const mimeType = (video?.path && mime.getType(video?.path)) || "";
+  //       const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
+  //       const videoDuration = await getVideoDuration(file);
+  //       if (file.size > maxVideoSize.value) {
+  //         alertModalError.value = EntitiesEnum.MaxVideoSize;
+  //       }
+
+  //       preloading.value = false;
+
+  //       if (alertModalError.value?.length) return;
+
+  //       const fileSize = bytesToSize(file.size);
+  //       const fileName = `${video.path?.split("/")?.slice(-1) || ""}`;
+  //       emits("change", file, fileSize, fileName);
+  //     })
+  //     .catch(async (error) => {
+  //       console.error("camera error: ", error);
+  //       preloading.value = false;
+  //     });
+  // } else {
+  //   const input: HTMLInputElement = document.createElement("input");
+  //   input.type = "file";
+  //   input.accept = "video/mp4,video/x-m4v,video/*";
+  //   document.body.appendChild(input);
+  //   input.onchange = async (event) => {
+  //     const file = event.target?.files[0];
+
+  //     const videoDuration = await getVideoDuration(file);
+  //     if (file.size > maxVideoSize.value) {
+  //       alertModalError.value = EntitiesEnum.MaxVideoSize;
+  //     }
+
+  //     preloading.value = false;
+
+  //     if (alertModalError.value?.length) return;
+
+  //     const fileSize = bytesToSize(file.size);
+  //     console.log(file.size);
+  //     const fileName = file.name;
+  //     emits("change", file, fileSize, fileName);
+  //     input.remove();
+  //   };
+  //   input.click();
+  // }
 };
 
 const readFile = async (path: string): Promise<ReadFileResult> => {
