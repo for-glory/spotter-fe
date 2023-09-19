@@ -6,8 +6,8 @@
 import { withDefaults, defineProps, inject, onUnmounted } from "vue";
 import { pickerController, PickerOptions } from "@ionic/vue";
 import { Emitter, EventType } from "mitt";
-import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
+import { Capacitor } from "@capacitor/core";
 
 const { role } = useRoles();
 const props = withDefaults(
@@ -43,7 +43,7 @@ const openPicker = async () => {
     buttons: props.options.buttons,
     mode: "ios",
     columns,
-    cssClass: role === RoleEnum.Trainer ? "trainer-picker" : ""
+    cssClass: Capacitor.isNativePlatform() ? "trainer-picker" : "trainer-picker  web-trainer-picker"
   });
   await picker.present();
 };

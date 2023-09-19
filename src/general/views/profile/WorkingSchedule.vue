@@ -5,7 +5,7 @@
   >
     <base-layout hide-navigation-menu>
       <template #header>
-        <page-header
+        <page-header  :class="{ 'modal-header': isFromModal }"
           :back-btn="isFromModal && role === RoleEnum.Trainer ? false : true"
           :close-btn="isFromModal && role === RoleEnum.Trainer && isWindowSmall"
           title="Working schedule"
@@ -676,6 +676,12 @@ const resetWorkingHour = () => {
         margin-bottom: 16px;
       }
     }
+  }
+}
+
+:deep(.modal-header) {
+  ion-title {
+    font-family: Yantramanav !important;
   }
 }
 </style>

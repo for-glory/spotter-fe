@@ -60,7 +60,7 @@
 
 .trainer-picker {
   .picker-wrapper {
-    height: 300px;
+    height: 312px;
 
     .picker-toolbar {
       contain: initial; 
@@ -73,16 +73,17 @@
       bottom: 0;
       width: calc(100% - 15%);
       text-align: center;
-
+      margin-bottom: 10px;
       button {
         background: var(--gold);
         color: var(--main-color);
         text-align: center;
         font-size: 16px;
         font-style: normal;
-        font-weight: 700;
+        font-weight: 700 !important;
         width: 100%;
         border-radius: 8px;
+        font-family: Yantramanav;
       }
     }
   }
@@ -97,19 +98,6 @@
 
     .picker-toolbar div:nth-child(2) {
       bottom: 35px;
-    }
-  }
-}
-
-.web-working-schedule {
-  align-items: flex-end;
-
-  &::part(content) {
-    --width: 702px;
-    --height: 438px;
-
-    @media (max-width:700px) {
-      --height: 100%;
     }
   }
 }

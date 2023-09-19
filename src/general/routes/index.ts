@@ -627,6 +627,14 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardUserProfilePreview,
+        path: "profile-preview",
+        component: () => import("@/general/views/dashboard/settings/UserProfile.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardPassList,
         path: "pass/list",
         component: () => import("@/general/views/dashboard/pass/List.vue"),
