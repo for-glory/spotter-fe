@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="btn-container">
-          <ion-button expand="block" class="secondary" @click="select" fill="outline">Add New Gym</ion-button>
+          <ion-button expand="block" class="secondary" @click="select" fill="outline">Save</ion-button>
         </div>
       </template>
     </ion-content>
@@ -150,14 +150,14 @@ defineExpose({
 <style lang="scss" scoped>
 .content {
   height: calc(100% - 48px - var(--ion-safe-area-top));
-  --padding-top: 24px;
   --padding-bottom: calc(24px + var(--ion-safe-area-bottom));
 }
 
 .title {
+  color: #E1DBC5;
+  font-weight: 700;
   display: block;
   font-size: 16px;
-  font-weight: 500;
   line-height: 1.5;
   margin-bottom: 16px;
 
@@ -211,9 +211,29 @@ defineExpose({
   }
 }
 .btn-container {
+  height: 10%;
   ion-button {
     width: 60%;
     margin: 0 auto;
+    --background: #E1DBC5;
+    color: #262626;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 767px) {
+  .equipment-amenities-modal{
+    --width: 100vw;
+    --height: 100vh;
+  }
+
+  .checkbox-container{
+    flex-direction: column;
+  }
+  
+  .checkbox-col{
+    height: 100%;
+    width: 100% !important;
   }
 }
 </style>

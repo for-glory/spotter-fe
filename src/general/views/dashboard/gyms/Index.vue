@@ -6,10 +6,10 @@
 		:class="{ 'holder-content--empty': !loading }"
 	>
     <div>
-      <!-- <div class="banner">
-        <ion-icon src="assets/icon/arrow-back.svg" />
-        <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title>
-      </div> -->
+      <div class="banner">
+        <ion-icon @click="goBack" src="assets/icon/arrow-back.svg" />
+        <!-- <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title> -->
+      </div>
       <div>
         <div class="carousel">
           <swiper
@@ -86,10 +86,10 @@
         <ion-button class="add-gym-btn" @click="goToGymCreate">Share Gym</ion-button>
       </div>
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" @click="goToGymCreate">Edit</ion-button>
+        <ion-button class="add-gym-btn" @click="goToGymEdit">Edit</ion-button>
       </div>
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" color="danger" fill="outline" @click="goToGymCreate">Delete</ion-button>
+        <ion-button class="add-gym-btn" color="danger" fill="outline" @click="deleteGym">Delete</ion-button>
       </div>
       <div class="feature-field ion-margin-top">
         <div>
@@ -142,46 +142,57 @@
           @change="tabsChanged"
         />
         <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-        <div class="tabs-holder">
-          <!-- <page-tabs
-            :tabs="tabs"
-            class="page-tabs"
-            :value="activeTab"
-            @change="tabsChanged"
-          /> -->
-          <!-- <div class="content"> -->
-            <!-- <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" /> -->
-            <!-- <div v-else>
-              <review-item
-                v-for="review in reviews"
-                :key="review.id"
-                class="review-item"
-                :avatar-url="review.avatarUrl"
-                :full-name="review.fullName"
-                :date="review.date"
-                :rating="review.rating"
-                :text="review.text"
-              />
-            </div> -->
-
-            <!-- <div v-else>
-              <div class="black-box review" v-for="review in reviews" :key="review.id">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex reviewer align-items-center">
-                    <avatar :src="review.avatarUrl" />
-                    <ion-text class="reviewer-name">{{ review.fullName }}</ion-text>
-                    <ion-text class="review-point">{{ review.rating }}</ion-text>
-                  </div>
-                  <ion-text class="review-date">{{ dayjs(review.date).format("D MMMM, YYYY") }}</ion-text>
-                </div>
-                <ion-text class="review-message">{{ review.text }}</ion-text>
+        <div class="tabs-holder d-flex ion-margin-top">
+          <div class="ion-text-center">
+            <ion-title>$20.00</ion-title>
+            <ion-text>1 Day</ion-text>
+            <ion-text>One day access</ion-text>
+          </div>
+          <div class="ion-text-center">
+            <ion-title>$39.00</ion-title>
+            <ion-text>2 Days</ion-text>
+            <ion-text>Two days access</ion-text>
+          </div>
+          <div class="ion-text-center">
+            <ion-title>$79.00</ion-title>
+            <ion-text>5 Day</ion-text>
+            <ion-text>Five days access</ion-text>
+          </div>
+        </div>
+        <div class="tabs-text-content ion-margin-top">
+          <div class="card-background">
+            <div class="d-flex">
+              <ion-title class="ion-no-padding">Full Body Stretching</ion-title>
+              <ion-text>Tamra Dae</ion-text>
+            </div>
+            <div class="d-flex inner-text">
+              <div class="width50 ">
+                <ion-item class="ion-no-padding" lines="none">
+                  <ion-icon src="assets/icon/time-light.svg"></ion-icon>
+                  <ion-text>8 min - Expert</ion-text>
+                </ion-item>
               </div>
-            </div> -->
-          <!-- </div> -->
+              <div class="width50 ion-text-end">
+                <ion-item class="ion-no-padding ion-text-end sub-text" lines="none">
+                  <ion-icon src="assets/icon/person-light.svg"></ion-icon>
+                  <ion-text class="bold-lato">30</ion-text>
+                </ion-item>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 	</div> 
+  <create-facility-modal ref="createFacilityModal" />
+  <discard-changes
+    :is-open="isDeleteModalOpen"
+    @close="deleteModalClosed"
+    title="Do you want to delete gym?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Delete"
+  />
 </template>
 
 <script setup lang="ts">
@@ -229,6 +240,18 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode } from "swiper";
 import { TabItemNew } from "@/interfaces/TabItemNew";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
+import { useNewFacilityStore } from "@/facilities/store/new-facility";
+import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";
+import {
+  NativeGeocoderResult,
+} from "@awesome-cordova-plugins/native-geocoder";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+
+const deleteGymModal = ref<typeof DeleteGymModal | null>(null);
+
+const createFacilityModal = ref<typeof CreateFacilityModal | null>(null);
+
+const store = useNewFacilityStore();
 
 const route = useRoute();
 
@@ -344,6 +367,70 @@ const goToGymCreate = () => {
     name: EntitiesEnum.DashboardGymCreate
   })
 }
+
+const goToGymEdit = () => {
+  store.clear();
+  const curFacility = result.value.facility;
+  store.setAddress(
+    curFacility?.address?.city?.state,
+    curFacility?.address?.city,
+    {
+      thoroughfare: curFacility?.address?.street,
+      subThoroughfare: curFacility?.address?.extra,
+      latitude: curFacility?.address?.lat,
+      longitude: curFacility?.address?.lng,
+    } as NativeGeocoderResult
+  );
+
+  const amenities = curFacility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = curFacility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+
+  curFacility.media?.map((option) => {
+    store.addPhoto({
+      ...option,
+      url: option.pathUrl,
+    });
+  });
+  store.setAmenities(amenities);
+  store.setDescription(curFacility.description);
+  store.setEquipments(equipments);
+  store.setTitle(curFacility.name);
+
+  createFacilityModal.value?.present({
+    isEdit: true,
+    selectedFacilityId: result?.value?.facility?.id
+  });
+}
+
+const isDeleteModalOpen = ref(false);
+
+const deleteGym = () => {
+  isDeleteModalOpen.value = true;
+}
+
+const deleteModalClosed = (approved: boolean) => {
+  isDeleteModalOpen.value = false;
+};
+
+const goBack = () => {
+  router.go(-1);
+}
 </script>
 
 <style scoped lang="scss">
@@ -356,7 +443,8 @@ const goToGymCreate = () => {
   width: 100%;
   position: relative;
   overflow: hidden;
-  display: flex;
+  // display: flex;
+  font-size: 30px;
   align-items: center;
   justify-content: center;
   gap: 7px;
@@ -458,6 +546,7 @@ const goToGymCreate = () => {
   padding-top: 9px;
   padding-bottom: 37px;
   overflow-y: scroll;
+  margin-top: 4%;
 
   .share-btn {
     width: 100%;
@@ -587,5 +676,71 @@ const goToGymCreate = () => {
 .page-tabs {
   background-color: #262626;
   border-radius: 10px;
+}
+
+.tabs-holder {
+  background-color: #262626;
+  border-radius: 8px;
+  padding: 8px;
+  justify-content: center;
+  gap: 20px;
+  ion-title {
+    font-size: 16px;
+    font-family: 'Yantramanav';
+    font-weight: 500;
+  }
+  ion-text {
+    display: block;
+    font-size: 14px;
+    font-family: 'Yantramanav';
+    font-weight: 300;
+    color: #C4C4C4;
+  }
+}
+
+.back-btn {
+  // position: absolute;
+  font-size: 30px;
+  // left: 19%;
+}
+
+.tabs-text-content {
+  background-color: #262626;
+  max-height: 20vh;
+  padding: 10px;
+  border-radius: 8px;
+  overflow: auto;
+  .width50 {
+    width: 50%;
+    height: 30px;
+  }
+  .inner-text {
+    padding: 10px 5px;
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+  .sub-text {
+    float: right;
+  }
+  ion-item {
+    --background: transparent;
+    ion-text {
+      font-size: 14px;
+      font-family: 'Yantramanav';
+      padding-left: 5px;
+      font-weight: 300;
+    }
+    .bold-lato {
+      font-weight: 500;
+      font-family: 'lato';
+    }
+  }
+  .card-background {
+    background-color: #202020;
+    padding: 5px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <page-header @back="cancel" back-btn title="Add New Gym">
+  <page-header @back="cancel" back-btn :title="!edit ? 'Add New Gym' : 'Edit gym Profile'">
     <template #custom-btn>
     </template>
   </page-header>
@@ -107,6 +107,7 @@
     <div class="form-row">
       <ion-label class="label"> Choose equipment and amenitites </ion-label>
       <choose-block
+        class="form-row__control"
         title="Equipment and amenities"
         @handle-click="onChooseAmenities"
         :value="facilityEquipments?.length + facilityAmenities?.length || ''"
@@ -121,14 +122,16 @@
         expand="block"
         class="secondary create-btn"
         @click="onSaveAndExit"
+        v-if="!nextButton"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
       >
         Add New Gym
       </ion-button>
-      <!-- <ion-button
+      <ion-button
         expand="block"
+        class="secondary create-btn"
         @click="onNext"
         v-if="nextButton"
         :disabled="
@@ -136,7 +139,7 @@
         "
       >
         {{ nextButtonText }}
-      </ion-button> -->
+      </ion-button>
     </div>
   </div>
   <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
@@ -442,7 +445,7 @@ const onSaveAndExit = () => {
 };
 
 const onNext = () => {
-  emits("submit", {
+  emits("edit", {
     title: facilityTitle.value,
     description: facilityDescription.value,
     photos: facilityPhotos.value,
@@ -455,6 +458,10 @@ const onNext = () => {
     amenities: facilityAmenities.value,
   }, "create_event");
 };
+
+const cancel = () => {
+  emits("cancel");
+}
 
 const clearStore = () => {
   store.clear();
@@ -498,6 +505,7 @@ defineExpose({
   ion-button {
     width: 100%;
     --background: #E1DBC5;
+    color: #262626;
   }
   // .button {
   //   margin: 0 8px;
@@ -520,7 +528,7 @@ defineExpose({
   }
 
   &__control {
-    border: 1px solid;
+    border: 1px solid #ffffff99;
     margin-top: 10px;
     padding: 0;
     width: 100%;
@@ -557,7 +565,13 @@ defineExpose({
 .create-btn {
   position: absolute;
   width: 90% !important;
-  bottom: 5%;
+  bottom: 9%;
   font-weight: 500;
+  color: #262626;
+}
+
+.form-row__control {
+  border-radius: 8px;
+  border: 1px solid #ffffff99;
 }
 </style>
