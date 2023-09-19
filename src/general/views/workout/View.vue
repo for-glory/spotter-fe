@@ -312,7 +312,7 @@ const showSettingsModal = () => {
   let daily = dailysItems.value[activeIndex.value];
   store.setWorkout({
     title: daily.title,
-    type: daily.type.id,
+    type: daily.type,
     duration: daily.duration,
     bodyParts: daily.workoutMuscleTypesIds,
     price: getSumForPayment(daily.price, true),

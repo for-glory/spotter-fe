@@ -362,6 +362,7 @@ const videoSelected = async (
         `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.thumbnail_path}`
       );
       store.setValue("workoutPath", res?.data.videoPreload.thumbnail_path);
+      store.setValue("workoutDuration", res?.data.videoPreload.duration);
       videoOnLoading.value = false;
       percentLoaded.value = undefined;
       videoInfo.value.size = size;

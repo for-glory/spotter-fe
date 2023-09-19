@@ -68,7 +68,11 @@
     <div class="" v-else>
       <div v-if="tab === 'dailys'">
         <div v-if="filter==='all'">
-          <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
+          <ion-text 
+            class="font-light font-12 color-white"
+          >
+            Showing all {{ dailysData.length }} Dailys
+          </ion-text>
           <workouts-swiper
             title="Recently Uploaded"
             :workouts="dailysData"
@@ -227,7 +231,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   {
     page: 1,
     first: 1000,
-    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    facility_id: currentFacility.facility?.id,
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
     order: SortOrder.Asc,
   },
@@ -238,14 +242,14 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
   DailyAnalyticsDocument,
   {
-    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    facility_id: currentFacility.facility?.id,
     limit: performanceLimit.value
   }
 );
 const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
   DailyPerformanceDocument,
   {
-    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+    facility_id: currentFacility.facility?.id,
     limit: 7
   }
 );
@@ -257,17 +261,19 @@ onMounted(() => {
 const performanceData = ref<Array<any>>();
 const trendingDailys = computed(() => {
   let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
-   dailys.sort((a: any, b: any) => {
+  let trending = dailys.filter((daily) => daily.views_count > 0).sort((a: any, b: any) => {
     return b.views_count - a.views_count;
-  });
-  return dailys;
+  }).slice(0, 10);
+  console.log(trending);
+  return trending;
 });
 const recommendedDailys = computed(() => {
   let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
-  dailys.sort((a: any, b: any) => {
+  let recommend = dailys.filter((daily) => daily.recommended_count > 0).sort((a: any, b: any) => {
     return b.recommended_count - a.recommended_count;
-  });
-  return dailys;
+  }).slice(0, 10);
+  console.log(recommend);
+  return recommend;
 });
 
 const onDelete = () => {
