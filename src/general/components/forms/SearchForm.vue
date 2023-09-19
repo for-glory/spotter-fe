@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': rmPadding }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding }"
   >
     <ion-back-button
       v-if="backBtn"

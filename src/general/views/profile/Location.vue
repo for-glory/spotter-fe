@@ -1,8 +1,8 @@
 <template>
-  <base-layout>
+  <base-layout :hideNavigationMenu="isFromModal ? true : false">
     <template #header>
-      <page-header
-        back-btn
+      <page-header :class="{ 'web-location': isFromModal, 'header': !isFromModal }"
+        :back-btn="isFromModal ? false : true"
         :title="
           isFreelancer ||
           role !== RoleEnum.Manager ||
@@ -12,7 +12,6 @@
             : 'Choose my location'
         "
         @back="onBack"
-        class="header"
       />
     </template>
     <template #content>
@@ -107,7 +106,7 @@
           </div>
         </template>
         <template v-else>
-          <div class="form-row">
+          <div :class="['form-row', { 'w-327': isFromModal } ]">
             <choose-block
               :value="chosenGym?.name ?? ''"
               @handle-click="openChooseGym"
@@ -115,11 +114,11 @@
             />
           </div>
 
-          <div class="form-row">
+          <div :class="['form-row', { 'w-327': isFromModal } ]">
             <base-toggle v-model:value="isMobile" content="Are you mobile" />
           </div>
 
-          <div class="form-row">
+          <div :class="['form-row', { 'w-327': isFromModal } ]">
             <ion-label class="label native-app">
               Please set your travel or distance radius (1-15 miles)
             </ion-label>
@@ -136,7 +135,7 @@
         </template>
       </div>
     </template>
-    <template #footer>
+    <template v-if="!isFromModal" #footer> 
       <buttons-footer
         main-button-text="Save"
         @click="saveAddress"
@@ -186,6 +185,12 @@ import {
 } from "@awesome-cordova-plugins/native-geocoder";
 import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 import useRoles from "@/hooks/useRole";
+
+const props = defineProps<{
+  isFromModal?:boolean
+}>();
+
+console.log("props", props);
 
 const router = useRouter();
 
@@ -623,6 +628,9 @@ const chosenGym = computed(() => store.assignedFacility);
 
 .page {
   padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .spinner {
   display: block;
@@ -631,6 +639,7 @@ const chosenGym = computed(() => store.assignedFacility);
 }
 
 .form-row {
+  width: 100%;
   &__control {
     &:not(:first-child) {
       margin-top: 16px;
@@ -682,5 +691,15 @@ const chosenGym = computed(() => store.assignedFacility);
   font-weight: 300;
   font-size: 14px;
   color: var(--ion-color-white);
+}
+
+.w-327 {
+  width: 327px;
+}
+
+:deep(.web-location) {
+  ion-title {
+    font-family: Yantramanav !important;
+  }
 }
 </style>
