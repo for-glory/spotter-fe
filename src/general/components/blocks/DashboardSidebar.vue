@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-      <div class="main-menu" v-if="role !== RoleEnum.Trainer">
+      <div class="main-menu" v-if="role === RoleEnum.FacilityOwner">
         <div
           :class="getMenuItemClass(EntitiesEnum.DashboardOverview)"
           @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)"
@@ -115,6 +115,78 @@
         >
           <ion-icon src="assets/icon/email.svg" />
           <ion-text>Message</ion-text>
+        </div>
+      </div>
+      <div class="main-menu" v-if="role === RoleEnum.User">
+        <div
+          :class="getMenuItemClass(EntitiesEnum.Dashboard)"
+          @click="onHandleClickMenu(EntitiesEnum.Dashboard)"
+        >
+          <ion-icon src="assets/icon/dashboard.svg" />
+          <ion-text>Dashboard</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)"
+        >
+          <ion-icon src="assets/icon/daily.svg" />
+          <ion-text>Dailys</ion-text>
+        </div>
+        <!-- @todo: need to done this view -->
+        <div :class="getMenuItemClass(EntitiesEnum.TrainerUserProfile)">
+          <ion-icon src="assets/icon/daily.svg" />
+          <ion-text>Trainers</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.Discover)"
+          @click="onHandleClickMenu(EntitiesEnum.Discover)"
+        >
+          <ion-icon src="assets/icon/discover.svg" />
+          <ion-text>Discover</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.GymsNearby)"
+          @click="onHandleClickMenu(EntitiesEnum.GymsNearby)"
+        >
+          <ion-icon src="assets/icon/gym.svg" />
+          <ion-text>Gym</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.DashboardMessage)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)"
+        >
+          <ion-icon src="assets/icon/email.svg" />
+          <ion-text>Message</ion-text>
+        </div>
+      </div>
+      <div class="main-menu" v-if="role === RoleEnum.User">
+        <div
+          :class="getMenuItemClass(EntitiesEnum.ProfileBookingHistory)"
+          @click="onHandleClickMenu(EntitiesEnum.ProfileBookingHistory)"
+        >
+          <ion-icon src="assets/icon/booking.svg" />
+          <ion-text>Booking History</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.PaymentsMethods)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)"
+        >
+          <ion-icon src="assets/icon/Card.svg" />
+          <ion-text>Payment Method</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.DashboardCalendar)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardCalendar)"
+        >
+          <ion-icon src="assets/icon/calendar.svg" />
+          <ion-text>Calender</ion-text>
+        </div>
+        <div
+          :class="getMenuItemClass(EntitiesEnum.DashboardSettings)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)"
+        >
+          <ion-icon src="assets/icon/Setting.svg" />
+          <ion-text>Settings</ion-text>
         </div>
       </div>
       <div class="main-menu trainer-menu" v-if="role === RoleEnum.Trainer">
@@ -274,11 +346,11 @@ const avatarUrl = computed(() => {
 });
 
 const openFacilityDropdown = () => {
-  if(role === RoleEnum.Trainer) {
+  if (role === RoleEnum.Trainer) {
     router.push({
       name: EntitiesEnum.DashboardUserProfilePreview,
     });
-  return
+    return;
   }
   isOpenFacilityDropdown.value = !isOpenFacilityDropdown.value;
 };
