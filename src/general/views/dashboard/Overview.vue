@@ -316,17 +316,19 @@
           </div>
           <div class="event-ring">
             <template v-if="role === RoleEnum.Trainer">
-                <doughnut 
+              <doughnut
                 :data="eventPieChartData"
                 :options="chartOptions"
                 :width="null"
                 :height="null"
-                />
-                <span class="pie-chart-title completed-chart-title">{{ pichartTitle }}</span>
+              />
+              <span class="pie-chart-title completed-chart-title">{{
+                pichartTitle
+              }}</span>
             </template>
             <div v-else>
               <!-- event chart -->
-            
+
               <div style="position: relative; width: 100%; height: 250px">
                 <pie-chart
                   :chartData="pieChartDataDanger"
@@ -388,22 +390,22 @@
             />
             <template v-if="role === RoleEnum.Trainer">
               <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
               />
               <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
               />
               <event-item
-              :title="'Swimming & Cycling'"
-              :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
-              status="Closed"
+                :title="'Swimming & Cycling'"
+                :dateTime="dayjs(new Date()).format('dddd D MMMM | HH:mm')"
+                status="Closed"
               />
             </template>
-            </div>
+          </div>
           <div class="upcoming">
             <div class="flex-container header">
               <div
@@ -452,7 +454,8 @@
               status="Upcoming"
               :isLast="index + 1 === upcomingevents?.length"
             />
-            <upcoming-event-item v-if="role === RoleEnum.Trainer"
+            <upcoming-event-item
+              v-if="role === RoleEnum.Trainer"
               :title="'Run competition'"
               :street="'Light Street, 1'"
               :price="'100'"

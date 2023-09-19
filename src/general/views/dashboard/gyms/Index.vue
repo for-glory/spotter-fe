@@ -45,76 +45,112 @@
             <ion-text>Ratings {{ result?.facility?.score }}</ion-text>
             <star-rating :rating="result?.facility?.score??0"/>
           </div>
-          <div class="d-flex-col align-items-center">
-            <ion-text>Reviews</ion-text>
-            <review-status-bar :positiveCount="result?.facility?.positive_reviews_count??0" :negativeCount="result?.facility?.negative_reviews_count??0"/>
-            <ion-text class="total-review">based on {{ result?.facility?.reviews_count??0 }} reviews</ion-text>
-          </div>
         </div>
         <div class="description-field">
           <ion-title>Description:</ion-title>
           <ion-text>{{ result?.facility?.description }}</ion-text>
         </div>
-        <div class="feature-field">
-          <div>
-            <ion-title>Equipment</ion-title>
-            <div class="features">
-              <ion-button 
-                v-for="(item, id) in result?.facility?.equipments" 
-                :key="id" 
-                fill="outline"
-              >
-                <ion-icon :src="item.iconUrl"></ion-icon>
-                {{item.name}}
-              </ion-button>
-            </div>
+        <div class="d-flex">
+          <div class="d-flex reviews">
+            <ion-text>Reviews</ion-text>
+            <ion-text class="review-count">{{result?.facility?.score}}</ion-text>
+            <review-status-bar :positiveCount="result?.facility?.positive_reviews_count??0" :negativeCount="result?.facility?.negative_reviews_count??0" :ratings="result?.facility?.score"/>
+            <!-- <ion-text class="total-review">based on {{ result?.facility?.reviews_count??0 }} reviews</ion-text> -->
           </div>
-          <div>
-            <ion-title>Amenities</ion-title>
-            <div class="features">
-              <ion-button 
-                v-for="(item, id) in result?.facility?.amenities" 
-                :key="id" 
-                fill="outline"
-              >
-                <ion-icon :src="item.iconUrl"></ion-icon>
-                {{item.name}}
-              </ion-button>
-            </div>
-          </div>
+          <ion-text class="ion-text-end reviews">View All</ion-text>
         </div>
+      </div>
+      <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
+      <div v-else>
+        <ion-row>
+          <ion-col size="6" v-for="review in reviews" :key="review.id">
+            <div class="black-box review">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex reviewer align-items-center">
+                  <avatar :src="review.avatarUrl" />
+                  <ion-text class="reviewer-name">{{ review.fullName }}</ion-text>
+                  <ion-text class="review-point">{{ review.rating }}</ion-text>
+                </div>
+                <ion-text class="review-date">{{ dayjs(review.date).format("D MMMM, YYYY") }}</ion-text>
+              </div>
+              <ion-text class="review-message">{{ review.text }}</ion-text>
+            </div>
+          </ion-col>
+        </ion-row>
+        
       </div>
     </div>
     <div class="panel">
+        <!-- <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button> -->
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button>
+        <ion-button class="add-gym-btn" @click="goToGymCreate">Share Gym</ion-button>
       </div>
-      <div class="contact-field" v-if="manager">
+      <div class="d-flex justify-content-center">
+        <ion-button class="add-gym-btn" @click="goToGymCreate">Edit</ion-button>
+      </div>
+      <div class="d-flex justify-content-center">
+        <ion-button class="add-gym-btn" color="danger" fill="outline" @click="goToGymCreate">Delete</ion-button>
+      </div>
+      <div class="feature-field ion-margin-top">
+        <div>
+          <ion-title>Equipment:</ion-title>
+          <div class="features">
+            <ion-button 
+              v-for="(item, id) in result?.facility?.equipments" 
+              :key="id" 
+              fill="outline"
+            >
+              <ion-icon :src="item.iconUrl"></ion-icon>
+              {{item.name}}
+            </ion-button>
+          </div>
+        </div>
+        <div class="ion-margin-top">
+          <ion-title>Amenities:</ion-title>
+          <div class="features">
+            <ion-button 
+              v-for="(item, id) in result?.facility?.amenities" 
+              :key="id" 
+              fill="outline"
+            >
+              <ion-icon :src="item.iconUrl"></ion-icon>
+              {{item.name}}
+            </ion-button>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="contact-field" v-if="manager">
         <ion-avatar class="photo">
 					<ion-img v-if="manager.avatarUrl" :src="manager.avatarUrl"></ion-img>
 					<template v-else>
 						{{ manager.first_name?.charAt(0) }}
 					</template>
-				</ion-avatar>
-        <ion-label class="name">
+				</ion-avatar> -->
+        <!-- <ion-label class="name">
           {{ `${manager.first_name} ${manager.last_name}`}}
-          <!-- <ion-icon slot="icon-only" src="assets/icon/arrow-down.svg"></ion-icon> -->
-        </ion-label>
-        <ion-text class="contact">{{"Gym Manager"}}</ion-text>
-        <ion-text class="contact">{{ manager.email }}</ion-text>
+        </ion-label> -->
+        <!-- <ion-text class="contact">{{"Gym Manager"}}</ion-text>
+        <ion-text class="contact">{{ manager.email }}</ion-text> -->
         <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
-      </div>
-      <div>
-        <ion-button class="share-btn">Share Gym</ion-button>
+      <!-- </div> -->
+      <div class="ion-margin-top">
+        <ion-title class="ion-no-padding">Offerings:</ion-title>
+        <page-tabs-New
+          :tabs="tabs"
+          class="page-tabs"
+          :value="activeTab"
+          @change="tabsChanged"
+        />
+        <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
         <div class="tabs-holder">
-          <page-tabs
+          <!-- <page-tabs
             :tabs="tabs"
             class="page-tabs"
             :value="activeTab"
             @change="tabsChanged"
-          />
-          <div class="content">
-            <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
+          /> -->
+          <!-- <div class="content"> -->
+            <!-- <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" /> -->
             <!-- <div v-else>
               <review-item
                 v-for="review in reviews"
@@ -128,7 +164,7 @@
               />
             </div> -->
 
-            <div v-else>
+            <!-- <div v-else>
               <div class="black-box review" v-for="review in reviews" :key="review.id">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex reviewer align-items-center">
@@ -140,9 +176,8 @@
                 </div>
                 <ion-text class="review-message">{{ review.text }}</ion-text>
               </div>
-            </div>
-            
-          </div>
+            </div> -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -178,7 +213,7 @@ import { Review as UserReview } from "@/ts/types/user";
 import { useQuery } from "@vue/apollo-composable";
 import PageTabs from "@/general/components/PageTabs.vue";
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { v4 as uuidv4 } from "uuid";
@@ -192,15 +227,19 @@ import dayjs from "dayjs";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode } from "swiper";
+import { TabItemNew } from "@/interfaces/TabItemNew";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 
-const currentFacility = useFacilityStore();
+const route = useRoute();
+
+const currentFacilityId = route.params.id;
 
 const filter = ref<string>('recent');
 
 const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
   GetFacilityDocument,
   {
-    id: currentFacility.facility.id,
+    id: currentFacilityId,
   }
 );
 
@@ -208,7 +247,7 @@ const { result: managerResult, loading: managerLoading } = useQuery(
   GetManagersByFacilityDocument,
   {
     role: RoleEnum.Manager,
-    facilities: [currentFacility.facility.id],
+    facilities: [currentFacilityId],
     first: 1,
     page: 1
   }
@@ -222,18 +261,42 @@ const medias = computed(() =>
   result.value?.facility?.media.length ? result.value.facility?.media : []
 );
 
-const tabs: TabItem[] = [
+// const tabs: TabItem[] = [
+//   {
+//     name: ReviewTypeEnum.Recent,
+//     label: "Recent",
+//   },
+//   {
+//     name: ReviewTypeEnum.Positive,
+//     label: "Positive",
+//   },
+//   {
+//     name: ReviewTypeEnum.Negative,
+//     label: "Negative",
+//   },
+// ];
+
+const tabs: TabItemNew[] = [
   {
-    name: ReviewTypeEnum.Recent,
-    label: "Recent",
+    name: EntitiesEnum.FacilityDropins,
+    labelActive: "assets/icon/dropinsActive.png",
+    labelInactive: "assets/icon/dropins.png",
   },
   {
-    name: ReviewTypeEnum.Positive,
-    label: "Positive",
+    name: EntitiesEnum.Facilities,
+    labelActive: "assets/icon/dumbbell.png",
+    labelInactive: "assets/icon/dumbbellActive.png",
+  },
+
+  {
+    name: EntitiesEnum.Trainings,
+    labelActive: "assets/icon/TrainerActive.png",
+    labelInactive: "assets/icon/Trainer.png",
   },
   {
-    name: ReviewTypeEnum.Negative,
-    label: "Negative",
+    name: EntitiesEnum.Events,
+    labelActive: "assets/icon/facilitiesActive.png",
+    labelInactive: "assets/icon/facilities.png",
   },
 ];
 
@@ -250,7 +313,7 @@ const {
   loading: reviewLoading,
   refetch,
 } = useQuery(ReviewsDocument, () => ({
-  id: currentFacility.facility.id,
+  id: currentFacilityId,
   type: FeedbackEntityEnum.Facility,
   review_type: activeTab.value,
 }));
@@ -314,10 +377,11 @@ const goToGymCreate = () => {
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
-  img {
-    width: 100%;
-    max-width: 650px;
-    max-height: 310px;
+  .media-item {
+    width: 46.528vw;
+    // max-width: 650px;
+    // max-height: 310px;
+    height: 33.712vh;
   }
 }
 .data-box {
@@ -360,14 +424,17 @@ const goToGymCreate = () => {
   }
 }
 .feature-field {
-  display: flex;
-  justify-content: space-between;
-  gap: 30px;
+  // display: flex;
+  // justify-content: space-between;
+  // gap: 30px;
 
   .features {
     margin-top: 24px;
     display: flex;
     flex-wrap: wrap;
+    ion-button {
+      height: 4.33vh;
+    }
 
     ion-icon {
       width: 24px;
@@ -385,7 +452,7 @@ const goToGymCreate = () => {
   right: 0;
   top: 90px;
   height: 100%;
-  background-color: var(--gray-700);
+  // background-color: var(--gray-700);
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 9px;
@@ -398,15 +465,17 @@ const goToGymCreate = () => {
     margin-bottom: 14px;
   }
   .add-gym-btn {
-    width: 40%;
-    margin: 20px 0;
+    width: 51%;
+    height: 3.919vh;
   }
-  .black-box {
-    background-color: var(--main-color);
+  
+}
+.black-box {
+    background-color: #262626;
     border-radius: 8px;
     padding: 4px;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin: 5px;
+    height: 14.743vh;
 
     .normal-button {
       padding-top: 7.5px;
@@ -466,7 +535,6 @@ const goToGymCreate = () => {
       color: var(--gray-500);
     }
   }
-}
 .contact-field {
   display: flex;
   flex-direction: column;
@@ -503,4 +571,21 @@ const goToGymCreate = () => {
     width: 94px;
     height: 94px;
   }
+
+.review-count {
+  padding: 3px 15px;
+  border: 1px solid #e1dbc5;
+  border-radius: 25px;
+  margin: 0 10px;
+}
+
+.reviews {
+  width: 50%;
+  color: #e1dbc5;
+}
+
+.page-tabs {
+  background-color: #262626;
+  border-radius: 10px;
+}
 </style>

@@ -1,29 +1,54 @@
 <template>
-  <div class="d-flex-col gap-24 content">
-    <div class="block d-flex">
-      <div class="d-flex-col gap-16 color-white w-70">
-        <ion-text class="font-light font-12">Latest daily. {{ dayjs(daily?.created_at).format('D MMMM YYYY') }}</ion-text>
-        <ion-text class="font-light font-12">
-          <span class="font-bold font-24">{{ daily?.total_revenue }}</span>
-          Purchases
+  <div class="block d-flex content">
+    <div class="d-flex-col gap-16 color-white w-70">
+      <ion-text 
+        class="font-light"
+        :class="isNative ? 'font-12' : 'font-18'"
+      >
+        Latest daily. {{ dayjs(daily?.created_at).format('D MMMM YYYY') }}
+      </ion-text>
+      <ion-text 
+        class="font-light"
+        :class="isNative ? 'font-12' : 'font-18'"
+      >
+        <span 
+          class="font-bold"
+          :class="isNative ? 'font-24' : 'font-30'"
+        >
+          {{ daily?.total_revenue }}
+        </span>
+        Purchases
+      </ion-text>
+      <div class="d-flex-col gap-4">
+        <ion-text 
+          class="font-medium" 
+          :class="isNative ? 'font-16' : 'font-24'"
+          style="cursor: pointer"
+          @click="watchDaily"
+        >
+          {{ daily?.title }}
         </ion-text>
-        <div class="d-flex-col gap-4">
-          <ion-text class="font-medium font-16" @click="watchDaily">
-            {{ daily?.title }}
-          </ion-text>
-          <ion-text class="font-light font-14 color-gray-400 d-flex align-items-center">
-            <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
-            {{ getDurationText(daily?.duration) }} • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
-          </ion-text>
-        </div>
+        <ion-text 
+          class="font-light color-gray-400 d-flex align-items-center"
+          :class="isNative ? 'font-14' : 'font-18'"
+        >
+          <ion-icon src="assets/icon/time.svg" class="clock-icon"></ion-icon>
+          {{ getDurationText(daily?.duration) }} • {{ daily?.type.name }} • {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
+        </ion-text>
       </div>
-      <div class="font-semibold font-18 color-gold w-30 d-flex-col justify-content-center">
-        <div class="color-gray font-medium font-14 color-gray d-flex align-items-center">
-          Revenue
-          <ion-icon src="assets/icon/dollar-circle.svg" class="dollar-icon"></ion-icon>
-        </div>
-        {{ daily?.total_revenue * daily?.price / 100 }}
+    </div>
+    <div 
+      class="font-semibold color-gold w-30 d-flex-col justify-content-center"
+      :class="isNative ? 'font-18' : 'font-24'"
+    >
+      <div 
+        class="color-gray font-medium font-14 color-gray d-flex align-items-center gap-4"
+        :class="isNative ? 'font-14' : 'font-20'"
+      >
+        Revenue
+        <ion-icon src="assets/icon/dollar-circle.svg" class="dollar-icon"></ion-icon>
       </div>
+      {{ daily?.total_revenue * daily?.price / 100 }}
     </div>
   </div>
 </template>
@@ -33,11 +58,12 @@ import { defineProps, computed, defineEmits } from "vue";
 import { Workout } from "@/generated/graphql";
 import { IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
 import dayjs from "dayjs";
+import { Capacitor } from "@capacitor/core";
 
 defineProps<{
   daily: any;
 }>(); 
-
+let isNative = Capacitor.isNativePlatform();
 const getDurationText = (value: number) => {
   if(value < 60) {
     return value + ' s';
@@ -128,6 +154,9 @@ const watchDaily = () => {
   }
   .font-24 {
     font-size: 24px;
+  }
+  .font-30 {
+    font-size: 30px;
   }
 
   .color-gray {

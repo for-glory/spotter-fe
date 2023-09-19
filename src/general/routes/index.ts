@@ -487,21 +487,27 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardBookings,
         path: "bookings",
         component: () => import("@/general/views/dashboard/bookings/index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
       },
       {
         name: EntitiesEnum.DashboardTrainings,
         path: "trainings",
-        component: () => import("@/general/views/dashboard/bookings/upcoming-trainings.vue"),
+        component: () =>
+          import("@/general/views/dashboard/bookings/upcoming-trainings.vue"),
       },
       {
         name: EntitiesEnum.DashboardUserProfile,
         path: "user/profile/:id(\\d+)",
-        component: () => import("@/general/views/dashboard/bookings/user-profile.vue"),
+        component: () =>
+          import("@/general/views/dashboard/bookings/user-profile.vue"),
       },
       {
         name: EntitiesEnum.DashboardTrainingsCalendar,
         path: "trainings-calendar",
-        component: () => import("@/general/views/dashboard/bookings/trainings-calendar.vue"),
+        component: () =>
+          import("@/general/views/dashboard/bookings/trainings-calendar.vue"),
       },
       {
         name: EntitiesEnum.Upcoming,
@@ -561,8 +567,17 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardEditWorkout,
+        path: "workout/edit/:id",
+        component: () =>
+          import("@/general/views/dashboard/workout/EditWorkout.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardWorkoutTypes,
-        path: "workout/create/type",
+        path: "workout/type",
         component: () => import("@/general/views/dashboard/workout/Types.vue"),
         meta: {
           middleware: [gymOwnerSubscription],
@@ -570,7 +585,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardMuscleTypes,
-        path: "workout/create/muscle-type",
+        path: "workout/muscle-type",
         component: () =>
           import("@/general/views/dashboard/workout/MuscleTypes.vue"),
         meta: {
@@ -689,8 +704,16 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardManageGyms,
-        path: "gyms",
+        path: "gyms/:id?",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardListGyms,
+        path: "list-gyms",
+        component: () => import("@/general/views/dashboard/gyms/List.vue"),
         meta: {
           middleware: [gymOwnerSubscription, gymOwnerRole],
         },

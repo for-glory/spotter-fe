@@ -183,8 +183,8 @@
       </div>
       <div class="setting-menu" v-if="role === RoleEnum.FacilityOwner">
         <div
-          :class="getMenuItemClass(EntitiesEnum.DashboardManageGyms)"
-          @click="onHandleClickMenu(EntitiesEnum.DashboardManageGyms)"
+          :class="getMenuItemClass(EntitiesEnum.DashboardListGyms)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardListGyms)"
         >
           <ion-icon src="assets/icon/gym-icon.svg" />
           <ion-text>Location</ion-text>
@@ -287,8 +287,6 @@ const selectFacility = (id) => {
   router.push({
     name: EntitiesEnum.DashboardOverview,
   });
-
-  // router.push({ path: "/dashboard/" });
 };
 
 watch(

@@ -1,22 +1,31 @@
 <template>
-	<div
-		class="holder-content ion-padding-horizontal"
-		:class="{ 'holder-content--empty': !loading }"
+  <div
+    class="holder-content ion-padding-horizontal"
+    :class="{ 'holder-content--empty': !loading }"
     v-if="role !== RoleEnum.Trainer"
-	>
+  >
     <div class="banner">
       <ion-icon src="assets/icon/arrow-back.svg" />
       <ion-title class="banner__title">Settings</ion-title>
     </div>
     <div class="settings">
       <div class="settings-menu">
-        <div :class="filter === 'profile' ? 'menu-item__active' : 'menu-item'" @click="handleClick('profile')">
+        <div
+          :class="filter === 'profile' ? 'menu-item__active' : 'menu-item'"
+          @click="handleClick('profile')"
+        >
           My Profile
         </div>
-        <div :class="filter === 'security' ? 'menu-item__active' : 'menu-item'" @click="handleClick('security')">
+        <div
+          :class="filter === 'security' ? 'menu-item__active' : 'menu-item'"
+          @click="handleClick('security')"
+        >
           Password and Security
         </div>
-        <div :class="filter === 'services' ? 'menu-item__active' : 'menu-item'"  @click="handleClick('services')">
+        <div
+          :class="filter === 'services' ? 'menu-item__active' : 'menu-item'"
+          @click="handleClick('services')"
+        >
           Connected Services
         </div>
         <div
@@ -26,14 +35,14 @@
         >
           Delete Account
         </div>
-			</div>
+      </div>
       <div class="settings-panel">
-        <profile v-if="filter === 'profile'"/>
-        <security v-else-if="filter === 'security'"/>
+        <profile v-if="filter === 'profile'" />
+        <security v-else-if="filter === 'security'" />
         <services v-else />
       </div>
     </div>
-	</div>
+  </div>
   <div v-else class="h-100">
     <edit class="h-100"></edit>
   </div>
@@ -48,14 +57,10 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonTitle,
-  IonIcon
-} from "@ionic/vue";
+import { IonTitle, IonIcon } from "@ionic/vue";
+import { IonButton, IonSpinner } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
-import {
-  DeleteProfileDocument, RoleEnum,
-} from "@/generated/graphql";
+import { DeleteProfileDocument, RoleEnum } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -71,8 +76,7 @@ import Services from "@/general/views/dashboard/settings/Services.vue";
 import { clearAuthItems } from "@/router/middleware/auth";
 import Edit from "./Edit.vue";
 
-
-const filter = ref<string>('profile');
+const filter = ref<string>("profile");
 
 const { id: myId } = useId();
 const { id: myFacilityId } = useFacilityId();
@@ -90,21 +94,20 @@ const {
 } = useMutation(DeleteProfileDocument);
 
 const handleClick = (value: string) => {
-	filter.value = value;
-}
+  filter.value = value;
+};
 const onDeleteAccount = () => {
   showModal();
-}
+};
 const onDeleteConfirmed = () => {
   deleteProfile();
   hideModal();
-}
+};
 
 profileDeleted(() => {
   clearAuthItems();
   router.push({ name: EntitiesEnum.Login });
 });
-
 </script>
 
 <style scoped lang="scss">
@@ -120,7 +123,7 @@ profileDeleted(() => {
 }
 
 .settings {
-	background-color: var(--gray-700);
+  background-color: var(--gray-700);
   margin-top: 50px;
   min-height: 766px;
   display: flex;

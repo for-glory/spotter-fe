@@ -1,18 +1,33 @@
 <template>
-  <div class="content">
+  <div 
+    class="common-style"
+    :class="{
+      'block': !isNative
+    }"
+  >
     <ion-title class="title font-bold font-20 color-white">Dailys Performance</ion-title>
     <div>
-      <div class="font-semibold font-18 color-gold w-30 d-flex-col justify-content-center">
-        <div class="color-gray font-medium font-14 color-gray d-flex align-items-center">
+      <div 
+        v-if="performanceData.length"
+        class="d-flex-col font-semibold color-gold gap-8 w-30 d-flex-col justify-content-center"
+        :class="isNative ? 'font-18' : 'font-20'"
+      >
+        <div 
+          class="color-gray font-medium color-gray d-flex align-items-center gap-4"
+          :class="isNative ? 'font-14' : 'font-18'"
+        >
           Purchases
           <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
         </div>
         {{ totalRevenue }}
-      </div>
-      <div class="graph-field" v-if="performanceData.length">
-        <ion-text class="font-light font-12 color-white">
+        <ion-text 
+          class="font-light color-white"
+          :class="isNative ? 'font-12' : 'font-14'"
+        >
           {{ performanceLimit === 'all' ? 'All' : 'In the last ' + performanceLimit + ' days' }}
         </ion-text>
+      </div>
+      <div class="graph-section" v-if="performanceData.length">
         <div class="chart-container">
           <LineChart :chartData="data" :chartOptions="option" />
         </div>
@@ -23,7 +38,7 @@
           <ion-button :fill="performanceLimit==='all'?'solid':'outline'" @click="handleSetDuration('all')">All</ion-button>
         </div>
       </div>
-      <div class="graph-field d-flex align-items-center justify-content-center">
+      <div v-if="!performanceData.length" class="graph-section d-flex align-items-center justify-content-center">
         <ion-text class="font-bold font-20 color-white">No purchases</ion-text>
       </div>
     </div>
@@ -34,6 +49,7 @@
 import { defineProps, computed, ref, defineEmits, watch } from "vue";
 import { IonItem, IonLabel } from "@ionic/vue";
 import LineChart from "@/general/components/LineChart.vue";
+import { Capacitor } from "@capacitor/core";
 
 const props = defineProps<{
   performanceData: Array<any>;
@@ -43,6 +59,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: "change", limit: string): void;
 }>();
+let isNative = Capacitor.isNativePlatform();
 
 const performanceLimit = computed(() => props.limit);
 const labels = ref<Array<string>>(['02 Aug 2023', '03 Aug 2023', '04 Aug 2023', '05 Aug 2023', '06 Aug 2023', '07 Aug 2023', '08 Aug 2023']);
@@ -185,7 +202,7 @@ const option = {
   margin-bottom: 8px;
 }
 
-.content {
+.common-style {
   .w-70 {
     width: 70%;
   }
@@ -202,6 +219,9 @@ const option = {
   }
   .gap-12 {
     gap: 12px;
+  }
+  .gap-8 {
+    gap: 8px;
   }
   .gap-4 {
     gap: 4px;
@@ -254,7 +274,7 @@ const option = {
   }  
 }
 
-.graph-field {
+.graph-section {
   padding-top: 14px;
 
   .tabs-group {
@@ -268,5 +288,10 @@ const option = {
 }
 .chart-container {
   padding: 10px 0;
+}
+.block {
+  padding: 11px 27px;
+  background-color: #262626;
+  width: 100%;
 }
 </style>

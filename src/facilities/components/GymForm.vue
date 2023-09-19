@@ -1,6 +1,10 @@
 <template>
+  <page-header @back="cancel" back-btn title="Add New Gym">
+    <template #custom-btn>
+    </template>
+  </page-header>
   <div
-    class="inputs-form"
+    class="inputs-form ion-margin-top"
     :class="{ 'inputs-form--footer-fixed': footerFixed }"
   >
     <div class="form-row">
@@ -21,8 +25,8 @@
         required
         @change="facilityTitleChange"
         v-model:value="facilityTitle"
-        placeholder="What's the name of your gym"
-        label="Gym name"
+        placeholder="Enter gym name"
+        label="What's the name of your gym"
       />
     </div>
 
@@ -115,16 +119,15 @@
     >
       <ion-button
         expand="block"
-        class="secondary"
+        class="secondary create-btn"
         @click="onSaveAndExit"
-        fill="outline"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
       >
-        {{ saveButtonText }}
+        Add New Gym
       </ion-button>
-      <ion-button
+      <!-- <ion-button
         expand="block"
         @click="onNext"
         v-if="nextButton"
@@ -133,10 +136,11 @@
         "
       >
         {{ nextButtonText }}
-      </ion-button>
+      </ion-button> -->
     </div>
   </div>
-  <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
+  <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
+  <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
   <equipment-and-amenities
     ref="equipmentAndAmenitiessModal"
     @cancel="equipmentAndAmenitiessSelected"
@@ -170,6 +174,9 @@ import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 
 const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
@@ -244,9 +251,12 @@ const onChooseAmenities = () => {
 };
 
 const onChooseLocation = () => {
-  router.push({
-    name: EntitiesEnum.ChooseLocation, 
-    params: { type: 'facility' }
+  // router.push({
+  //   name: EntitiesEnum.ChooseLocation, 
+  //   params: { type: 'facility' }
+  // });
+  chooseLocationModal.value?.present({
+    title: "Address",
   });
 }
 
@@ -487,6 +497,7 @@ defineExpose({
 
   ion-button {
     width: 100%;
+    --background: #E1DBC5;
   }
   // .button {
   //   margin: 0 8px;
@@ -541,5 +552,12 @@ defineExpose({
   font-weight: 300;
   font-size: 14px;
   color: var(--ion-color-white);
+}
+
+.create-btn {
+  position: absolute;
+  width: 90% !important;
+  bottom: 5%;
+  font-weight: 500;
 }
 </style>

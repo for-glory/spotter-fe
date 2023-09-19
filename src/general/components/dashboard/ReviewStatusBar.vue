@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="d-flex align-items-center">
-      <ion-icon src="assets/icon/positive-review.svg"></ion-icon>
-      <ion-text class="green">{{positiveCount}}</ion-text>
-      <ion-icon src="assets/icon/negative-review.svg"></ion-icon>
-      <ion-text class="red">{{negativeCount}}</ion-text>
+    <div class="d-flex align-items-center review-content">
+      <ion-icon class="icons" src="assets/icon/positive-review.svg"></ion-icon>
+      <ion-text class="skin">{{positiveCount}}</ion-text>
+      <ion-icon class="icons" src="assets/icon/negative-review.svg"></ion-icon>
+      <ion-text class="skin">{{negativeCount}}</ion-text>
     </div>
     <div class="d-flex align-items-center">
       <div class="progress-green" :style="{ width: greenWidth }"></div>
@@ -34,7 +34,10 @@ const redWidth = computed(() => `${(props.negativeCount / totalReviews) * 100}%`
 </script>
 
 <style scoped>
-
+.skin {
+  color: #E1DBC5;
+  font: 700 16px/1 var(--ion-font-family);
+}
 .green {
   color: var(--ion-color-success-tint);
   font: 700 16px/1 var(--ion-font-family);
@@ -51,5 +54,18 @@ const redWidth = computed(() => `${(props.negativeCount / totalReviews) * 100}%`
 .progress-red {
   background-color: var(--ion-color-danger-tint);
   height: 2px;
+}
+
+.review-content {
+  .icons {
+    height: 26px;
+    font-size: 26px;
+    margin: 0 5px;
+  }
+  ion-text {
+    height: 26px;
+    font-size: 26px;
+    margin: 0 5px;
+  }
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <ion-modal ref="modal">
-    <page-header @back="cancel" back-btn :title="title">
+  <ion-modal ref="modal" class="equipment-amenities-modal">
+    <page-header @back="cancel" back-btn>
       <template #custom-btn>
-        <ion-button @click="select" class="header-btn">
+        <!-- <ion-button @click="select" class="header-btn">
           <ion-icon src="assets/icon/accept.svg" />
-        </ion-button>
+        </ion-button> -->
       </template>
     </page-header>
     <ion-content class="ion-padding-horizontal content">
@@ -14,18 +14,27 @@
         v-if="equipmentLoading || amenitiesLoading"
       />
       <template v-else>
-        <ion-text class="title"> Equipment </ion-text>
-        <checkbox-group
-          @change="onEquipmentsChange"
-          :options="equipments || []"
-          :selected="equipmentsValue"
-        />
-        <ion-text class="title"> Amenities </ion-text>
-        <checkbox-group
-          @change="onAmenitiesChange"
-          :options="amenities || []"
-          :selected="amenitiesValue"
-        />
+        <div class="checkbox-container">
+          <div class="checkbox-col">
+            <ion-text class="title"> Equipment </ion-text>
+            <checkbox-group
+              @change="onEquipmentsChange"
+              :options="equipments || []"
+              :selected="equipmentsValue"
+            />
+          </div>
+          <div class="checkbox-col">
+            <ion-text class="title"> Amenities </ion-text>
+            <checkbox-group
+              @change="onAmenitiesChange"
+              :options="amenities || []"
+              :selected="amenitiesValue"
+            />
+          </div>
+        </div>
+        <div class="btn-container">
+          <ion-button expand="block" class="secondary" @click="select" fill="outline">Add New Gym</ion-button>
+        </div>
       </template>
     </ion-content>
   </ion-modal>
@@ -185,6 +194,26 @@ defineExpose({
 
   ion-icon {
     font-size: 1em;
+  }
+}
+
+.equipment-amenities-modal {
+  --width: 54.5vw;
+  --height: 42vh;
+}
+
+.checkbox-container {
+  display: flex;
+  height: 89%;
+  .checkbox-col {
+    width: 50%;
+    overflow: auto;
+  }
+}
+.btn-container {
+  ion-button {
+    width: 60%;
+    margin: 0 auto;
   }
 }
 </style>
