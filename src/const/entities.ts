@@ -107,6 +107,7 @@ export enum EntitiesEnum {
   Nearby = "NEARBY",
   Events = "EVENTS",
   EventsDetailed = "EVENTS_DETAILED",
+  EventsNewDetailed = "EVENTS_DETAILED",
   EventOrder = "EVENT_ORDER",
   Favourites = "FAVOURITES",
   EmptyState = "EMPTY_STATE",
