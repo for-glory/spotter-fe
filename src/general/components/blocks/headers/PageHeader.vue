@@ -148,6 +148,14 @@ const emits = defineEmits<{
     line-height: 150%;
     letter-spacing: 0.216px;
   }
+  .title-ytmn-20 {
+    font-family: Yantramanav;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    text-align: center;
+    color: var(--fitnesswhite);
+  }
 }
 
 .buttons-last-slot {
