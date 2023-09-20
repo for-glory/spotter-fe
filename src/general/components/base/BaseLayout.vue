@@ -7,7 +7,13 @@
       '--offset': offsetTop + 'px',
     }"
   >
+    <ion-spinner
+      v-if="loadingUser"
+      name="lines"
+      class="spinner"
+    />
     <ion-header
+      v-if="!loadingUser"
       class="header ion-no-border"
       :class="{ 'header--fixed': headerFixed }"
     >
@@ -15,6 +21,7 @@
     </ion-header>
 
     <ion-content
+      v-if="!loadingUser"
       ref="content"
       :fullscreen="true"
       :scroll-events="draggable"
@@ -76,7 +83,7 @@
     </ion-content>
 
     <ion-footer
-      v-if="!hideNavigationMenu"
+      v-if="!hideNavigationMenu && !loadingUser"
       :class="{ 'page-footer--content-width': !fullWidthFooter }"
       collapse="fade"
       no-border
@@ -103,6 +110,7 @@ import {
   onUnmounted,
   ref,
   withDefaults,
+  computed
 } from "vue";
 import {
   IonHeader,
@@ -112,12 +120,25 @@ import {
   IonBackdrop,
   isPlatform
 } from "@ionic/vue";
+import {
+  Query,
+  RoleEnum,
+  SettingsCodeEnum,
+  UserDocument,
+  DeleteProfileDocument,
+  SubscriptionsTypeEnum,
+  FacilityDashboardWidgetDocument,
+  Facility
+} from "@/generated/graphql";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import NavigationMenu from "@/general/components/NavigationMenu.vue";
 import useRoles from "@/hooks/useRole";
 import { navigationMenu as navigation } from "@/const/navigation";
 import { IonContentCustomEvent, ScrollDetail } from "@ionic/core";
-import { RoleEnum } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
+import useId from "@/hooks/useId";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useUserStore } from "@/general/stores/user";
 
 const props = withDefaults(
   defineProps<{
@@ -144,6 +165,9 @@ const props = withDefaults(
 
 const content = ref<typeof IonContent | null>(null);
 const { role } = useRoles();
+const { id } = useId();
+const facilityStore = useFacilityStore();
+const userStore = useUserStore();
 
 const menuType =
   role === RoleEnum.OrganizationOwner ||
@@ -153,6 +177,42 @@ const menuType =
     : role;
 const menu = navigation[menuType];
 
+const {
+  result,
+  loading: loadingUser,
+  onResult: gotUser,
+} = useQuery<Pick<Query, "user">>(UserDocument, { id });
+const progress = ref<string | number>("");
+
+const facilities = computed(() => result.value?.user?.owned_facilities);
+
+gotUser(() => {
+  switch(role) {
+    case RoleEnum.OrganizationOwner :
+    case RoleEnum.FacilityOwner :
+      if(!localStorage.getItem("selected_facility")) {
+        facilityStore.setFacility(facilities.value?.at(0) as Facility);
+        localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
+      } else {
+        let activeId = localStorage.getItem("selected_facility");
+        let facilityValue = facilities.value?.find((facility) => facility?.id === activeId);
+        if(!facilityValue && facilities.value?.length){
+          facilityStore.setFacility(facilities.value?.at(0) as Facility);
+          localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
+        } else {
+          facilityStore.setFacility(facilityValue as Facility);
+        }
+      }
+      userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
+      userStore.setEmail(result.value?.user?.email);
+      userStore.setId(result.value?.user?.id);
+      userStore.setSubscription(result.value?.user?.currentSubscription);
+      userStore.setAvatarUrl(result.value?.user?.avatarUrl);
+      userStore.setAddress(result.value?.user?.address?.city?.state, result.value?.user?.address?.city, result.value?.user?.address);
+      userStore.setOwnedFacilities(result.value?.user?.owned_facilities);
+      break;
+  }
+});
 const scrollToBottom = () => {
   if (content.value) {
     content.value.$el.scrollToBottom(500);
@@ -424,5 +484,10 @@ onUnmounted(() => {
 }
 .top-24 {
   padding-top: 24px;
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
