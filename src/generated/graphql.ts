@@ -7926,6 +7926,13 @@ export const WorkoutsDocument = gql`
       data {
         id
         preview
+        reviews_count
+        recommended_count
+        total_revenue
+        views_count
+        purchases
+        video
+        videoUrl
         type {
           id
           name

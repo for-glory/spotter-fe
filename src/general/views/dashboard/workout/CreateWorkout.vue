@@ -181,10 +181,13 @@ import {
   WorkoutVideosInput,
   WorkoutTypesQuery,
   WorkoutTypesDocument,
-  WorkoutType
+  WorkoutType,
+  RoleEnum
 } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import useRoles from "@/hooks/useRole";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
 const percentLoaded = ref<number | undefined>();
@@ -193,8 +196,11 @@ const router = useRouter();
 
 const store = useWorkoutsStore();
 const facilityStore = useFacilityStore();
+const trainerStore = useTrainerStore();
 const isConfirmedModalOpen = ref(false);
 const errorMessage = ref("");
+const { role } = useRoles();
+const isFacilityOwner = role === (RoleEnum.FacilityOwner || RoleEnum.OrganizationOwner);
 
 const videoOnLoading = ref<boolean>(false);
 const videoPath = computed(
@@ -308,7 +314,6 @@ const params = computed(() => ({
   preview: store.workoutPath,
   video: store.path,
   body_parts: store.workoutMuscleTypesIds,
-  facility_id: facilityStore.facility?.id,
   type_id: store.workoutType?.id,
   title: store.workoutTitle,
   description: store.description,
@@ -317,11 +322,17 @@ const params = computed(() => ({
 }));
 
 const handleSubmit = () => {
+  let dailyParam;
+  if(isFacilityOwner) {
+    dailyParam = { ...params.value, facility_id: facilityStore.facility?.id };
+  } else {
+    dailyParam = { ...params.value };
+  }
   if (isValidForm.value) {
-    createWorkout(params.value)
+    createWorkout(dailyParam)
     .then(async () => {
       const toast = await toastController.create({
-        message: "Deleted successfully",
+        message: "Created successfully",
         duration: 2000,
         icon: "assets/icon/success.svg",
         cssClass: "success-toast",

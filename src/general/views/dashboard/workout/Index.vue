@@ -233,11 +233,9 @@ const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
 
-console.log(role === RoleEnum.Trainer);
-
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
-  role === isFacilityOwner ? WorkoutsByFacilityDocument : WorkoutsDocument,
-  role === isFacilityOwner ? {
+  isFacilityOwner ? WorkoutsByFacilityDocument : WorkoutsDocument,
+  isFacilityOwner ? {
     page: 1,
     first: 1000,
     facility_id: currentFacility.facility?.id,
@@ -279,7 +277,6 @@ const trendingDailys = computed(() => {
   let trending = dailys.filter((daily) => daily.views_count > 0).sort((a: any, b: any) => {
     return b.views_count - a.views_count;
   }).slice(0, 10);
-  console.log(trending);
   return trending;
 });
 const recommendedDailys = computed(() => {
@@ -287,7 +284,6 @@ const recommendedDailys = computed(() => {
   let recommend = dailys.filter((daily) => daily.recommended_count > 0).sort((a: any, b: any) => {
     return b.recommended_count - a.recommended_count;
   }).slice(0, 10);
-  console.log(recommend);
   return recommend;
 });
 
