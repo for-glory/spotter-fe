@@ -112,7 +112,6 @@ gotUser(({ data }) => {
       created_at: data?.user?.created_at,
     };
     trainerStore.setTrainer(trainer);
-    console.log("my role is trainer:   ", trainerStore.trainer);
   }
 
   activeFacilityId.value = facilityStore.facility?.id;
