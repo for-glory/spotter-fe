@@ -7905,7 +7905,7 @@ export const WorkoutDocument = gql`
     `;
 export const WorkoutsDocument = gql`
   query workouts(
-    $dynamic_search: String!
+    $dynamic_search: String
     $trainer_id: ID
     $first: Int
     $page: Int
