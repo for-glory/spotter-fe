@@ -29,12 +29,14 @@ import { useProfileStore } from "../../stores/profile";
 import { ref, watch } from "vue";
 import { Query, RoleEnum, UserDocument } from "@/generated/graphql";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import useRoles from "@/hooks/useRole";
 
 const isLoading = ref(true);
 const facilities = ref();
 const store = useProfileStore();
 const facilityStore = useFacilityStore();
+const trainerStore = useTrainerStore();
 const { role } = useRoles();
 const activeFacilityId = ref<string | null>(null);
 
@@ -85,6 +87,32 @@ gotUser(({ data }) => {
       facilities.value?.length && facilities.value[0]
         ? facilities.value[0].id
         : null;
+  }
+
+  if(role === RoleEnum.Trainer) {
+    let trainer = {
+      id: data?.user?.id,
+      first_name: data?.user?.first_name,
+      last_name: data?.user?.last_name,
+      avatarUrl: data?.user?.avatarUrl,
+      tax_id: data?.user?.tax_id,
+      email: data?.user?.email,
+      address: data?.user?.address,
+      currentSubscription: data?.user?.currentSubscription,
+      score: data?.user?.score,
+      reviews_count: data?.user?.reviews_count,
+      recommended_count: data?.user?.recommended_count,
+      not_recommended_count: data?.user?.not_recommended_count,
+      trainings_count: data?.user?.trainings_count,
+      positive_reviews_count: data?.user?.positive_reviews_count,
+      negative_reviews_count: data?.user?.negative_reviews_count,
+      completed_trainings_count: data?.user?.completed_trainings_count,
+      trainer_type: data?.user?.trainer_type,
+      trainerRates: data?.user?.trainerRates,
+      created_at: data?.user?.created_at,
+    };
+    trainerStore.setTrainer(trainer);
+    console.log("my role is trainer:   ", trainerStore.trainer);
   }
 
   activeFacilityId.value = facilityStore.facility?.id;
