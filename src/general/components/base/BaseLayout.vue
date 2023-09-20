@@ -82,7 +82,13 @@
         <!-- </slot> -->
       </div>
     </div>
-    
+    <ion-header
+      v-if="getPlatform == 'ios' || getPlatform == 'android'"
+      class="header ion-no-border"
+      :class="{ 'header--fixed': headerFixed }"
+    >
+      <slot name="header"></slot>
+    </ion-header>
     <ion-content
       v-if="getPlatform == 'ios' || getPlatform == 'android'"
       ref="content"
