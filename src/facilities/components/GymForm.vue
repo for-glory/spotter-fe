@@ -44,7 +44,7 @@
     <div class="form-row">
       <choose-block
         title="Choose your gym location"
-        class="form-row__control"
+        class="form-row__control cursor-pointer"
         @handle-click="onChooseLocation"
         :value="
           selectedAddress
@@ -107,7 +107,7 @@
     <div class="form-row">
       <ion-label class="label"> Choose equipment and amenitites </ion-label>
       <choose-block
-        class="form-row__control"
+        class="form-row__control cursor-pointer"
         title="Equipment and amenities"
         @handle-click="onChooseAmenities"
         :value="facilityEquipments?.length + facilityAmenities?.length || ''"
@@ -120,7 +120,7 @@
     >
       <ion-button
         expand="block"
-        class="secondary create-btn"
+        class="secondary create-btn cursor-pointer"
         @click="onSaveAndExit"
         v-if="!nextButton"
         :disabled="
@@ -131,7 +131,7 @@
       </ion-button>
       <ion-button
         expand="block"
-        class="secondary create-btn"
+        class="secondary create-btn cursor-pointer"
         @click="onNext"
         v-if="nextButton"
         :disabled="
@@ -565,7 +565,7 @@ defineExpose({
 .create-btn {
   position: absolute;
   width: 90% !important;
-  bottom: 9%;
+  bottom: 2%;
   font-weight: 500;
   color: #262626;
 }
@@ -573,5 +573,8 @@ defineExpose({
 .form-row__control {
   border-radius: 8px;
   border: 1px solid #ffffff99;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

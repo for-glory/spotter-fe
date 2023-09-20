@@ -1,5 +1,5 @@
 <template>
-  <ion-modal ref="modal" class="modal" swipeToClose :backdrop-dismiss="true">
+  <ion-modal ref="modal" class="createFacilityModal" swipeToClose :backdrop-dismiss="true">
     <div class="content">
       <gym-form
         ref="gymForm"
@@ -60,12 +60,18 @@ const isConfirmedModalOpen = ref(false);
 const facilityStore = useFacilityStore();
 
 const onBack = () => {
-  isConfirmedModalOpen.value = true;
+  console.log("### ", isEdit);
+  if(isEdit?.value) isConfirmedModalOpen.value = true;
+  else {
+    gymForm.value?.clearStore();
+    modal?.value?.$el.dismiss();
+  }
 };
 
 const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
+    gymForm.value?.clearStore();
     modal?.value?.$el.dismiss();
   }
 };
@@ -162,15 +168,18 @@ facilityUpdated((res) => {
   padding: calc(var(--ion-safe-area-top)) 24px
     calc(16px + var(--ion-safe-area-bottom));
 }
-.modal {
+.createFacilityModal {
     ion-modal > .ion-page{
+      --position: absolute !important;
       position: absolute !important;
     }
     ion-modal{
+      --position: absolute !important;
       position: absolute !important;
     }
 
     .ion-page{
+      --position: absolute !important;
       position: absolute !important;
     }
     
@@ -217,8 +226,23 @@ facilityUpdated((res) => {
 }
 
 @media (max-width: 767px) {
-  .modal{
+  .createFacilityModal{
     --width: 100%;
+
+    ion-modal > .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+    ion-modal{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+
+    .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
   }
+  
 }
 </style>

@@ -16,6 +16,7 @@ import { useRouter } from "vue-router";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
 import { defineProps, ref, withDefaults } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 const { role } = useRoles();
@@ -25,7 +26,7 @@ const props = withDefaults(
     isWebView?: boolean;
   }>(),
   {
-    isWebView: true,
+    isWebView: Capacitor.isNativePlatform() ? false : true,
   }
 );
 </script>

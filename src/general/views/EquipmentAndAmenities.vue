@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="btn-container">
-          <ion-button expand="block" class="secondary" @click="select" fill="outline">Save</ion-button>
+          <ion-button expand="block" class="secondary cursor-pointer" @click="select" fill="outline">Save</ion-button>
         </div>
       </template>
     </ion-content>

@@ -1,4 +1,5 @@
 <template>
+  <template v-if="isWebView">
   <ion-spinner v-if="loading" name="lines" class="spinner" />
 	<div
     v-else
@@ -7,7 +8,7 @@
 	>
     <div>
       <div class="banner">
-        <ion-icon @click="goBack" src="assets/icon/arrow-back.svg" />
+        <ion-icon class="cursor-pointer" @click="goBack" src="assets/icon/arrow-back.svg" />
         <!-- <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title> -->
       </div>
       <div>
@@ -60,8 +61,8 @@
           <ion-text class="ion-text-end reviews">View All</ion-text>
         </div>
       </div>
-      <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" />
-      <div v-else>
+      <!-- <ion-spinner v-if="reviewLoading" name="lines" class="review-spinner" /> -->
+      <div>
         <ion-row>
           <ion-col size="6" v-for="review in reviews" :key="review.id">
             <div class="black-box review">
@@ -83,13 +84,13 @@
     <div class="panel">
         <!-- <ion-button class="add-gym-btn" @click="goToGymCreate">Add new gym</ion-button> -->
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" @click="goToGymCreate">Share Gym</ion-button>
+        <ion-button class="add-gym-btn cursor-pointer" @click="goToGymCreate">Share Gym</ion-button>
       </div>
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" @click="goToGymEdit">Edit</ion-button>
+        <ion-button class="add-gym-btn cursor-pointer" @click="goToGymEdit">Edit</ion-button>
       </div>
       <div class="d-flex justify-content-center">
-        <ion-button class="add-gym-btn" color="danger" fill="outline" @click="deleteGym">Delete</ion-button>
+        <ion-button class="add-gym-btn cursor-pointer" color="danger" fill="outline" @click="deleteGym">Delete</ion-button>
       </div>
       <div class="feature-field ion-margin-top">
         <div>
@@ -142,40 +143,84 @@
           @change="tabsChanged"
         />
         <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-        <div class="tabs-holder d-flex ion-margin-top">
+        <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum?.FacilityDropins">
           <div class="ion-text-center">
-            <ion-title>$20.00</ion-title>
+            <ion-title class="offering-title">$20.00</ion-title>
             <ion-text>1 Day</ion-text>
             <ion-text>One day access</ion-text>
           </div>
           <div class="ion-text-center">
-            <ion-title>$39.00</ion-title>
+            <ion-title class="offering-title">$39.00</ion-title>
             <ion-text>2 Days</ion-text>
             <ion-text>Two days access</ion-text>
           </div>
           <div class="ion-text-center">
-            <ion-title>$79.00</ion-title>
+            <ion-title class="offering-title">$79.00</ion-title>
             <ion-text>5 Day</ion-text>
             <ion-text>Five days access</ion-text>
           </div>
         </div>
-        <div class="tabs-text-content ion-margin-top">
-          <div class="card-background">
+        <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum.Facilities">
+          <div class="ion-text-center">
+            <ion-title class="offering-title">$120.00</ion-title>
+            <ion-text>1 Month</ion-text>
+            <ion-text>Basic plan</ion-text>
+          </div>
+          <div class="ion-text-center">
+            <ion-title class="offering-title">$139.00</ion-title>
+            <ion-text>1 Month</ion-text>
+            <ion-text>Standard plan</ion-text>
+          </div>
+          <div class="ion-text-center">
+            <ion-title class="offering-title">$179.00</ion-title>
+            <ion-text>1 Month</ion-text>
+            <ion-text>Premium plan</ion-text>
+          </div>
+        </div>
+        <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
+          <div class="card-background" v-for="dailys in dailysData">
             <div class="d-flex">
-              <ion-title class="ion-no-padding">Full Body Stretching</ion-title>
-              <ion-text>Tamra Dae</ion-text>
+              <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
+              <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
             </div>
+            <div class="d-flex inner-text">
+              <div class="width75">
+                <ion-item class="ion-no-padding" lines="none">
+                  <ion-icon src="assets/icon/time-light.svg"></ion-icon>
+                  <ion-text>{{ dailys?.duration + ' min -' + dailys?.type?.name }}</ion-text>
+                </ion-item>
+              </div>
+              <div class="width25 ion-text-end">
+                <ion-item class="ion-no-padding ion-text-end sub-text" lines="none">
+                  <ion-icon src="assets/icon/person-light.svg"></ion-icon>
+                  <ion-text class="bold-lato">{{dailys?.type?.views_count ? dailys?.type?.views_count : 0 }}</ion-text>
+                </ion-item>
+              </div>
+            </div>
+          </div>
+          </div>
+          <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
+          <div class="card-background" v-for="event in allEvents">
+            <div class="d-flex">
+              <ion-title class="ion-no-padding offering-title">{{ event?.title }}</ion-title>
+              <!-- <ion-text class="offering-name ">{{ event?.description }}</ion-text> -->
+              <ion-item class="ion-no-padding ion-text-end" lines="none">
+                  <ion-icon src="assets/icon/time-light.svg"></ion-icon>
+                  <ion-text>{{ event?.start_date }}</ion-text>
+                </ion-item>
+            </div>
+            <ion-text class="offering-name">{{ event?.start_date }}</ion-text>
             <div class="d-flex inner-text">
               <div class="width50 ">
                 <ion-item class="ion-no-padding" lines="none">
-                  <ion-icon src="assets/icon/time-light.svg"></ion-icon>
-                  <ion-text>8 min - Expert</ion-text>
+                  <ion-icon src="assets/icon/location-light.svg"></ion-icon>
+                  <ion-text>{{ event?.address?.street }}</ion-text>
                 </ion-item>
               </div>
               <div class="width50 ion-text-end">
                 <ion-item class="ion-no-padding ion-text-end sub-text" lines="none">
                   <ion-icon src="assets/icon/person-light.svg"></ion-icon>
-                  <ion-text class="bold-lato">30</ion-text>
+                  <ion-text class="bold-lato">{{ event?.booked_count }}</ion-text>
                 </ion-item>
               </div>
             </div>
@@ -184,6 +229,215 @@
       </div>
     </div>
 	</div> 
+  
+</template>
+<template v-else>
+  <base-layout :hide-navigation-menu="role !== RoleEnum.Trainer">
+      <template #header>
+      <page-header
+          back-btn
+          :title="''"
+          @back="onBack"
+      />
+      
+      <ion-icon class="menu-option" @click="openActionOption" src="assets/icon/vertical-ellipsis-light.svg"></ion-icon>
+      </template>
+      <template #content>
+        <div
+          class="holder-content ion-padding-horizontal"
+          :class="{ 'holder-content--empty': !loading }"
+        >
+          <div>
+            <div>
+              <div class="carousel">
+                <swiper
+                  v-if="medias.length"
+                  free-mode
+                  slidesPerView="auto"
+                  :spaceBetween="16"
+                  :slidesOffsetAfter="0"
+                  :slidesOffsetBefore="0"
+                  :modules="[FreeMode]"
+                >
+                  <swiper-slide
+                    v-for="(item, index) in medias"
+                    :key="`swiper_${index}`"
+                    class="swiper-slide"
+                  >
+                    <ion-img
+                      :src="item?.pathUrl"
+                      class="media-item"
+                    />
+                  </swiper-slide>
+                </swiper>
+              </div>
+              <div class="ion-padding mobile-view-content">
+              <div class="data-box d-flex justify-content-between">
+                <div class="d-flex-col">
+                  <ion-text>{{ result?.facility?.name }}</ion-text>
+                  <div class="field-label d-flex align-items-center">
+                    <ion-icon src="assets/icon/location.svg"></ion-icon>
+                    <ion-text>{{ result?.facility?.address?.street }}</ion-text>
+                  </div>
+                </div>
+              </div>
+              <div class="description-field">
+                <ion-text>{{ result?.facility?.description }}</ion-text>
+              </div>
+              <div class="d-flex">
+                <div class="d-flex reviews">
+                  <ion-text>Reviews</ion-text>
+                  <ion-text class="review-count">{{ result?.facility?.score }}</ion-text>
+                  <review-status-bar :positiveCount="result?.facility?.positive_reviews_count ?? 0" :negativeCount="result?.facility?.negative_reviews_count ?? 0" :ratings="result?.facility?.score"/>
+                  <!-- <ion-text class="total-review">based on {{ result?.facility?.reviews_count??0 }} reviews</ion-text> -->
+                </div>
+                <ion-text class="ion-text-end reviews">View All</ion-text>
+              </div>
+              <div>
+                <ion-row>
+                  <ion-col size="6" v-for="review in reviews" :key="review.id">
+                    <div class="black-box review">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex reviewer align-items-center">
+                          <avatar :src="review.avatarUrl" />
+                          <ion-text class="reviewer-name">{{ review.fullName }}</ion-text>
+                          <ion-text class="review-point">{{ review.rating }}</ion-text>
+                        </div>
+                        <ion-text class="review-date">{{ dayjs(review.date).format("D MMMM, YYYY") }}</ion-text>
+                      </div>
+                      <ion-text class="review-message">{{ review.text }}</ion-text>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </div>
+              <div class="ion-margin-top">
+                <ion-title class="ion-no-padding color-white font16">Offerings</ion-title>
+                <page-tabs-New
+                  :tabs="tabs"
+                  class="page-tabs"
+                  :value="activeTab"
+                  @change="tabsChanged"
+                />
+                <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
+                <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum?.FacilityDropins">
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$20.00</ion-title>
+                    <ion-text>1 Day</ion-text>
+                    <ion-text>One day access</ion-text>
+                  </div>
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$39.00</ion-title>
+                    <ion-text>2 Days</ion-text>
+                    <ion-text>Two days access</ion-text>
+                  </div>
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$79.00</ion-title>
+                    <ion-text>5 Day</ion-text>
+                    <ion-text>Five days access</ion-text>
+                  </div>
+                </div>
+                <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum.Facilities">
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$120.00</ion-title>
+                    <ion-text>1 Month</ion-text>
+                    <ion-text>Basic plan</ion-text>
+                  </div>
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$139.00</ion-title>
+                    <ion-text>1 Month</ion-text>
+                    <ion-text>Standard plan</ion-text>
+                  </div>
+                  <div class="ion-text-center">
+                    <ion-title class="offering-title">$179.00</ion-title>
+                    <ion-text>1 Month</ion-text>
+                    <ion-text>Premium plan</ion-text>
+                  </div>
+                </div>
+                <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
+                  <div class="card-background" v-for="dailys in dailysData">
+                    <div class="d-flex">
+                      <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
+                      <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
+                    </div>
+                    <div class="d-flex inner-text">
+                      <div class="width75">
+                        <ion-item class="ion-no-padding" lines="none">
+                          <ion-icon src="assets/icon/time-light.svg"></ion-icon>
+                          <ion-text>{{ dailys?.duration + ' min -' + dailys?.type?.name }}</ion-text>
+                        </ion-item>
+                      </div>
+                      <div class="width25 ion-text-end">
+                        <ion-item class="ion-no-padding ion-text-end sub-text" lines="none">
+                          <ion-icon src="assets/icon/person-light.svg"></ion-icon>
+                          <ion-text class="bold-lato">{{ dailys?.type?.views_count ? dailys?.type?.views_count : 0 }}</ion-text>
+                        </ion-item>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
+                  <div class="card-background" v-for="event in allEvents">
+                    <div class="d-flex">
+                      <ion-title class="ion-no-padding offering-title">{{ event?.title }}</ion-title>
+                      <!-- <ion-text class="offering-name ">{{ event?.description }}</ion-text> -->
+                      <ion-item class="ion-no-padding ion-text-end" lines="none">
+                          <ion-icon src="assets/icon/time-light.svg"></ion-icon>
+                          <ion-text>{{ event?.start_date }}</ion-text>
+                        </ion-item>
+                    </div>
+                    <ion-text class="offering-name">{{ event?.start_date }}</ion-text>
+                    <div class="d-flex inner-text">
+                      <div class="width50 ">
+                        <ion-item class="ion-no-padding" lines="none">
+                          <ion-icon src="assets/icon/location-light.svg"></ion-icon>
+                          <ion-text>{{ event?.address?.street }}</ion-text>
+                        </ion-item>
+                      </div>
+                      <div class="width50 ion-text-end">
+                        <ion-item class="ion-no-padding ion-text-end sub-text" lines="none">
+                          <ion-icon src="assets/icon/person-light.svg"></ion-icon>
+                          <ion-text class="bold-lato">{{ event?.booked_count }}</ion-text>
+                        </ion-item>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                <div class="feature-field ion-margin-top">
+                  <div>
+                    <ion-title class="color-white font16">Equipment</ion-title>
+                    <div class="features">
+                      <ion-button 
+                        v-for="(item, id) in result?.facility?.equipments" 
+                        :key="id" 
+                        fill="outline"
+                      >
+                        <ion-icon :src="item.iconUrl"></ion-icon>
+                        {{ item.name }}
+                      </ion-button>
+                    </div>
+                  </div>
+                  <div class="ion-margin-top">
+                    <ion-title class="color-white font16">Amenities</ion-title>
+                    <div class="features">
+                      <ion-button 
+                        v-for="(item, id) in result?.facility?.amenities" 
+                        :key="id" 
+                        fill="outline"
+                      >
+                        <ion-icon :src="item.iconUrl"></ion-icon>
+                        {{ item.name }}
+                      </ion-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </template>
+  </base-layout>
+</template>
   <create-facility-modal ref="createFacilityModal" />
   <discard-changes
     :is-open="isDeleteModalOpen"
@@ -195,6 +449,7 @@
   />
 </template>
 
+
 <script setup lang="ts">
 import {
   IonButton,
@@ -204,7 +459,8 @@ import {
   IonIcon,
   IonImg,
   IonTitle,
-  IonAvatar
+  IonAvatar,
+  actionSheetController
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
@@ -218,12 +474,20 @@ import {
   ReviewTypeEnum,
   SettingsCodeEnum,
   UnfollowDocument,
+  EventsQuery,
+  EventsDocument,
+  QueryEventsOrderByColumn,
+  EventsQueryVariables,
+  SortOrder,
+  WorkoutsByFacilityDocument,
+  QueryFacilityWorkoutsOrderByColumn,
+GetCustomersByFacilityItemsDocument
 } from "@/generated/graphql";
 import { TabItem } from "@/interfaces/TabItem";
 import { Review as UserReview } from "@/ts/types/user";
 import { useQuery } from "@vue/apollo-composable";
 import PageTabs from "@/general/components/PageTabs.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
@@ -246,6 +510,17 @@ import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
+import { Capacitor } from '@capacitor/core';
+
+const props = withDefaults(
+  defineProps<{
+    isWebView?: boolean;
+  }>(),
+  {
+    isWebView: Capacitor.isNativePlatform() ? false : true,
+  }
+);
 
 const deleteGymModal = ref<typeof DeleteGymModal | null>(null);
 
@@ -283,6 +558,48 @@ const manager = computed(() =>
 const medias = computed(() =>
   result.value?.facility?.media.length ? result.value.facility?.media : []
 );
+
+const openActionOption = async (index?: number, mediaId?: string) => {
+  const mobileButtons = [
+    {
+      text: "Edit",
+      data: {
+        type: "edit",
+      },
+    },
+    {
+      text: "Delete",
+      data: {
+        type: "delete",
+      },
+    },
+    {
+      text: "Cancel",
+      role: "cancel",
+    },
+  ];
+
+  const actionSheet = await actionSheetController.create({
+    mode: "ios",
+    buttons: mobileButtons,
+  });
+
+  await actionSheet.present();
+
+  const { data } = await actionSheet.onWillDismiss();
+  const type = data?.type;
+
+  const actions = {
+    ['edit']: () =>
+    goToGymEdit(),
+    ['delete']: () =>
+     deleteGym()
+  };
+
+  if (actions[type]) {
+    actions[type]();
+  }
+};
 
 // const tabs: TabItem[] = [
 //   {
@@ -431,6 +748,128 @@ const deleteModalClosed = (approved: boolean) => {
 const goBack = () => {
   router.go(-1);
 }
+
+// Events List
+const idFilter = computed(() => {
+  return { created_by_facility: result.value?.facility?.id }
+});
+
+const eventsPage = ref<number>(1);
+ const totalEvents = ref<number>(0);
+const eventsParams: EventsQueryVariables = {
+  first: 8,
+  page: eventsPage.value,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  // start_date: {
+  //   from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+  //   to: dayjs().add(1, 'y').format("YYYY-MM-DD HH:mm:ss"),
+  // },
+  ...idFilter.value,
+};
+
+const {
+  onResult: gotEvents,
+  loading: eventsLoading,
+  refetch: eventsRefetch,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const allEvents = ref([]);
+const status = route.query.status;
+const events = computed(() => {
+   return allEvents.value.filter(ev => {
+    if(filter.value === 'all') return true;
+    return ev.status === filter.value
+  });  
+  
+});
+
+gotEvents((response) => {
+  totalEvents.value = response.data?.events?.paginatorInfo.total ?? 0;
+  response.data?.events?.data.map(item => {
+    allEvents.value.push({
+      ...item,
+      status: dayjs().isBefore(item.end_date) ?  'upcoming' : 'finished',
+    })
+  });
+});
+// End Events
+
+// Dailys data
+const dailysItemsStore = useDailysItemsStore();
+const summaryData = ref<any>({
+  totalViews: 0,
+  subscribers: 0,
+  totalRevenue: 0,
+  viewsPerDaily: 0,
+  topDailys: [],
+});
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
+  WorkoutsByFacilityDocument,
+  {
+    page: 1,
+    first: 1000,
+    facility_id: result.value?.facility?.id,
+    orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Asc,
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+gotDailysData(({ data }) => {
+  let dailys = [ ...data.facilityWorkouts.data ];
+  dailys.sort((a: any, b: any) => {
+    return a.total_revenue - b.total_revenue;
+  });
+  summaryData.value.topDailys = dailys.slice(0, 10);
+  let recentDailys = [ ...data.facilityWorkouts.data ];
+  recentDailys.sort((a: any, b: any) => {
+    const dateFirst = dayjs(a, "h:mm A");
+    const dateLast = dayjs(b, "h:mm A");
+    return dateFirst.isBefore(dateLast) ? 1 : -1;
+  });
+  console.log("### dailysData ", recentDailys );
+  console.log('allEvents: ', allEvents.value);
+  dailysItemsStore.setData(recentDailys);
+});
+
+const dailysData = computed(
+  () => dailysItemsStore.dailysData
+);
+// Dailys End
+
+// Passes start
+// const {
+//   result: facilityItemPassResult,
+//   loading: loadingFacilityPass,
+//   onResult: gotFacility,
+// } = useQuery(GetCustomersByFacilityItemsDocument, {
+//   facility_id: result.value?.facility?.id,
+//   item_type: "PASS"
+// });
+// console.log(facilityItemPassResult)
+
+// const passes = computed(() => {
+//   console.log("### passes ", facilityItemPassResult.value);
+//   return facilityItemPassResult.value?.getCustomersByFacilityItems?.data;
+// });
+
+// gotFacility(({ data }) => {
+//   let dailys = [ ...data.facilityWorkouts.data ];
+//   console.log(" ##@ ", dailys)
+// });
+
+// Passes End
+
 </script>
 
 <style scoped lang="scss">
@@ -684,11 +1123,12 @@ const goBack = () => {
   padding: 8px;
   justify-content: center;
   gap: 20px;
-  ion-title {
-    font-size: 16px;
-    font-family: 'Yantramanav';
-    font-weight: 500;
-  }
+  // ion-title {
+  //   font-size: 16px !important;
+  //   font-family: 'Yantramanav';
+  //   font-weight: 500;
+  // }
+
   ion-text {
     display: block;
     font-size: 14px;
@@ -714,10 +1154,18 @@ const goBack = () => {
     width: 50%;
     height: 30px;
   }
+  .width75 {
+    width: 75%;
+    height: 30px;
+  }
+  .width25 {
+    width: 25%;
+    height: 30px;
+  }
   .inner-text {
-    padding: 10px 5px;
+    padding-bottom: 5px;
     ion-icon {
-      font-size: 24px;
+      font-size: 20px;
     }
   }
   .sub-text {
@@ -741,6 +1189,110 @@ const goBack = () => {
     padding: 5px;
     border-radius: 8px;
     margin-bottom: 5px;
+  }
+}
+
+.offering-name {
+  font-family: 'lato';
+  font-weight: 500;
+  font-size: 14px !important;
+  color: #C4C4C4;
+}
+
+.offering-title {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Lato';
+  padding-bottom: 10px;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.color-white {
+  color: #fff !important;
+}
+.font16 {
+  font-size: 16px;
+}
+@media (max-width: 767px) {
+  ion-header {
+    position: absolute;
+    ion-toolbar {
+      --background: transparent !important;
+      ion-buttons {
+        margin: 16px 0px !important;
+      }
+    }
+  }
+  .holder-content {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+  }
+  .media-item {
+    width: 100% !important;
+    max-height: 275px !important;
+    object-fit: cover;
+  }
+  .swiper-slide {
+    margin-right: 0 !important;
+  }
+  .swiper {
+    margin-left: 0;
+    margin-right: 0;
+    // position: unset;
+    overflow: unset;
+    list-style: none;
+    padding: 0;
+    z-index: 1;
+  }
+  .carousel {
+    display: block;
+    height: auto;
+    position: fixed;
+    z-index: 9;
+    top: 0;
+  }
+  .mobile-view-content {
+    overflow: auto;
+    position: relative;
+    top: 230px;
+  }
+  .data-box {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    .field-label {
+      color: var(--gray-400);
+      font: 16px/1 var(--ion-font-family);
+      
+      ion-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      ion-text {
+        font-size: 14px;
+      }
+    }
+    ion-text {
+      font: 500 20px/1 var(--ion-font-family);
+    }
+  }
+  .reviews {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .menu-option {
+    font-size: 30px;
+    position: absolute;
+    right: 16px;
+    top: 20px;
+    border-radius: 50%;
+    background-color: #0000005e;
+    padding: 5px;
+    z-index: 999;
   }
 }
 </style>

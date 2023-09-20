@@ -2,14 +2,15 @@
     <base-layout :hide-navigation-menu="role !== RoleEnum.Trainer" v-if="!isWebView">
         <template #header>
         <page-header
+            class="cursor-pointer"
             back-btn
-            :title="'Gym Loctions'"
+            :title="'Gym Locations'"
             @back="onBack"
         />
         </template>
         <template #content>
             <div class="add-gym-container">
-                <ion-button class="add-gym-btn" @click="goToGymCreate({
+                <ion-button class="add-gym-btn cursor-pointer" @click="goToGymCreate({
                     data: null,
                     title: 'New Gym',
                     })">Add new gym</ion-button>
@@ -24,7 +25,7 @@
                                 </ion-thumbnail>
                             </div>
 
-                            <div class="" style="width: 100%;" @click="goToGymDetails(item)">
+                            <div class="cursor-pointer" style="width: 100%;" @click="goToGymDetails(item)">
                                 <div style="width: 100%; min-height: 50px">
                                     <div class="d-flex justify-content-between title">
                                         <span>{{ item.name }}</span>
@@ -38,7 +39,7 @@
                                 </div>
                             </div>
                             <div class="delete-icon ion-margin-end">
-                                <ion-icon src="assets/icon/delete.svg"></ion-icon>
+                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg"></ion-icon>
                             </div>
                         </div>
                     </ion-card-content>
@@ -48,7 +49,7 @@
     </base-layout>
     <template v-else>
         <div class="add-gym-container">
-            <ion-button class="add-gym-btn" @click="goToGymCreate({
+            <ion-button class="add-gym-btn cursor-pointer" @click="goToGymCreate({
                     data: null,
                     title: 'New Gym',
                     })">Add new gym</ion-button>
@@ -63,7 +64,7 @@
                                 </ion-thumbnail>
                             </div>
 
-                            <div class="text-content" @click="goToGymDetails(item)">
+                            <div class="text-content cursor-pointer" @click="goToGymDetails(item)">
                                 <div class="name-header">
                                     <div class="d-flex justify-content-between title">
                                         <span>{{ item.name }}</span>
@@ -77,7 +78,7 @@
                                 </div>
                             </div>
                             <div class="delete-icon ion-margin-end">
-                                <ion-icon src="assets/icon/delete.svg"></ion-icon>
+                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg"></ion-icon>
                             </div>
                         </div>
                     </ion-card-content>
@@ -103,6 +104,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";
 import useRoles from "@/hooks/useRole";
+import { Capacitor } from '@capacitor/core';
 
 const { role } = useRoles();
 
@@ -111,7 +113,7 @@ const props = withDefaults(
     isWebView?: boolean;
   }>(),
   {
-    isWebView: true,
+    isWebView:  Capacitor.isNativePlatform() ? false : true,
   }
 );
 
@@ -230,7 +232,14 @@ const onBack = () => {
 
 @media (max-width: 767px) {
   .list-container{
-    width: 100%;
+    width: auto;
+    margin: 16px;
+    .delete-icon {
+        margin-right: 0;
+    }
   }
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

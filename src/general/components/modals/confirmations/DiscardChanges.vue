@@ -4,7 +4,7 @@
       <ion-icon
         src="assets/icon/close.svg"
         @click="closeModal()"
-        class="close-btn"
+        class="close-btn cursor-pointer"
       ></ion-icon>
       <ion-img class="modal__img" src="assets/dumbbells.png" />
       <div class="ion-padding-horizontal">
@@ -17,12 +17,12 @@
           </ion-text>
         </div>
         <div class="modal__footer">
-          <ion-button @click="closeModal()" class="modal__button">
+          <ion-button @click="closeModal()" class="modal__button cursor-pointer">
             {{ cancelButton }}
           </ion-button>
           <ion-button
             @click="closeModal(true)"
-            class="modal__button secondary"
+            class="modal__button secondary cursor-pointer"
             v-if="!hideButton"
           >
             {{ button }}
@@ -146,5 +146,8 @@ ion-modal::part(backdrop) {
   --min-height: 16px;
   --min-width: 16px;
   z-index: 5;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
