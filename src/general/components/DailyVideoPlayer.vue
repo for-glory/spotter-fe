@@ -50,12 +50,10 @@ const preview = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.preview}
 
 const shouldPlay = computed(() => props.play);
 
-onMounted(() => {
+onMounted(async () => {
   console.log('mounted: shouldPlay?: ', shouldPlay.value);
-  if(shouldPlay.value) {
-    videoRef.value.play();
-  } else {
-    videoRef.value.pause();
+  if(!shouldPlay.value) {
+    await videoRef.value.pause();
   }
 });
 
