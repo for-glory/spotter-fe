@@ -100,6 +100,7 @@ import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useUserStore } from "@/general/stores/user";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
@@ -119,6 +120,7 @@ const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
 const unreadMessages = ref<number[]>([]);
 const facilityStore = useFacilityStore();
 const userStore = useUserStore();
+const trainerStore = useTrainerStore();
 const overviewData = ref<any>({});
 const modal = ref<typeof IonModal | null>(null);
 
@@ -148,9 +150,9 @@ watch(
 
 const avatarUrl = computed(() => {
   switch (role) {
-    // case RoleEnum.User:
-    // case RoleEnum.Trainer:
-    //   return result.value?.user?.avatarUrl;
+    case RoleEnum.User:
+    case RoleEnum.Trainer:
+      return userStore.avatarUrl;
 
     case RoleEnum.Manager:
     case RoleEnum.FacilityOwner:

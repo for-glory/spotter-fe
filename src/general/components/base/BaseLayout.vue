@@ -139,6 +139,7 @@ import { EntitiesEnum } from "@/const/entities";
 import useId from "@/hooks/useId";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useUserStore } from "@/general/stores/user";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 
 const props = withDefaults(
   defineProps<{
@@ -168,6 +169,7 @@ const { role } = useRoles();
 const { id } = useId();
 const facilityStore = useFacilityStore();
 const userStore = useUserStore();
+const trainerStore = useTrainerStore();
 
 const menuType =
   role === RoleEnum.OrganizationOwner ||
@@ -203,15 +205,44 @@ gotUser(() => {
           facilityStore.setFacility(facilityValue as Facility);
         }
       }
-      userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
-      userStore.setEmail(result.value?.user?.email);
-      userStore.setId(result.value?.user?.id);
-      userStore.setSubscription(result.value?.user?.currentSubscription);
-      userStore.setAvatarUrl(result.value?.user?.avatarUrl);
-      userStore.setAddress(result.value?.user?.address?.city?.state, result.value?.user?.address?.city, result.value?.user?.address);
-      userStore.setOwnedFacilities(result.value?.user?.owned_facilities);
+      break;
+
+    case RoleEnum.Trainer :
+      let trainer = {
+        id: result?.value?.user?.id,
+        first_name: result?.value?.user?.first_name,
+        last_name: result?.value?.user?.last_name,
+        avatarUrl: result?.value?.user?.avatarUrl,
+        tax_id: result?.value?.user?.tax_id,
+        email: result?.value?.user?.email,
+        address: result?.value?.user?.address,
+        currentSubscription: result?.value?.user?.currentSubscription,
+        score: result?.value?.user?.score,
+        reviews_count: result?.value?.user?.reviews_count,
+        recommended_count: result?.value?.user?.recommended_count,
+        not_recommended_count: result?.value?.user?.not_recommended_count,
+        trainings_count: result?.value?.user?.trainings_count,
+        positive_reviews_count: result?.value?.user?.positive_reviews_count,
+        negative_reviews_count: result?.value?.user?.negative_reviews_count,
+        completed_trainings_count: result?.value?.user?.completed_trainings_count,
+        trainer_type: result?.value?.user?.trainer_type,
+        trainerRates: result?.value?.user?.trainerRates,
+        created_at: result?.value?.user?.created_at,
+      };
+      trainerStore.setTrainer(trainer);
+      break;
+
+    default :
       break;
   }
+
+  userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
+  userStore.setEmail(result.value?.user?.email);
+  userStore.setId(result.value?.user?.id);
+  userStore.setSubscription(result.value?.user?.currentSubscription);
+  userStore.setAvatarUrl(result.value?.user?.avatarUrl);
+  userStore.setAddress(result.value?.user?.address?.city?.state, result.value?.user?.address?.city, result.value?.user?.address);
+  userStore.setOwnedFacilities(result.value?.user?.owned_facilities);
 });
 const scrollToBottom = () => {
   if (content.value) {
