@@ -1,19 +1,22 @@
 <template>
-  <div>
-    <div 
-      class="swiper-header d-flex align-items-center justify-content-between w-100"
-      style="padding-top: 16px; padding-bottom: 16px;"
-    >
-      <ion-title slot="start" class="title">{{ title }}</ion-title>
-      <ion-text 
-        class="font-medium font-14 color-gold" 
-        style="text-align: end; cursor: pointer;"
-        @click="handleSetFilter(queryType)"
+  <div :class="{ 'native': !Capacitor.isNativePlatform() }">
+    <ion-item class="toolbar-item" style="padding-top: 16px; padding-bottom: 16px;">
+      <div 
+        class="swiper-header d-flex align-items-center justify-content-between w-100"
       >
-        View All
-      </ion-text>
-    </div>
+        <ion-text class="text">{{ title }}</ion-text>
+        <ion-text 
+          v-if="workouts?.length"
+          class="font-medium font-14 color-gold" 
+          style="text-align: end; cursor: pointer;"
+          @click="handleSetFilter(queryType)"
+        >
+          View All
+        </ion-text>
+      </div>
+    </ion-item>
     <swiper
+      v-if="workouts?.length"
       free-mode
       slidesPerView="auto"
       :spaceBetween="16"
@@ -44,6 +47,9 @@
         />
       </swiper-slide>
     </swiper>
+    <div v-else class="empty-text">
+      <ion-text class="color-gray">{{ title === 'Trending' ? 'No trending dailys yet' : title === 'Most Liked' ? 'No most liked dailys yet' : 'No recent dailys yet' }}</ion-text>
+    </div>
   </div>
 </template>
 
@@ -55,6 +61,7 @@ import { defineProps, withDefaults, ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Workout, WorkoutStatesEnum } from "@/generated/graphql";
 import WorkoutItem from "@/users/components/Workout.vue";
+import { Capacitor } from '@capacitor/core';
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 
@@ -90,7 +97,6 @@ const openViewModal = (daily: any) => {
 
 <style scoped lang="scss">
 .swiper-header {
-  margin-bottom: 8px;
   --min-height: 24px;
   --padding-top: 32px;
   --padding-bottom: 7px;
@@ -113,12 +119,22 @@ const openViewModal = (daily: any) => {
   }
 }
 
-.swiper-slide {
-  width: 30%;
+.native {
+  .swiper-slide {
+    width: 30%;
+  }
 }
 
 .title {
   padding-left: 17px;
   font: 500 16px/1.5 var(--ion-font-family);
+}
+.empty-text {
+  padding: 20px;
+  font-size: 16px;
+  width: 100%;
+}
+.toolbar-item {
+  --background: #262626;
 }
 </style>

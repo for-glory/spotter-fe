@@ -62,138 +62,33 @@
           <div v-if="tab === 'dailys'">
             <div v-if="filter==='all'">
               <ion-text class="font-light font-12 color-white">Showing all {{ dailysData.length }} Dailys</ion-text>
-              <div>
-                <div 
-                  class="d-flex align-items-center justify-content-between w-100"
-                  style="padding-top: 16px; padding-bottom: 16px;"
-                >
-                  <ion-text class="font-medium font-16 color-white">Recently Uploaded</ion-text>
-                  <ion-text class="font-medium font-14 color-gold" @click="handleSetFilter('recently uploaded')">View All</ion-text>
-                </div>
-                <swiper 
-                  v-if="dailysData?.length"
-                  free-mode
-                  slidesPerView="auto"
-                  :spaceBetween="16"
-                  :slidesOffsetAfter="16"
-                  :slidesOffsetBefore="16"
-                  :modules="[FreeMode]"
-                >
-                  <swiper-slide 
-                    v-for="daily in dailysData" 
-                    :key="daily.id"
-                  >
-                    <workout-item
-                      :duration="daily.duration"
-                      :title="daily.title || ''"
-                      :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
-                      :type="daily.type?.name || ''"
-                      :trainer="
-                        `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
-                        ''
-                      "
-                      :id="daily.id"
-                      :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.views_count"
-                      :recommended_count="daily.recommended_count"
-                      :share="true"
-                      :hide="true"
-                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
-                      @hide="hideDailysItem(daily.id)"
-                      @show="showDailysItem(daily.id)"
-                      @click="watchDailys(daily)"
-                    />
-                  </swiper-slide>
-                </swiper>
-              </div>
-              <div>
-                <div 
-                  class="d-flex align-items-center justify-content-between w-100"
-                  style="padding-top: 16px; padding-bottom: 16px;"
-                >
-                  <ion-text class="font-medium font-16 color-white">Trending</ion-text>
-                  <ion-text class="font-medium font-14 color-gold" @click="handleSetFilter('trending')">View All</ion-text>
-                </div>
-                <swiper 
-                  v-if="trendingDailys?.length"
-                  free-mode
-                  slidesPerView="auto"
-                  :spaceBetween="16"
-                  :slidesOffsetAfter="16"
-                  :slidesOffsetBefore="16"
-                  :modules="[FreeMode]"
-                >
-                  <swiper-slide 
-                    v-for="daily in trendingDailys" 
-                    :key="daily.id"
-                  >
-                    <workout-item
-                      :duration="daily.duration"
-                      :title="daily.title || ''"
-                      :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
-                      :type="daily.type?.name || ''"
-                      :trainer="
-                        `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
-                        ''
-                      "
-                      :id="daily.id"
-                      :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.views_count"
-                      :recommended_count="daily.recommended_count"
-                      :share="true"
-                      :hide="true"
-                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
-                      @hide="hideDailysItem(daily.id)"
-                      @show="showDailysItem(daily.id)"
-                      @click="watchDailys(daily)"
-                    />
-                  </swiper-slide>
-                </swiper>
-              </div>
-              <div>
-                <div 
-                  class="d-flex align-items-center justify-content-between w-100"
-                  style="padding-top: 16px; padding-bottom: 16px;"
-                >
-                  <ion-text class="font-medium font-16 color-white">Most Liked</ion-text>
-                  <ion-text class="font-medium font-14 color-gold"  @click="handleSetFilter('most liked')">View All</ion-text>
-                </div>
-                <swiper 
-                  v-if="recommendedDailys?.length"
-                  free-mode
-                  slidesPerView="auto"
-                  :spaceBetween="16"
-                  :slidesOffsetAfter="16"
-                  :slidesOffsetBefore="16"
-                  :modules="[FreeMode]"
-                >
-                  <swiper-slide 
-                    v-for="daily in recommendedDailys" 
-                    :key="daily.id"
-                  >
-                    <workout-item
-                      :duration="daily.duration"
-                      :title="daily.title || ''"
-                      :pathUrl="`${VUE_APP_CDN}${daily.preview}` || ''"
-                      :type="daily.type?.name || ''"
-                      :trainer="
-                        `${daily.trainer?.first_name} ${daily.trainer?.last_name}` ||
-                        ''
-                      "
-                      :id="daily.id"
-                      :total_revenue="daily.total_revenue"
-                      :reviews_count="daily.views_count"
-                      :recommended_count="daily.recommended_count"
-                      :share="true"
-                      :hide="true"
-                      :hidden="daily.state === WorkoutStatesEnum.Hidden"
-                      @hide="hideDailysItem(daily.id)"
-                      @show="showDailysItem(daily.id)"
-                      @click="watchDailys(daily)"
-                    />
-                  </swiper-slide>
-                </swiper>
-              </div>
+              <workouts-swiper
+                title="Recently Uploaded"
+                :workouts="dailysData"
+                queryType="recent"
+                @show="showDailysItem"
+                @hide="hideDailysItem"
+                @changeFilter="handleSetFilter('recently uploaded')"
+                @click="watchDailys"
+              />
+              <workouts-swiper
+                title="Trending"
+                :workouts="trendingDailys"
+                queryType="trending"
+                @show="showDailysItem"
+                @hide="hideDailysItem"
+                @changeFilter="handleSetFilter('trending')"
+                @click="watchDailys"
+              />
+              <workouts-swiper
+                title="Most Liked"
+                :workouts="recommendedDailys"
+                queryType="recommended"
+                @show="showDailysItem"
+                @hide="hideDailysItem"
+                @changeFilter="handleSetFilter('most liked')"
+                @click="watchDailys"
+              />
             </div>
             <div v-else>
               <div class="d-flex align-items-center justify-content-between" style="padding-bottom: 13px">
@@ -277,7 +172,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { useDailysStore } from "@/general/stores/useDailysStore";
 import dayjs from "dayjs";
-import WorkoutsSwiper from "@/facilities/components/WorkoutsSwiper.vue";
+import WorkoutsSwiper from "@/general/components/dashboard/workouts/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
@@ -347,17 +242,19 @@ onBeforeMount(() => {
 const performanceData = ref<Array<any>>();
 const trendingDailys = computed(() => {
   let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
-   dailys.sort((a: any, b: any) => {
+  let trending = dailys.filter((daily) => daily.views_count > 0).sort((a: any, b: any) => {
     return b.views_count - a.views_count;
-  });
-  return dailys;
+  }).slice(0, 10);
+  console.log(trending);
+  return trending;
 });
 const recommendedDailys = computed(() => {
   let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
-  dailys.sort((a: any, b: any) => {
+  let recommend = dailys.filter((daily) => daily.recommended_count > 0).sort((a: any, b: any) => {
     return b.recommended_count - a.recommended_count;
-  });
-  return dailys;
+  }).slice(0, 10);
+  console.log(recommend);
+  return recommend;
 });
 
 
@@ -563,5 +460,8 @@ ion-button#create {
   .fixed {
     position: fixed;
   }
+}
+.swiper-slide {
+  width: 100% !important;
 }
 </style>

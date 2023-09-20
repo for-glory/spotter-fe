@@ -7,6 +7,7 @@
 @import 'partials/toast';
 @import './variables.css';
 @import 'partials/alert';
+@import 'partials/modal';
 
 /* For responsiveness across screens */
 html {
@@ -313,7 +314,12 @@ ion-modal.auto-height {
 .flex-wrap {
   flex-wrap: wrap;
 }
-
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
+}
 .gap-24 {
   gap: 1.5rem;
 }
@@ -419,4 +425,7 @@ html:not(.plt-capacitor) .show-if-web {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.profile-action-sheet {
+  --button-color: var(--gold);
 }

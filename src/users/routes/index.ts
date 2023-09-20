@@ -357,4 +357,13 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth],
     },
   },
+
+  {
+    name: 'Gym_detail',
+    path: "/users/discover/gym_detail",
+    component: () => import("@/users/views/discover/gym_detail.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
 ];

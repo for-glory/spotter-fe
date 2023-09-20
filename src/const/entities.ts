@@ -1,6 +1,7 @@
 export enum EntitiesEnum {
   Profile = "PROFILE",
   ProfileEdit = "PROFILE_EDIT",
+  ProfileGettingPaid = "PROFILE_GETTING_PAID",
   ProfileEmail = "PROFILE_EMAIL",
   ProfilePassword = "PROFILE_PASSWORD",
   ProfileLanguages = "PROFILE_LANGUAGEs",
@@ -106,6 +107,7 @@ export enum EntitiesEnum {
   Nearby = "NEARBY",
   Events = "EVENTS",
   EventsDetailed = "EVENTS_DETAILED",
+  EventsNewDetailed = "EVENTS_DETAILED",
   EventOrder = "EVENT_ORDER",
   Favourites = "FAVOURITES",
   EmptyState = "EMPTY_STATE",
@@ -170,6 +172,7 @@ export enum EntitiesEnum {
   DashboardTrainings = "DASHBOARD_Trainings",
   DashboardTrainingsCalendar = "DASHBOARD_Trainings_CALENDAR",
   DashboardUserProfile = "DASHBOARD_USER_PROFILE",
+  DashboardUserProfilePreview = "DASHBOARD_USER_PROFILE_PREVIEW",
   DashboardEvent = "DASHBOARD_EVENT",
   DashboardCreateEvent = "DASHBOARD_CREATE_EVENT",
   DashboardMembership = "DASHBOARD_MEMBERSHIP",

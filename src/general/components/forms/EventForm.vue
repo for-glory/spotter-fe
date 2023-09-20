@@ -2,7 +2,7 @@
   <div class="create-event">
     <ion-grid>
       <ion-row>
-        <ion-col offset="2">
+        <ion-col>
           <div class="form-row">
             <ion-label class="label"> Choose cover for event </ion-label>
             <photos-loader
@@ -20,7 +20,7 @@
       </ion-row>
       <ion-row>
         
-        <ion-col offset="2" size="4">
+        <ion-col size="6">
           <div class="form-row">
             <base-input
               required
@@ -33,7 +33,7 @@
           </div>
         </ion-col>
         
-        <ion-col  size="4">
+        <ion-col  size="6">
           <div class="form-row">
             <base-input
               type="text"
@@ -45,7 +45,7 @@
             />
           </div>
         </ion-col>
-        <ion-col  offset="2" size="4">
+        <ion-col  size="6">
           <div class="form-row">
             <ion-label class="label"> Choose equioment and amenitites </ion-label>
             <choose-block
@@ -60,28 +60,30 @@
             />
           </div>
         </ion-col>
-        <ion-col  size="4">
+        <ion-col  size="6">
            <template v-if="true">
-            
-            <ion-label class="label"> Venus </ion-label>
-      <div class="form-row">
-        <choose-block
-          title="Venue"
-          class="form-row__control"
-          @handle-click="onChooseLocation"
+            <div class="form-row">
+              <ion-label class="label"> Venue </ion-label>
+              <ion-item class="input-container item-interactive item-input item-has-placeholder item md item-lines-none item-fill-none choose-place1">
+          <GMapAutocomplete
+          placeholder="Enter your address"
+          class="search-form__control form-row__control"
+          @place_changed="setPlace"
           :value="
             selectedAddress
               ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
               : ''
           "
-        />
-      </div>
+        >
+        </GMapAutocomplete>
+              </ion-item>
+            </div>
     </template>
         </ion-col>
 
         
     <template v-if="true"> 
-        <ion-col offset="2" size="4">
+        <ion-col size="6">
       <div class="form-row">
         <base-input
           type="text"
@@ -93,7 +95,7 @@
         />
       </div>
             </ion-col>
-        <ion-col  size="4">
+        <ion-col  size="6">
 
       <div class="form-row">
         <base-input
@@ -104,7 +106,7 @@
         />
       </div>
             </ion-col>
-        <ion-col offset="2"  size="4">
+        <ion-col  size="6">
 
       <div class="form-row">
         <ion-label class="label"> Choose date of event </ion-label>
@@ -120,7 +122,7 @@
         />
       </div>
             </ion-col>
-        <ion-col  size="4">
+        <ion-col  size="6">
 
             <div class="form-row">
         <ion-label class="label"> End date </ion-label>
@@ -138,7 +140,7 @@
       </div>
 
             </ion-col>
-        <ion-col  offset="2" size="4">
+        <ion-col  size="6">
     
     <div class="form-row">
         <ion-label class="label"> Choose time of event </ion-label>
@@ -155,7 +157,7 @@
       </div>
      
             </ion-col>
-        <ion-col  size="4">
+        <ion-col  size="6">
 
       <div class="form-row">
         <ion-label class="label"> Choose end time </ion-label>
@@ -171,7 +173,7 @@
         </wheel-picker>
       </div>
             </ion-col>
-        <ion-col offset="2" size="8">
+        <ion-col size="12">
 
       <div class="form-row">
         <base-input
@@ -237,9 +239,11 @@
     ref="equipmentAndAmenitiessModal"
     @cancel="equipmentAndAmenitiessSelected"
   />
+  <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
 </template>
 
 <script lang="ts" setup>
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
 import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
@@ -296,6 +300,27 @@ enum DateFieldsEnum {
   StartDate = "START_DATE",
   EndDate = "END_DATE",
 }
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
+const chooseGymLocation = () => {
+    router.push({
+    name: EntitiesEnum.ChooseLocation, 
+    params: { type: 'facility' }
+  });
+  // chooseLocationModal.value?.present({
+  //   title: "Address",
+  // });
+}
+
+const { load: getCities, refetch: getCityByName } = useLazyQuery(
+  CitiesDocument,
+  {
+    first: 15,
+    name: "",
+    state_code: "",
+  }
+);
+getCities();
+
 const isConfirmedModalOpen = ref(false);
 const onBack = () => {
   isConfirmedModalOpen.value = true;
@@ -329,7 +354,7 @@ watch(
     if (!newVal) return;
     store.setTitle(newVal.title ?? "");
     store.setPrice(newVal.price ?? "");
-   // store.setAddress(newVal.address.state,newVal.address.city, newVal.address.address);
+    store.setAddress(newVal.address.state,newVal.address.city, newVal.address.address);
     store.setMaxParticipants(newVal.max_participants ?? "")
     store.setStartDate(newVal.start_date ?? "")
      store.setStartTime(newVal.start_time ?? "")
@@ -342,15 +367,6 @@ watch(
   }
 );
 
-const { load: getCities, refetch: getCityByName } = useLazyQuery(
-  CitiesDocument,
-  {
-    first: 15,
-    name: "",
-    state_code: "",
-  }
-);
-getCities();
 
 const store = useNewEventStore();
 
@@ -443,6 +459,88 @@ const uploadPhoto = async (photo: string, index?: number, id?: string) => {
       percentPhotoLoaded.value = undefined;
     });
 };
+
+const setPlace = (place: any) => {
+  if (place) {
+    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
+    const address = gmapObjToNativeGeocoderResultObject(place);
+
+    if (address.locality) {
+      getCityByName({
+        first: 15,
+        name: address.locality,
+        state_code: address.administrativeArea,
+      })?.then(async (res) => {
+        const res_city = res.data.cities.data[0];
+        console.log("selected city", res_city)
+        store.setAddress(res_city.state, res_city, address);
+        const venueAddress = {
+          state:res_city.state,
+           city: res_city,
+           address: address
+        }
+        localStorage.setItem("venueAddress", JSON.stringify(venueAddress))
+        console.log({ res_city });
+      });
+    }
+  }
+}
+const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
+  let street_number =''
+  let route =''
+  const address:NativeGeocoderResult = {
+    latitude: gmObj.geometry.location.lat().toString(),
+    longitude: gmObj.geometry.location.lng().toString(),
+    countryCode: '',
+    countryName: '',
+    postalCode: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    locality: '',
+    subLocality: '',
+    thoroughfare: '',
+    subThoroughfare: '',
+    areasOfInterest: []
+  }
+  for (let i=0; i < gmObj.address_components.length; i++)
+  {
+    if(gmObj.address_components[i].types.includes("postal_code"))
+    {
+      address.postalCode = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("locality"))
+    {
+      address.locality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("subLocality"))
+    {
+      address.subLocality = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("country"))
+    {
+      address.countryName = gmObj.address_components[i].long_name;
+      address.countryCode = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
+    {
+      address.administrativeArea = gmObj.address_components[i].short_name;
+    }
+    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
+    {
+      address.subAdministrativeArea = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("street_number"))
+    {
+      street_number = gmObj.address_components[i].long_name;
+    }
+    if(gmObj.address_components[i].types.includes("route"))
+    {
+      route = gmObj.address_components[i].long_name;
+    }
+  }
+  address.thoroughfare = street_number + " " + route
+  return address;
+}
 
 const { mutate: deleteMedia, loading: mediaDeleting } =
   useMutation(DeleteMediaDocument);
@@ -748,6 +846,11 @@ defineExpose({
     margin: 0;
   }
 }
+
+input.search-form__control.form-row__control.pac-target-input {
+    background: transparent !important;
+    border: none !important;
+}
 .actions-wrapper {
   display: flex;
   flex-direction: column;
@@ -771,11 +874,12 @@ defineExpose({
     background: #333;;
     border-radius: 10px;
     padding: 20px;
-    height: 1000px;
+    height: 1000px; 
+    padding-inline: 12%;
 }
 .btn {
   float: right;
-  margin-right: 16%;
+  margin-right: -5px;
 }
 .label {
  color: var(--ion-color-white) !important;
@@ -790,4 +894,33 @@ ion-item.input-container {
   border: 1px solid #fff !important;;
   border-radius: 8px  !important;
 }
+.choose-place1 {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.5;
+    --background: var(--gray-700);
+     border-radius: 8px;
+    --inner-padding-start: 14px;
+    --inner-padding-end: 14px;
+    font-family: "Yantramanav";
+    border: 1px solid #fff;
+}
+input.input-container.item-interactive.item-input.item-has-placeholder.item.md.item-lines-none.item-fill-none.choose-place1.pac-target-input {
+    width: 100% !important;
+    height: 100% !important;
+    background: var(--gray-700) !important;
+    border: none !important;
+}
+
+input:focus {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0px !important;
+    padding: 0px !important;
+    background: var(--gray-700) !important;
+    border: none !important;
+}
+
+
+
 </style>

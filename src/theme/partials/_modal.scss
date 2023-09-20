@@ -1,0 +1,31 @@
+.tr-choose-gym-modal {
+  &::part(content){
+    --width: 375px;
+    height: 531px;
+  }
+}
+
+.web-working-schedule {
+  align-items: flex-end;
+
+  &::part(content) {
+    --width: 702px;
+    --height: 438px;
+
+    @media (max-width:700px) {
+      --height: 100%;
+    }
+  }
+}
+.web-choose-location {
+  align-items: flex-end;
+
+  &::part(content) {
+    --width: 702px;
+    --height: 320px;
+
+    @media (max-width:700px) {
+      --height: 100%;
+    }
+  }
+}

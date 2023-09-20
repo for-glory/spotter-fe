@@ -57,7 +57,7 @@ export const profileMenu: ProfileMenu = {
     //   isTrusted: true,
     // },
     {
-      name: EntitiesEnum.ProfilePaymentMethods,
+      name: EntitiesEnum.ProfileGettingPaid,
       label: "Getting Paid",
       icon: "paid",
       isTrusted: true,

@@ -115,6 +115,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileGettingPaid,
+    path: "/profile/getting-paid",
+    component: () => import("@/general/views/profile/GettingPaid.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileEmail,
     path: "/profile/edit/email",
     component: () => import("@/general/views/profile/Email.vue"),
@@ -614,6 +622,14 @@ export const routes: Array<RouteRecordRaw> = [
         name: EntitiesEnum.DashboardSettings,
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription, gymOwnerRole],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardUserProfilePreview,
+        path: "profile-preview",
+        component: () => import("@/general/views/dashboard/settings/UserProfile.vue"),
         meta: {
           middleware: [gymOwnerSubscription, gymOwnerRole],
         },

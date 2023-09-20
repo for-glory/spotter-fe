@@ -107,7 +107,7 @@
             name="lines"
             class="spinner"
           />
-          <div class="h-100">
+          <div v-else class="h-100">
             <ion-text>
               {{ reviewDescription }}
             </ion-text>

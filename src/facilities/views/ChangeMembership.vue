@@ -23,7 +23,8 @@
             }"
             :disabled="plan.owned && dayjs(plan.expiryDate).isAfter(dayjs())"
           >
-            <div class="radiobutton__block">
+            <div class="content d-flex">
+            <!-- <div class="radiobutton__block"> -->
               <div class="radiobutton__icon">
                 <ion-icon src="assets/icon/medal.svg" 
                   :class="plan?.tier === 'BRONZE' ? 'bronze' : plan?.tier === 'SILVER' ? 'silver' : 'gold'"
@@ -39,8 +40,11 @@
 
                 <ion-text class="radiobutton__cost"
                   >${{ plan?.prices[0].price / 100 }}
-                  <span>
+                  <span v-if="role !== RoleEnum.Trainer">
                     /{{ plan?.tier === 'GOLD' ? 'for first location' : 'per location'}}
+                  </span>
+                  <span class="plan-unit" v-else-if="role === RoleEnum.Trainer">
+                      /per month
                   </span>
                 </ion-text>
                 <ul>
@@ -58,6 +62,9 @@
                     Top Features
                   </li> -->
                 </ul>
+            <div class="short-note" v-if="currentSubscription === plan?.tier">
+              * Short “workout of the day” videos Trainers can post for Clients/Users to purchase and download
+            </div>
               </div>
             </div>
             <ion-radio :value="plan.id" slot="end"></ion-radio>
@@ -67,7 +74,7 @@
     </template>
     <template #footer>
       <div class="holder-button">
-        <div class="checkbox">
+        <div class="checkbox" v-if="role !== RoleEnum.Trainer">
           <ion-checkbox
             mode="ios"
             :modelValue="isAgreed"
@@ -185,6 +192,9 @@ const {
 	hideModal: hideChangeModal,
 	showModal: showChangeModal
 } = useConfirmationModal();
+
+const { currentSubscription } = useSubscription();
+console.log("currentPlan", currentSubscription);
 
 const typeValue = computed(() => {
   if (role === RoleEnum.Trainer) {
@@ -348,7 +358,7 @@ const handleChangeMembership = () => {
 };
 
 const selectProduct = (plan: any) => {
-  console.log(selectedPlanId);
+  console.log("selectedPlanId", selectedPlanId.value);
   if (Capacitor.isNativePlatform()) {
     selectedItem.value = InAppPurchase2.products
       .filter((value) => {
@@ -472,7 +482,7 @@ const showAgreement = async (url: string) => {
     box-shadow: inset 0 0 0 0.8px var(--gray-600);
 
     .gold {
-			color: var(--gold);
+			color: var(--new-gold);
 		}
 		.silver {
 			color: var(--silver);
@@ -536,21 +546,33 @@ const showAgreement = async (url: string) => {
 
       &.accessibility {
         color: var(--ion-color-primary);
+        font-family: "Lato";
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 150%;
+        margin: 8px 0px;
+        display: flex;
       }
     }
 
     ion-icon {
-      font-size: 10px;
-      margin-right: 6px;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-bottom: -4px;
     }
   }
 }
 .status-text {
+  font-family: "Lato";
   color: var(--gray-700);
   background-color: #E1DBC5;
   border-radius: 20px;
-  font: 500 12px/1 Lato;
-  padding: 2px 9px 2px 9px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  margin-left: 11px;
+  line-height: 150%;
 }
 .holder-button {
   backdrop-filter: blur(10px);
@@ -590,5 +612,19 @@ const showAgreement = async (url: string) => {
     margin: 0;
     white-space: normal;
   }
+}
+.plan-unit {
+  font-family: "Lato";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+}
+.short-note {
+  font-family: "Lato";
+  font-size: 10px;
+  font-style: italic;
+  line-height: 150%;
+  color: rgba(255, 255, 255, 0.60);
 }
 </style>

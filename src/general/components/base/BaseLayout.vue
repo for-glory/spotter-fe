@@ -7,14 +7,90 @@
       '--offset': offsetTop + 'px',
     }"
   >
+
+    <!-- <div class="content-section"> -->
+    <div class="dashboard-container" v-if="getPlatform == 'desktop'">
+      <div class="dashboard-container__sidebar">
+        <dashboard-sidebar />
+        
+      </div>
+      <div class="dashboard-container__right-section abc">
+        <!-- <slot name="right-section"> -->
+        <ion-content
+          ref="content"
+          :fullscreen="true"
+          :scroll-events="draggable"
+          @ionScroll="onContentScroll"
+          @touchend="onContentTouchEnd"
+          :scroll-y="initialBreakpoint < 1"
+          @touchstart="onContentTouchStart"
+          @ionScrollEnd="onContentScrollEnd"
+          @ionScrollStart="onContentScrollStart"
+          class="page-content has-footer has-header"
+          :class="{
+            'page-content--full-height': contentFullHeight,
+            'page-content--fullscreen': isFullscreenView,
+            'top-24': isPlatform('ios'),
+          }"
+        >
+        <dashboard-searchbar />
+          <template v-if="draggable">
+            <ion-backdrop
+              :visible="true"
+              :tappable="false"
+              :style="{
+                opacity:
+                  1 - scrollPercents < 0
+                    ? 0
+                    : 1 - scrollPercents > 1
+                    ? 1
+                    : 1 - scrollPercents,
+              }"
+            >
+            </ion-backdrop>
+            <div
+              class="fixed-content"
+              :class="{
+                'fixed-content--fullheight': initialBreakpoint === 1,
+              }"
+            >
+              <slot name="static"></slot>
+            </div>
+
+            <div
+              class="draggable-content"
+              :style="{
+                background: draggableBackground,
+                '--background': draggableBackground,
+              }"
+            >
+              <span
+                draggable="true"
+                class="draggable-content__drag-handle"
+                :style="{ '--offset': offsetTop + 'px' }"
+                :class="{
+                  'draggable-content__drag-handle--fixed': isFullscreenView,
+                }"
+              >
+              </span>
+              <slot name="draggable"></slot>
+            </div>
+          </template>
+
+          <slot v-else name="content"></slot>
+        </ion-content>
+        <!-- </slot> -->
+      </div>
+    </div>
     <ion-header
+      v-if="getPlatform == 'ios' || getPlatform == 'android'"
       class="header ion-no-border"
       :class="{ 'header--fixed': headerFixed }"
     >
       <slot name="header"></slot>
     </ion-header>
-
     <ion-content
+      v-if="getPlatform == 'ios' || getPlatform == 'android'"
       ref="content"
       :fullscreen="true"
       :scroll-events="draggable"
@@ -47,7 +123,9 @@
         </ion-backdrop>
         <div
           class="fixed-content"
-          :class="{ 'fixed-content--fullheight': initialBreakpoint === 1 }"
+          :class="{
+            'fixed-content--fullheight': initialBreakpoint === 1,
+          }"
         >
           <slot name="static"></slot>
         </div>
@@ -74,7 +152,7 @@
 
       <slot v-else name="content"></slot>
     </ion-content>
-
+    <!-- </div> -->
     <ion-footer
       v-if="!hideNavigationMenu"
       :class="{ 'page-footer--content-width': !fullWidthFooter }"
@@ -97,6 +175,7 @@ export default {
 
 <script setup lang="ts">
 import {
+  computed,
   defineExpose,
   defineProps,
   onMounted,
@@ -110,14 +189,19 @@ import {
   IonContent,
   IonFooter,
   IonBackdrop,
-  isPlatform
+  isPlatform,
 } from "@ionic/vue";
 import NavigationMenu from "@/general/components/NavigationMenu.vue";
+import DashboardSidebar from "@/general/components/blocks/DashboardSidebar.vue";
 import useRoles from "@/hooks/useRole";
+import DashboardSearchbar from "@/general/components/blocks/DashboardSearchbar.vue"; 
 import { navigationMenu as navigation } from "@/const/navigation";
 import { IonContentCustomEvent, ScrollDetail } from "@ionic/core";
 import { RoleEnum } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
+import { Capacitor } from "@capacitor/core";
+import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
+const isSearchOnFocus = ref<boolean>(false);
 
 const props = withDefaults(
   defineProps<{
@@ -302,6 +386,19 @@ onUnmounted(() => {
     window.removeEventListener("resize", getBreakpoint);
   }
 });
+
+const getPlatform = computed(() => {
+  if (Capacitor.isNativePlatform()) {
+    if (isPlatform("android")) {
+      return "android";
+    }
+    if (isPlatform("ios")) {
+      return "ios";
+    }
+  } else {
+    return "desktop";
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -424,5 +521,21 @@ onUnmounted(() => {
 }
 .top-24 {
   padding-top: 24px;
+}
+
+.dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+
+  &__sidebar {
+    width: 256px;
+    box-shadow: 6px 0px 18px 0px rgba(0, 0, 0, 0.25);
+    background: var(--gray-700);
+  }
+
+  &__right-section {
+    width: calc(100% - 256px);
+  }
 }
 </style>

@@ -2,8 +2,7 @@
 
   <base-layout :hide-navigation-menu="isSearchOnFocus">
     <template #header>
-      <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
-        @handle-blur="isSearchOnFocus = false" />
+
 
       <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
@@ -466,7 +465,7 @@
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
+                  <ion-button class="evnt_btn"><router-link to="/users/discover/event_detail">Register</router-link></ion-button>
                 </div>
               </div>
               </div>
@@ -475,9 +474,6 @@
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/train.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Train Meeting</ion-label>
@@ -502,7 +498,7 @@
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
+                  <ion-button class="evnt_btn"><router-link to="/users/discover/event_detail">Register</router-link></ion-button>
                 </div>
               </div>
               </div>
@@ -510,9 +506,6 @@
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/run.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Run Competition</ion-label>
@@ -537,7 +530,7 @@
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
+                  <ion-button class="evnt_btn"><router-link to="/users/discover/event_detail">Register</router-link></ion-button>
                 </div>
               </div>
               </div>
@@ -545,9 +538,6 @@
             <ion-item lines="none" class="event">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/run.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Run Competition</ion-label>
@@ -572,7 +562,7 @@
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
+                  <ion-button class="evnt_btn"><router-link to="/users/discover/event_detail">Register</router-link></ion-button>
                 </div>
               </div>
               </div>
@@ -664,7 +654,7 @@ import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
+
 import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
 import { ActivityItem } from "@/interfaces/ActivityItem";
 

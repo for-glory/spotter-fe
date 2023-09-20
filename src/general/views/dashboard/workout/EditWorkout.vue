@@ -326,6 +326,7 @@ const handleSubmit = () => {
         level: store.workoutType?.id,
         body_parts: store.workoutMuscleTypesIds,
         video: store.path ?? '',
+        duration: store.workoutDuration,
         preview: store.path ? store.workoutPath : ''
       }
     })
@@ -372,6 +373,7 @@ const videoSelected = async (
         `${process.env.VUE_APP_MEDIA_URL}${res?.data.videoPreload.thumbnail_path}`
       );
       store.setValue("workoutPath", res?.data.videoPreload.thumbnail_path);
+      store.setValue("workoutDuration", res?.data.videoPreload.duration);
       videoOnLoading.value = false;
       percentLoaded.value = undefined;
       videoInfo.value.size = size;

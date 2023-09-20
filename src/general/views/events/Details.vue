@@ -1,57 +1,111 @@
 <template>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
-  <detail
-    hiddenReviews
-    :name="eventData?.title"
-    :photos-url="eventData?.media"
-    :address="eventData?.address"
-    footer-subtitle="Event"
-    buttonText="Purchase Entry"
-    advantagesTitle="Amenities"
-    equipmentsTitle="Equipments"
-    :show-share-button="eventData?.trainerId !== id"
-    :edit-button="eventData?.trainerId === id"
-    @handle-book="onBook"
-    @handle-edit="onEdit"
-    :is-trusted="isTrusted"
-    :disabled="addToCartLoading"
-    :ordered="ordered"
-    v-else
-    :show-advantages="eventData?.amenities.length"
-    :show-equipments="eventData?.equipments.length"
-  >
-    <template #info>
-      <info
-        :start-date="eventData?.startDate || ''"
-        start-date-label="Start date"
-        :price="`$${eventData?.price}`"
-        price-label="Entry"
-        :members="`${eventData?.bookedCount}/${eventData?.maxParticipants}`"
-        members-label="Members"
-      />
-    </template>
-    <template #content>
-      <div class="holder-content ion-padding-horizontal">
-        <ion-text v-html="eventData?.description || ''" />
-      </div>
-    </template>
-    <template #advantages>
-      <advantage-item
-        v-for="(amenity, index) in eventData?.amenities"
-        :icon="amenityIcon(amenity)"
-        :title="amenity?.name"
-        :key="index"
-      />
-    </template>
-    <template #equipments>
-      <advantage-item
-        v-for="(equipment, index) in eventData?.equipments"
-        :icon="amenityIcon(equipment)"
-        :title="equipment?.name"
-        :key="index"
-      />
-    </template>
-  </detail>
+  <div v-else>
+    <event-detail
+      v-if="!Capacitor.isNativePlatform()"
+      hiddenReviews
+      :name="eventData?.title"
+      :photos-url="eventData?.media"
+      :address="eventData?.address"
+      footer-subtitle="Event"
+      buttonText="Purchase Entry"
+      advantagesTitle="Amenities"
+      equipmentsTitle="Equipments"
+      :show-share-button="eventData?.trainerId !== id"
+      :edit-button="eventData?.trainerId === id"
+      @handle-book="onBook"
+      @handle-edit="onEdit"
+      :is-trusted="isTrusted"
+      :disabled="addToCartLoading"
+      :ordered="ordered"
+      :show-advantages="eventData?.amenities.length"
+      :show-equipments="eventData?.equipments.length"
+    >
+      <template #info>
+        <info
+          :start-date="eventData?.startDate || ''"
+          start-date-label="Start date"
+          :price="`$${eventData?.price}`"
+          price-label="Entry"
+          :members="`${eventData?.bookedCount}/${eventData?.maxParticipants}`"
+          members-label="Members"
+        />
+      </template>
+      <template #content>
+        <div class="holder-content ion-padding-horizontal">
+          <ion-text v-html="eventData?.description || ''" />
+        </div>
+      </template>
+      <template #advantages>
+        <advantage-item
+          v-for="(amenity, index) in eventData?.amenities"
+          :icon="amenityIcon(amenity)"
+          :title="amenity?.name"
+          :key="index"
+        />
+      </template>
+      <template #equipments>
+        <advantage-item
+          v-for="(equipment, index) in eventData?.equipments"
+          :icon="amenityIcon(equipment)"
+          :title="equipment?.name"
+          :key="index"
+        />
+      </template>
+    </event-detail>
+    <detail
+      v-else
+      hiddenReviews
+      :name="eventData?.title"
+      :photos-url="eventData?.media"
+      :address="eventData?.address"
+      footer-subtitle="Event"
+      buttonText="Purchase Entry"
+      advantagesTitle="Amenities"
+      equipmentsTitle="Equipments"
+      :show-share-button="eventData?.trainerId !== id"
+      :edit-button="eventData?.trainerId === id"
+      @handle-book="onBook"
+      @handle-edit="onEdit"
+      :is-trusted="isTrusted"
+      :disabled="addToCartLoading"
+      :ordered="ordered"
+      :show-advantages="eventData?.amenities.length"
+      :show-equipments="eventData?.equipments.length"
+    >
+      <template #info>
+        <info
+          :start-date="eventData?.startDate || ''"
+          start-date-label="Start date"
+          :price="`$${eventData?.price}`"
+          price-label="Entry"
+          :members="`${eventData?.bookedCount}/${eventData?.maxParticipants}`"
+          members-label="Members"
+        />
+      </template>
+      <template #content>
+        <div class="holder-content ion-padding-horizontal">
+          <ion-text v-html="eventData?.description || ''" />
+        </div>
+      </template>
+      <template #advantages>
+        <advantage-item
+          v-for="(amenity, index) in eventData?.amenities"
+          :icon="amenityIcon(amenity)"
+          :title="amenity?.name"
+          :key="index"
+        />
+      </template>
+      <template #equipments>
+        <advantage-item
+          v-for="(equipment, index) in eventData?.equipments"
+          :icon="amenityIcon(equipment)"
+          :title="equipment?.name"
+          :key="index"
+        />
+      </template>
+    </detail>
+  </div>
   <confirmation
     :is-visible="showConfirmationModal"
     title="Do you want to delete account"
@@ -72,7 +126,8 @@ export default {
 <script setup lang="ts">
 import { IonText, IonSpinner, actionSheetController } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
-import Detail from "@/general/components/EventDetail.vue";
+import EventDetail from "@/general/components/EventDetail.vue";
+import Detail from "@/general/components/Detail.vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   AddToCartDocument,
@@ -94,6 +149,7 @@ import useId from "@/hooks/useId";
 import { Share } from "@capacitor/share";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { Capacitor } from "@capacitor/core";
 
 const route = useRoute();
 const router = useRouter();

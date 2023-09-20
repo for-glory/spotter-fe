@@ -9,8 +9,8 @@
         name="lines"
         class="spinner"
       />
-      <div class="membership" v-else>
-        <ion-text class="status-text">Your plan is currently active</ion-text>
+      <div class="membership" :class="{ 'tr-membership': role === RoleEnum.Trainer }" v-else>
+        <ion-text v-if="role !== RoleEnum.Trainer"  class="status-text">Your plan is currently active</ion-text>
         <div class="plans">
           <ion-item
             lines="none"
@@ -49,8 +49,11 @@
                   </li>
                 </ul>
               </div>
-              <div class="tax-text">
+              <div class="tax-text" v-if="role !== RoleEnum.Trainer">
                 {{currentPlan?.tier === 'SILVER' ? "* Taxes and fees may apply." : currentPlan?.tier === 'GOLD' ? '* Reduced rate for multiple locations. Contact us for pricing.' : ''}}
+              </div>
+              <div class="tax-text" v-else>
+                * Short “workout of the day” videos Trainers can post for Clients/Users to purchase and download
               </div>
             </div>
           </ion-item>
@@ -70,14 +73,9 @@ import {
   IonText,
   IonItem,
   IonLabel,
-  IonRadio,
-  IonRadioGroup,
   IonIcon,
   isPlatform,
   IonSpinner,
-  onIonViewDidLeave,
-  IonCheckbox,
-  IonSlide,
   IonSlides
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
@@ -96,8 +94,6 @@ import { ref, onMounted } from "vue";
 import useRoles from "@/hooks/useRole";
 import { computed } from "@vue/reactivity";
 import { InAppPurchase2, IAPProduct } from "@ionic-native/in-app-purchase-2";
-import dayjs from "dayjs";
-import { Browser } from "@capacitor/browser";
 import { setAuthItemsFromMe } from "@/router/middleware/auth";
 import useSubscription from "@/hooks/useSubscription";
 import { Capacitor } from '@capacitor/core';
@@ -624,6 +620,46 @@ const onChangeMembership = () => {
   ion-label {
     margin: 0;
     white-space: normal;
+  }
+}
+
+.tr-membership {
+  .radiobutton {
+    --inner-padding-top: 27px;
+    &__block {
+      padding: 0;
+    }
+    &__label {
+      color: var(--gold);
+    }
+    &__cost {
+      padding-bottom: 16px;
+      span {
+        font-size: 14px;
+      }
+    }
+    .accessibility {
+      ion-text {
+        color: var(--fitnesswhite);
+      }
+    }
+    .tax-text {
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.60);
+      font-size: 10px;
+    }
+  }
+
+  .membership-buttons {
+    ion-button {
+      --border-radius: 8px !important;
+      font-weight: 500 !important;
+    }
+    #change {
+      --color: var(--gray-700) !important;
+      --background: var(--gold) !important;
+      margin-bottom: 16px;
+    }
   }
 }
 </style>

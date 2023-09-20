@@ -1,11 +1,11 @@
 <template>
   <base-layout hide-navigation-menu>
     <template #header>
-      <page-header back-btn title="Order confirmation" @back="onBack" />
+      <page-header back-btn title="Order confirmation" :title-class="role === RoleEnum.Trainer ? 'title-ytmn-20' : undefined"  @back="onBack" />
     </template>
     <template #content>
       <ion-spinner v-if="loading" name="lines" class="spinner" />
-      <div class="content" v-else>
+      <div class="content" :class="{ 'tr-content': role === RoleEnum.Trainer }" v-else>
         <ion-text
           >Automatically receive confirmation notification when session is
           booked or canceled</ion-text
@@ -13,6 +13,7 @@
         <base-toggle
           :value="autoOrderConfirmation"
           content="Auto order confirmation"
+          class="tr-toggle"
           @change="onHandleChange"
         />
       </div>
@@ -28,14 +29,17 @@ import { useRouter } from "vue-router";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   MeDocument,
+  RoleEnum,
   SettingsCodeEnum,
   UpdateUserDocument,
 } from "@/generated/graphql";
 import useId from "@/hooks/useId";
 import { ref } from "vue";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const { id } = useId();
+const { role } = useRoles();
 
 const autoOrderConfirmation = ref(false);
 
@@ -91,5 +95,15 @@ ion-text {
 .spinner {
   display: block;
   margin: 30vh auto;
+}
+
+.tr-content { 
+  ion-text {
+    color: var(--gray-600);
+    font-family: Yantramanav;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+  }
 }
 </style>

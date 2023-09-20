@@ -65,6 +65,7 @@ export type Address = {
   lat?: Maybe<Scalars["Float"]>;
   lng?: Maybe<Scalars["Float"]>;
   street?: Maybe<Scalars["String"]>;
+
 };
 
 export type AddressInput = {
@@ -73,6 +74,7 @@ export type AddressInput = {
   lat: Scalars["Float"];
   lng: Scalars["Float"];
   street?: InputMaybe<Scalars["String"]>;
+
 };
 
 export type Amenity = {
@@ -6587,7 +6589,24 @@ export const EventDocument = gql`
         }
       }
       address {
+        id
+        lat
+        lng
+        extra
         street
+        city {
+          id
+          name
+          country {
+            id
+            name
+          }
+          state {
+            id
+            name
+          }
+          }
+         
       }
       media {
         id

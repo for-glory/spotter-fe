@@ -35,6 +35,7 @@ const props = defineProps<{
   value?: boolean;
   content: string;
   loading?: boolean;
+  class?: string;
 }>();
 
 const emits = defineEmits<{

@@ -322,7 +322,7 @@
                 :width="null"
                 :height="null"
               />
-              <span class="pie-chart-title completed-chart-title">{{
+              <span class="pie-chart-title completed-chart-title" style="margin-right: 22%;">{{
                 pichartTitle
               }}</span>
             </template>
@@ -1467,6 +1467,8 @@ ion-col.col-gap.test {
     font-size: 26px;
     font-weight: 600;
   }
+
+
 
   .completed-chart-title {
     bottom: 20px;
