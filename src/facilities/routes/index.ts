@@ -102,7 +102,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.ProfileEditGym,
-    path: "/profile/edit-gym",
+    path: "/profile/edit-gym/:id?",
     component: () => import("@/facilities/views/EditGym.vue"),
     meta: {
       middleware: [auth],

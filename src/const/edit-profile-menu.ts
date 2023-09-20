@@ -112,6 +112,10 @@ export const editProfileMenu: EditProfileMenu = {
       label: "Add social links",
     },
     {
+      name: EntitiesEnum.DashboardListGyms,
+      label: "Location",
+    },
+    {
       name: EntitiesEnum.ProfileOrderConfirmation,
       label: "Order confirmation",
     },

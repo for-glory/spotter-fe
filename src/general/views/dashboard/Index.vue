@@ -1,7 +1,7 @@
 <template>
   <base-dashboard-layout>
     <template  #right-section>
-			<dashboard-searchbar />
+			<dashboard-searchbar  v-if="isWebView"/>
       <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 bg-main'">
         <router-view />
       </div>
@@ -15,9 +15,20 @@ import DashboardSearchbar from "@/general/components/blocks/DashboardSearchbar.v
 import { useRouter } from "vue-router";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
+import { defineProps, ref, withDefaults } from "vue";
+import { Capacitor } from '@capacitor/core';
 
 const router = useRouter();
 const { role } = useRoles();
+
+const props = withDefaults(
+  defineProps<{
+    isWebView?: boolean;
+  }>(),
+  {
+    isWebView: Capacitor.isNativePlatform() ? false : true,
+  }
+);
 </script>
 
 <style scoped lang="scss">

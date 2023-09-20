@@ -3,7 +3,7 @@
     <ion-segment
       id="page-tabs"
       mode="ios"
-      class="tabs"
+      class="tabs ion-margin-top"
       @ionChange="segmentChanged"
       :value="value || (tabs && tabs[0].name)"
     >
@@ -61,10 +61,10 @@ const getTabImage = (tabName: EntitiesEnum) => {
   border-radius: 8px;
   pointer-events: auto;
   backdrop-filter: blur(20px);
-  background: rgba(24, 24, 24, 0.64);
+  background: #262626;
 
   &__item {
-    margin: 0;
+    --margin-top: 0;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;

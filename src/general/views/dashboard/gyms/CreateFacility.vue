@@ -1,10 +1,15 @@
 <template>
-  <ion-modal ref="modal" class="modal" swipeToClose :backdrop-dismiss="true">
+  <ion-modal ref="modal" class="createFacilityModal" swipeToClose :backdrop-dismiss="true">
     <div class="content">
       <gym-form
         ref="gymForm"
         button-text="Create"
+        :edit="isEdit"
+        :nextButton="isEdit"
+        :nextButtonText="isEdit ? 'Next' : ''"
         @submit="createNewFacility"
+        @edit="updateFacilityDetails"
+        @cancel="onBack"
       />
     </div>
     <discard-changes
@@ -25,7 +30,7 @@ import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
 import { useMutation } from "@vue/apollo-composable";
 import {
-  CreateFacilityDocument,
+  CreateFacilityDocument, UpdateFacilityDocument,
 } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
 import { ref, defineExpose } from "vue";
@@ -35,7 +40,12 @@ import DiscardChanges from "@/general/components/modals/confirmations/DiscardCha
 
 const modal = ref<typeof IonModal | null>(null);
 
+const isEdit = ref(false);
+const selectedFacilityId = ref(null);
+
 const present = (p?: any) => {
+    isEdit.value = p?.isEdit;
+    selectedFacilityId.value = p?.selectedFacilityId;
     modal?.value?.$el.present();
 };
 
@@ -50,14 +60,19 @@ const isConfirmedModalOpen = ref(false);
 const facilityStore = useFacilityStore();
 
 const onBack = () => {
-  isConfirmedModalOpen.value = true;
+  console.log("### ", isEdit);
+  if(isEdit?.value) isConfirmedModalOpen.value = true;
+  else {
+    gymForm.value?.clearStore();
+    modal?.value?.$el.dismiss();
+  }
 };
 
 const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
     gymForm.value?.clearStore();
-    router.go(-1);
+    modal?.value?.$el.dismiss();
   }
 };
 
@@ -65,6 +80,10 @@ const gymForm = ref<typeof GymForm | null>(null);
 
 const { mutate: createFacility, onDone: facilityCreated } = useMutation(
   CreateFacilityDocument
+);
+
+const { mutate: updateFacility , onDone: facilityUpdated } = useMutation(
+  UpdateFacilityDocument
 );
 
 const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
@@ -96,6 +115,36 @@ const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
   });
 };
 
+const updateFacilityDetails = (data: newFacilityStoreTypes, mode: string) => {
+  const { registration_code } = JSON.parse(
+    localStorage.getItem("organization") || "{}"
+  );
+  updateFacility({
+    id: selectedFacilityId?.value,
+    input: {
+      name: data.title,
+      description: data.description,
+      address: {
+        lat: Number(data.address.address?.latitude),
+        lng: Number(data.address.address?.longitude),
+        street: `${data.address.address?.thoroughfare || ""}, ${
+          data.address.address?.subThoroughfare || ""
+        }`,
+        city_id: data.address.city?.id || "",
+      },
+      media: data.photos.map((photo, index) => {
+        return {
+          title: `${data.title}-${index}`,
+          file: photo.path,
+        };
+      }),
+      equipments: data.equipments.map((equipment) => equipment.id),
+      amenities: data.amenities.map((amenity) => amenity.id),
+      registration_code,
+    },
+  });
+};
+
 facilityCreated((res) => {
   gymForm.value?.clearStore();
   facilityStore.setFacility(res.data?.createFacility);
@@ -104,6 +153,14 @@ facilityCreated((res) => {
     name: EntitiesEnum.DashboardOverview,
   });
 });
+
+facilityUpdated((res) => {
+  gymForm.value?.clearStore();
+  facilityStore.setFacility(res.data?.createFacility);
+	setSelectedGym(res.data?.createFacility?.id);
+  modal?.value?.$el.dismiss();
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -111,7 +168,21 @@ facilityCreated((res) => {
   padding: calc(var(--ion-safe-area-top)) 24px
     calc(16px + var(--ion-safe-area-bottom));
 }
-.modal {
+.createFacilityModal {
+    ion-modal > .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+    ion-modal{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+
+    .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+    
     --ion-backdrop-opacity: 0.6;
     --ion-backdrop-color: var(--ion-color-black);
     --height: 100%;
@@ -152,5 +223,26 @@ facilityCreated((res) => {
             width: 100%;
         }
     }
+}
+
+@media (max-width: 767px) {
+  .createFacilityModal{
+    --width: 100%;
+
+    ion-modal > .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+    ion-modal{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+
+    .ion-page{
+      --position: absolute !important;
+      position: absolute !important;
+    }
+  }
+  
 }
 </style>

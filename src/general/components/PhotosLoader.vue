@@ -258,7 +258,7 @@ const getUploadedImg = (image: string) => {
     --background: var(--gray-700);
     --border-width: 0.8px;
     --border-style: dashed;
-    --border-color: var(--ion-color-medium);
+    --border-color: #ffffff99;
     --border-radius: 8px;
 
     &__loader {
