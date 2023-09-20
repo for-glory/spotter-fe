@@ -1,4 +1,4 @@
-
+Someone pls update this readme file with latest guide, this one is out of date, i am not able to build ios and android with this instructions here
 
 
 # Spotter app v1.01
