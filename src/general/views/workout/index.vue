@@ -234,9 +234,6 @@ const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetc
 
 onBeforeMount(() => {
   store.clearState();
-  if(!currentFacility.facility?.id) {
-    router.push({ name: EntitiesEnum.Overview });
-  }
 });
 
 const performanceData = ref<Array<any>>();
