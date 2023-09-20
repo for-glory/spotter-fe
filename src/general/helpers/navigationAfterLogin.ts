@@ -43,7 +43,7 @@ const navigationAfterAuth = (user: User) => {
       if (Capacitor.isNativePlatform()) {
         router.push({ name: EntitiesEnum.Dashboard });
       } else {
-        router.push({ name: EntitiesEnum.Dashboard });
+        router.push({ name: EntitiesEnum.DashboardOverview });
       }
 
       break;

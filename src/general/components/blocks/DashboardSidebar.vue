@@ -119,8 +119,8 @@
       </div>
       <div class="main-menu" v-if="role === RoleEnum.User">
         <div
-          :class="getMenuItemClass(EntitiesEnum.Dashboard)"
-          @click="onHandleClickMenu(EntitiesEnum.Dashboard)"
+          :class="getMenuItemClass(EntitiesEnum.DashboardOverview)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)"
         >
           <ion-icon src="assets/icon/dashboard.svg" />
           <ion-text>Dashboard</ion-text>
