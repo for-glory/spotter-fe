@@ -17,7 +17,7 @@
             </div>
             <div class="list-container" v-for="(item, index) in facilities">
                 <ion-card class="background-grey">
-                    <ion-card-content>
+                    <ion-card-content class="card-content">
                         <div class="d-flex ion-align-items-center ion-justify-content-center background-grey" style="gap: 10px">
                             <div>
                                 <ion-thumbnail>
@@ -26,20 +26,20 @@
                             </div>
 
                             <div class="cursor-pointer" style="width: 100%;" @click="goToGymDetails(item)">
-                                <div style="width: 100%; min-height: 50px">
+                                <div class="gym-name">
                                     <div class="d-flex justify-content-between title">
                                         <span>{{ item.name }}</span>
                                     </div>
                                 </div>
                                 <div class="d-flex-col time-location">
                                     <div class="d-flex justify-content-start ion-align-items-center subtitle">
-                                        <ion-icon size="14px" src="assets/icon/location.svg"></ion-icon> <span>{{
-                                            item.address?.street }}</span>
+                                        <ion-icon size="14px" src="assets/icon/location.svg"></ion-icon> 
+                                        <span>{{ item.address?.street }}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="delete-icon ion-margin-end">
-                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg"></ion-icon>
+                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg" @click="deleteGym(item)"></ion-icon>
                             </div>
                         </div>
                     </ion-card-content>
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                             <div class="delete-icon ion-margin-end">
-                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg"></ion-icon>
+                                <ion-icon class="cursor-pointer" src="assets/icon/delete.svg" @click="deleteGym(item)"></ion-icon>
                             </div>
                         </div>
                     </ion-card-content>
@@ -86,6 +86,14 @@
             </div>
     </template>
     <create-facility-modal ref="createFacilityModal" />
+    <discard-changes
+        :is-open="isDeleteModalOpen"
+        @close="deleteModalClosed"
+        title="Do you want to delete gym?"
+        text="Changes will not be saved"
+        cancelButton="Cancel"
+        button="Delete"
+    />
 </template>
 <script setup lang="ts">
 import dayjs from "dayjs";
@@ -95,7 +103,8 @@ import {
   RoleEnum,
   Query,
 
-  UserDocument
+  UserDocument,
+  DeleteFacilityDocument
 } from "@/generated/graphql";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
@@ -105,6 +114,9 @@ import { EntitiesEnum } from "@/const/entities";
 import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";
 import useRoles from "@/hooks/useRole";
 import { Capacitor } from '@capacitor/core';
+import { toastController } from "@ionic/vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { useMutation } from "@vue/apollo-composable";
 
 const { role } = useRoles();
 
@@ -116,7 +128,8 @@ const props = withDefaults(
     isWebView:  Capacitor.isNativePlatform() ? false : true,
   }
 );
-
+const isDeleteModalOpen = ref(false);
+const selectedGym = ref(null);
 const facilities = ref();
 const { id } = useId();
 const {
@@ -149,6 +162,43 @@ const goToGymDetails = (gym:any) => {
         }
     })
 }
+
+const { mutate: deleteFacility, onDone: facilityDeleted} = useMutation(
+  DeleteFacilityDocument
+);
+
+const deleteGym = (gym) => {
+    selectedGym.value = gym;
+    isDeleteModalOpen.value = true;
+}
+
+const deleteModalClosed = (approved: boolean) => {
+  isDeleteModalOpen.value = false;
+  if(approved){
+    deleteFacility({ id : selectedGym?.value?.id})
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Gym was deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      selectedGym.value = null;
+      refetch();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      selectedGym.value = null;
+      throw new Error(error);
+    });
+  }
+};
 
 const onBack = () => {
   router.go(-1);
@@ -219,6 +269,7 @@ const onBack = () => {
 }
 .card-content {
     padding: 12px 16px !important;
+    display: block !important;
 }
 
 .name-header {
@@ -233,11 +284,38 @@ const onBack = () => {
 @media (max-width: 767px) {
   .list-container{
     width: auto;
-    margin: 16px;
+    margin: 10px;
+  }
+
+    .gym-name {
+        width: 100% !important; 
+        min-height: 35px !important;
+    }
+    .card-content {
+        padding: 10px !important;
+        display: block !important;
+    }
+    .subtitle {
+        ion-icon {
+            color: #E1DBC5;
+            font-size: 1.6rem;
+            height: 26px;
+        }
+
+        span {
+            font-family: Yantramanav;
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 21px;
+            text-align: left !important;
+        }
+    }
     .delete-icon {
+        height: 26px;
+        color: #f86969;
+        font-size: 2.6rem !important;
         margin-right: 0;
     }
-  }
 }
 .cursor-pointer {
   cursor: pointer;
