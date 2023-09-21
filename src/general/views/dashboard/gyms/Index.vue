@@ -178,7 +178,7 @@
           </div>
         </div>
         <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
-          <div class="card-background" v-for="dailys in dailysData">
+          <div class="card-background" v-for="dailys in dailysData" @click="openViewModal(dailys)">
             <div class="d-flex">
               <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
               <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
@@ -200,7 +200,7 @@
           </div>
           </div>
           <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
-          <div class="card-background" v-for="event in allEvents">
+          <div class="card-background" v-for="event in allEvents" @click="openEvent(event.id)">
             <div class="d-flex">
               <ion-title class="ion-no-padding offering-title">{{ event?.title }}</ion-title>
               <!-- <ion-text class="offering-name ">{{ event?.description }}</ion-text> -->
@@ -354,7 +354,7 @@
                   </div>
                 </div>
                 <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
-                  <div class="card-background" v-for="dailys in dailysData">
+                  <div class="card-background" v-for="dailys in dailysData"  @click="openViewModal(dailys)">
                     <div class="d-flex">
                       <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
                       <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
@@ -447,6 +447,7 @@
     cancelButton="Cancel"
     button="Delete"
   />
+  <view-daily-modal ref="dailyModal"  />
 </template>
 
 
@@ -515,6 +516,22 @@ import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { Capacitor } from '@capacitor/core';
 import { useMutation } from "@vue/apollo-composable";
 import { toastController } from "@ionic/vue";
+import ViewDailyModal from "@/general/components/modals/workout/ViewDailyModal.vue"
+
+const dailyModal = ref<typeof ViewDailyModal | null>(null);
+
+const openViewModal = (daily: any) => {
+  dailyModal.value?.present({ ...daily });
+};
+
+const openEvent = (eventId: string) => {
+  router.push({
+    name: EntitiesEnum.EventsDetailed,
+    params: {
+      id: eventId,
+    },
+  });
+};
 
 const props = withDefaults(
   defineProps<{
