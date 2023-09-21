@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="review-cards">
-                            <base-carousel show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
+                            <base-carousel class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
                                     <div class="review-card" v-for="review in reviews">
                                         <div class="review-header">
@@ -767,7 +767,12 @@ const specialNeeds = computed<string | null>(() => {
     // gap: 16px;
     margin-top: 16px;
     // overflow: auto;
-
+    position: relative;
+    width: 100%;
+    .review-swiper {
+        position: absolute;
+        width: 100%;
+    }
     .review-card {
         padding: 16px;
         // max-width: 324px;
