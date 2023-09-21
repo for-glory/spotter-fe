@@ -5710,6 +5710,15 @@ export const CreateFacilityDocument = gql`
     }
   }
 `;
+
+export const DeleteFacilityDocument = gql`
+  mutation deleteFacility($id: ID!) {
+    deleteFacility(id: $id) {
+      id
+    }
+  }
+`;
+
 export const CheckOrganizationRegistrationCodeDocument = gql`
   query checkOrganizationRegistrationCode($code: String!) {
     checkOrganizationRegistrationCode(code: $code) {

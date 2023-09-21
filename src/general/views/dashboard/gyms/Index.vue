@@ -178,7 +178,14 @@
           </div>
         </div>
         <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
-          <div class="card-background" v-for="dailys in dailysData">
+          <div class="card-background"  v-if="!dailysData || !dailysData.length">
+            <empty-block
+              title="Dailys Empty"
+              hideButton
+              text="No offering Dailys available for this location, create new Dailys to get started"
+            />
+          </div>
+          <div class="card-background" v-for="dailys in dailysData" @click="openViewModal(dailys)">
             <div class="d-flex">
               <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
               <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
@@ -200,7 +207,14 @@
           </div>
           </div>
           <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
-          <div class="card-background" v-for="event in allEvents">
+            <div class="card-background"  v-if="!allEvents || !allEvents.length">
+              <empty-block
+                title="Events Empty"
+                hideButton
+                text="No offering Events available for this location, create new Events to get started"
+              />
+            </div>
+          <div class="card-background" v-for="event in allEvents" @click="openEvent(event.id)">
             <div class="d-flex">
               <ion-title class="ion-no-padding offering-title">{{ event?.title }}</ion-title>
               <!-- <ion-text class="offering-name ">{{ event?.description }}</ion-text> -->
@@ -354,7 +368,14 @@
                   </div>
                 </div>
                 <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
-                  <div class="card-background" v-for="dailys in dailysData">
+                  <div class="card-background"  v-if="!dailysData || !dailysData.length">
+                    <empty-block
+                      title="Dailys Empty"
+                      hideButton
+                      text="No offering Dailys available for this location, create new Dailys to get started"
+                    />
+                  </div>
+                  <div class="card-background" v-for="dailys in dailysData"  @click="openViewModal(dailys)">
                     <div class="d-flex">
                       <ion-title class="ion-no-padding offering-title">{{ dailys?.title }}</ion-title>
                       <ion-text class="offering-name ion-text-end">{{ dailys?.type?.name }}</ion-text>
@@ -376,7 +397,14 @@
                   </div>
                   </div>
                   <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
-                  <div class="card-background" v-for="event in allEvents">
+                    <div class="card-background"  v-if="!allEvents || !allEvents.length">
+                      <empty-block
+                        title="Events Empty"
+                        hideButton
+                        text="No offering Events available for this location, create new Events to get started"
+                      />
+                    </div>
+                  <div class="card-background" v-for="event in allEvents"  @click="openEvent(event.id)">
                     <div class="d-flex">
                       <ion-title class="ion-no-padding offering-title">{{ event?.title }}</ion-title>
                       <!-- <ion-text class="offering-name ">{{ event?.description }}</ion-text> -->
@@ -447,6 +475,7 @@
     cancelButton="Cancel"
     button="Delete"
   />
+  <view-daily-modal ref="dailyModal"  />
 </template>
 
 
@@ -481,6 +510,7 @@ import {
   SortOrder,
   WorkoutsByFacilityDocument,
   QueryFacilityWorkoutsOrderByColumn,
+  DeleteFacilityDocument,
 GetCustomersByFacilityItemsDocument
 } from "@/generated/graphql";
 import { TabItem } from "@/interfaces/TabItem";
@@ -512,6 +542,25 @@ import {
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useDailysItemsStore } from "@/general/stores/useDailysItemsStore";
 import { Capacitor } from '@capacitor/core';
+import { useMutation } from "@vue/apollo-composable";
+import { toastController } from "@ionic/vue";
+import ViewDailyModal from "@/general/components/modals/workout/ViewDailyModal.vue";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
+
+const dailyModal = ref<typeof ViewDailyModal | null>(null);
+
+const openViewModal = (daily: any) => {
+  dailyModal.value?.present({ ...daily });
+};
+
+const openEvent = (eventId: string) => {
+  router.push({
+    name: EntitiesEnum.EventsDetailed,
+    params: {
+      id: eventId,
+    },
+  });
+};
 
 const props = withDefaults(
   defineProps<{
@@ -523,6 +572,10 @@ const props = withDefaults(
 );
 
 const deleteGymModal = ref<typeof DeleteGymModal | null>(null);
+
+const { mutate: deleteFacility, onDone: facilityDeleted} = useMutation(
+  DeleteFacilityDocument
+);
 
 const createFacilityModal = ref<typeof CreateFacilityModal | null>(null);
 
@@ -630,8 +683,8 @@ const tabs: TabItemNew[] = [
 
   {
     name: EntitiesEnum.Trainings,
-    labelActive: "assets/icon/TrainerActive.png",
-    labelInactive: "assets/icon/Trainer.png",
+    labelActive: "assets/icon/DailysActive.png",
+    labelInactive: "assets/icon/DailysInactive.png",
   },
   {
     name: EntitiesEnum.Events,
@@ -660,6 +713,7 @@ const {
 
 onMounted(() => {
   refetch();
+  eventsRefetch();
 });
 
 const reviews = computed(() =>
@@ -743,6 +797,28 @@ const deleteGym = () => {
 
 const deleteModalClosed = (approved: boolean) => {
   isDeleteModalOpen.value = false;
+  if(approved){
+    deleteFacility({ id : currentFacilityId})
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Gym was deleted successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      goBack();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+      throw new Error(error);
+    });
+  }
 };
 
 const goBack = () => {
@@ -751,7 +827,7 @@ const goBack = () => {
 
 // Events List
 const idFilter = computed(() => {
-  return { created_by_facility: result.value?.facility?.id }
+  return { created_by_facility: currentFacilityId }
 });
 
 const eventsPage = ref<number>(1);
@@ -793,6 +869,7 @@ const events = computed(() => {
 
 gotEvents((response) => {
   totalEvents.value = response.data?.events?.paginatorInfo.total ?? 0;
+  allEvents.value = [];
   response.data?.events?.data.map(item => {
     allEvents.value.push({
       ...item,
@@ -816,7 +893,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   {
     page: 1,
     first: 1000,
-    facility_id: result.value?.facility?.id,
+    facility_id: currentFacilityId,
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
     order: SortOrder.Asc,
   },
@@ -845,6 +922,10 @@ gotDailysData(({ data }) => {
 const dailysData = computed(
   () => dailysItemsStore.dailysData
 );
+
+const onBack = () => {
+  router.go(-1);
+};
 // Dailys End
 
 // Passes start
@@ -978,13 +1059,13 @@ const dailysData = computed(
   position: fixed;
   right: 0;
   top: 90px;
-  height: 100%;
+  height: 86vh;
   // background-color: var(--gray-700);
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 9px;
   padding-bottom: 37px;
-  overflow-y: scroll;
+  overflow: auto;
   margin-top: 4%;
 
   .share-btn {
@@ -1146,7 +1227,7 @@ const dailysData = computed(
 
 .tabs-text-content {
   background-color: #262626;
-  max-height: 20vh;
+  max-height: 25vh;
   padding: 10px;
   border-radius: 8px;
   overflow: auto;
@@ -1230,7 +1311,7 @@ const dailysData = computed(
     padding-top: 0;
   }
   .media-item {
-    width: 100% !important;
+    width: 100vw !important;
     max-height: 275px !important;
     object-fit: cover;
   }
