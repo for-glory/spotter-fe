@@ -122,7 +122,6 @@ const openViewModal = (daily: any) => {
 .desktop {
   .swiper-slide {
     width: 40%;
-    min-width: 400px;
   }
 }
 
