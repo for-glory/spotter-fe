@@ -159,9 +159,11 @@ import {
   ShowWorkoutDocument,
   DailyAnalyticsDocument,
   DailyPerformanceDocument,
+  DailyAnalyticsForTrainerDocument,
+  DailyPerformanceForTrainerDocument,
   WorkoutStatesEnum,
   WorkoutsDocument,
-  RoleEnum
+  RoleEnum,
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed, onMounted, onBeforeMount } from "vue";
@@ -232,16 +234,20 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   }
 );
 const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
-  DailyAnalyticsDocument,
-  {
-    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
-    limit: performanceLimit.value
+  isFacilityOwner ? DailyAnalyticsDocument : DailyAnalyticsForTrainerDocument,
+  isFacilityOwner ? {
+    facility_id: currentFacility.facility?.id,
+  } : {
+    trainer_id: currentTrainer.trainer?.id
   }
 );
 const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
-  DailyPerformanceDocument,
-  {
-    facility_id: currentFacility.facility?.id || localStorage.getItem("selected_facility"),
+  isFacilityOwner ? DailyPerformanceDocument : DailyPerformanceForTrainerDocument,
+  isFacilityOwner ? {
+    facility_id: currentFacility.facility?.id,
+    limit: 7
+  } : {
+    trainer_id: currentTrainer.trainer?.id,
     limit: 7
   }
 );

@@ -180,6 +180,8 @@ import {
   ShowWorkoutDocument,
   DailyAnalyticsDocument,
   DailyPerformanceDocument,
+  DailyAnalyticsForTrainerDocument,
+  DailyPerformanceForTrainerDocument,
   WorkoutStatesEnum,
   WorkoutsDocument,
   RoleEnum
@@ -253,20 +255,23 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   }
 );
 const { result: dailysAnalyticsResult, loading: dailysAnalyticsLoading, refetch: refetchDailysAnalytics, onResult: gotDailysAnalyticsData } = useQuery(
-  DailyAnalyticsDocument,
-  {
+  isFacilityOwner ? DailyAnalyticsDocument : DailyAnalyticsForTrainerDocument,
+  isFacilityOwner ? {
     facility_id: currentFacility.facility?.id,
-    limit: performanceLimit.value
+  } : {
+    trainer_id: currentTrainer.trainer?.id
   }
 );
 const { result: dailyPerformanceResult, loading: dailyPerformanceLoading, refetch: refetchDailyPerformance, onResult: gotDailysPerformanceData } = useQuery(
-  DailyPerformanceDocument,
-  {
+  isFacilityOwner ? DailyPerformanceDocument : DailyPerformanceForTrainerDocument,
+  isFacilityOwner ? {
     facility_id: currentFacility.facility?.id,
+    limit: 7
+  } : {
+    trainer_id: currentTrainer.trainer?.id,
     limit: 7
   }
 );
-
 onMounted(() => {
   store.clearState();
 });
