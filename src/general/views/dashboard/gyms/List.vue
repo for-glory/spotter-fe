@@ -26,7 +26,7 @@
                             </div>
 
                             <div class="cursor-pointer" style="width: 100%;" @click="goToGymDetails(item)">
-                                <div style="width: 100%; min-height: 50px">
+                                <div class="gym-name">
                                     <div class="d-flex justify-content-between title">
                                         <span>{{ item.name }}</span>
                                     </div>
@@ -287,6 +287,10 @@ const onBack = () => {
     margin: 10px;
   }
 
+    .gym-name {
+        width: 100% !important; 
+        min-height: 35px !important;
+    }
     .card-content {
         padding: 10px !important;
         display: block !important;
@@ -309,7 +313,7 @@ const onBack = () => {
     .delete-icon {
         height: 26px;
         color: #f86969;
-        font-size: 2.6rem;
+        font-size: 2.6rem !important;
         margin-right: 0;
     }
 }
