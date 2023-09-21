@@ -174,12 +174,15 @@ import { EntitiesEnum } from "@/const/entities";
 import {
   WorkoutsByFacilityDocument,
   QueryFacilityWorkoutsOrderByColumn,
+  QueryWorkoutsOrderByColumn,
   SortOrder,
   HideWorkoutDocument,
   ShowWorkoutDocument,
   DailyAnalyticsDocument,
   DailyPerformanceDocument,
-  WorkoutStatesEnum
+  WorkoutStatesEnum,
+  WorkoutsDocument,
+  RoleEnum
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed, onMounted } from "vue";
@@ -191,6 +194,7 @@ import useId from "@/hooks/useId";
 import useSubscription from "@/hooks/useSubscription";
 import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import WorkoutsSwiper from "@/general/components/dashboard/workouts/WorkoutsSwiper.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
 // import dayjs from "dayjs";
@@ -205,10 +209,12 @@ const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const tab = ref<string>('dailys');
 const filter = ref<string>('all');
 const performanceLimit = ref<string>('7');
+const { role } = useRoles();
 
 const { id: myId } = useId();
 const { type: subscriptionType } = useSubscription();
 const currentFacility = useFacilityStore();
+const currentTrainer = useTrainerStore();
 const dailysItemsStore = useDailysItemsStore();
 const summaryData = ref<any>({
   totalViews: 0,
@@ -221,18 +227,25 @@ const router = useRouter();
 const store = useDailysStore();
 const dailyModal = ref<typeof ViewDailyModal | null>(null);
 
-
+const isFacilityOwner = role === (RoleEnum.FacilityOwner || RoleEnum.OrganizationOwner);
+const allDailys = computed(() => isFacilityOwner ? [ ...dailysResult.value.facilityWorkouts.data ] : [ ...dailysResult.value.workouts.data ]);
 const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
-  WorkoutsByFacilityDocument,
-  {
+  isFacilityOwner ? WorkoutsByFacilityDocument : WorkoutsDocument,
+  isFacilityOwner ? {
     page: 1,
     first: 1000,
     facility_id: currentFacility.facility?.id,
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Asc,
+  } : {
+    page: 1,
+    first: 1000,
+    trainer_id: currentTrainer.trainer?.id,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
     order: SortOrder.Asc,
   },
   {
@@ -260,19 +273,17 @@ onMounted(() => {
 
 const performanceData = ref<Array<any>>();
 const trendingDailys = computed(() => {
-  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+  let dailys = allDailys.value;
   let trending = dailys.filter((daily) => daily.views_count > 0).sort((a: any, b: any) => {
     return b.views_count - a.views_count;
   }).slice(0, 10);
-  console.log(trending);
   return trending;
 });
 const recommendedDailys = computed(() => {
-  let dailys = [ ...dailysResult.value.facilityWorkouts.data ];
+  let dailys = allDailys.value;
   let recommend = dailys.filter((daily) => daily.recommended_count > 0).sort((a: any, b: any) => {
     return b.recommended_count - a.recommended_count;
   }).slice(0, 10);
-  console.log(recommend);
   return recommend;
 });
 
@@ -283,12 +294,12 @@ const onDelete = () => {
 }
 
 gotDailysData(({ data }) => {
-  let dailys = [ ...data.facilityWorkouts.data ];
+  let dailys = allDailys.value;
   dailys.sort((a: any, b: any) => {
     return a.total_revenue - b.total_revenue;
   });
   summaryData.value.topDailys = dailys.slice(0, 10);
-  let recentDailys = [ ...data.facilityWorkouts.data ];
+  let recentDailys = allDailys.value;
   recentDailys.sort((a: any, b: any) => {
     const dateFirst = dayjs(a, "h:mm A");
     const dateLast = dayjs(b, "h:mm A");

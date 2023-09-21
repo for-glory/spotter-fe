@@ -24,7 +24,7 @@
               style="gap: 8px"
             >
               <ion-title class="name selected"
-                >{{ facilityName || "Tamra Dae" }}
+                >{{ name }}
               </ion-title>
               <ion-icon
                 size="12px"
@@ -33,7 +33,7 @@
               ></ion-icon>
             </div>
             <ion-text class="address">{{
-              facilityAddress || "Arizona, Phoenix, USA"
+              address
             }}</ion-text>
           </div>
         </div>
@@ -310,6 +310,7 @@ import { ref, computed, watch, defineProps, withDefaults } from "vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import { useProfileStore } from "../../stores/profile";
 import { setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import useRoles from "@/hooks/useRole";
@@ -326,6 +327,7 @@ const props = withDefaults(
 
 const { role } = useRoles();
 const facilityStore = useFacilityStore();
+const trainerStore = useTrainerStore();
 const router = useRouter();
 const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const isOpenFacilityDropdown = ref<boolean>(false);
@@ -386,6 +388,28 @@ const facilityAddress = computed<string>(
       (facility: any) => facility.id === activeFacilityId.value
     )?.address?.street ?? ""
 );
+
+const name = computed(() => {
+  switch(role) {
+    case RoleEnum.FacilityOwner :
+    case RoleEnum.OrganizationOwner :
+      return facilityName;
+    
+    case RoleEnum.Trainer :
+      return trainerStore.trainer.first_name + ' ' + trainerStore.trainer.last_name;
+  }
+});
+
+const address = computed(() => {
+  switch(role) {
+    case RoleEnum.FacilityOwner :
+    case RoleEnum.OrganizationOwner :
+      return facilityAddress;
+    
+    case RoleEnum.Trainer :
+      return trainerStore.trainer.address?.street + ' ' + trainerStore.trainer.last_name;
+  }
+});
 
 const onHandleClickMenu = (pathName: string) => {
   console.log(pathName);

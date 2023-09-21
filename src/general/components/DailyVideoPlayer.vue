@@ -11,9 +11,8 @@
       ref="videoRef"
       autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
-      class="shadow"
     />
-    <div @click="handlePlay" class="shadow w-100 h-100 absolute" />
+    <div @click="handlePlay" class="shadow" />
   </ion-item>
 </template>
 
@@ -51,12 +50,10 @@ const preview = computed(() => `${process.env.VUE_APP_MEDIA_URL}${props.preview}
 
 const shouldPlay = computed(() => props.play);
 
-onMounted(() => {
+onMounted(async () => {
   console.log('mounted: shouldPlay?: ', shouldPlay.value);
-  if(shouldPlay.value) {
-    videoRef.value.play();
-  } else {
-    videoRef.value.pause();
+  if(!shouldPlay.value) {
+    await videoRef.value.pause();
   }
 });
 
@@ -105,6 +102,9 @@ const handlePlay = () => {
   }
 }
 .shadow {
+  position: absolute;
   background-image: linear-gradient(to bottom, #1818181a, #181818ba);
+  width: calc(100% - 16px);
+  height: 100%;
 }
 </style>

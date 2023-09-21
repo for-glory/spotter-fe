@@ -27,7 +27,8 @@ import { minutesDuration } from "@/const/minutes-durations";
 import { EntitiesEnum } from "@/const/entities";
 import { 
   FilePreloadDocument,
-  CreateDailyDocument
+  CreateDailyDocument,
+  RoleEnum
 } from "@/generated/graphql";
 import { useDailysStore } from "@/general/stores/useDailysStore";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
@@ -36,37 +37,47 @@ import { Emitter, EventType } from "mitt";
 import WorkoutForm from "@/general/components/forms/WorkoutForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const store = useDailysStore();
 const currentFacility = useFacilityStore();
+
+const { role } = useRoles();
+const isFacilityOwner = role === (RoleEnum.FacilityOwner || RoleEnum.OrganizationOwner);
 
 const isConfirmationOpen = ref<boolean>(false);
 const workoutForm = ref<typeof WorkoutForm | null>(null);
 const percentLoaded = ref(0);
 
 const {
-  mutate,
+  mutate: createDaily,
   loading: dailysOnCreation,
   onDone: dailysCreated,
 } = useMutation(CreateDailyDocument);
 
+const params = computed(() => ({
+  preview: store.workoutPath,
+  video: store.path,
+  body_parts: store.workoutMuscleTypesIds,
+  type_id: store.workoutType?.id,
+  title: store.workoutTitle,
+  description: store.description,
+  duration: Number(store.workoutDuration),
+  price: getSumForPayment(store.workoutPrice as number),
+}));
 
 const createDailys = () => {
-  mutate({ 
-    preview: store.workoutPath,
-    video: store.path,
-    body_parts: store.workoutMuscleTypesIds,
-    facility_id: currentFacility.facility?.id,
-    type_id: store.workoutType?.id,
-    title: store.workoutTitle,
-    description: store.exercises?.description,
-    price: getSumForPayment(store.workoutPrice as number),
-    duration: store.workoutDuration,
-  })
+  let dailyParam;
+  if(isFacilityOwner) {
+    dailyParam = { ...params.value, facility_id: currentFacility.facility?.id };
+  } else {
+    dailyParam = { ...params.value };
+  }
+  createDaily({ dailyParam })
     .then(async () => {
       const toast = await toastController.create({
-        message: "Updated successfully",
+        message: "Created successfully",
         duration: 2000,
         icon: "assets/icon/success.svg",
         cssClass: "success-toast",

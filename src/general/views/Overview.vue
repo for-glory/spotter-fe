@@ -41,34 +41,6 @@
       </div>
     </template>
   </base-layout>
-  <ion-modal
-    ref="modal"
-    :is-open="isGymModalOpen"
-    class="choose-facility-modal"
-    @willDismiss="isGymModalOpen = false"
-    v-if="facilities?.length && activeFacilityId"
-  >
-    <div class="modal-gym__content">
-      <ion-radio-group
-        v-model="activeFacilityId"
-        @ionChange="isGymModalOpen = false"
-      >
-        <choice-location
-          :id="facility?.id"
-          :key="facility?.id"
-          :facility="facility"
-          v-for="facility in facilities"
-        />
-      </ion-radio-group>
-      <ion-button
-        @click="addNewFacility"
-        class="add-facility-button secondary"
-        expand="block"
-      >
-        Add new gym
-      </ion-button>
-    </div>
-  </ion-modal>
 </template>
 
 <script setup lang="ts">
@@ -94,7 +66,6 @@ import {
   FacilityDashboardWidgetDocument,
   Facility
 } from "@/generated/graphql";
-import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -129,6 +100,7 @@ import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useUserStore } from "@/general/stores/user";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
@@ -148,29 +120,22 @@ const defaultAddress = process.env.VUE_APP_DEFAULT_POSITION_ADDRESS;
 const unreadMessages = ref<number[]>([]);
 const facilityStore = useFacilityStore();
 const userStore = useUserStore();
+const trainerStore = useTrainerStore();
 const overviewData = ref<any>({});
 const modal = ref<typeof IonModal | null>(null);
 
-const {
-  result,
-  loading: loadingUser,
-  onResult: gotUser,
-} = useQuery<Pick<Query, "user">>(UserDocument, { id });
-const progress = ref<string | number>("");
+onMounted(() => {
+  fetchChats();
+});
+
+const activeFacilityId = computed(() => facilityStore.facility.id );
 
 const {
   result: dashboardData,
   loading: loadingDashboarData,
   refetch,
   onResult: gotData,
-} = useQuery(FacilityDashboardWidgetDocument, { id: facilityStore?.facility.id })
-
-onMounted(() => {
-  fetchChats();
-});
-
-const facilities = computed(() => result.value?.user?.owned_facilities);
-const activeFacilityId = ref<string | null>(null);
+} = useQuery(FacilityDashboardWidgetDocument, { id: activeFacilityId.value });
 
 watch(
   () => activeFacilityId.value,
@@ -179,7 +144,7 @@ watch(
       name: router?.currentRoute?.value?.name,
       query: { facilityId: newVal },
     });
-    facilityStore.setFacility(facilities.value?.find((facility) => facility?.id === newVal) as Facility);
+    refetch({ id: facilityStore?.facility.id });
   }
 );
 
@@ -187,61 +152,19 @@ const avatarUrl = computed(() => {
   switch (role) {
     case RoleEnum.User:
     case RoleEnum.Trainer:
-      return result.value?.user?.avatarUrl;
+      return userStore.avatarUrl;
 
     case RoleEnum.Manager:
     case RoleEnum.FacilityOwner:
     case RoleEnum.OrganizationOwner: {
-      const facility = facilities.value?.find(
-        (focility) => focility?.id === activeFacilityId.value
-      );
-      return facility?.media
-        ? facility?.media[0]?.pathUrl
-        : result.value?.user?.avatarUrl;
+      return facilityStore.facility?.media
+        ? facilityStore.facility?.media[0]?.pathUrl
+        : userStore.avatarUrl;
     }
 
     default:
       return "";
   }
-});
-
-gotUser(({ data }) => {
-  activeFacilityId.value =
-    facilities.value?.length && facilities.value[0]
-      ? facilities.value[0].id
-      : null;
-
-  if(!localStorage.getItem("selected_facility")) {
-    facilityStore.setFacility(facilities.value?.at(0) as Facility);
-    localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
-  } else {
-    activeFacilityId.value = localStorage.getItem("selected_facility");
-    let facilityValue = facilities.value?.find((facility) => facility?.id === activeFacilityId.value);
-    console.log(activeFacilityId.value);
-    if(!facilityValue && facilities.value?.length){
-      facilityStore.setFacility(facilities.value?.at(0) as Facility);
-      localStorage.setItem("selected_facility", facilities.value?.at(0)?.id as string);
-    } else {
-      facilityStore.setFacility(facilityValue as Facility);
-    }
-  }
-  console.log("facilityStore.facility", facilityStore.facility);
-  
-  refetch( { id: facilityStore?.facility?.id } );
-
-  userStore.setName(result.value?.user?.first_name, result.value?.user?.last_name);
-  userStore.setEmail(result.value?.user?.email);
-  userStore.setId(result.value?.user?.id);
-  userStore.setSubscription(result.value?.user?.currentSubscription);
-  userStore.setAvatarUrl(result.value?.user?.avatarUrl);
-  userStore.setAddress(result.value?.user?.address?.city?.state, result.value?.user?.address?.city, result.value?.user?.address);
-  userStore.setOwnedFacilities(result.value?.user?.owned_facilities);
-
-  progress.value = data?.user?.settings?.find(
-    (settings: any) => settings.setting.code === SettingsCodeEnum.VerifiedUser
-  )?.value
-    ? 100
-    : 0;
 });
 
 gotData(({ data }) => {

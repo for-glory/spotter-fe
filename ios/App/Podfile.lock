@@ -152,6 +152,7 @@ DEPENDENCIES:
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
   - "DevaCommunityCapacitorCameraPro (from `../../node_modules/@deva-community/capacitor-camera-pro`)"
+  - GoogleSignIn (~> 6.2.4)
   - "WhiteguruCapacitorPluginVideoEditor (from `../../node_modules/@whiteguru/capacitor-plugin-video-editor`)"
 
 SPEC REPOS:
@@ -273,6 +274,6 @@ SPEC CHECKSUMS:
   StripeUICore: 55b2660a2cad2fe055a05f59297caa4ae50acf74
   WhiteguruCapacitorPluginVideoEditor: f27137306c632d1b702856718510e6950c287ecc
 
-PODFILE CHECKSUM: da37a9bf3479a262e94575da7debc9a9b093c56a
+PODFILE CHECKSUM: cfe0f619f60149d995d987f1f6c6a997a9b11054
 
 COCOAPODS: 1.12.1

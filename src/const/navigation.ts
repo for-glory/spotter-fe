@@ -53,10 +53,10 @@ export const navigationMenu: NavigationMenu = {
       category: "/overview",
     },
     {
-      name: EntitiesEnum.CreateDailys,
+      name: EntitiesEnum.WorkoutList,
       label: "Dailys",
       icon: "assets/icon/daily.svg",
-      category: "/create-dailys",
+      category: "/dailys",
     },
     {
       name: EntitiesEnum.TrainerSchedule,

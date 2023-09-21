@@ -515,6 +515,30 @@ export type EventPaginator = {
   paginatorInfo: PaginatorInfo;
 };
 
+export type Trainer = {
+  __typename?: "Trainer";
+  id: Scalars["ID"];
+  first_name: Scalars["String"];
+  last_name: Scalars["String"];
+  tax_id?: Maybe<Scalars["String"]>;
+  avatarUrl: Scalars["String"];
+  email: Scalars["String"];
+  address?: Maybe<Address>;
+  currentSubscription: SubscriptionsTierEnum;
+  certificates?: Maybe<Array<Document>>;
+  score?: Maybe<Scalars["Float"]>;
+  reviews_count?: Maybe<Scalars["Int"]>;
+  recommended_count?: Maybe<Scalars["Int"]>;
+  not_recommended_count?: Maybe<Scalars["Int"]>;
+  trainings_count: Scalars["Int"];
+  positive_reviews_count?: Maybe<Scalars["Int"]>;
+  negative_reviews_count?: Maybe<Scalars["Int"]>;
+  completed_trainings_count?: Maybe<Scalars["Int"]>;
+  trainer_type?: Maybe<TrainerTypeEnum>;
+  trainerRates?: Maybe<Array<Maybe<TrainerRate>>>;
+  created_at: Scalars["DateTime"];
+};
+
 export type Facility = {
   __typename?: "Facility";
   address?: Maybe<Address>;
@@ -2794,6 +2818,7 @@ export type User = {
   was_visited_by_me?: Maybe<Scalars["Boolean"]>;
   weiver_and_labilities?: Maybe<Array<Document>>;
   workouts?: Maybe<Array<Maybe<Workout>>>;
+  tax_id?: Maybe<Scalars["String"]>;
 };
 
 export type UserSettingsArgs = {
@@ -7889,7 +7914,7 @@ export const WorkoutDocument = gql`
     `;
 export const WorkoutsDocument = gql`
   query workouts(
-    $dynamic_search: String!
+    $dynamic_search: String
     $trainer_id: ID
     $first: Int
     $page: Int
@@ -7910,6 +7935,13 @@ export const WorkoutsDocument = gql`
       data {
         id
         preview
+        reviews_count
+        recommended_count
+        total_revenue
+        views_count
+        purchases
+        video
+        videoUrl
         type {
           id
           name
