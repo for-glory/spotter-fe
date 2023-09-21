@@ -393,7 +393,7 @@ const name = computed(() => {
   switch(role) {
     case RoleEnum.FacilityOwner :
     case RoleEnum.OrganizationOwner :
-      return facilityName;
+      return facilityName.value;
     
     case RoleEnum.Trainer :
       return trainerStore.trainer.first_name + ' ' + trainerStore.trainer.last_name;
@@ -404,7 +404,7 @@ const address = computed(() => {
   switch(role) {
     case RoleEnum.FacilityOwner :
     case RoleEnum.OrganizationOwner :
-      return facilityAddress;
+      return facilityAddress.value;
     
     case RoleEnum.Trainer :
       return trainerStore.trainer.address?.street + ' ' + trainerStore.trainer.last_name;
