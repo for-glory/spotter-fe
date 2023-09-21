@@ -761,6 +761,7 @@ const deleteModalClosed = (approved: boolean) => {
         cssClass: "success-toast",
       });
       toast.present();
+      goBack();
     })
     .catch(async (error) => {
       const toast = await toastController.create({

@@ -17,7 +17,7 @@
             </div>
             <div class="list-container" v-for="(item, index) in facilities">
                 <ion-card class="background-grey">
-                    <ion-card-content>
+                    <ion-card-content class="card-content">
                         <div class="d-flex ion-align-items-center ion-justify-content-center background-grey" style="gap: 10px">
                             <div>
                                 <ion-thumbnail>
@@ -33,8 +33,8 @@
                                 </div>
                                 <div class="d-flex-col time-location">
                                     <div class="d-flex justify-content-start ion-align-items-center subtitle">
-                                        <ion-icon size="14px" src="assets/icon/location.svg"></ion-icon> <span>{{
-                                            item.address?.street }}</span>
+                                        <ion-icon size="14px" src="assets/icon/location.svg"></ion-icon> 
+                                        <span>{{ item.address?.street }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -284,11 +284,34 @@ const onBack = () => {
 @media (max-width: 767px) {
   .list-container{
     width: auto;
-    margin: 16px;
+    margin: 10px;
+  }
+
+    .card-content {
+        padding: 10px !important;
+        display: block !important;
+    }
+    .subtitle {
+        ion-icon {
+            color: #E1DBC5;
+            font-size: 1.6rem;
+            height: 26px;
+        }
+
+        span {
+            font-family: Yantramanav;
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 21px;
+            text-align: left !important;
+        }
+    }
     .delete-icon {
+        height: 26px;
+        color: #f86969;
+        font-size: 2.6rem;
         margin-right: 0;
     }
-  }
 }
 .cursor-pointer {
   cursor: pointer;
