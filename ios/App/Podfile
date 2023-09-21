@@ -39,6 +39,7 @@ end
 
 target 'App' do
   capacitor_pods
+  pod 'GoogleSignIn', '~> 6.2.4'
   # Add your Pods here
 end
 
