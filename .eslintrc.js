@@ -31,5 +31,14 @@ module.exports = {
         jest: true,
       },
     },
+    {
+      "prettier/prettier": [
+        "error",
+        {},
+        {
+          "usePrettierrc": false
+        }
+      ]
+    }
   ],
 };
