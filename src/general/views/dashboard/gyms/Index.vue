@@ -182,7 +182,8 @@
             <empty-block
               title="Dailys Empty"
               hideButton
-              text="No offering Dailys available for this location, create new Dailys to get started"
+              text="No dailys available for this location, create new dailys to get started"
+              icon="assets/icon/daily.svg"
             />
           </div>
           <div class="card-background" v-for="dailys in dailysData" @click="openViewModal(dailys)">
@@ -211,7 +212,8 @@
               <empty-block
                 title="Events Empty"
                 hideButton
-                text="No offering Events available for this location, create new Events to get started"
+                text="No Events available for this location, create new events to get started"
+                icon= "assets/icon/events.svg"
               />
             </div>
           <div class="card-background" v-for="event in allEvents" @click="openEvent(event.id)">
@@ -372,7 +374,8 @@
                     <empty-block
                       title="Dailys Empty"
                       hideButton
-                      text="No offering Dailys available for this location, create new Dailys to get started"
+                      text="No dailys available for this location, create new dailys to get started"
+                      icon="assets/icon/daily.svg"
                     />
                   </div>
                   <div class="card-background" v-for="dailys in dailysData"  @click="openViewModal(dailys)">
@@ -401,7 +404,8 @@
                       <empty-block
                         title="Events Empty"
                         hideButton
-                        text="No offering Events available for this location, create new Events to get started"
+                        text="No Events available for this location, create new events to get started"
+                        icon= "assets/icon/events.svg"
                       />
                     </div>
                   <div class="card-background" v-for="event in allEvents"  @click="openEvent(event.id)">
