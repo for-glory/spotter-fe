@@ -143,37 +143,17 @@
         />
         <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
         <div class="tabs-holder d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$20.00</ion-title>
+          <div class="ion-text-center"  v-for="dropin in dropins">
+            <ion-title class="offering-title">${{dropin.price}}</ion-title>
             <ion-text>1 Day</ion-text>
-            <ion-text>One day access</ion-text>
-          </div>
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$39.00</ion-title>
-            <ion-text>2 Days</ion-text>
-            <ion-text>Two days access</ion-text>
-          </div>
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$79.00</ion-title>
-            <ion-text>5 Day</ion-text>
-            <ion-text>Five days access</ion-text>
+            <ion-text>{{dropin.title}}</ion-text>
           </div>
         </div>
         <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$120.00</ion-title>
+          <div class="ion-text-center"  v-for="pass in passes">
+            <ion-title class="offering-title">${{pass.price}}</ion-title>
             <ion-text>1 Month</ion-text>
-            <ion-text>Basic plan</ion-text>
-          </div>
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$139.00</ion-title>
-            <ion-text>1 Month</ion-text>
-            <ion-text>Standard plan</ion-text>
-          </div>
-          <div class="ion-text-center">
-            <ion-title class="offering-title">$179.00</ion-title>
-            <ion-text>1 Month</ion-text>
-            <ion-text>Premium plan</ion-text>
+            <ion-text>{{pass.title }}</ion-text>
           </div>
         </div>
         <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Trainings">
@@ -351,12 +331,12 @@
                   </div>
                 </div>
                 <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
-                  <div class="ion-text-center">
-                    <ion-title class="offering-title">$120.00</ion-title>
+                  <div class="ion-text-center" v-for="pass in passes" > 
+                    <ion-title class="offering-title">${{pass.price}}</ion-title>
                     <ion-text>1 Month</ion-text>
-                    <ion-text>Basic plan</ion-text>
+                    <ion-text>{{pass.title }}</ion-text>
                   </div>
-                  <div class="ion-text-center">
+                  <!-- <div class="ion-text-center">
                     <ion-title class="offering-title">$139.00</ion-title>
                     <ion-text>1 Month</ion-text>
                     <ion-text>Standard plan</ion-text>
@@ -365,7 +345,7 @@
                     <ion-title class="offering-title">$179.00</ion-title>
                     <ion-text>1 Month</ion-text>
                     <ion-text>Premium plan</ion-text>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Trainings">
                   <div class="card-background"  v-if="!dailysData || !dailysData.length">
@@ -513,7 +493,7 @@ import {
   WorkoutsByFacilityDocument,
   QueryFacilityWorkoutsOrderByColumn,
   DeleteFacilityDocument,
-GetCustomersByFacilityItemsDocument
+  FacilityItemsByFacilityIdAndTypeDocument
 } from "@/generated/graphql";
 import { TabItem } from "@/interfaces/TabItem";
 import { Review as UserReview } from "@/ts/types/user";
@@ -933,27 +913,38 @@ const onBack = () => {
 // Dailys End
 
 // Passes start
-// const {
-//   result: facilityItemPassResult,
-//   loading: loadingFacilityPass,
-//   onResult: gotFacility,
-// } = useQuery(GetCustomersByFacilityItemsDocument, {
-//   facility_id: result.value?.facility?.id,
-//   item_type: "PASS"
-// });
-// console.log(facilityItemPassResult)
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+  onResult: gotFacility,
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacilityId,
+  item_type: "PASS"
+});
 
-// const passes = computed(() => {
-//   console.log("### passes ", facilityItemPassResult.value);
-//   return facilityItemPassResult.value?.getCustomersByFacilityItems?.data;
-// });
-
-// gotFacility(({ data }) => {
-//   let dailys = [ ...data.facilityWorkouts.data ];
-//   console.log(" ##@ ", dailys)
-// });
+const passes = computed(() => {
+  console.log("### passes ", facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data[0]);
+  return facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
 
 // Passes End
+
+
+// Dropins start
+const {
+  result: dropinResult,
+  loading: loadingFacilityDropin
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacilityId,
+  item_type: "DROPIN"
+});
+
+const dropins = computed(() => {
+  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType?.data[0]);
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Dropins End
 
 </script>
 
