@@ -1,5 +1,5 @@
 <template>
-  <ion-text :class="{ total: isTotal }" class="rating">
+  <ion-text :class="{ total: isTotal,'user-rating' : role === RoleEnum.User }" class="rating">
     {{ value.toString().includes(".") ? value : `${value}.0` || "0.0" }}
   </ion-text>
 </template>
@@ -7,6 +7,10 @@
 <script setup lang="ts">
 import { defineProps, withDefaults } from "vue";
 import { IonText } from "@ionic/vue";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
+
+const { role } = useRoles();
 
 withDefaults(
   defineProps<{
@@ -32,5 +36,11 @@ withDefaults(
     border-color: var(--gold);
     color: var(--gold);
   }
+}
+.user-rating {
+  border-color: var(--gold);
+  color: var(--gold);
+  font-family: "Yantramanav";
+  height: 22px;
 }
 </style>

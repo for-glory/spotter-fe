@@ -4,7 +4,7 @@
       <ion-spinner v-if="loading" name="lines" class="spinner" />
       <template v-else>
         <h3 v-if="!!title">{{ title }}</h3>
-        <span v-if="!!location">{{ location }}</span>
+        <ion-label v-if="!!location">{{ location }}</ion-label>
       </template>
     </div>
     <div class="fixed-holder__button-holder">
@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { defineProps, withDefaults } from "vue";
-import { IonSpinner } from "@ionic/vue";
+import { IonSpinner, IonLabel } from "@ionic/vue";
 
 withDefaults(
   defineProps<{
@@ -49,6 +49,8 @@ withDefaults(
     white-space: nowrap;
     width: calc(44%);
     text-overflow: clip;
+    display: flex;
+    flex-direction: column;
   }
 
   h3 {
@@ -57,15 +59,20 @@ withDefaults(
     font-weight: 500;
     font-size: 16px;
     line-height: 1.5;
-    color: var(--ion-color-white);
+    color: var(--fitnesswhite);
     text-overflow: ellipsis;
     overflow: hidden;
+    font-family: "Yantramanav";
   }
 
-  span {
+  ion-label {
     font-size: 14px;
     line-height: 1.5;
     color: var(--gray-400);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Yantramanav";
   }
 
   &__button-holder {

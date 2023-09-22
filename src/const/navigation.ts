@@ -38,11 +38,11 @@ export const navigationMenu: NavigationMenu = {
       category: "/discover",
     },
     {
-      name: EntitiesEnum.UserWorkouts,
+      name: EntitiesEnum.Facilities,
       label: "Gyms",
       id: "workout",
       icon: "assets/icon/booking.svg",
-      category: "/workouts",
+      category: "/facilities",
     },
   ],
   TRAINER: [

@@ -33,7 +33,7 @@
       </div>
     </template>
     <template #draggable>
-      <div class="detail__container">
+      <div class="detail__container" :class="{'detail-container-user': role === RoleEnum.User}">
         <div class="detail__header ion-padding-horizontal">
           <div class="main-info">
             <ion-title class="name" v-if="name">
@@ -41,7 +41,7 @@
             </ion-title>
             <ion-text class="address" v-if="address">
               <ion-icon
-                src="assets/icon/geolocation.svg"
+                src="assets/icon/location.svg"
                 class="address__icon"
               />
               {{ address }}
@@ -183,7 +183,7 @@ import { EntitiesEnum } from "@/const/entities";
 import VideoPlayer from "@/general/components/VideoPlayer.vue";
 import useId from "@/hooks/useId";
 import { useLazyQuery } from "@vue/apollo-composable";
-import { MeDocument } from "@/generated/graphql";
+import { MeDocument, RoleEnum } from "@/generated/graphql";
 const props = withDefaults(
   defineProps<{
     name?: string;
@@ -510,5 +510,27 @@ ion-text {
   color: var(--gray-700);
   justify-content: center;
   background: var(--gray-600);
+}
+.detail-container-user {
+  .follow {
+    margin: 0;
+    min-width: 48px
+  }
+  .main-info {
+    .name {
+      color: var(--fitnesswhite);
+    }
+    .address {
+      font-family: "Yantramanav";
+      font-size: 14px;
+      color: var(--gray-400);
+      ion-icon {
+        color: var(--gold);
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
 }
 </style>

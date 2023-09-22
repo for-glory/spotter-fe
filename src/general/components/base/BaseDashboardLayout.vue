@@ -1,18 +1,11 @@
 <template>
-  <ion-spinner
-    v-if="isLoading"
-    name="lines"
-    class="spinner"
-    id="main-content"
-  />
+  <ion-spinner v-if="isLoading" name="lines" class="spinner" id="main-content" />
   <div class="dashboard-container" v-else>
     <div class="dashboard-container__sidebar">
       <dashboard-sidebar :facilities="facilities" />
     </div>
-    <div
-      class="dashboard-container__right-section"
-      :class="role === RoleEnum.Trainer ? 'scrollable-content' : ''"
-    >
+    <div class="dashboard-container__right-section"
+      :class="{ 'scrollable-content': role === RoleEnum.Trainer || role === RoleEnum.User }">
       <slot name="right-section"></slot>
     </div>
   </div>
@@ -89,7 +82,7 @@ gotUser(({ data }) => {
         : null;
   }
 
-  if(role === RoleEnum.Trainer) {
+  if (role === RoleEnum.Trainer) {
     let trainer = {
       id: data?.user?.id,
       first_name: data?.user?.first_name,

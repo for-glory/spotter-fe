@@ -145,8 +145,8 @@
           <ion-text>Discover</ion-text>
         </div>
         <div
-          :class="getMenuItemClass(EntitiesEnum.GymsNearby)"
-          @click="onHandleClickMenu(EntitiesEnum.GymsNearby)"
+          :class="getMenuItemClass(EntitiesEnum.Gyms)"
+          @click="onHandleClickMenu(EntitiesEnum.Gyms)"
         >
           <ion-icon src="assets/icon/gym.svg" />
           <ion-text>Gym</ion-text>
