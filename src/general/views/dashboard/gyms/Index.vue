@@ -572,6 +572,7 @@ const props = withDefaults(
     isWebView: Capacitor.isNativePlatform() ? false : true,
   }
 );
+const { role } = useRoles();
 
 const deleteGymModal = ref<typeof DeleteGymModal | null>(null);
 

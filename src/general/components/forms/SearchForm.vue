@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User }"
   >
     <ion-back-button
       v-if="backBtn"
@@ -711,5 +711,24 @@ defineExpose({
   font-style: normal;
   font-weight: 300;
   --box-shadow: inset 0 0 0 0.8px var(--gray-500);
+}
+
+.search-form-user {
+  padding: 24px;
+  padding-bottom: 0;
+  ion-searchbar {
+    font-family: "Yantramanav";
+    --color: var(--fitnesswhite);
+    --icon-color: var(--gray-500);
+    --box-shadow: none;
+    border: 0.8px solid var(--gray-500);
+    border-radius: 8px;
+  }
+  .search-form__clear-btn {
+    font-family: "Yantramanav";
+    font-size: 16px;
+    font-weight: 500;
+    --color: var(--gray-500);
+  }
 }
 </style>

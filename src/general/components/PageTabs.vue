@@ -54,7 +54,7 @@ const segmentChanged = (event: SegmentCustomEvent) => {
   border-radius: 8px;
   pointer-events: auto;
   backdrop-filter: blur(20px);
-  background: rgba(24, 24, 24, 0.64);
+  background: var(--gray-700);
 
   &__item {
     margin: 0;
