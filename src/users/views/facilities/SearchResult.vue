@@ -1,5 +1,5 @@
 <template>
-  <div class="search-result" :class="{ 'search-active': isSelected, 'tr-search-result': role === RoleEnum.Trainer }">
+  <div class="search-result" :class="{ 'search-active': isSelected, 'tr-search-result': role === RoleEnum.Trainer || role === RoleEnum.User }">
     <ion-thumbnail class="search-result__photo">
       <img v-if="photo?.length" :src="photo" class="search-result__img" />
       <template v-else>
@@ -130,11 +130,16 @@ const photo = computed(() => {
 
 .tr-search-result {
   padding: 12px 16px;
+  margin-bottom: 0;
   .search-result__title {
-    font-family: Yantramanav;
+    font-family: "Yantramanav";
     font-size: 16px;
     font-style: normal;
     font-weight: 500;
+  }
+  .facility-item__address {
+    font-family: "Yantramanav";
+    color: var(--gray-400);
   }
 }
 

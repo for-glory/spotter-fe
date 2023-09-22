@@ -4,7 +4,8 @@
     :class="{
       'header--transparent': transparent,
       'header--buttons-transparent': buttonsTransparent,
-      'ios-app-top': isPlatform('ios')
+      'ios-app-top': isPlatform('ios'),
+      'user-header': role === RoleEnum.User
     }"
   >
     <ion-buttons slot="start">
@@ -59,7 +60,10 @@ import {
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
 import { ellipsisVertical } from "ionicons/icons";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
+const { role } = useRoles();
 withDefaults(
   defineProps<{
     transparent?: boolean;
@@ -219,5 +223,12 @@ const emits = defineEmits<{
   position: absolute;
   margin: -12px 0 0 4px;
   background: var(--alert-red);
+}
+.user-header {
+  .header__title {
+    font-family: "Yantramanav";
+    color: var(--fitnesswhite);
+    line-height: 30px;
+  }
 }
 </style>

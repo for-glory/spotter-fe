@@ -1,12 +1,12 @@
 <template>
-  <div class="likes">
+  <div class="likes" :class="{'likes-user' : role === RoleEnum.User}">
     <div class="likes__holder">
       <strong class="likes__positive">
         <ion-icon class="likes__icon" src="assets/icon/like.svg" />
         {{ likes }}
       </strong>
       <strong class="likes__negative">
-        <ion-icon class="likes__icon" src="assets/icon/dislike.svg" />
+        <ion-icon class="likes__icon" :src="'assets/icon/' + (role === RoleEnum.User ? 'dislike-outline' : 'dislike') + '.svg'" />
         {{ dislikes }}
       </strong>
     </div>
@@ -21,6 +21,10 @@
 import { defineProps } from "vue";
 import { IonText, IonIcon } from "@ionic/vue";
 import { IonProgressBar } from "@ionic/vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
+
+const { role } = useRoles();
 
 defineProps<{
   progressValue: number;
@@ -78,6 +82,15 @@ defineProps<{
   &__reviews {
     font-size: 14px;
     line-height: 1.5;
+  }
+}
+
+.likes-user {
+  .likes__positive,.likes__negative {
+    color: var(--gold);
+  }
+  .progress {
+    --background: var(--gold);
   }
 }
 </style>

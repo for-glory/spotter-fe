@@ -619,6 +619,46 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.Gyms,
+        path: "gyms",
+        component: () => import("@/users/views/gyms/Index.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
+        name: EntitiesEnum.GymDetails,
+        path: "gym-preview/:id",
+        component: () => import("@/users/views/gyms/GymPreview.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
+        name: EntitiesEnum.GymOrderCalendar,
+        path: ":id/order-calendar",
+        component: () => import("@/users/views/gyms/OrderCalendar.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
+        name: EntitiesEnum.GymPaymentMethod,
+        path: ":id/payment-method",
+        component: () => import("@/users/views/gyms/PaymentMethods.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
+        name: EntitiesEnum.GymReviews,
+        path: ":id/gym-reviews",
+        component: () => import("@/users/views/gyms/Reviews.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardSettings,
         path: "settings",
         component: () => import("@/general/views/dashboard/settings/Index.vue"),
@@ -712,7 +752,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardManageGyms,
-        path: "gyms/:id?",
+        path: "gyms/:id",
         component: () => import("@/general/views/dashboard/gyms/Index.vue"),
         meta: {
           middleware: [gymOwnerSubscription, gymOwnerRole],

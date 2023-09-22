@@ -139,11 +139,10 @@
         <page-tabs-New
           :tabs="tabs"
           class="page-tabs"
-          :value="activeTab"
           @change="tabsChanged"
         />
         <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-        <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum?.FacilityDropins">
+        <div class="tabs-holder d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
           <div class="ion-text-center">
             <ion-title class="offering-title">$20.00</ion-title>
             <ion-text>1 Day</ion-text>
@@ -160,7 +159,7 @@
             <ion-text>Five days access</ion-text>
           </div>
         </div>
-        <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum.Facilities">
+        <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
           <div class="ion-text-center">
             <ion-title class="offering-title">$120.00</ion-title>
             <ion-text>1 Month</ion-text>
@@ -177,12 +176,13 @@
             <ion-text>Premium plan</ion-text>
           </div>
         </div>
-        <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
+        <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Trainings">
           <div class="card-background"  v-if="!dailysData || !dailysData.length">
             <empty-block
               title="Dailys Empty"
               hideButton
-              text="No offering Dailys available for this location, create new Dailys to get started"
+              text="No dailys available for this location, create new dailys to get started"
+              icon="assets/icon/daily.svg"
             />
           </div>
           <div class="card-background" v-for="dailys in dailysData" @click="openViewModal(dailys)">
@@ -206,12 +206,13 @@
             </div>
           </div>
           </div>
-          <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
+          <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Events">
             <div class="card-background"  v-if="!allEvents || !allEvents.length">
               <empty-block
                 title="Events Empty"
                 hideButton
-                text="No offering Events available for this location, create new Events to get started"
+                text="No Events available for this location, create new events to get started"
+                icon= "assets/icon/events.svg"
               />
             </div>
           <div class="card-background" v-for="event in allEvents" @click="openEvent(event.id)">
@@ -329,11 +330,10 @@
                 <page-tabs-New
                   :tabs="tabs"
                   class="page-tabs"
-                  :value="activeTab"
                   @change="tabsChanged"
                 />
                 <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-                <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum?.FacilityDropins">
+                <div class="tabs-holder d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
                   <div class="ion-text-center">
                     <ion-title class="offering-title">$20.00</ion-title>
                     <ion-text>1 Day</ion-text>
@@ -350,7 +350,7 @@
                     <ion-text>Five days access</ion-text>
                   </div>
                 </div>
-                <div class="tabs-holder d-flex ion-margin-top" v-if="activeTab == EntitiesEnum.Facilities">
+                <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
                   <div class="ion-text-center">
                     <ion-title class="offering-title">$120.00</ion-title>
                     <ion-text>1 Month</ion-text>
@@ -367,12 +367,13 @@
                     <ion-text>Premium plan</ion-text>
                   </div>
                 </div>
-                <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Trainings">
+                <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Trainings">
                   <div class="card-background"  v-if="!dailysData || !dailysData.length">
                     <empty-block
                       title="Dailys Empty"
                       hideButton
-                      text="No offering Dailys available for this location, create new Dailys to get started"
+                      text="No dailys available for this location, create new dailys to get started"
+                      icon="assets/icon/daily.svg"
                     />
                   </div>
                   <div class="card-background" v-for="dailys in dailysData"  @click="openViewModal(dailys)">
@@ -396,12 +397,13 @@
                     </div>
                   </div>
                   </div>
-                  <div class="tabs-text-content ion-margin-top"  v-if="activeTab == EntitiesEnum?.Events">
+                  <div class="tabs-text-content ion-margin-top"  v-if="activeOfferingsTab == EntitiesEnum?.Events">
                     <div class="card-background"  v-if="!allEvents || !allEvents.length">
                       <empty-block
                         title="Events Empty"
                         hideButton
-                        text="No offering Events available for this location, create new Events to get started"
+                        text="No Events available for this location, create new events to get started"
+                        icon= "assets/icon/events.svg"
                       />
                     </div>
                   <div class="card-background" v-for="event in allEvents"  @click="openEvent(event.id)">
@@ -570,6 +572,7 @@ const props = withDefaults(
     isWebView: Capacitor.isNativePlatform() ? false : true,
   }
 );
+const { role } = useRoles();
 
 const deleteGymModal = ref<typeof DeleteGymModal | null>(null);
 
@@ -694,9 +697,10 @@ const tabs: TabItemNew[] = [
 ];
 
 const activeTab = ref<ReviewTypeEnum>(ReviewTypeEnum.Recent);
+const activeOfferingsTab = ref<any>(null);
 
-const tabsChanged = (newTab: ReviewTypeEnum) => {
-  activeTab.value = newTab;
+const tabsChanged = (newTab: any) => {
+  activeOfferingsTab.value = newTab;
 };
 
 const router = useRouter();
