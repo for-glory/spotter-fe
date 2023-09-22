@@ -42,16 +42,19 @@
     </div>
 
     <div class="form-row">
-      <choose-block
+      <!-- <choose-block
         title="Choose your gym location"
         class="form-row__control cursor-pointer"
         @handle-click="onChooseLocation"
-        :value="
-          selectedAddress
-            ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
-            : ''
-        "
-      />
+        :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`: ''"
+      /> -->
+      <GMapAutocomplete
+        placeholder="Enter your address"
+        class="search-form__control"
+        :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`: ''"
+        :class="{'search-form__control--on-focus': isFocused}"
+        @place_changed="setPlace">
+      </GMapAutocomplete>
       <!-- <ion-label class="label"> Choose your gym location </ion-label>
       <choose-block
         title="Location"
@@ -350,7 +353,7 @@ const setPlace = (place: any) => {
       })?.then(async (res) => {
         const res_city = res.data.cities.data[0];
         console.log("selected city", res_city)
-        store.setAddress(res_city.state, res_city, address);
+        store.setAddress(res_city?.state, res_city, address);
       })
     }
   }
