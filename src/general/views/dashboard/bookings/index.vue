@@ -57,7 +57,7 @@
         <div class="events__container">
             <items-header
                 :title="`Upcoming ${
-                    activeTab === EntitiesEnum.Events ? 'events' : 'Sessions'
+                    activeTab === EntitiesEnum.Events ? 'Events' : 'Sessions'
                 }`"
                 @handle-view="onViewTrainings"
                 :hide-view-more="
@@ -94,10 +94,18 @@
                         <event-item
                             v-for="training in trainings"
                             :key="training.id"
-                            :item="(training as any)"
+                            :item="({
+                                ...training,
+                                title: training.user.last_name + ' '  + training.user.last_name,
+                                media: [{'pathUrl': training.user.avatarUrl}],
+                                userId: training.user.id,
+                                address: {
+                                    street: training.user.address?.street
+                                }
+                            } as any)"
                             rounded
                             class="trainer-event-item"
-                            @click="onViewCalendar"
+                            @click="onViewCalendar(training.id)"
                         />
                     </div>
                 </template>
@@ -141,7 +149,7 @@ import {
     SortOrder,
     QueryTrainerTrainingsOrderByColumn,
     TrainingStatesEnum,
-TrainingPaginator,
+    TrainingPaginator,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -265,13 +273,9 @@ const { result: calendarWidgetResult } = useQuery(
     }
 );
 
-console.log('befoer')
-
 const events = computed<EventPaginator["data"]>(() =>
     eventsResult?.value?.events?.data ? eventsResult.value.events.data : []
 );
-
-console.log('After')
 
 const trainings = computed<TrainingPaginator["data"]>(() =>
     trainingsResult?.value?.trainerTrainings?.data ? trainingsResult?.value?.trainerTrainings?.data : []
@@ -334,8 +338,11 @@ const onViewTrainings = () => {
     router.push({ name: EntitiesEnum.DashboardTrainings });
 };
 
-const onViewCalendar = () => {
-    router.push({ name: EntitiesEnum.DashboardTrainingsCalendar });
+const onViewCalendar = (id: string) => {
+    router.push({
+      name: EntitiesEnum.DashboardTrainingsCalendar,
+      params: { id: id }    
+    });
 };
 
 const openTraining = (

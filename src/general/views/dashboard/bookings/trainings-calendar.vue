@@ -9,7 +9,7 @@
         </div>
         <div class="d-flex gap-16 h-100 overflow-hidden">
            <div class="flex-1 h-100 d-flex-col justify-content-between hide-scrollbar">
-            <TrainerInfo></TrainerInfo>
+            <TrainerInfo :item="train" ></TrainerInfo>
            </div>
            <div class="flex-2 h-100 hide-scrollbar">
             <base-calendar class="web-custom-calendar" week-days-format="W" :attributes="calendarOption" />
@@ -43,6 +43,8 @@ const bookings = computed(() => {
   if (calendarWidgetResult && calendarWidgetResult?.value) {
     const userAvailability = calendarWidgetResult?.value?.userAvailability;
 
+    console.log(calendarWidgetResult?.value);
+
     if (userAvailability && userAvailability?.events) {
       const { events } = userAvailability;
       const bookedEvents = events.map((event: any) => {
@@ -65,6 +67,7 @@ const bookings = computed(() => {
   }
   return availability;
 });
+
 const calendarOption = computed(() => {
   const tmp = bookings.value.map((date) => {
     return new Date(date.start_date);
