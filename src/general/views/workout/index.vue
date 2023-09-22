@@ -166,7 +166,7 @@ import {
   RoleEnum,
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { ref, computed, onMounted, onBeforeMount, watch } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -213,21 +213,52 @@ const allDailys = computed(() => isFacilityOwner ? [ ...dailysResult.value.facil
 const setTab = (workoutT: string) => {
 		tab.value = workoutT;
 }
+let payload = {
+  page: 1,
+  first: 1000,
+  order: SortOrder.Asc,
+};
+watch(() => currentFacility.facility,
+() => {
+  refetchDailys({ 
+    ...payload,
+    orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+    facility_id: currentFacility.facility?.id 
+  });
+  refetchDailysAnalytics({
+    facility_id: currentFacility.facility?.id,
+  });
+  refetchDailyPerformance({
+    facility_id: currentFacility.facility?.id,
+    limit: 7
+  });
+});
+watch(() => currentTrainer.trainer,
+() => {
+  refetchDailys({ 
+    ...payload,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    trainer_id: currentFacility.facility?.id 
+  });
+  refetchDailysAnalytics({
+    trainer_id: currentTrainer.trainer?.id,
+  });
+  refetchDailyPerformance({
+    trainer_id: currentTrainer.trainer?.id,
+    limit: 7
+  });
+});
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
   isFacilityOwner ? WorkoutsByFacilityDocument : WorkoutsDocument,
   isFacilityOwner ? {
-    page: 1,
-    first: 1000,
-    facility_id: currentFacility.facility?.id,
+    ...payload,
     orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
-    order: SortOrder.Asc,
+    facility_id: currentFacility.facility?.id 
   } : {
-    page: 1,
-    first: 1000,
-    trainer_id: currentTrainer.trainer?.id,
+    ...payload,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    order: SortOrder.Asc,
+    trainer_id: currentFacility.facility?.id 
   },
   {
     fetchPolicy: "no-cache",
