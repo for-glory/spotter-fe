@@ -9,7 +9,7 @@
     </template>
     <template #draggable>
       <div class="subscriptions__content-holder">
-        <ion-title class="subscriptions__title"> Choose your option </ion-title>
+        <ion-title class="subscriptions__title" :class="{'font-yantramanav' : role === RoleEnum.User}"> Choose your option </ion-title>
         <choose
           :products="products"
           @handle-chosen-product="handleChosenProduct"
@@ -24,6 +24,7 @@
           class="button-submit"
           @click="onChooseSubscription"
           :disabled="!paymentStore.productItemId"
+          :class="{'font-yantramanav' : role === RoleEnum.User}"
         >
           Purchase now
         </ion-button>
@@ -52,9 +53,11 @@ import {
   FacilityQueryVariables,
   FacilityItem,
   PurchasableProductsEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { Productable } from "@/ts/types/store";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
+import useRoles from "@/hooks/useRole";
 
 const route = useRoute();
 const router = useRouter();
@@ -77,12 +80,36 @@ const { onResult } = useQuery<FacilityQuery>(
   facilityQueryVariables
 );
 
+const { role } = useRoles();
+
 onResult((data) => {
   products.value = data?.data?.facility?.productItems || [];
 });
 
 onMounted(() => {
   paymentProductsStore.clearCart();
+  setTimeout(() => {
+    products.value = [{
+    id:"1",
+    created_at: new Date().toString(),
+    description:"Get 1 session at the gym",
+    facility:'$9.99/one payment',
+    front_price:"9.99",
+    price:"$9.99",
+    product_id:'premium',
+    title:"Premium plan"
+  },
+  {
+    id:"2",
+    created_at: new Date().toString(),
+    description:"Get 8 sessions at the gym",
+    facility:'$39.99/one payment',
+    front_price:"39.99",
+    price:"$39.99",
+    product_id:'premium',
+    title:"Premium plan"
+  }]
+  }, 500);
 });
 
 const handleChosenProduct = (product: Productable) => {

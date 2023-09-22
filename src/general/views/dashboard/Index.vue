@@ -2,7 +2,7 @@
   <base-dashboard-layout>
     <template  #right-section>
 			<dashboard-searchbar  v-if="isWebView"/>
-      <div :class="role !== RoleEnum.Trainer ? 'content' : 'h-100 bg-main'">
+      <div :class="{'content' : role !== RoleEnum.Trainer && role !== RoleEnum.User,'h-100 bg-main' : role === RoleEnum.Trainer || role === RoleEnum.User}">
         <router-view />
       </div>
     </template>

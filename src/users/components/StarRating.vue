@@ -60,6 +60,9 @@ function onStarClick(i: number) {
   &--medium {
     font-size: 24px;
   }
+  &--32 {
+    font-size: 32px !important;
+  }
 
   &__inner {
     overflow: hidden;

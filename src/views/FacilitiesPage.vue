@@ -58,6 +58,7 @@ import { MapFilters, MapMarkerItem } from "@/ts/types/map";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { Capacitor } from "@capacitor/core";
 
 const props = defineProps<{
   filters?: MapFilters;
@@ -127,7 +128,7 @@ const toggleModal = () => {
 const onClick = (e: CustomEvent, facilityId: string) => {
   emits("hide-modal");
   router.push({
-    name: EntitiesEnum.Facility,
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails,
     params: {
       id: facilityId,
     },

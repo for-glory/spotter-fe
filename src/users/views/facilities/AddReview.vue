@@ -8,7 +8,7 @@
       <div class="ion-padding-horizontal review" v-else>
         <div class="write-review">
           <div v-if="feedback === EntitiesEnum.Positive.toLocaleLowerCase()">
-            <span class="write-review__title">{{
+            <span class="write-review__title" :class="Number(stars || 0) > 0? 'active': ''" >{{
               Number(stars).toFixed(1)
             }}</span>
             <ion-text color="medium" class="write-review__question">
@@ -30,7 +30,7 @@
           </div>
 
           <ion-item class="write-review__holder-textarea">
-            <ion-label class="write-review__label" position="floating">
+            <ion-label class="write-review__label" position="stacked">
               Add review
             </ion-label>
             <ion-textarea
@@ -52,7 +52,7 @@
             </ion-button>
             <ion-button
               v-if="feedback === EntitiesEnum.Negative.toLocaleLowerCase()"
-              class="button secondary"
+              class="button secondary skip-btn"
               expand="block"
               @click="confirmReview"
             >
@@ -165,12 +165,13 @@ const handleBack = () => {
   }
 
   &__text {
+    font-family: 'Yantramanav';
     display: block;
     font-weight: 300;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 150%;
     color: var(--ion-color-secondary);
-    margin-bottom: 30px;
+    margin-bottom: 22px;
   }
 
   &__title {
@@ -180,15 +181,19 @@ const handleBack = () => {
     line-height: 1.5;
     color: var(--gray-600);
     margin-bottom: 13px;
+    &.active {
+      color: var(--fitnesswhite);
+    }
   }
 
   &__question {
     display: block;
-    margin-bottom: 13px;
+    margin-bottom: 8px;
     font-weight: 500;
     font-size: 16px;
-    line-height: 1.5;
-    color: var(--ion-color-white);
+    line-height: 150%;
+    font-family: 'Yantramanav';
+    color: var(--fitnesswhite);
   }
 
   :deep(.stars) {
@@ -204,17 +209,24 @@ const handleBack = () => {
     --background: var(--gray-700);
     --border-radius: 8px;
     --border-width: 0.8px;
+    --border-style: solid;
     --border-color: var(--gray-500);
-    --padding-start: 15px;
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
     --padding-end: 0;
+    --highlight-background: var(--gray-500);
+    --full-highlight-height: 0px;
+    margin-top: 8px;
   }
 
   &__label {
+    font-family: 'Yantramanav';
     --ion-color-primary: var(--gray-400);
     font-weight: 500;
     font-size: 12px;
-    line-height: 18px;
+    line-height: 150%;
     color: var(--gray-400);
+    transform: translateY(50%) scale(1);
   }
 
   &__textarea {
@@ -232,7 +244,13 @@ const handleBack = () => {
 
     ion-button {
       margin-bottom: 16px;
-      letter-spacing: 0;
+      font-family: 'Yantramanav';
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 130%;
+    }
+    .skip-btn {
+      --color: var(--fitnesswhite);
     }
   }
 }

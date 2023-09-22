@@ -1,5 +1,5 @@
 <template>
-  <ion-item class="facility-item">
+  <ion-item class="facility-item" :class="{'facility-item-user': role === RoleEnum.User}">
     <div class="facility-item__photo">
       <ion-img v-if="photo?.length" :src="photo"></ion-img>
       <template v-else>
@@ -22,14 +22,17 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import { Facility } from "@/generated/graphql";
+import { Facility, RoleEnum } from "@/generated/graphql";
 import { IonItem, IonImg, IonLabel } from "@ionic/vue";
 import RatingNumber from "@/general/components/RatingNumber.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
+import useRoles from "@/hooks/useRole";
 
 const props = defineProps<{
   facility: Facility;
 }>();
+
+const { role } = useRoles();
 
 const photo = computed(() => {
   return props.facility.media?.length
@@ -124,6 +127,18 @@ const photo = computed(() => {
 
   &__distance {
     margin-right: 3px;
+  }
+}
+.facility-item-user {
+  .facility-item__title {
+    font-family: "Yantramanav";
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--fitnesswhite);
+  }
+  .facility-item__address {
+    font-family: Yantramanav;
+    color: var(--gray-400);
   }
 }
 </style>
