@@ -142,14 +142,30 @@
           @change="tabsChanged"
         />
         <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-        <div class="tabs-holder d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
+        <div class="tabs-holder tabs-text-content d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
+          <div class="card-background"  v-if="!dropins || !dropins.length">
+            <empty-block
+              title="Drop-ins Empty"
+              hideButton
+              text="No Dropins available for this location, create new dropins to get started"
+              icon= "assets/icon/dropin.svg"
+            />
+          </div>
           <div class="ion-text-center"  v-for="dropin in dropins">
             <ion-title class="offering-title">${{dropin.price}}</ion-title>
             <ion-text>1 Day</ion-text>
             <ion-text>{{dropin.title}}</ion-text>
           </div>
         </div>
-        <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
+        <div class="tabs-holder tabs-text-content d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
+          <div class="card-background"  v-if="!passes || !passes.length">
+            <empty-block
+              title="Passes Empty"
+              hideButton
+              text="No Passes available for this location, create new passes to get started"
+              icon= "assets/icon/gym-user-icon.svg"
+            />
+          </div>
           <div class="ion-text-center"  v-for="pass in passes">
             <ion-title class="offering-title">${{pass.price}}</ion-title>
             <ion-text>1 Month</ion-text>
@@ -313,24 +329,30 @@
                   @change="tabsChanged"
                 />
                 <!-- <ion-button class="share-btn">Share Gym</ion-button> -->
-                <div class="tabs-holder d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
-                  <div class="ion-text-center">
-                    <ion-title class="offering-title">$20.00</ion-title>
+                <div class="tabs-holder tabs-text-content d-flex ion-margin-top" v-if="!activeOfferingsTab || activeOfferingsTab == EntitiesEnum?.FacilityDropins">
+                  <div class="card-background"  v-if="!dropins || !dropins.length">
+                    <empty-block
+                      title="Drop-ins Empty"
+                      hideButton
+                      text="No Dropins available for this location, create new dropins to get started"
+                      icon= "assets/icon/dropin.svg"
+                    />
+                  </div>
+                  <div class="ion-text-center"  v-for="dropin in dropins">
+                    <ion-title class="offering-title">${{dropin.price}}</ion-title>
                     <ion-text>1 Day</ion-text>
-                    <ion-text>One day access</ion-text>
-                  </div>
-                  <div class="ion-text-center">
-                    <ion-title class="offering-title">$39.00</ion-title>
-                    <ion-text>2 Days</ion-text>
-                    <ion-text>Two days access</ion-text>
-                  </div>
-                  <div class="ion-text-center">
-                    <ion-title class="offering-title">$79.00</ion-title>
-                    <ion-text>5 Day</ion-text>
-                    <ion-text>Five days access</ion-text>
+                    <ion-text>{{dropin.title}}</ion-text>
                   </div>
                 </div>
-                <div class="tabs-holder d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
+                <div class="tabs-holder tabs-text-content d-flex ion-margin-top" v-if="activeOfferingsTab == EntitiesEnum.Facilities">
+                  <div class="card-background"  v-if="!passes || !passes.length">
+                    <empty-block
+                      title="Passes Empty"
+                      hideButton
+                      text="No Passes available for this location, create new passes to get started"
+                      icon= "assets/icon/gym-user-icon.svg"
+                    />
+                  </div>
                   <div class="ion-text-center" v-for="pass in passes" > 
                     <ion-title class="offering-title">${{pass.price}}</ion-title>
                     <ion-text>1 Month</ion-text>
@@ -940,7 +962,7 @@ const {
 });
 
 const dropins = computed(() => {
-  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType?.data[0]);
+  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType);
   return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
 
