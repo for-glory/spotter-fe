@@ -24,7 +24,7 @@
         </ion-button>
         <div>
           <div class="workout-item__head">
-            <ion-label class="workout-item__title"> {{ title }}</ion-label>
+            <ion-text class="workout-item__title"> {{ title }}</ion-text>
           </div>
           <ion-text class="workout-item__info">
             <ion-icon icon="assets/icon/time.svg" />

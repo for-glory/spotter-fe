@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'native': !Capacitor.isNativePlatform() }">
+  <div :class="{ 'desktop': !Capacitor.isNativePlatform() }">
     <ion-item class="toolbar-item" style="padding-top: 16px; padding-bottom: 16px;">
       <div 
         class="swiper-header d-flex align-items-center justify-content-between w-100"
@@ -119,9 +119,9 @@ const openViewModal = (daily: any) => {
   }
 }
 
-.native {
+.desktop {
   .swiper-slide {
-    width: 30%;
+    width: 40%;
   }
 }
 
