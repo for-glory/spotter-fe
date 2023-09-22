@@ -10,54 +10,29 @@
           <div class="rating-star">
             <span class="rating-star__title">{{ facility?.score }}</span>
             <star-rating :model-value="facility?.score || 0" size="medium" />
-            <ion-text color="medium" class="rating-star__reviews">
+            <ion-text color="medium" class="rating-star__reviews" :class="{'font-yantramanav' : role === RoleEnum.User}">
               based on {{ facility?.reviews_count }} reviews
             </ion-text>
           </div>
-          <like-rating
-            :likes="facility?.positive_reviews_count || 0"
-            :total="facility?.reviews_count || 0"
-            :dislikes="facility?.negative_reviews_count || 0"
-            :progressValue="progressValue"
-          />
+          <like-rating :likes="facility?.positive_reviews_count || 0" :total="facility?.reviews_count || 0"
+            :dislikes="facility?.negative_reviews_count || 0" :progressValue="progressValue" />
         </div>
         <div class="tabs-holder">
-          <page-tabs
-            :tabs="tabs"
-            class="page-tabs ion-padding-horizontal"
-            :value="activeTab"
-            @change="tabsChanged"
-          />
+          <page-tabs :tabs="tabs" class="page-tabs ion-padding-horizontal" :value="activeTab" @change="tabsChanged" />
           <div class="content ion-padding-horizontal">
             <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
             <div v-else>
-              <review-item
-                v-for="review in reviews"
-                :key="review.id"
-                class="review-item"
-                :avatar-url="review.avatarUrl"
-                :full-name="review.fullName"
-                :date="review.date"
-                :rating="review.rating"
-                :text="review.text"
-              />
+              <review-item v-for="review in tempReviews" :key="review.id" class="review-item" :avatar-url="review.avatarUrl"
+                :full-name="review.fullName" :date="review.date" :rating="review.rating" :text="review.text" />
             </div>
           </div>
         </div>
       </template>
     </template>
     <template #footer>
-      <gym-fixed
-        :title="facility?.name || ''"
-        :location="facility?.address?.street || ''"
-      >
+      <gym-fixed :title="facility?.name || ''" :location="facility?.address?.street || ''">
         <template #button v-if="isAbleToAddReview">
-          <ion-button
-            expand="block"
-            color="primary"
-            class="fixed-holder__button"
-            @click="onAddReview"
-          >
+          <ion-button expand="block" color="primary" class="fixed-holder__button font-yantramanav" @click="onAddReview">
             Add review
           </ion-button>
         </template>
@@ -67,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton } from "@ionic/vue";
+import { IonButton, IonSpinner } from "@ionic/vue";
 import { Review as UserReview } from "@/ts/types/user";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import StarRating from "@/users/components/StarRating.vue";
@@ -88,11 +63,15 @@ import {
   Review,
   ReviewsDocument,
   ReviewTypeEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { useRoute } from "vue-router";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+import useRoles from "@/hooks/useRole";
 
 const route = useRoute();
+
+const { role } = useRoles();
 
 const tabs: TabItem[] = [
   {
@@ -108,6 +87,22 @@ const tabs: TabItem[] = [
     label: "Negative",
   },
 ];
+const tempReviews: UserReview[] = [{
+  id: "1",
+  date: new Date().toString(),
+  rating: 4.9,
+  text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
+  avatarUrl: "https://picsum.photos/200/300",
+  fullName: 'Sharon Jem',
+},
+{
+  id: "2",
+  date: new Date().toString(),
+  rating: 4.5,
+  text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
+  avatarUrl: "https://picsum.photos/200/300",
+  fullName: 'Sharon Jem',
+}];
 
 const activeTab = ref<ReviewTypeEnum>(ReviewTypeEnum.Recent);
 
@@ -151,6 +146,15 @@ const reviews = computed(() =>
         avatarUrl: cur.author?.avatarUrl || "",
         fullName: `${cur.author?.first_name} ${cur.author?.last_name}`,
       });
+      const t: UserReview = {
+        id: "1",
+        date: new Date().toString(),
+        rating: cur.score || 0,
+        text: cur.review,
+        avatarUrl: cur.author?.avatarUrl || "",
+        fullName: 'Test user',
+      };
+      acc.push(t);
       return acc;
     },
     []

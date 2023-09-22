@@ -45,7 +45,7 @@
           <ion-text class="card__exp-date__desrc desrc">Exp. date</ion-text>
           <ion-text class="card__exp-date__title title">{{ expDate }}</ion-text>
         </div>
-        <div v-if="isDefault" class="title">Default card for the payments</div>
+        <div v-if="isDefault" class="title title_default">Default card for the payments</div>
       </div>
     </div>
   </div>
@@ -108,8 +108,8 @@ const onDelete = () => {
   }
 
   &__number {
-    display: inline-grid;
-    grid-template-columns: repeat(4, 36px) 14px;
+    display: flex;
+    // grid-template-columns: repeat(4, 36px) 14px;
     gap: 5px;
     font-weight: 500;
     align-items: center;
@@ -122,6 +122,7 @@ const onDelete = () => {
   &__footer {
     display: flex;
     gap: 16px;
+    max-height: 43px;
   }
 
   &__holder,
@@ -139,6 +140,9 @@ const onDelete = () => {
   font-weight: 300;
   font-size: 12px;
   color: var(--ion-color-white);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .desrc {
@@ -154,5 +158,12 @@ const onDelete = () => {
 
 .visible-numbers {
   padding-top: 3px;
+}
+.title_default {
+  align-self: center;
+  white-space: normal;
+}
+.card__holder {
+  max-width: 30%;
 }
 </style>

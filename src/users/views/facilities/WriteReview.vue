@@ -101,13 +101,13 @@ const goNextStep = () => {
   --border-color: var(--gray-600);
 
   &.item-radio-checked {
-    --color: var(--ion-color-white);
+    --color: var(--fitnesswhite);
     --border-color: var(--ion-color-primary);
   }
 
   ion-radio {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     border-width: 1.8px;
     margin: 3px 3px 3px 20px;
     --color: var(--ion-color-medium);
@@ -125,18 +125,18 @@ const goNextStep = () => {
   }
 
   &__icon {
-    margin-right: 4px;
+    margin-right: 8px;
     font-size: 24px;
     width: 1em;
     height: 1em;
+    color: var(--ion-color-primary);
+    // .radiobutton--positive & {
+    //   color: var(--ion-color-primary);
+    // }
 
-    .radiobutton--positive & {
-      color: var(--ion-color-success);
-    }
-
-    .radiobutton--negative & {
-      color: var(--ion-color-danger-tint);
-    }
+    // .radiobutton--negative & {
+    //   color: var(--ion-color-danger-tint);
+    // }
   }
 }
 
@@ -154,10 +154,11 @@ const goNextStep = () => {
 
   &__question {
     display: block;
+    font-family: 'Yantramanav';
     margin-bottom: 32px;
     font-weight: 500;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 150%;
     color: var(--ion-color-white);
   }
 
@@ -167,7 +168,10 @@ const goNextStep = () => {
 
     ion-button {
       margin-bottom: 16px;
-      letter-spacing: 0;
+      font-family: 'Yantramanav';
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 130%;
     }
   }
 }

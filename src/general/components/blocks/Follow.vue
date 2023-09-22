@@ -1,7 +1,7 @@
 <template>
   <ion-icon
     :src="
-      isFollowed ? 'assets/icon/followed.svg' : 'assets/icon/unfollowed.svg'
+      isFollowed ? 'assets/icon/followed.svg' : 'assets/icon/call.svg'
     "
     class="follow"
     @click="onClick"

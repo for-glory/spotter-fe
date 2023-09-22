@@ -1,7 +1,7 @@
 <template>
   <div
     class="review__container"
-    :class="{ 'review__container--height-fixed': heightFixed }"
+    :class="{ 'review__container--height-fixed': heightFixed,'user-review' : role === RoleEnum.User }"
   >
     <div class="review__header">
       <avatar class="review__avatar" :src="avatarUrl" />
@@ -23,6 +23,10 @@ import Rating from "@/general/components/blocks/ratings/Rating.vue";
 import { computed, defineProps } from "vue";
 import Avatar from "../Avatar.vue";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
+
+const { role } = useRoles();
 
 const props = defineProps<{
   avatarUrl: string;
@@ -75,6 +79,11 @@ const currentDate = computed(() => dayjs(props.date).format("D MMMM, YYYY"));
   &__text {
     font-weight: 300;
     font-size: 14px;
+  }
+}
+.user-review {
+  .review__user, .review__date, .review__text {
+    font-family: "Yantramanav";
   }
 }
 </style>

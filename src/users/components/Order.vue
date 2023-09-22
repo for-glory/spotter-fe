@@ -1,6 +1,6 @@
 <template>
   <ion-text v-if="!hideTitle" class="content__title">Order details</ion-text>
-  <div class="content__container">
+  <div class="content__container" :class="{'content-container-user' : role === RoleEnum.User}">
     <trainer-item
       v-if="type === EntitiesEnum.Trainer && item"
       :trainer="item"
@@ -44,6 +44,10 @@ import EventInfo from "@/general/components/Event.vue";
 import { EntitiesEnum } from "@/const/entities";
 import SearchResult from "@/users/views/facilities/SearchResult.vue";
 import dayjs from "dayjs";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
+
+const { role }  = useRoles();
 
 withDefaults(
   defineProps<{
@@ -82,6 +86,7 @@ withDefaults(
     font-size: 16px;
     margin-left: 16px;
     color: var(--ion-color-white);
+    font-family: "Yantramanav";
   }
 }
 
@@ -114,5 +119,19 @@ withDefaults(
 
 .trainer {
   --padding-bottom: 10px;
+}
+.content-container-user {
+  .order__label,.order__info {
+    font-family: "Yantramanav";
+  }
+  .order__label{
+    color: var(--gray-400);
+  }
+  .order__info {
+    color: var(--fitnesswhite);
+  }
+  .facility-item__address {
+    font-weight: 500;
+  }
 }
 </style>

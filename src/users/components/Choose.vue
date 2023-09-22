@@ -6,6 +6,7 @@
       v-for="(product, index) in products"
       :key="product.id"
       @click="handleChosenProduct(product)"
+      :class="{'radiobutton-user' : role === RoleEnum.User}"
     >
       <div class="radiobutton__holder">
         <div class="radiobutton__head">
@@ -37,8 +38,10 @@ import {
 } from "@ionic/vue";
 import { defineProps, defineEmits } from "vue";
 import { Productable } from "@/ts/types/store";
-import { FacilityItem } from "@/generated/graphql";
+import { FacilityItem, RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
+const { role } = useRoles();
 defineProps<{
   products: FacilityItem[];
 }>();
@@ -140,5 +143,13 @@ const handleChosenProduct = (product: Productable) => {
   font-size: 12px;
   line-height: 1;
   flex-shrink: 0;
+}
+.radiobutton-user {
+  .radiobutton__title,.radiobutton__label,.radiobutton__description {
+    font-family: "Yantramanav";
+  }
+  .radiobutton__title,.radiobutton__label {
+    color: var(--fitnesswhite);
+  }
 }
 </style>

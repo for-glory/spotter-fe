@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'calendar--dark': darkBackground }" class="calendar">
+  <div :class="{ 'calendar--dark': darkBackground, 'user-calendar': role === RoleEnum.User }" class="calendar">
     <ion-datetime
       ref="calendar"
       :value="selectedDate"
@@ -52,6 +52,10 @@ import {
 } from "vue";
 import dayjs from "dayjs";
 import { computed } from "@vue/reactivity";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
+
+const { role } = useRoles();
 
 const props = withDefaults(
   defineProps<{
@@ -238,5 +242,15 @@ ion-datetime {
   display: block;
   margin: 6px auto 22px;
   --color: var(--ion-color-white);
+}
+.user-calendar {
+  ion-datetime {
+    font-family: "Yantramanav";
+    --title-color: var(--fitnesswhite);
+    &::part(native){
+      font-family: "Yantramanav" !important;
+      color: var(--fitnesswhite) !important;
+    }
+  }
 }
 </style>
