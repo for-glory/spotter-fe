@@ -523,12 +523,28 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardEventDetail,
+        path: "event/:id(\\d+)",
+        component: () => import("@/general/views/dashboard/events/Details.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardCreateEvent,
         path: "create-event",
         component: () =>
           import("@/general/views/dashboard/events/CreateEvent.vue"),
         meta: {
           middleware: [gymOwnerSubscription],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardEditEvent,
+        path: "event/:id(\\d+)/edit",
+        component: () => import("@/general/views/dashboard/events/EditEvent.vue"),
+        meta: {
+          middleware: [auth],
         },
       },
       {

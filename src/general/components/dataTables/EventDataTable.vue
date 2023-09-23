@@ -24,7 +24,7 @@
 					<ion-text class="gray">Status</ion-text>
 				</ion-col>
 			</ion-row>
-			<ion-row class="table-row" v-for="event in events" :key="event.id" @click="onHandleDetailsPage(EntitiesEnum.EventsDetailed, event.id)">
+			<ion-row class="table-row" v-for="event in events" :key="event.id" @click="onHandleDetailsPage(EntitiesEnum.DashboardEventDetail, event.id)">
 				<ion-col size="1.7" class="table-td">
 					<ion-text class="gray">{{ event.title }}</ion-text>
 				</ion-col>
