@@ -8670,3 +8670,21 @@ export const DailyViewsAndPurchasesDocument = gql`
   }
 }
 `;
+export const DailyAnalyticsForTrainerDocument = gql`
+  query dailyAnalytics($trainer_id: ID!) {
+    dailyAnalytics(trainer_id: $trainer_id) {
+      total_revenue
+      purchases
+      views
+      per_daily_views
+    }
+  }
+`;
+export const DailyPerformanceForTrainerDocument = gql`
+  query dailyPerformance($trainer_id: ID!, $limit: Int) {
+    dailyPerformance(trainer_id: $trainer_id, limit: $limit) {
+      date
+      count
+    }
+  }
+`;

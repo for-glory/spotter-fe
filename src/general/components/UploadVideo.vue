@@ -104,6 +104,7 @@ import { v4 as uuidv4 } from "uuid";
 import CircleProgress from "@/general/components/CircleProgress.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { EntitiesEnum } from "@/const/entities";
+import { Capacitor } from "@capacitor/core";
 
 defineProps<{
   video: string;
@@ -135,7 +136,8 @@ const videoOptions: VideoOptions = {
 const isUploadModalOpen = ref<boolean>(false);
 
 const chooseVideo = (mode: string) => {
-  CameraPro.getVideo(videoOptions)
+  if(Capacitor.isNativePlatform()) {
+    CameraPro.getVideo(videoOptions)
     .then(async (video: Video) => {
       preloading.value = true;
       const blobFile = (video?.path && (await readFile(video.path))) || "";
@@ -158,56 +160,31 @@ const chooseVideo = (mode: string) => {
       console.error("camera error: ", error);
       preloading.value = false;
     });
-  // isUploadModalOpen.value = false;
-  // if (mode === 'record') {
-  //   CameraPro.getVideo(videoOptions)
-  //     .then(async (video: Video) => {
-  //       preloading.value = true;
-  //       const blobFile = (video?.path && (await readFile(video.path))) || "";
-  //       const mimeType = (video?.path && mime.getType(video?.path)) || "";
-  //       const file = dataURItoVideo(blobFile.data, uuidv4(), mimeType);
-  //       const videoDuration = await getVideoDuration(file);
-  //       if (file.size > maxVideoSize.value) {
-  //         alertModalError.value = EntitiesEnum.MaxVideoSize;
-  //       }
+  } else {
+    const input: HTMLInputElement = document.createElement("input");
+    input.type = "file";
+    input.accept = "video/mp4,video/x-m4v,video/*";
+    document.body.appendChild(input);
+    input.onchange = async (event) => {
+      const file = event.target?.files[0];
 
-  //       preloading.value = false;
+      const videoDuration = await getVideoDuration(file);
+      if (file.size > maxVideoSize.value) {
+        alertModalError.value = EntitiesEnum.MaxVideoSize;
+      }
 
-  //       if (alertModalError.value?.length) return;
+      preloading.value = false;
 
-  //       const fileSize = bytesToSize(file.size);
-  //       const fileName = `${video.path?.split("/")?.slice(-1) || ""}`;
-  //       emits("change", file, fileSize, fileName);
-  //     })
-  //     .catch(async (error) => {
-  //       console.error("camera error: ", error);
-  //       preloading.value = false;
-  //     });
-  // } else {
-  //   const input: HTMLInputElement = document.createElement("input");
-  //   input.type = "file";
-  //   input.accept = "video/mp4,video/x-m4v,video/*";
-  //   document.body.appendChild(input);
-  //   input.onchange = async (event) => {
-  //     const file = event.target?.files[0];
+      if (alertModalError.value?.length) return;
 
-  //     const videoDuration = await getVideoDuration(file);
-  //     if (file.size > maxVideoSize.value) {
-  //       alertModalError.value = EntitiesEnum.MaxVideoSize;
-  //     }
-
-  //     preloading.value = false;
-
-  //     if (alertModalError.value?.length) return;
-
-  //     const fileSize = bytesToSize(file.size);
-  //     console.log(file.size);
-  //     const fileName = file.name;
-  //     emits("change", file, fileSize, fileName);
-  //     input.remove();
-  //   };
-  //   input.click();
-  // }
+      const fileSize = bytesToSize(file.size);
+      console.log(file.size);
+      const fileName = file.name;
+      emits("change", file, fileSize, fileName);
+      input.remove();
+    };
+    input.click();
+  }
 };
 
 const readFile = async (path: string): Promise<ReadFileResult> => {

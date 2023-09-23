@@ -1,12 +1,5 @@
 <template>
   <ion-modal ref="modal" class="equipment-amenities-modal">
-    <page-header @back="cancel" back-btn>
-      <template #custom-btn>
-        <!-- <ion-button @click="select" class="header-btn">
-          <ion-icon src="assets/icon/accept.svg" />
-        </ion-button> -->
-      </template>
-    </page-header>
     <ion-content class="ion-padding-horizontal content">
       <ion-spinner
         name="lines"
@@ -17,19 +10,23 @@
         <div class="checkbox-container">
           <div class="checkbox-col">
             <ion-text class="title"> Equipment </ion-text>
-            <checkbox-group
-              @change="onEquipmentsChange"
-              :options="equipments || []"
-              :selected="equipmentsValue"
-            />
+            <div class="group-box">
+              <checkbox-group
+                @change="onEquipmentsChange"
+                :options="equipments || []"
+                :selected="equipmentsValue"
+              />
+            </div>
           </div>
           <div class="checkbox-col">
             <ion-text class="title"> Amenities </ion-text>
-            <checkbox-group
-              @change="onAmenitiesChange"
-              :options="amenities || []"
-              :selected="amenitiesValue"
-            />
+            <div class="group-box">
+              <checkbox-group
+                @change="onAmenitiesChange"
+                :options="amenities || []"
+                :selected="amenitiesValue"
+              />
+            </div>
           </div>
         </div>
         <div class="btn-container">
@@ -149,8 +146,6 @@ defineExpose({
 
 <style lang="scss" scoped>
 .content {
-  height: calc(100% - 48px - var(--ion-safe-area-top));
-  --padding-bottom: calc(24px + var(--ion-safe-area-bottom));
 }
 
 .title {
@@ -171,32 +166,6 @@ defineExpose({
   margin: 30vh auto;
 }
 
-.header-btn {
-  margin: 0;
-  height: 32px;
-  font-size: 24px;
-  display: block;
-  min-width: 32px;
-  backdrop-filter: blur(4px);
-  border-radius: 50%;
-  --border-radius: 50% !important;
-  --padding-bottom: 0;
-  --padding-end: 0;
-  --padding-start: 0;
-  --padding-top: 0;
-  --icon-padding-bottom: 0;
-  --icon-padding-end: 0;
-  --icon-padding-start: 0;
-  --icon-padding-top: 0;
-  --min-height: 32px;
-  --min-width: 32px;
-  --background: rgba(var(--ion-color-black-rgb), 0.12);
-
-  ion-icon {
-    font-size: 1em;
-  }
-}
-
 .equipment-amenities-modal {
   --width: 54.5vw;
   --height: 42vh;
@@ -204,14 +173,32 @@ defineExpose({
 
 .checkbox-container {
   display: flex;
-  height: 89%;
+  height: calc(100% - 90px);
+  padding: 0 14px;
   .checkbox-col {
+    padding-top: 34px;
     width: 50%;
-    overflow: auto;
+    .group-box {
+      height: calc(100% - 20px);
+      overflow-y: auto;
+  
+      &::part(scroll) {
+        margin-right: -15px;
+        padding-right: 15px;
+      }
+  
+      &::part(scroll)::-webkit-scrollbar {
+        display: none;
+      }
+  
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
   }
 }
 .btn-container {
-  height: 10%;
+  margin-top: 32px;
   ion-button {
     width: 60%;
     margin: 0 auto;
@@ -232,7 +219,7 @@ defineExpose({
   }
   
   .checkbox-col{
-    height: 100%;
+    height: 50%;
     width: 100% !important;
   }
 }

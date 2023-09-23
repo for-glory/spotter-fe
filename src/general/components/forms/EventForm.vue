@@ -19,8 +19,7 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        
-        <ion-col size="6">
+        <ion-col size="12" size-lg="6">
           <div class="form-row">
             <base-input
               required
@@ -33,7 +32,7 @@
           </div>
         </ion-col>
         
-        <ion-col  size="6">
+        <ion-col size="12" size-lg="6">
           <div class="form-row">
             <base-input
               type="text"
@@ -45,7 +44,7 @@
             />
           </div>
         </ion-col>
-        <ion-col  size="6">
+        <ion-col size="12" size-lg="6">
           <div class="form-row">
             <ion-label class="label"> Choose equioment and amenitites </ion-label>
             <choose-block
@@ -60,180 +59,157 @@
             />
           </div>
         </ion-col>
-        <ion-col  size="6">
-           <template v-if="true">
-            <div class="form-row">
-              <ion-label class="label"> Venue </ion-label>
-              <ion-item class="input-container item-interactive item-input item-has-placeholder item md item-lines-none item-fill-none choose-place1">
-          <GMapAutocomplete
-          placeholder="Enter your address"
-          class="search-form__control form-row__control"
-          @place_changed="setPlace"
-          :value="
-            selectedAddress
-              ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
-              : ''
-          "
-        >
-        </GMapAutocomplete>
-              </ion-item>
-            </div>
-    </template>
+        <ion-col size="12" size-lg="6">
+          <ion-label class="label"> Venue </ion-label>
+          <div class="form-row">
+            <choose-block
+              title="Location"
+              class="form-row__control"
+              @handle-click="onChooseLocation"
+              :value="
+                selectedAddress
+                  ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
+                  : `${props.data?.address.street}`
+              "
+            />
+          </div>
         </ion-col>
-
-        
-    <template v-if="true"> 
-        <ion-col size="6">
-      <div class="form-row">
-        <base-input
-          type="text"
-          :disabled="loading"
-          @change="eventMaxParticipantsChange"
-          v-model:value="eventMaxParticipants"
-          placeholder="Capacity"
-          label="Set the max participants for event"
-        />
-      </div>
-            </ion-col>
-        <ion-col  size="6">
-
-      <div class="form-row">
-        <base-input
-          type="text"
-          :disabled="loading"
-          label="Discount (optional)"
-          placeholder="Enter discount value"
-        />
-      </div>
-            </ion-col>
-        <ion-col  size="6">
-
-      <div class="form-row">
-        <ion-label class="label"> Choose date of event </ion-label>
-        <choose-block
-          title="Start date"
-          :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
-          @handle-click="
-            showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
-              title: 'Start date',
-            })
-          "
-          :disabled="loading"
-        />
-      </div>
-            </ion-col>
-        <ion-col  size="6">
-
-            <div class="form-row">
-        <ion-label class="label"> End date </ion-label>
-        <choose-block
-          title="End date"
-          :disabled="!eventStartDate || !eventStartTime || loading"
-          :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
-          @handle-click="
-            showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
-              min: eventStartDate ?? undefined,
-              title: 'End date',
-            })
-          "
-        />
-      </div>
-
-            </ion-col>
-        <ion-col  size="6">
-    
-    <div class="form-row">
-        <ion-label class="label"> Choose time of event </ion-label>
-        <wheel-picker :options="startTimeOptions" name="startTime">
-          <template #button>
-            <choose-block
-              title="Start time"
-              :value="eventStartTime"
-              :disabled="!eventStartDate || loading"
-              @handle-click="openPicker('startTime')"
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <base-input
+              type="text"
+              :disabled="loading"
+              @change="eventMaxParticipantsChange"
+              v-model:value="eventMaxParticipants"
+              placeholder="Capacity"
+              label="Set the max participants for event"
             />
-          </template>
-        </wheel-picker>
-      </div>
-     
-            </ion-col>
-        <ion-col  size="6">
-
-      <div class="form-row">
-        <ion-label class="label"> Choose end time </ion-label>
-        <wheel-picker :options="endTimeOptions" name="endTime">
-          <template #button>
-            <choose-block
-              title="End time"
-              :value="eventEndTime"
-              :disabled="!eventEndDate || loading"
-              @handle-click="openPicker('endTime')"
+          </div>
+        </ion-col>
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <base-input
+              type="text"
+              :disabled="loading"
+              label="Discount (optional)"
+              placeholder="Enter discount value"
             />
-          </template>
-        </wheel-picker>
-      </div>
-            </ion-col>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <ion-label class="label"> Choose date of event </ion-label>
+            <choose-block
+              title="Start date"
+              :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
+              @handle-click="
+                showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
+                  title: 'Start date',
+                })
+              "
+              :disabled="loading"
+            />
+          </div>
+        </ion-col>
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <ion-label class="label"> End date </ion-label>
+            <choose-block
+              title="End date"
+              :disabled="!eventStartDate || !eventStartTime || loading"
+              :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
+              @handle-click="
+                showDatePikerModal(DateFieldsEnum.EndDate, eventEndDate, {
+                  min: eventStartDate ?? undefined,
+                  title: 'End date',
+                })
+              "
+            />
+          </div>
+        </ion-col>
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <ion-label class="label"> Choose time of event </ion-label>
+            <wheel-picker :options="startTimeOptions" name="startTime">
+              <template #button>
+                <choose-block
+                  title="Start time"
+                  :value="eventStartTime"
+                  :disabled="!eventStartDate || loading"
+                  @handle-click="openPicker('startTime')"
+                />
+              </template>
+            </wheel-picker>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-lg="6">
+          <div class="form-row">
+            <ion-label class="label"> Choose end time </ion-label>
+            <wheel-picker :options="endTimeOptions" name="endTime">
+              <template #button>
+                <choose-block
+                  title="End time"
+                  :value="eventEndTime"
+                  :disabled="!eventEndDate || loading"
+                  @handle-click="openPicker('endTime')"
+                />
+              </template>
+            </wheel-picker>
+          </div>
+        </ion-col>
         <ion-col size="12">
-
-      <div class="form-row">
-        <base-input
-          :rows="3"
-          :maxlength="150"
-          :disabled="loading"
-          label="Event description"
-          @change="eventDescriptionChange"
-          v-model:value="eventDescription"
-          placeholder="Enter a description"
-        />
-      </div>
-            </ion-col>
-            
-    </template>
- 
-        
+          <div class="form-row">
+            <base-input
+              :rows="3"
+              :maxlength="150"
+              :disabled="loading"
+              label="Event description"
+              @change="eventDescriptionChange"
+              v-model:value="eventDescription"
+              placeholder="Enter a description"
+            />
+          </div>
+        </ion-col>
       </ion-row>
    
-<ion-row class="btn">
-    <!-- <div
-      class="actions-wrapper"
-      :class="{ 'actions-wrapper--fixed': footerFixed }"
-    > -->
-    <ion-button @click="onBack" >
-      Cancel
-    </ion-button>
-      <ion-button style="margin-right: 14px;"
-        expand="block"
-        class="secondary"
-        @click="submitEvent('exit')"
-        fill="outline"
-        :disabled="
-          !eventTitle?.length || !eventPhotos?.length || !selectedAddress
-        "
-      >
-        {{ saveButtonText || 'Save' }}
-      </ion-button>
-      <ion-button
-        expand="block"
-        @click="submitEvent('next')"
-        v-if="nextButton"
-        :disabled="
-          !eventTitle?.length || !eventPhotos?.length || !selectedAddress
-        "
-      >
-        {{ nextButtonText || 'Next' }}
-      </ion-button>
-    <!-- </div> -->
-    </ion-row>
-     </ion-grid>
-
-
-     
+      <ion-row class="btn">
+        <!-- <div
+          class="actions-wrapper"
+          :class="{ 'actions-wrapper--fixed': footerFixed }"
+        > -->
+        <ion-button @click="onBack" >
+          Cancel
+        </ion-button>
+        <ion-button style="margin-right: 14px;"
+          expand="block"
+          class="secondary"
+          @click="submitEvent('exit')"
+          fill="outline"
+          :disabled="
+            !props.edit ? !eventTitle?.length || !eventPhotos?.length || !selectedAddress : false
+          "
+        >
+          {{ saveButtonText || 'Save' }}
+        </ion-button>
+        <ion-button
+          expand="block"
+          @click="submitEvent('next')"
+          v-if="nextButton"
+          :disabled="
+            !eventTitle?.length || !eventPhotos?.length || !selectedAddress
+          "
+        >
+          {{ nextButtonText || 'Next' }}
+        </ion-button>
+        <!-- </div> -->
+      </ion-row>
+    </ion-grid>
   </div>
-    <discard-changes
-    :is-open="isConfirmedModalOpen"
-    @close="discardModalClosed"
+  <discard-changes
+  :is-open="isConfirmedModalOpen"
+  @close="discardModalClosed"
   />
-  <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
+  <g-map-autocomplete-modal ref="chooseAddressModal" @select="addressSelected" :store="store" />
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
   <equipment-and-amenities
     ref="equipmentAndAmenitiessModal"
@@ -252,7 +228,8 @@ import {
   IonButton,
   IonLabel,
   PickerColumnOption,
-  IonSpinner,
+  IonRow,
+  IonCol,
   toastController,
 } from "@ionic/vue";
 import {
@@ -279,9 +256,8 @@ import {
 } from "@/generated/graphql";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useNewEventStore } from "@/general/stores/new-event";
-import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
+import GMapAutocompleteModal from "@/general/components/GMapAutocompleteModal.vue";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
-import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import {
   DatePickerModalResult,
   DatePickerOptions,
@@ -354,12 +330,12 @@ watch(
     if (!newVal) return;
     store.setTitle(newVal.title ?? "");
     store.setPrice(newVal.price ?? "");
-    store.setAddress(newVal.address.state,newVal.address.city, newVal.address.address);
+    store.setAddress(newVal.address.city.state, newVal.address.city, newVal.address.address);
     store.setMaxParticipants(newVal.max_participants ?? "")
     store.setStartDate(newVal.start_date ?? "")
-     store.setStartTime(newVal.start_time ?? "")
-     store.setEndDate(newVal.end_date ?? "")
-      store.setEndTime(newVal.end_time ?? "")
+    store.setStartTime(newVal.start_time ?? "")
+    store.setEndDate(newVal.end_date ?? "")
+    store.setEndTime(newVal.end_time ?? "")
     store.setDescription(newVal.description ?? "");
     store.setPhotos(newVal.photos ?? []);
     store.setEquipments(newVal.equipments ?? []);
@@ -555,13 +531,20 @@ const deletePhoto = (index: number, id?: string) => {
   }
 };
 
-const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
+const chooseAddressModal = ref<typeof GMapAutocompleteModal | null>(null);
 
 const onChooseLocation = () => {
-  router.push({
-    name: EntitiesEnum.ChooseLocation, 
-    params: { type: 'event' }
-  });
+  if (Capacitor.isNativePlatform()) {
+    router.push({
+      name: EntitiesEnum.ChooseLocation, 
+      params: { type: 'event' }
+    });
+  }
+  else {
+    chooseAddressModal.value?.present({
+      title: "Address",
+    });
+  }
 }
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
@@ -758,6 +741,27 @@ const submitEvent = async (type: string) => {
     : {
         title: eventTitle.value,
         description: eventDescription.value,
+        start_date: formatTime(
+          eventStartDate.value as number,
+          eventStartTime.value
+        ),
+        end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
+        price: Number(store.price),
+        address: {
+          lat: selectedAddress.value?.latitude
+            ? Number(selectedAddress.value?.latitude)
+            : props.data?.address.lat,
+          lng: selectedAddress.value?.longitude
+            ? Number(selectedAddress.value?.longitude)
+            : props.data?.address.lng,
+          street: `${selectedAddress.value?
+            (selectedAddress.value?.thoroughfare
+              ? selectedAddress.value?.thoroughfare + ", "
+              : "" + 
+            selectedAddress.value?.subThoroughfare || "") : props.data?.address.street}`,
+          city_id: selectedAddress.value ? selectedCity.value?.id : props.data?.address.city.id,
+        },
+        max_participants: parseInt(eventMaxParticipants.value),
         equipments: eventEquipments.value.map((equipment) => equipment.id),
         amenities: eventAmenities.value.map((amenity) => amenity.id),
         media: eventPhotos.value
@@ -772,41 +776,7 @@ const submitEvent = async (type: string) => {
           .filter((photo) => photo.file),
       };
 
-  emits("submit", {
-        title: eventTitle.value,
-        description: eventDescription.value,
-        start_date: formatTime(
-          eventStartDate.value as number,
-          eventStartTime.value
-        ),
-        end_date: formatTime(eventEndDate.value as number, eventEndTime.value),
-        price: Number(store.price),
-        address: {
-          lat: selectedAddress.value?.latitude
-            ? Number(selectedAddress.value?.latitude)
-          : 34.034744,
-        lng: selectedAddress.value?.longitude
-          ? Number(selectedAddress.value?.longitude)
-          : -118.2381,
-        street: `${
-          selectedAddress.value?.thoroughfare
-            ? selectedAddress.value?.thoroughfare + ", "
-            : ""
-        }${selectedAddress.value?.subThoroughfare || ""}`,
-        city_id: selectedCity.value?.id,
-      },
-      max_participants: parseInt(eventMaxParticipants.value),
-      equipments: eventEquipments.value.map((equipment) => equipment.id),
-      amenities: eventAmenities.value.map((amenity) => amenity.id),
-      media: eventPhotos.value?.map((photo, index) => {
-        return {
-          title: `${eventTitle.value
-            .replace(/\s/g, "")
-            .toLowerCase()}-${index}`,
-          file: photo.path,
-        };
-      }),
-  }, type);
+  emits("submit", data, type);
 };
 
 const formatTime = (date: number, time: string): string => {
@@ -874,12 +844,10 @@ input.search-form__control.form-row__control.pac-target-input {
     background: #333;;
     border-radius: 10px;
     padding: 20px;
-    height: 1000px; 
     padding-inline: 12%;
 }
 .btn {
-  float: right;
-  margin-right: -5px;
+  justify-content: end;
 }
 .label {
  color: var(--ion-color-white) !important;

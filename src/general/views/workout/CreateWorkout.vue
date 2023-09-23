@@ -74,7 +74,7 @@ const createDailys = () => {
   } else {
     dailyParam = { ...params.value };
   }
-  createDaily({ dailyParam })
+  createDaily(dailyParam)
     .then(async () => {
       const toast = await toastController.create({
         message: "Created successfully",
