@@ -505,7 +505,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardTrainingsCalendar,
-        path: "trainings-calendar",
+        path: "trainings-calendar/:date?/:id(\\d+)?",
         component: () =>
           import("@/general/views/dashboard/bookings/trainings-calendar.vue"),
       },
