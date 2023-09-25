@@ -6,7 +6,7 @@
         button-text="Create"
         :edit="isEdit"
         :nextButton="isEdit"
-        :nextButtonText="isEdit ? 'Next' : ''"
+        :nextButtonText="isEdit ? 'Save' : ''"
         @submit="createNewFacility"
         @edit="updateFacilityDetails"
         @cancel="onBack"
