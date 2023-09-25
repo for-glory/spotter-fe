@@ -12,7 +12,7 @@ export const navigationMenu: NavigationMenu = {
       category: "/dashboard",
     },
     {
-      name: EntitiesEnum.ActivitiesNearby,
+      name: EntitiesEnum.Workouts,
       label: "Dailys",
       id: "dailys",
       icon: "assets/icon/youtube.svg",

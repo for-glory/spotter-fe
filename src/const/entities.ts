@@ -221,5 +221,7 @@ export enum EntitiesEnum {
   WorkoutView = "WORKOUT_VIEW",
   WorkoutReviews = "WORKOUT_REVIEWS",
   EditWorkout = "EDIT_WORKOUT",
-  Upcoming = "UPCOMING"
+  Upcoming = "UPCOMING",
+  Dailys = "DAILYS",
+  Trending = "TRENDING",
 }
