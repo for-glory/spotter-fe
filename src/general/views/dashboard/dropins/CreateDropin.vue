@@ -100,16 +100,40 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon, IonLabel } from "@ionic/vue";
+import { FacilityItemsByFacilityIdAndTypeDocument, GetCustomersByFacilityItemsDocument } from "@/generated/graphql";
+import { IonButton, IonIcon, IonLabel,  } from "@ionic/vue";
 import { chevronBackOutline } from "ionicons/icons";
+import { useQuery } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
 // import { Multiselect } from "vue-multiselect";
 
 const router = useRouter();
+const route = useRoute();
+
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
+
+const dropinsDetail = route.params.data;
+const currentFacilityId = route.params.id;
+console.log("currentId", currentFacilityId);
+// Dropins start
+const {
+  result: dropinResult,
+  loading: loadingFacilityDropin
+} = useQuery(GetCustomersByFacilityItemsDocument, {
+  facility_id: currentFacilityId,
+  item_type: 'DROPIN',
+});
+
+const dropins = computed(() => {
+  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType);
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Dropins End
 </script>
 
 <style scoped lang="scss">

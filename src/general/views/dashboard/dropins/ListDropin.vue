@@ -33,18 +33,35 @@
               >
             </div>
           </div>
-        </div>
+        </div>        
         <ion-spinner
           v-if="loadingFacilityDropin"
           name="lines"
           class="spinner"
         />
         <div v-else>
+          <pass-dropins-list :dataList="dropins"  @delete="isDelete" @edit="isEditPass"/>
           <!-- <pass-dropin-data-table :dropins="dropins"/> -->
         </div>
+        <div class="card-background" v-if="!dropins || !dropins.length">
+            <empty-block
+              title="Drop-ins Empty"
+              hideButton
+              text="No drop-ins created yet"
+              icon= "assets/icon/dropin.svg"
+            />
+          </div>
       </ion-col>
     </ion-row>
   </ion-grid>
+  <discard-changes
+      :is-open="isDeleteModalOpen"
+      @close="deleteModalClosed"
+      title="Do you want to delete drop-in?"
+      text="gym drop-in will be deleted"
+      cancelButton="Cancel"
+      button="Delete"
+    />
 </template>
 
 <script setup lang="ts">
@@ -60,10 +77,14 @@ import {
   IonCol
 } from "@ionic/vue";
 import {
-  GetCustomersByFacilityItemsDocument,
+  // GetCustomersByFacilityItemsDocument,
+  FacilityItemsByFacilityIdAndTypeDocument
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
+import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref, computed } from "vue";
@@ -78,31 +99,90 @@ const currentFacility = useFacilityStore();
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
+const isDeleteModalOpen = ref(false);
 
+// Dropins start
 const {
   result: dropinResult,
-  loading: loadingFacilityDropin,
-  onResult
-} = useQuery(GetCustomersByFacilityItemsDocument, {
+  loading: loadingFacilityDropin
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
   item_type: "DROPIN"
 });
 
 const dropins = computed(() => {
-  return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
-    if (filter.value === "all") {
-      return true;
-    }
-    else if (filter.value === "active") {
-      return item.is_active_pass;
-    }
-    else if (filter.value === "expired") {
-      return !item.is_active_pass;
-    }
-  })
+  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType);
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
+
+// Dropins End
+
+// const {
+//   result: dropinResult,
+//   loading: loadingFacilityDropin,
+//   onResult
+// } = useQuery(GetCustomersByFacilityItemsDocument, {
+//   facility_id: currentFacility.facility.id,
+//   item_type: "DROPIN"
+// });
+
+// const dropins = computed(() => {
+//   return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
+//     if (filter.value === "all") {
+//       return true;
+//     }
+//     else if (filter.value === "active") {
+//       return item.is_active_pass;
+//     }
+//     else if (filter.value === "expired") {
+//       return !item.is_active_pass;
+//     }
+//   })
+// });
 const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
+}
+
+const isDelete = (flag: Boolean) => {
+  console.log("Is delete");
+  isDeleteModalOpen.value = true;
+};
+
+const deleteModalClosed = (approved: boolean) => {
+  isDeleteModalOpen.value = false;
+  if (approved) {
+    console.log("aasdasda")
+    // deleteFacility({ id : currentFacilityId})
+    // .then(async () => {
+    //   const toast = await toastController.create({
+    //     message: "Gym was deleted successfully",
+    //     duration: 2000,
+    //     icon: "assets/icon/success.svg",
+    //     cssClass: "success-toast",
+    //   });
+    //   toast.present();
+    //   goBack();
+    // })
+    // .catch(async (error) => {
+    //   const toast = await toastController.create({
+    //     message: "Something went wrong. Please try again.",
+    //     icon: "assets/icon/info.svg",
+    //     cssClass: "danger-toast",
+    //   });
+    //   toast.present();
+    //   throw new Error(error);
+    // });
+  }
+};
+const isEditPass = (data: any) => {
+  console.log('edit pass data: ', data)
+  // navigate(EntitiesEnum.DashboardDropinCreate);
+  router.push({
+    name: EntitiesEnum.DashboardDropinCreate,
+    params: {
+      id: data.id
+    },
+  });
 }
 </script>
 
