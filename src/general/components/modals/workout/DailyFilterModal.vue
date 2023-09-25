@@ -213,13 +213,10 @@ const selectType = (type: any) => {
   }
 };
 const selectBodyPart = (part: any) => {
-  console.log(selectedBodyParts.value);
-  console.log(isSelectedBodyPart(part));
   if(!isSelectedBodyPart(part)) {
     selectedBodyParts.value.push(part.id);
   } else {
     selectedBodyParts.value = selectedBodyParts.value.filter((selectedPart) => selectedPart !== part.id);
-    console.log(selectedBodyParts.value);
   }
 };
 

@@ -48,6 +48,10 @@
               v-for="workout in workouts"
               :key="workout.id"
               :activity="workout"
+              :type="'daily'"
+              :duration="allDailys?.find((daily)=>daily.id===workout.id)?.duration"
+              :dailyType="allDailys?.find((daily)=>daily.id===workout.id)?.type.name"
+              :trainer="allDailys?.find((daily)=>daily.id===workout.id)?.trainer"
               @click="openActivity(workout.id)"
             />
             <ion-infinite-scroll
@@ -107,7 +111,7 @@ import {
   QueryWorkoutsOrderByColumn,
   SortOrder,
 } from "@/generated/graphql";
-import { ref } from "vue";
+import { defineProps, computed,ref } from "vue";
 import { ActivityItem } from "@/interfaces/ActivityItem";
 import { useRouter } from "vue-router";
 import { discoverTabs } from "@/const/tabs";
@@ -147,7 +151,7 @@ const tabsChanged = (name: EntitiesEnum) => {
   updateWorkouts
 };
 
-const { refetch: updateWorkouts, onResult: gotWorkouts } =
+const { result: workoutsResult, refetch: updateWorkouts, onResult: gotWorkouts } =
   useQuery<WorkoutsQuery>(
     WorkoutsDocument,
     {
@@ -161,6 +165,8 @@ const { refetch: updateWorkouts, onResult: gotWorkouts } =
       fetchPolicy: "no-cache",
     }
   );
+
+const allDailys = computed(() => workoutsResult.value?.workouts?.data);
 
 const loadMoreWorkouts = (ev: InfiniteScrollCustomEvent) => {
   if (workouts.value && workouts.value.length < totalWorkouts.value) {

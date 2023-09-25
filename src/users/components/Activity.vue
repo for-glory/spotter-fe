@@ -9,16 +9,41 @@
     <div class="activity-item__inner">
       <div class="activity-item__head">
         <ion-label class="activity-item__title"> {{ activity.name }}</ion-label>
-        <rating-number class="activity-item__rating">
+        <rating-number 
+          v-if="type !== 'daily'" 
+          class="activity-item__rating"
+        >
           {{ activity.rating }}
         </rating-number>
       </div>
-      <address-item class="activity-item__address" v-if="activity.distance">
+      <address-item 
+        v-if="activity.distance"
+        class="activity-item__address" 
+      >
         <ion-text class="activity-item__distance" color="primary">
           {{ activity.distance }}
         </ion-text>
         far from you
       </address-item>
+      <div 
+        v-if="type === 'daily'" 
+        class="activity-item__info d-flex align-items-center"
+      >
+        <ion-icon icon="assets/icon/time.svg" />
+        <span>
+          <template v-if="duration">
+            {{ getDurationText(duration) }}
+            <ion-text color="light" class="dot">
+              &nbsp;&#183;&nbsp;
+            </ion-text>
+          </template>
+          {{ dailyType }}
+          <ion-text color="light" class="dot">
+            &nbsp;&#183;&nbsp;
+          </ion-text>
+          {{ trainer?.first_name + " " + trainer?.last_name }}
+        </span>
+      </div>
     </div>
   </ion-item>
 </template>
@@ -32,7 +57,22 @@ import { ActivityItem } from "@/interfaces/ActivityItem";
 
 defineProps<{
   activity: ActivityItem;
+  type?: string;
+  duration?: number;
+  dailyType?: string;
+  trainer?: string;
 }>();
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
+
 </script>
 
 <style lang="scss" scoped>
@@ -59,6 +99,15 @@ defineProps<{
     min-height: 100%;
     flex-direction: column;
     justify-content: flex-end;
+  }
+
+  &__info {
+    ion-icon {
+      line-height: 1;
+      font-size: 24px;
+      margin-right: 4px;
+      color: var(--ion-color-primary);
+    }
   }
 
   &__photo {
@@ -122,5 +171,9 @@ defineProps<{
   &__distance {
     margin-right: 3px;
   }
+}
+.dot {
+  font-weight: 500;
+  font-size: 16px;
 }
 </style>
