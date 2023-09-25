@@ -154,6 +154,7 @@
     ref="filtersModal"
     :isOpen="isFiltersOpen"
     @close="isFiltersOpen = false"
+    @applyFilter="applyFilters"
   />
 
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
@@ -209,6 +210,7 @@ import { minutesDuration } from "@/const/minutes-durations";
 import { Emitter, EventType } from "mitt";
 import useRoles from "@/hooks/useRole";
 import DailyFilterModal from "@/general/components/modals/workout/DailyFilterModal.vue";
+import { useUserStore } from "@/general/stores/user";
 
 const { role }= useRoles()
 
@@ -252,7 +254,7 @@ const emits = defineEmits<{
 const isFocused = ref<boolean>(false);
 const searchBar = ref<typeof IonSearchbar | null>(null);
 const isFacilityTab = computed(() => props.type === EntitiesEnum.Facilities);
-
+const userStore = useUserStore();
 const searchQuery = ref<string>("");
 const params = computed(() => {
   return {
@@ -365,25 +367,30 @@ const showFilters = () => {
 const filtersModal = ref<typeof IonModal | null>(null);
 
 const applyFilters = async () => {
-  const date_from = filterStartDate.value
-      ? formatTime(filterStartDate.value, filterStartTime.value)
-      : undefined,
-    date_to = filterEndDate.value
-      ? formatTime(filterEndDate.value, filterEndTime.value)
-      : undefined;
-  if (date_from && date_to && date_from >= date_to) {
-    const toast = await toastController.create({
-      message: "Incorrect time range entered",
-      duration: 2000,
-      icon: "assets/icon/info.svg",
-      cssClass: "danger-toast",
+  if(isFacilityTab.value){
+    const date_from = filterStartDate.value
+        ? formatTime(filterStartDate.value, filterStartTime.value)
+        : undefined,
+      date_to = filterEndDate.value
+        ? formatTime(filterEndDate.value, filterEndTime.value)
+        : undefined;
+    if (date_from && date_to && date_from >= date_to) {
+      const toast = await toastController.create({
+        message: "Incorrect time range entered",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      return toast.present();
+    }
+    emits("apply-filters", {
+      date_from,
+      date_to,
     });
-    return toast.present();
+  } else {
+    let filter = userStore.dailyFilter;
+    emits("apply-filters", { ...filter });
   }
-  emits("apply-filters", {
-    date_from,
-    date_to,
-  });
   filtersModal.value?.$el.dismiss();
 };
 

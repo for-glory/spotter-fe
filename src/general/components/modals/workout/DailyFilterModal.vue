@@ -145,6 +145,7 @@ import router from "@/router";
 import { Emitter, EventType } from "mitt";
 import useRoles from "@/hooks/useRole";
 import { useDailysStore } from "@/general/stores/useDailysStore";
+import { useUserStore } from "@/general/stores/user";
 import RadioGroup from "@/general/components/blocks/RadioGroup.vue";
 
 const { role }= useRoles()
@@ -158,9 +159,11 @@ const props = withDefaults(
 );
 const emits = defineEmits<{
   (e: 'close'): void;
+  (e: 'applyFilter'): void;
 }>();
 
 const dailysStore = useDailysStore();
+const userStore = useUserStore();
 const selectedTypes = ref<Array<any>>([]);
 const selectedBodyParts = ref<Array<any>>([]);
 const isFiltersOpen = computed(() => props.isOpen);
@@ -219,6 +222,15 @@ const selectBodyPart = (part: any) => {
     console.log(selectedBodyParts.value);
   }
 };
+
+const applyFilters = () => {
+  let filter = {
+    level: selectedTypes,
+    tags: selectedBodyParts,
+  }
+  userStore.setDailyFilter(filter);
+  emits('applyFilter');
+}
 
 </script>
 

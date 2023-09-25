@@ -17,6 +17,10 @@ export const useUserStore = defineStore("user", {
         city: null,
         address: null,
       },
+      dailyFilter: {
+        level: [],
+        tags: [],
+      }
     };
   },
   actions: {
@@ -45,6 +49,9 @@ export const useUserStore = defineStore("user", {
     },
     setOwnedFacilities(owned_facilities: any) {
       this.owned_facilities = owned_facilities;
+    },
+    setDailyFilter(filter: any) {
+      this.dailyFilter = filter;
     },
     clear() {
       this.id= "",

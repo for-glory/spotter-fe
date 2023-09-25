@@ -4,7 +4,8 @@
       <search-form 
         hide-results
         filtersBtn
-        @search="searchWorkouts" 
+        @search="searchWorkouts"
+        @apply-filters="applyFilter"
         :class="{'ios-app-top': isPlatform('ios')}"
       />
     </template>
@@ -75,7 +76,7 @@
   </base-layout>
 
   <page-tabs
-    v-if="!showFilterModal"
+    v-if="!showFilterModal && workoutsLoaded"
     :tabs="tabs"
     class="page-tabs"
     @change="tabsChanged"
@@ -230,6 +231,19 @@ const openActivity = (activityId: string | number) => {
     },
   });
 };
+
+const applyFilter = (data: any) => {
+  console.log(data);
+  workoutsLoaded.value = false;
+  updateWorkouts({
+    first: 6,
+    page: activePage.value,
+    dynamic_search: searchQuery.value,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Desc,
+    has_body_parts: data.tags
+  });
+}
 
 const handleBack = () => {
   router.go(-1);
