@@ -18,7 +18,7 @@
             </template>
            </div>
            <div class="flex-2 h-100 hide-scrollbar">
-            <base-calendar class="web-custom-calendar" week-days-format="W" v-model="date" :attributes="calendarOption" />
+            <base-calendar class="web-custom-calendar" week-days-format="W" :attributes="calendarOption" />
            </div>
         </div>
     </div>
@@ -39,7 +39,7 @@ import { UserAvailabilityDocument,
   QueryTrainerTrainingsOrderByColumn,
   SortOrder
  } from "@/generated/graphql";
-import TrainingDetails from "./training-details.vue";
+import TrainingDetails from "@/general/views/dashboard/bookings/training-details.vue";
 const date = ref('')
 const question = ref('')
 const answer = ref('Questions usually contain a question mark. ;-)')
