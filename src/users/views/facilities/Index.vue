@@ -6,6 +6,7 @@
     :offset-top="64"
     :content-full-height="isMapFullscreen"
     :initial-breakpoint="!isMapFullscreen ? 0.5 : 1"
+    :hide-navigation-menu="isWebView"
   >
     <template #header>
       <search-form
@@ -82,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import ItemsMap, { MapMarkerItem } from "@/general/components/ItemsMap.vue";
@@ -106,6 +107,11 @@ const selectedItem = ref<string | null>(null);
 const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
+  const props = withDefaults(defineProps<{
+    isWebView?:boolean
+  }>(),  {
+    isWebView: false
+  });
 
 const tabs: TabItem[] = [
   {
@@ -117,6 +123,12 @@ const tabs: TabItem[] = [
     label: "Trainers",
   },
 ];
+
+onMounted(() => {
+  if(props.isWebView) {
+    useCurrentLocation.value = true;
+  }
+}); 
 
 const preferredTab: EntitiesEnum = localStorage.getItem(
   "preferred_booking_tab"

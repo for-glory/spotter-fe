@@ -105,7 +105,7 @@ const userPosition = ref<PositionLatLng>({
 });
 
 const myMarkerIcon = {
-  url: "assets/icon/my-marker.svg",
+  url: "assets/icon/my-marker-new.svg",
   scaledSize: {
     width: 81,
     height: 81,
@@ -114,7 +114,7 @@ const myMarkerIcon = {
 };
 
 const markerIcon = {
-  url: "assets/icon/map-marker.svg",
+  url: "assets/icon/location-light.svg",
   scaledSize: {
     width: 24,
     height: 24,

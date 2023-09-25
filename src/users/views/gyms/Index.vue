@@ -1,34 +1,37 @@
 <template>
     <div class="main-content">
         <div class="page-header">
-            <ion-title class="banner__title">Trainers</ion-title>
+            <ion-title class="banner__title">Gyms Nearby</ion-title>
         </div>
-        <div class="content-wrapper" :class="{'view-all' : isViewAll}">
+        <div class="position-relative">
+            <mapSection :is-web-view="true"></mapSection>
+        </div>
+        <!-- <IonContent>
+            <div class="search-bar">
+                <search-form :filters="availabilityFilters
+                    ? {
+                        availability: {
+                            date_from: availabilityFilters.date_from,
+                            date_to: availabilityFilters.date_to,
+                        },
+                    }
+                    : {}
+                    " :type="activeTab" @handle-focus="isSearchOnFocus = true"
+                    @handle-blur="isSearchOnFocus = false" :filters-btn="activeTab === EntitiesEnum.Trainers"
+                    @apply-filters="applyFilters" @reset-filters="resetFilters" />
+            </div>
             <div class="page-map">
-                <div class="search-bar">
-                    <search-form :filters="availabilityFilters
-                        ? {
-                            availability: {
-                                date_from: availabilityFilters.date_from,
-                                date_to: availabilityFilters.date_to,
-                            },
-                        }
-                        : {}
-                        " :type="activeTab" @handle-focus="isSearchOnFocus = true"
-                        @handle-blur="isSearchOnFocus = false" :filters-btn="activeTab === EntitiesEnum.Trainers"
-                        @apply-filters="applyFilters" @reset-filters="resetFilters" />
-                </div>
                 <items-map v-if="!meLoading" :items="locations" :center="userLocation" @marker-click="selectItem"
                     @fullscreen="changeMapView" :selected-item="selectedItem" @change-position="mapPositionChanged"
                     :use-current-location="useCurrentLocation">
                 </items-map>
             </div>
-            <div class="nearby-gym hide-scrollbar">
+            <div class="nearby-gym">
                 <facilities-page :filters="mapPosition" @toggle-modal="showDraggable"
                     v-if="activeTab === EntitiesEnum.Facilities" @location-items="mapItemsChanged" :selected="selectedItem"
                     @deselect="selectedItem = null" />
             </div>
-        </div>
+        </IonContent> -->
     </div>
 </template>
   
@@ -47,7 +50,8 @@ import { useSettings } from "@/hooks/useSettings";
 import { OnboardingStep } from "@/ts/types/onboardingStep";
 import { MapFilters, PositionLatLng } from "@/ts/types/map";
 import debounce from "lodash/debounce";
-import { IonTitle } from "@ionic/vue";
+import { IonContent, IonTitle } from "@ionic/vue";
+import mapSection from "../facilities/Index.vue";
 
 const locations = ref<MapMarkerItem[]>([]);
 const selectedItem = ref<string | null>(null);
@@ -94,7 +98,7 @@ const showDraggable = () => {
     isViewAll.value = true;
 };
 
-const useCurrentLocation = ref<boolean>(false);
+const useCurrentLocation = ref<boolean>(true);
 const userLocation = ref<PositionLatLng>({
     lat: Number(process.env.VUE_APP_DEFAULT_POSITION_LAT),
     lng: Number(process.env.VUE_APP_DEFAULT_POSITION_LNG),
@@ -186,34 +190,6 @@ const selectItem = (id: string) => {
 </script>
   
 <style lang="scss" scoped>
-.page-tabs {
-    left: 0;
-    right: 0;
-    display: flex;
-    z-index: 9999;
-    position: fixed;
-    align-items: center;
-    pointer-events: none;
-    flex-direction: column;
-    justify-content: center;
-    bottom: calc(84px + var(--ion-safe-area-bottom));
-    --btn-min-width: 32vw;
-}
-
-.page-map {
-    height: 430px;
-    min-height: 430px;
-    display: flex;
-    justify-content: center;
-
-    .search-bar {
-        position: absolute;
-        max-width: 500px;
-        width: 100%;
-        margin: auto;
-    }
-}
-
 .main-content {
     padding: 16px 90px;
     padding-bottom: 0;
@@ -230,36 +206,9 @@ const selectItem = (id: string) => {
             color: var(--gold);
         }
     }
-
-    .content-wrapper {
-        padding: 0 40px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        height: 100%;
+    .position-relative{
         position: relative;
-
-        .nearby-gym {
-            background: var(--gray-800);
-            padding: 16px 30px;
-            margin-top: -20px;
-            z-index: 99;
-            position: relative;
-            border-radius: 32px 32px 0 0;
-            flex: 2;
-        }
-        &.view-all {
-            .nearby-gym {
-                overflow: auto;
-                position: absolute;
-                width: calc(100% - 80px);
-                top: 100px;
-                right: 0;
-                left: 0;
-                bottom: 0;
-                margin: auto;
-            }
-        }
+        height: 100%;
     }
 }
 </style>
