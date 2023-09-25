@@ -5,7 +5,7 @@
         <div class="pass-list ion-margin-top">
           <div class="d-flex justify-content-between pass-list__top">
             <div class="ion-padding-vertical">
-              <ion-button
+              <!-- <ion-button
                 class="button-rounded ion-margin-end"
                 :fill="filter==='all'?'solid':'outline'"
                 @click="handleFilter('all')">
@@ -22,22 +22,14 @@
                 :fill="filter==='expired'?'solid':'outline'"
                 @click="handleFilter('expired')">
                 Expired
-              </ion-button>
+              </ion-button> -->
             </div>
-            <!-- <div class="ion-padding-vertical">
+            <div class="ion-padding-vertical">
               <ion-button
                 @click="navigate(EntitiesEnum.DashboardDropinCreate)"
                 class=""
                 fill="solid"
                 >Create Drop ins</ion-button
-              >
-            </div> -->
-            <div class="ion-padding-vertical">
-              <ion-button
-                @click="navigate(EntitiesEnum.DashboardDropinViewList)"
-                class=""
-                fill="solid"
-                >View Drop-Ins</ion-button
               >
             </div>
           </div>
@@ -48,7 +40,7 @@
           class="spinner"
         />
         <div v-else>
-          <pass-dropin-data-table :dropins="dropins"/>
+          <!-- <pass-dropin-data-table :dropins="dropins"/> -->
         </div>
       </ion-col>
     </ion-row>
