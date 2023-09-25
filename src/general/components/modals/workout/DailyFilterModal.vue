@@ -118,6 +118,7 @@ import {
   defineExpose,
   inject,
   watch,
+  onMounted,
 } from "vue";
 import {
   IonButton,
@@ -169,6 +170,10 @@ const selectedBodyParts = ref<Array<any>>([]);
 const isFiltersOpen = computed(() => props.isOpen);
 const showAllTags = ref<boolean>(false);
 
+onMounted(() => {
+  selectedTypes.value = userStore.dailyFilter?.level;
+  selectedBodyParts.value = userStore.dailyFilter?.tags;
+});
 watch(() => props.isOpen,
 () => {
   if(isFiltersOpen) {

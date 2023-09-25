@@ -12,13 +12,17 @@
     <template #content>
       <div class="holder-content ion-padding-horizontal">
         <ion-spinner v-if="!workoutsLoaded" name="lines" class="spinner" />
-        <div v-else-if="view === 'dailys'">
+        <div v-else-if="view === 'library'">
           <template v-if="workouts && workouts.length">
             <ion-title slot="start" class="title">My Library</ion-title>
             <activity
               v-for="workout in workouts"
               :key="workout.id"
               :activity="workout"
+              :type="'daily'"
+              :duration="allDailys?.find((daily)=>daily.id===workout.id)?.duration"
+              :dailyType="allDailys?.find((daily)=>daily.id===workout.id)?.type.name"
+              :trainer="allDailys?.find((daily)=>daily.id===workout.id)?.trainer"
               @click="openActivity(workout.id)"
             />
             <ion-infinite-scroll
@@ -126,7 +130,7 @@ const tabs: TabItem[] = [
   },
   {
     name: EntitiesEnum.Dailys,
-    label: "Dailys",
+    label: "Library",
   },
 ];
 
@@ -144,7 +148,7 @@ const tabsChanged = (name: EntitiesEnum) => {
       break;
     
     case EntitiesEnum.Dailys :
-      view.value = 'dailys';
+      view.value = 'library';
       break;
   }
 
