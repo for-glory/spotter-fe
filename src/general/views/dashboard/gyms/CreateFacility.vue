@@ -33,10 +33,14 @@ import {
   CreateFacilityDocument, UpdateFacilityDocument,
 } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
-import { ref, defineExpose } from "vue";
+import { ref, defineExpose , defineEmits} from "vue";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import {setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+
+const emits = defineEmits<{
+  (e: "close", isConfirmed: boolean): void;
+}>();
 
 const modal = ref<typeof IonModal | null>(null);
 
@@ -47,6 +51,10 @@ const present = (p?: any) => {
     isEdit.value = p?.isEdit;
     selectedFacilityId.value = p?.selectedFacilityId;
     modal?.value?.$el.present();
+};
+
+const closeModal = () => {
+  emits("close", isEdit );
 };
 
 defineExpose({
@@ -156,9 +164,8 @@ facilityCreated((res) => {
 
 facilityUpdated((res) => {
   gymForm.value?.clearStore();
-  facilityStore.setFacility(res.data?.createFacility);
-	setSelectedGym(res.data?.createFacility?.id);
   modal?.value?.$el.dismiss();
+  closeModal();
 });
 
 </script>
