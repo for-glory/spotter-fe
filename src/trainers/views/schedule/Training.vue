@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { IonText, IonButton, toastController } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import TrainingDetail from "@/general/components/Training";
+import TrainingDetail from "@/general/components/Training.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";

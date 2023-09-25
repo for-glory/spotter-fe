@@ -1,9 +1,11 @@
 <template>
-  <ion-text>
+  <ion-text :class="isNative && 'native ion-padding'">
     Already A Member?
     <router-link :to="{ name: EntitiesEnum.Login }"> Log In </router-link>
   </ion-text>
-  <div class="mt-2">
+  <div
+  :class="{ 'mt-2': !isNative, 'native login-form-container ion-padding' : isNative }"
+  >
     <base-form class="authentication-form" @submit.prevent="onSubmit">
       <base-input
         v-model:value="emailInput"
@@ -68,6 +70,9 @@ import { RegisterInput } from "@/generated/graphql";
 import { passwordSchema, userNameSchema, requiredFieldSchema } from "@/validations/authValidations";
 import { ApolloError } from "@apollo/client";
 import { humanizeString } from "@/utils/textUtils";
+import { Capacitor } from "@capacitor/core";
+
+let isNative = Capacitor.isNativePlatform();
 
 const props = defineProps<{
   error: ApolloError | null;

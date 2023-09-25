@@ -105,7 +105,7 @@
                             } as any)"
                             rounded
                             class="trainer-event-item"
-                            @click="onViewCalendar(training.id)"
+                            @click="onViewCalendar(training.id, training.start_date)"
                         />
                     </div>
                 </template>
@@ -120,9 +120,6 @@
             </template>
         </div>
     </div>
-    <!-- <IonModal :is-open="true" :backdrop-dismiss="false">
-        <TrainerInfo></TrainerInfo>
-    </IonModal> -->
 </template>
 
 <script setup lang="ts">
@@ -311,6 +308,7 @@ const bookings = computed(() => {
 });
 
 const selectedDate = ref<Dayjs | null>(null);
+
 const activeTab = ref<EntitiesEnum>(
     (localStorage.getItem("trainer_schedule_active_tab") as EntitiesEnum) ??
         EntitiesEnum.Trainings
@@ -338,10 +336,17 @@ const onViewTrainings = () => {
     router.push({ name: EntitiesEnum.DashboardTrainings });
 };
 
-const onViewCalendar = (id: string) => {
+const onViewCalendar = (id: string|null, date: string|null) => {
+    if (date) {
+        date = dayjs(new Date(date)).format('YYYY-MM-DD')
+    }
+
     router.push({
       name: EntitiesEnum.DashboardTrainingsCalendar,
-      params: { id: id }    
+      params: {
+        date: date, 
+        id: id
+      }    
     });
 };
 
