@@ -3,6 +3,7 @@
     <template v-if="workoutsLoaded" #header>
       <search-form 
         hide-results
+        filtersBtn
         @search="searchWorkouts" 
         :class="{'ios-app-top': isPlatform('ios')}"
       />
@@ -12,7 +13,36 @@
         <ion-spinner v-if="!workoutsLoaded" name="lines" class="spinner" />
         <div v-else-if="view === 'dailys'">
           <template v-if="workouts && workouts.length">
-            <ion-title slot="start" class="title">Workouts</ion-title>
+            <ion-title slot="start" class="title">My Library</ion-title>
+            <activity
+              v-for="workout in workouts"
+              :key="workout.id"
+              :activity="workout"
+              @click="openActivity(workout.id)"
+            />
+            <ion-infinite-scroll
+              threshold="100px"
+              class="infinite-scroll"
+              @ionInfinite="loadMoreWorkouts"
+              v-if="workouts.length < totalWorkouts"
+            >
+              <ion-infinite-scroll-content
+                loading-spinner="lines"
+                loading-text="Loading more..."
+              >
+              </ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+          </template>
+          <empty-block
+            v-else
+            title="Empty here"
+            button-text="Explore more"
+            text="No workouts were found"
+            @button-click="router.push({ name: EntitiesEnum.UserWorkouts })"
+          />
+        </div>
+        <div v-else-if="view === 'trending'">
+          <template v-if="workouts && workouts.length">
             <activity
               v-for="workout in workouts"
               :key="workout.id"
@@ -45,6 +75,7 @@
   </base-layout>
 
   <page-tabs
+    v-if="!showFilterModal"
     :tabs="tabs"
     class="page-tabs"
     @change="tabsChanged"
@@ -99,6 +130,7 @@ const activePage = ref<number>(1);
 const totalWorkouts = ref<number>(0);
 const searchQuery = ref<string>("");
 const view = ref<string>("trending");
+const showFilterModal = ref<boolean>(false);
 
 const tabsChanged = (name: EntitiesEnum) => {
   switch(name) {
@@ -254,7 +286,7 @@ const handleBack = () => {
   left: 0;
   right: 0;
   display: flex;
-  z-index: 21000;
+  z-index: 20000;
   position: fixed;
   align-items: center;
   pointer-events: none;

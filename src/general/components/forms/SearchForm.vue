@@ -76,6 +76,7 @@
   </div>
 
   <ion-modal
+    v-if="isFacilityTab"
     ref="filtersModal"
     class="filters-modal"
     :is-open="isFiltersOpen"
@@ -148,6 +149,13 @@
     </div>
   </ion-modal>
 
+  <daily-filter-modal
+    v-else
+    ref="filtersModal"
+    :isOpen="isFiltersOpen"
+    @close="isFiltersOpen = false"
+  />
+
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
 </template>
 
@@ -200,6 +208,7 @@ import { hoursDuration } from "@/const/hours-durations";
 import { minutesDuration } from "@/const/minutes-durations";
 import { Emitter, EventType } from "mitt";
 import useRoles from "@/hooks/useRole";
+import DailyFilterModal from "@/general/components/modals/workout/DailyFilterModal.vue";
 
 const { role }= useRoles()
 
@@ -215,7 +224,8 @@ const props = withDefaults(
     filters?: any;
     noFoundMsg?: string;
     filtersBtn?: boolean;
-    extraPadding?:boolean
+    extraPadding?:boolean;
+    
   }>(),
   {
     backBtn: false,
@@ -624,7 +634,6 @@ defineExpose({
   &__filters {
     margin: 0;
     right: 36px;
-    bottom: 8px;
     width: 32px;
     z-index: 50;
     height: 32px;
