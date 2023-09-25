@@ -23,7 +23,7 @@
 
   <div class="form-body">
     <ion-grid fixed>
-      <!-- <ion-row>
+      <ion-row>
         <ion-col size="12">
           <div class="form-row">
             <div class="label">Upload gym logo</div>
@@ -33,7 +33,7 @@
             <photo-loader />
           </div>
         </ion-col>
-      </ion-row> -->
+      </ion-row>
       <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
@@ -58,14 +58,24 @@
       <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
-            <ion-label class="label"> Features </ion-label>
-            <input
+            <ion-label class="label"> Choose equipment and amenitites </ion-label>
+            <!-- <input
               class="input-text-field"
               type="text"
               placeholder="e.g: Cycling classes"
               name="features"
+            /> -->
+             <choose-block
+              class="input-text-field"
+              title="Equipment and amenities"
+              @handle-click="onChooseAmenities"
+              :value="facilityEquipments?.length + facilityAmenities?.length || ''"
             />
           </div>
+          <!-- <div class="form-row">
+            <ion-label class="label"> Choose equipment and amenitites </ion-label>
+           
+          </div> -->
         </ion-col>
         <ion-col size="12" size-md="6">
           <div class="form-row">
@@ -97,6 +107,10 @@
       </ion-row>
     </ion-grid>
   </div>
+  <equipment-and-amenities
+    ref="equipmentAndAmenitiessModal"
+    @cancel="equipmentAndAmenitiessSelected"
+  />
 </template>
 
 <script setup lang="ts">
@@ -109,17 +123,34 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import {
   CreateFacilityItemDocument,
 } from "@/generated/graphql";
+import {
+  ref,
+  computed,
+  defineEmits,
+  withDefaults,
+  defineProps,
+  defineExpose,
+} from "vue";
+import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
+import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
+import { CheckboxValueType } from "@/ts/types/checkbox-value";
+// import { useNewFacilityStore } from "../store/new-facility";
+import { useNewFacilityStore } from "../../../../facilities/store/new-facility";
 
 const router = useRouter();
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
-
+const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
+  null
+);
 const currentFacility = useFacilityStore();
 
 const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useMutation(
   CreateFacilityItemDocument
 );
+const facilityEquipments = computed(() => []);
+const facilityAmenities = computed(() => []);
 
 const createNewFacilityItemPass = () => {
   const sampledata = {
@@ -154,6 +185,27 @@ const createNewFacilityItemPass = () => {
       toast.present();
       throw new Error(error);
     });
+};
+
+const store = useNewFacilityStore();
+
+const equipmentAndAmenitiessSelected = (
+  result: EquipmentAndAmenitiesModalResult
+) => {
+  // store.setEquipments(result.equipments || []);
+  // store.setAmenities(result.amenities || []);
+};
+
+const onChooseAmenities = () => {
+  equipmentAndAmenitiessModal.value?.present({
+    title: "Amenities",
+    equipments: store.getEquipments.map(
+      (option: CheckboxValueType) => option.id as string
+    ),
+    amenities: store.getAmenities.map(
+      (option: CheckboxValueType) => option.id as string
+    ),
+  });
 };
 </script>
 
