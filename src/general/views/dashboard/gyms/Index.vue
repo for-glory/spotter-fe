@@ -559,7 +559,7 @@ const openViewModal = (daily: any) => {
 
 const openEvent = (eventId: string) => {
   router.push({
-    name: EntitiesEnum.EventsDetailed,
+    name: EntitiesEnum.DashboardEventDetail,
     params: {
       id: eventId,
     },
