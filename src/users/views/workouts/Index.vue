@@ -42,6 +42,7 @@
               `${workout?.trainer?.first_name} ${workout?.trainer?.last_name}` ||
               ''
             "
+            :showStatus="false"
           />
         </router-link>
       </div>
