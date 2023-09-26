@@ -200,6 +200,7 @@ export enum EntitiesEnum {
   DashboardPassCreate = "DASHBOARD_PASS_CREATE",
   DashboardPassProfile = "DASHBOARD_PASS_PROFILE",
   DashboardDropinList = "DASHBOARD_DROPIN_LIST",
+  DashboardDropinViewList = "DASHBOARD_DROPIN_VIEW_LIST",
   DashboardDropinCreate = "DASHBOARD_DROPIN_CREATE",
   DashboardDropinProfile = "DASHBOARD_DROPIN_PROFILE",
   DashboardGymManager = "DASHBOARD_GYM_MANAGER",

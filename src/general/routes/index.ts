@@ -740,8 +740,16 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardDropinViewList,
+        path: "dropin/listdropin",
+        component: () => import("@/general/views/dashboard/dropins/ListDropin.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardDropinCreate,
-        path: "dropin/create-drop-in",
+        path: "dropin/create-drop-in/:id?",
         component: () =>
           import("@/general/views/dashboard/dropins/CreateDropin.vue"),
         meta: {

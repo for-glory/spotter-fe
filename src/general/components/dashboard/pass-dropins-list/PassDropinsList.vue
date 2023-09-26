@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col class="ion-no-padding" size="4" v-for="item in dataList">
         <div class="list-container">
-          <ion-item class="thumbnail-container ion-no-padding">
+          <ion-item class="thumbnail-container ion-no-padding" lines="none">
             <ion-avatar slot="start">
               <img src="assets/backgrounds/banner1.jpeg" />
             </ion-avatar>
