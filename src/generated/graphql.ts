@@ -4548,6 +4548,24 @@ export type MyWorkoutsQuery = {
         __typename?: "User";
         first_name?: string | null;
         last_name?: string | null;
+        score?: number | null;
+        address?: {
+          __typename?: "Address";
+          lat?: number | null;
+          lng?: number | null;
+        } | null;
+        facilities?: Array<{
+          __typename?: "Facility";
+          media?: Array<{
+            __typename?: "Media";
+            pathUrl: string;
+          } | null> | null;
+          address?: {
+            __typename?: "Address";
+            lat?: number | null;
+            lng?: number | null;
+          } | null;
+        } | null> | null;
       };
       exercises?: Array<{
         __typename?: "WorkoutExercise";
@@ -4561,6 +4579,7 @@ export type MyWorkoutsQuery = {
     paginatorInfo: {
       __typename?: "PaginatorInfo";
       count: number;
+      firstItem?: number | null;
       currentPage: number;
       total: number;
       perPage: number;
@@ -7244,6 +7263,14 @@ export const MyWorkoutsDocument = gql`
     myWorkouts(orderBy: $orderBy, first: $first, page: $page) {
       data {
         id
+        preview
+        reviews_count
+        recommended_count
+        total_revenue
+        views_count
+        purchases
+        video
+        videoUrl
         type {
           id
           name
@@ -7252,6 +7279,20 @@ export const MyWorkoutsDocument = gql`
         trainer {
           first_name
           last_name
+          score
+          address {
+            lat
+            lng
+          }
+          facilities {
+            media {
+              pathUrl
+            }
+            address {
+              lat
+              lng
+            }
+          }
         }
         previewUrl
         title
