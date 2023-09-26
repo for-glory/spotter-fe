@@ -28,12 +28,13 @@
                 class="purchaised-workout"
                 :duration="workout.duration"
                 :title="workout.title || ''"
-                :pathUrl="`${VUE_APP_CDN}${workout.previewUrl}` || ''"
+                :pathUrl="`${workout?.previewUrl}` || ''"
                 :type="workout.type?.name || ''"
                 :trainer="
                   `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
                   ''
                 "
+                :showStatus="false"
               />
             </router-link>
           </div>

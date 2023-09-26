@@ -37,6 +37,7 @@
           <workout-item
             :title="workout?.title || ''"
             :pathUrl="`${workout?.previewUrl}` || ''"
+            :duration="workout?.duration"
             :type="workout?.type?.name || ''"
             :trainer="
               `${workout?.trainer?.first_name} ${workout?.trainer?.last_name}` ||
