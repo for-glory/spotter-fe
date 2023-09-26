@@ -91,8 +91,6 @@ const toEdit = (pass: any) => {
   emits("edit", pass);
 }
 
-
-
 </script>
 
 <style scoped lang="scss">
@@ -103,7 +101,8 @@ const toEdit = (pass: any) => {
   gap: 15px;
 
   ion-button {
-    width: 6.313vw
+    width: 6.313vw;
+    cursor: pointer;
   }
 }
 

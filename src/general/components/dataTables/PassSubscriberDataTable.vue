@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ion-grid class="event-table">
+    <ion-grid class="event-table" v-if="passes && passes.length">
       <ion-row class="table-header">
         <ion-col size="2" class="table-th">
           <ion-text>Members</ion-text>
@@ -21,8 +21,8 @@
           <ion-text>Status</ion-text>
         </ion-col>
       </ion-row>
-      <ion-row class="table-row ion-align-items-center" v-for="pass in passes" :key="pass.id">
-        <ion-col size="2" class="table-td">
+      <ion-row class="table-row" v-for="pass in passes" :key="pass.id">
+        <ion-col size="2" class="table-td" @click="gymPassDetails(pass)">
           <ion-text>{{ `${pass.user?.first_name} ${pass.user?.last_name}` }}</ion-text>
         </ion-col>
         <ion-col size="2" class="table-td">
@@ -49,7 +49,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-
+      <!-- <p @click="gymPassDetails({isGymDetails: true, id: 11})">Click me</p> -->
     <!-- <ion-grid>
       <ion-row class="pagination-bar">
         <ion-col size="2">
@@ -110,6 +110,18 @@ withDefaults(
 		passes:[]
   }
 );
+const emits = defineEmits<{
+  (e: "passDetails", data: any): void;
+}>();
+
+// const gymPassDetails = (pass: any) => {
+//   emits("passDetails",pass);
+// };
+
+const gymPassDetails = (pass: any) => {
+  console.log('toEdit', pass);
+  emits("passDetails", pass);
+}
 </script>
 
 <style scoped lang="scss">
@@ -122,12 +134,17 @@ withDefaults(
   .table-th {
     border-bottom: 1px solid var(--beige);
     padding: 10px 16px;
+    // border-right: 1px solid var(--beige);
   }
-
+  ion-col {
+    border-right: 1px solid var(--beige);
+    display: flex;
+    align-items: center;
+  }
   .table-td {
     //  border: 1px solid var(--beige);
     padding: 0 0 0 16px;
-
+  
     ion-button {
       font-size: 14px;
       height: 32px;

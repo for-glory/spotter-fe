@@ -195,6 +195,8 @@ export enum EntitiesEnum {
   DashboardGettingPaid = "DASHBOARD_GETTING_PAID",
   DashboardSettings = "DASHBOARD_SETTINGS",
   DashboardPassList = "DASHBOARD_PASS_LIST",
+  DashboardPassViewList = "DASHBOARD_PASS_VIEW_LIST",
+  DashboardDropinsPassDetail = "DASHBOARD_DROPINS_PASS_DETAIL",
   DashboardPassCreate = "DASHBOARD_PASS_CREATE",
   DashboardPassProfile = "DASHBOARD_PASS_PROFILE",
   DashboardDropinList = "DASHBOARD_DROPIN_LIST",
