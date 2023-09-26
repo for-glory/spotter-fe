@@ -6997,6 +6997,9 @@ export const GetCartDocument = gql`
             preview
             previewUrl
             front_price
+            views_count
+            recommended_count
+            reviews_count
             price
             type {
               id

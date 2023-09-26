@@ -24,13 +24,9 @@
             Get Access to this daily workout
           </ion-title>
           <ion-text color="secondary">
-            This daily contains
+            This daily contains one video totaling
             <ion-text color="primary">
-              {{ workoutData.exercises.length }} videos
-            </ion-text>
-            totaling
-            <ion-text color="primary">
-              {{ timeConvertToHuman(Number(workoutData.duration)) }}
+              {{ getDurationText(Number(workoutData.duration)) }}
             </ion-text>
           </ion-text>
         </div>
@@ -59,7 +55,7 @@
               class="workout__details__info__icon"
             />
             <span>
-              {{ timeConvertToHuman(Number(workoutData.duration)) }}
+              {{ getDurationText(Number(workoutData.duration)) }}
               <ion-text color="light">&nbsp;&nbsp;•&nbsp;&nbsp;</ion-text>
               {{ workoutData.type?.name }}
               <ion-text color="light">&nbsp;&nbsp;•&nbsp;&nbsp;</ion-text>
@@ -74,19 +70,34 @@
                   ${{ workoutData.price }}/one payment
                 </strong>
                 <ion-text color="secondary">
-                  Get
-                  {{ workoutData.exercises?.length }} video-workout access
+                  Get 1 daily-video access
                 </ion-text>
               </div>
               <ion-radio slot="end" value="1" />
             </ion-item>
           </ion-radio-group>
         </div>
-
+        <div class="workout__details__status d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex-col align-items-center">
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.recommended_count) }}</ion-text>
+            <ion-text class="font-normal color-gold font-14">Likes</ion-text>
+          </div>
+          <div class="split" />
+          <div class="d-flex-col align-items-center">
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.views_count) }}</ion-text>
+            <ion-text class="font-normal color-gold font-14">Views</ion-text>
+          </div>
+          <div class="split" />
+          <div class="d-flex-col align-items-center">
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.reviews_count) }}</ion-text>
+            <ion-text class="font-normal color-gold font-14">Reviews</ion-text>
+          </div>
+        </div>
+        <div class="font-14 font-normal color-fitness-white workout__description">
+          <ion-text>{{ workoutData.description }}</ion-text>
+        </div>
         <div class="workout__purchase-button">
-          <ion-button expand="block" @click="onPurchase"
-            >Purchase Daily</ion-button
-          >
+          <ion-button expand="block" @click="onPurchase">Purchase Daily</ion-button>
         </div>
       </div>
     </template>
@@ -146,6 +157,9 @@ const workoutData = computed(() => ({
   price: workout.value?.front_price || "",
   trainer: workout.value?.trainer || "",
   type: workout.value?.type || "",
+  recommended_count: workout.value?.recommended_count,
+  views_count: workout.value?.views_count,
+  reviews_count: workout.value?.reviews_count
 }));
 
 const onPurchase = () => {
@@ -158,48 +172,30 @@ const onPurchase = () => {
   });
 };
 
-// enum actionTypesEnum {
-//   DeleteEvent = "DELETE_EVENT",
-//   EditEvent = "EDIT_EVENT",
-//   ShareEvent = "SHARE_EVENT",
-// }
-
-// const onEdit = async () => {
-//   const actionSheet = await actionSheetController.create({
-//     mode: "ios",
-//     buttons: [
-//       {
-//         text: "Delete event",
-//         role: "destructive",
-//         data: {
-//           type: actionTypesEnum.DeleteEvent,
-//         },
-//       },
-//       {
-//         text: "Edit event",
-//         data: {
-//           type: actionTypesEnum.EditEvent,
-//         },
-//       },
-//       {
-//         text: "Share event",
-//         data: {
-//           type: actionTypesEnum.ShareEvent,
-//         },
-//       },
-//       {
-//         text: "Cancel",
-//         role: "cancel",
-//       },
-//     ],
-//   });
-
-//   await actionSheet.present();
-// };
-
 const handleBack = () => {
   router.go(-1);
 };
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e3).toFixed(0) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -332,15 +328,21 @@ ion-chip {
     padding: 0;
     display: block;
     margin: 0 -4px;
-    font-size: 28px;
+    font-size: 20px;
+    font-weight: 700;
     line-height: 1.3;
     white-space: normal;
     margin-bottom: 20px;
   }
 
+  &__description {
+    font-family: --var(Yantramanav);
+    padding-top: 16px;
+  }
+
   &__details {
     border-radius: 8px;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
     padding: 12px 16px 0;
     background: var(--gray-700);
 
@@ -384,6 +386,12 @@ ion-chip {
         font-size: 24px;
         margin-right: 4px;
       }
+    }
+
+    &__status {
+      padding: 14.5px 45px;
+      background-color: #262626;
+      border-radius: 8px;
     }
   }
 
@@ -450,5 +458,18 @@ ion-chip {
       margin: 0;
     }
   }
+}
+.split {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 1px;
+  height: 32px;
+  background-color: #3D3D3D;
+}
+.font-16 {
+  font-size: 16px;
+}
+.font-14 {
+  font-size: 14px;
 }
 </style>
