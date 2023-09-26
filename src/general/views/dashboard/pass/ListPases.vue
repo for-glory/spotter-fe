@@ -1,4 +1,15 @@
 <template>
+  <div>
+    <ion-item class="title ion-text-start">
+      <ion-icon
+        class=""
+        mode="ios"
+        color="medium"
+        :icon="chevronBackOutline">
+      </ion-icon>
+      <span @click="navigate(EntitiesEnum.DashboardPassList)" class="medium ion-padding-end clickable">Gym Pass</span>
+    </ion-item>
+  </div>
   <ion-grid fixed>
     <ion-row>
       <ion-col size="12">
@@ -43,7 +54,7 @@
             />
           </div>
          <div v-else>
-          <pass-dropins-list :dataList="passes"  @delete="isDelete" @edit="isEditPass"/>
+          <pass-dropins-list :dataList="passes" :unit="'Months'"  @delete="isDelete" @edit="isEditPass"/>
          </div>
         </div>
       </ion-col>
@@ -70,17 +81,24 @@ import {
 import {
   Query,
   GetCustomersByFacilityItemsDocument,
-  FacilityItemsByFacilityIdAndTypeDocument
+  FacilityItemsByFacilityIdAndTypeDocument,
+  DeleteFacilityItemDocument
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
+import { chevronBackOutline } from "ionicons/icons";
+
+const store = usePassDropinsItemsStore();
+const selectedDropin = ref(null);
+
 
 const router = useRouter();
 const currentFacility = useFacilityStore();
@@ -95,6 +113,7 @@ const navigate = (name: EntitiesEnum) => {
 // Passes start
 const {
   result: facilityItemPassResultList,
+  refetch
 } = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
   item_type: "PASS"
@@ -107,40 +126,39 @@ const passes = computed(() => {
 
 // Passes End
 
-const isDelete  = (flag: Boolean) => {
-  console.log("Is delete");
+const isDelete  = (data: any) => {
+  console.log("Is delete: ", data);
   isDeleteModalOpen.value = true;
+  selectedDropin.value = data;
 };
+const { mutate } = useMutation(DeleteFacilityItemDocument);
 
 const deleteModalClosed = (approved: boolean) => {
   isDeleteModalOpen.value = false;
   if(approved){
-    console.log("aasdasda");
-    // deleteFacility({ id : currentFacilityId})
-    // .then(async () => {
-    //   const toast = await toastController.create({
-    //     message: "Gym was deleted successfully",
-    //     duration: 2000,
-    //     icon: "assets/icon/success.svg",
-    //     cssClass: "success-toast",
-    //   });
-    //   toast.present();
-    //   goBack();
-    // })
-    // .catch(async (error) => {
-    //   const toast = await toastController.create({
-    //     message: "Something went wrong. Please try again.",
-    //     icon: "assets/icon/info.svg",
-    //     cssClass: "danger-toast",
-    //   });
-    //   toast.present();
-    //   throw new Error(error);
-    // });
+    console.log('approved: ', approved);
+    mutate({
+      id: selectedDropin?.value?.id,
+    })
+    .then(() => {
+      refetch();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 };
 const isEditPass = (data: any) => {
-  console.log('edit pass data: ', data)
+  console.log('edit pass data123: ', data);
+  store.setData(data);
+  router.push({
+    name: EntitiesEnum.DashboardPassCreate,
+    params: {
+      id: data.id,
+    }
+  })
 }
+
 </script>
 
 <style scoped lang="scss">
@@ -198,5 +216,16 @@ ion-label {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.title {
+  padding: 0;
+  display: block;
+  font: 400 24px var(--ion-font-family);
+  --background: transparent;
+  cursor: pointer;
+  ion-icon {
+    margin-right: 8px;
+    margin-left: -6px;
+  }
 }
 </style>

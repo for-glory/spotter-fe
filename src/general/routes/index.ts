@@ -716,7 +716,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardPassCreate,
-        path: "pass/create-pass",
+        path: "pass/create-pass/:id?",
         component: () =>
           import("@/general/views/dashboard/pass/CreatePass.vue"),
         meta: {
