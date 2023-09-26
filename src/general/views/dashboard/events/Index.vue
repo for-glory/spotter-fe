@@ -251,7 +251,6 @@ const handleEventType = (evT: string) => {
 .holder-content {
   padding-top: 24px;
   padding-bottom: 16px;
-
 }
 
 .spinner {

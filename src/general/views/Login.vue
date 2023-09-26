@@ -77,7 +77,7 @@ const handleSubmit = (formData: LoginMutationVariables) => {
 
 <style scoped lang="scss">
 .content {
-  margin-top: 72px;
+  margin-top: 5rem;
   display: flex;
   flex-direction: column;
   width: calc(100%);
@@ -90,7 +90,7 @@ const handleSubmit = (formData: LoginMutationVariables) => {
 .welcome-text {
   color: var(--gold);
   font-family: Lato;
-  font-size: 40px;
+  font-size: 3rem;
   font-style: normal;
   font-weight: 500;
   line-height: 130%;

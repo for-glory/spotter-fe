@@ -24,11 +24,11 @@
             <div class="d-flex gap-4 align-items-center">
               <ion-text class="rating rating__likes">
               <ion-icon src="assets/icon/like.svg" class="rating__icon" />
-              {{ 64 }}
+              {{ event?.user.positive_reviews_count }}
             </ion-text>
             <ion-text class="rating rating__dislikes">
               <ion-icon src="assets/icon/dislike.svg" class="rating__icon" />
-              {{ 48 }}
+              {{ event?.user.negative_reviews_count }}
             </ion-text>
             </div>
           </template>
@@ -67,7 +67,7 @@
       <div class="order__item">
         <ion-text class="order__label">{{ infoThreeTitle }}</ion-text>
         <ion-text class="order__info">
-          {{ infoThreeValue ? infoThreeValue : `$${event?.order?.front_total}` }}
+          {{ infoThreeValue ? infoThreeValue : `$${event?.order?.total.toFixed(2)}` }}
         </ion-text>
       </div>
     </div>
