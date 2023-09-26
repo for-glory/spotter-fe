@@ -29,6 +29,8 @@
 import { shallowRef, withDefaults, defineProps, defineEmits, ref, watch } from "vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { VideoPlayer } from "@videojs-player/vue";
+import { useRouter } from "vue-router";
+import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
 
 withDefaults(
@@ -61,6 +63,7 @@ const handleMounted = (payload: any) => {
 
 const timer = ref<any>(null);
 const totalTime = ref<number>(0);
+const router = useRouter();
 
 const handlePlay = () => {
   timer.value = window.setInterval(function() {
@@ -84,7 +87,7 @@ watch(() => totalTime.value,
 });
 
 const onBack = () => {
-  emits("back");
+  router.push({ name: EntitiesEnum.UserWorkouts });
 };
 
 const handleVideoEnded = () => {

@@ -239,7 +239,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.UserWorkouts,
-    path: "/users/workouts",
+    path: "/users/dailys",
     component: () => import("@/users/views/workouts/Index.vue"),
     meta: {
       middleware: [auth],
@@ -295,7 +295,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.UserWorkout,
-    path: "/users/workouts/:id(\\d+)",
+    path: "/users/dailys/:id(\\d+)",
     component: () => import("@/users/views/workouts/Preview.vue"),
     meta: {
       middleware: [auth],

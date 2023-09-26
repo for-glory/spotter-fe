@@ -13,7 +13,7 @@
         class="trial-video-player"
         @back="closeVideo"
         @ended="videoEndedHandle"
-        @trialEnd="isOpenBlurredScreenModal = true"
+        @trialEnd="onTrialEnd"
         autoplay
       >
         <template #custom-header-btn>
@@ -105,6 +105,10 @@ const previewUrl = computed<string>(
 const workoutInstructionTip = computed<string>(
   () => result?.value?.workout?.description ?? ""
 );
+
+const onTrialEnd = () => {
+  isOpenBlurredScreenModal.value = true;
+};
 
 const closeVideo = () => {
   trialMode.value = false;
