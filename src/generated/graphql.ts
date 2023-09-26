@@ -5312,7 +5312,7 @@ export type WorkoutsQueryVariables = Exact<{
   trainer_id?: InputMaybe<Scalars["ID"]>;
   first?: InputMaybe<Scalars["Int"]>;
   page?: InputMaybe<Scalars["Int"]>;
-  type_id?: InputMaybe<Scalars["ID"]>;
+  type_id?: InputMaybe<Array<Scalars["ID"]>>;
   has_body_parts?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   order: SortOrder;
   orderByColumn: QueryWorkoutsOrderByColumn;
@@ -7960,7 +7960,7 @@ export const WorkoutsDocument = gql`
     $trainer_id: ID
     $first: Int
     $page: Int
-    $type_id: ID
+    $type_id: [ID!]
     $has_body_parts: [ID!]
     $order: SortOrder!
     $orderByColumn: QueryWorkoutsOrderByColumn!

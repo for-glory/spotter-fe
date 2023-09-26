@@ -51,6 +51,7 @@
   </base-layout>
 
   <page-tabs
+    v-if="!workoutsLoading"
     :tabs="TABS"
     class="page-tabs"
     :value="EntitiesEnum.UserWorkouts"

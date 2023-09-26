@@ -15,11 +15,6 @@
         <div class="actions">
           <ion-label class="label">Intensity Level</ion-label>
         </div>
-        <radio-item-group
-          :value="selectedWorkoutsType"
-          @on-change="setWorkoutType"
-          :options="workoutTypes || []"
-        />
         <div 
           class="d-flex flex-wrap gap-12"
           style="margin-top: 8px;"
@@ -95,7 +90,6 @@ const props = withDefaults(
   }
 );
 
-const selectedWorkoutsType = ref<WorkoutType | null>(null);
 const selectedBodyParts = ref<string[] | null>(null);
 const selectedLocation = ref("");
 const selectAllBodyParts = ref(false);
@@ -182,8 +176,8 @@ const params = computed(() => {
     order: SortOrder.Desc,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
   };
-  if (selectedWorkoutsType.value)
-    queryParams.type_id = selectedWorkoutsType.value.id;
+  if (selectedTypes.value)
+    queryParams.type_id = selectedTypes.value;
   if (selectedBodyParts.value)
     queryParams.has_body_parts = selectedBodyParts.value;
   return queryParams;
@@ -199,18 +193,13 @@ const refetchReasult = debounce(() => {
   refetch();
 }, 1000);
 
-const setWorkoutType = (data: WorkoutType): void => {
-  selectedWorkoutsType.value = data;
-  refetchReasult();
-};
-
 const setBodyParts = (data: string[]): void => {
   selectedBodyParts.value = data;
   refetchReasult();
 };
 
 const clearState = () => {
-  selectedWorkoutsType.value = null;
+  selectedTypes.value = [];
   selectedBodyParts.value = null;
   selectedLocation.value = "";
   setAllBodyParts(false);
@@ -218,13 +207,14 @@ const clearState = () => {
 
 const onConfirm = () => {
   modal.value.$el.dismiss();
-  const query: { type: string; bodyParts?: string[]; workoutType?: string } = {
+  const query: { type: string; bodyParts?: string[]; workoutType?: string[] } = {
     type: "allWorkouts",
   };
-  if (selectedWorkoutsType.value?.id)
-    query.workoutType = selectedWorkoutsType.value.id;
+  if (selectedTypes.value)
+    query.workoutType = selectedTypes.value;
   if (selectedBodyParts.value) query.bodyParts = selectedBodyParts.value;
 
+  console.log({query});
   router.push({
     name: props.routeName,
     query,
