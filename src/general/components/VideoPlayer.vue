@@ -5,7 +5,8 @@
     </template>
   </page-header>
   <video-player
-    :autoplay="autoplay"
+    ref="player"
+    autoPlay
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${pathUrl}`"
     crossorigin="anonymous"
@@ -17,14 +18,16 @@
     :width="width"
     :playback-rates="[0.7, 1.0, 1.5, 2.0]"
     :preferFullWindow="true"
+    :duration="0.1"
     @mounted="handleMounted"
+    @play="handlePlay"
+    @pause="handlePlause"
     @ended="handleVideoEnded"
   />
 </template>
 <script setup lang="ts">
-import { shallowRef, withDefaults, defineProps, defineEmits, ref } from "vue";
+import { shallowRef, withDefaults, defineProps, defineEmits, ref, watch } from "vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import { VideoJsPlayer } from "video.js";
 import { VideoPlayer } from "@videojs-player/vue";
 import "video.js/dist/video-js.css";
 
@@ -35,23 +38,50 @@ withDefaults(
     width: number;
     photoUrl: string;
     autoplay?: boolean;
+    freeDuration?: number;
   }>(),
   {
     width: 320,
     photoUrl: "",
     autoplay: false,
+    freeDuration: 10,
   }
 );
 
 const emits = defineEmits<{
   (e: "back"): void;
   (e: "ended"): void;
+  (e: "trialEnd"): void;
 }>();
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
-const player = shallowRef<VideoJsPlayer>();
+const player = shallowRef<typeof VideoPlayer>();
 const handleMounted = (payload: any) => {
   player.value = payload.player;
 };
+
+const timer = ref<any>(null);
+const totalTime = ref<number>(0);
+
+const handlePlay = () => {
+  timer.value = window.setInterval(function() {
+    totalTime.value += 1;
+  }, 1000);
+}
+
+const handlePlause = () => {
+  if(timer.value) {
+    clearInterval(timer.value);
+  }
+};
+
+watch(() => totalTime.value,
+() => {
+  if(totalTime.value >= 10) {
+    player.value?.pause();
+    player.value?.currentTime(0)
+    emits('trialEnd');
+  }
+});
 
 const onBack = () => {
   emits("back");

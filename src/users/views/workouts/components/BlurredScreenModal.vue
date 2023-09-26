@@ -111,8 +111,8 @@ const watchTrialVideo = () => {
 
 .blurred-bg {
   opacity: 0.5;
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+  filter: blur(30px);
+  -webkit-filter: blur(300px);
   padding: 0;
   margin: 0;
   position: fixed;
@@ -136,7 +136,7 @@ ion-content {
 
 .blurred-modal {
   opacity: 0.7;
-  filter: blur(10px);
+  filter: blur(30px);
 }
 
 .header-btn {

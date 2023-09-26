@@ -1,15 +1,19 @@
 <template>
   <ion-page v-if="trialMode">
     <ion-content :fullscreen="true">
+      <ion-spinner v-if="loadingDaily" name="lines" class="spinner" />
       <my-video-player
         ref="trialVideoPlayer"
+        v-else
         :pathUrl="trialVideo || ''"
         :photoUrl="previewUrl || ''"
         :height="800"
         :width="400"
+        :freeDuration="10"
         class="trial-video-player"
         @back="closeVideo"
         @ended="videoEndedHandle"
+        @trialEnd="isOpenBlurredScreenModal = true"
         autoplay
       >
         <template #custom-header-btn>
@@ -69,9 +73,9 @@ import BlurredScreenModal from "./components/BlurredScreenModal.vue";
 import { EntitiesEnum } from "@/const/entities";
 import router from "@/router";
 
-const trialMode = ref(false);
+const trialMode = ref(true);
 const isOpenInstructionTipModal = ref(false);
-const isOpenBlurredScreenModal = ref(true);
+const isOpenBlurredScreenModal = ref(false);
 const trialVideoPlayer = ref(null);
 
 const { mutate: addToCartMutation, loading: addToCartLoading } =
@@ -79,7 +83,7 @@ const { mutate: addToCartMutation, loading: addToCartLoading } =
 
 const route = useRoute();
 
-const { result, onResult: gotWorkout } = useQuery(WorkoutDocument, {
+const { result, onResult: gotWorkout, loading: loadingDaily } = useQuery(WorkoutDocument, {
   id: route.params.id,
 });
 
@@ -223,5 +227,10 @@ ion-content {
       margin-top: 16px;
     }
   }
+}
+.spinner {
+  display: block;
+  pointer-events: none;
+  margin: calc(30vh - 60px) auto 0;
 }
 </style>
