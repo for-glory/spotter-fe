@@ -7888,6 +7888,7 @@ export const WorkoutDocument = gql`
     description
     price
     duration
+    video
     exercises {
       id
       title

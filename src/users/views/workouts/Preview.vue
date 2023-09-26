@@ -93,13 +93,13 @@ gotWorkout((response) => {
 });
 
 const trialVideo = computed<string>(
-  () => result?.value?.workout?.exercises[0]?.pathUrl ?? ""
+  () => result?.value?.workout?.video ?? ""
 );
 const previewUrl = computed<string>(
   () => result?.value?.workout?.previewUrl ?? ""
 );
 const workoutInstructionTip = computed<string>(
-  () => result?.value?.workout?.exercises[0]?.description ?? ""
+  () => result?.value?.workout?.description ?? ""
 );
 
 const closeVideo = () => {
