@@ -1,8 +1,10 @@
 <template>
-  <div class="register__container">
-    <div class="welcome-text">
-      <ion-icon id="header" @click="onBack" src="assets/icon/arrow-back.svg" />
-      <ion-text> Sign up and Create Your Profile</ion-text>
+  <div :class="!isNative && 'register__container'">
+    <div class="welcome-text" :class="isNative && 'ion-padding'">
+      <ion-text class="show-if-web hide-if-native"> Sign up and Create Your Profile</ion-text>
+      <ion-text class="show-if-native hide-if-web"
+        >Sign up and Create <br />Your Profile</ion-text
+      >
     </div>
     <registration-form
       :is-loading="loading"
@@ -25,7 +27,9 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { setAuthItems } from "@/router/middleware/auth";
 import navigationAfterAuth from "../helpers/navigationAfterLogin";
+import { Capacitor } from "@capacitor/core";
 
+let isNative = Capacitor.isNativePlatform();
 const {
   mutate: register,
   onDone,
@@ -80,17 +84,40 @@ loginDone(({ data, errors }) => {
 
 <style scoped lang="scss">
 .register__container {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  height: calc(100% - 337px - var(--ion-safe-area-top));
+  display: flex;
+  flex-direction: column;
+  width: calc(100%);
+  margin-top: 5rem;
 }
+
+.registration-form {
+  flex: 1 1 100%;
+}
+
 .welcome-text {
   color: var(--gold);
-  margin-top: 12%;
   font-family: Lato;
-  font-size: 25px;
+  font-size: 3rem;
   font-style: normal;
   font-weight: 500;
   line-height: 130%;
+}
+
+.native-app .welcome-text {
+  min-height: 250px;
+  height: 36%;
+  max-height: 298px;
+  background-image: url(/public/assets/mobile/auth-bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  font-family: Yantramanav;
+  display: flex;
+  width: 100%;
+
+  & ion-text {
+    margin-top: auto;
+    font-size: 28px;
+  }
 }
 </style>

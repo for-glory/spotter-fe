@@ -470,7 +470,7 @@
       </template>
   </base-layout>
 </template>
-  <create-facility-modal ref="createFacilityModal" />
+  <create-facility-modal ref="createFacilityModal" @close="reloadData" />
   <discard-changes
     :is-open="isDeleteModalOpen"
     @close="deleteModalClosed"
@@ -559,7 +559,7 @@ const openViewModal = (daily: any) => {
 
 const openEvent = (eventId: string) => {
   router.push({
-    name: EntitiesEnum.EventsDetailed,
+    name: EntitiesEnum.DashboardEventDetail,
     params: {
       id: eventId,
     },
@@ -592,30 +592,23 @@ const currentFacilityId = route.params.id;
 
 const filter = ref<string>('recent');
 
-const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
   GetFacilityDocument,
   {
     id: currentFacilityId,
   }
 );
 
-const { result: managerResult, loading: managerLoading } = useQuery(
-  GetManagersByFacilityDocument,
-  {
-    role: RoleEnum.Manager,
-    facilities: [currentFacilityId],
-    first: 1,
-    page: 1
-  }
-);
-console.log(managerResult)
-const manager = computed(() =>
-  managerResult?.value?.managers?.data.length ? managerResult?.value?.managers?.data[0] : {}
-);
+const medias = ref<any>([]);
 
-const medias = computed(() =>
-  result.value?.facility?.media.length ? result.value.facility?.media : []
-);
+const reloadData = () =>{
+  refetch();
+}
+
+onResult((result:any) => {
+  console.log("### ",result );
+  medias.value = result.data?.facility?.media.length ? result.data.facility?.media : []
+})
 
 const openActionOption = async (index?: number, mediaId?: string) => {
   const mobileButtons = [
@@ -710,7 +703,7 @@ const router = useRouter();
 const {
   result: reviewsResult,
   loading: reviewLoading,
-  refetch,
+  refetch: refetchReviews,
 } = useQuery(ReviewsDocument, () => ({
   id: currentFacilityId,
   type: FeedbackEntityEnum.Facility,
@@ -718,7 +711,7 @@ const {
 }));
 
 onMounted(() => {
-  refetch();
+  refetchReviews();
   eventsRefetch();
 });
 
@@ -920,8 +913,6 @@ gotDailysData(({ data }) => {
     const dateLast = dayjs(b, "h:mm A");
     return dateFirst.isBefore(dateLast) ? 1 : -1;
   });
-  console.log("### dailysData ", recentDailys );
-  console.log('allEvents: ', allEvents.value);
   dailysItemsStore.setData(recentDailys);
 });
 
@@ -945,7 +936,6 @@ const {
 });
 
 const passes = computed(() => {
-  console.log("### passes ", facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data[0]);
   return facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
 
@@ -962,7 +952,6 @@ const {
 });
 
 const dropins = computed(() => {
-  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType);
   return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
 

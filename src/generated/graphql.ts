@@ -8337,6 +8337,7 @@ export const TrainerTrainingsDocument = gql`
           }
         }
         order {
+          id
           total
         }
         trainer {

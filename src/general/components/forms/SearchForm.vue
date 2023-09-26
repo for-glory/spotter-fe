@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User,'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }"
   >
     <ion-back-button
       v-if="backBtn"
@@ -22,7 +22,7 @@
         'search-form__control--on-focus': isFocused,
         'search-form__control--with-back-btn': backBtn,
         'search-form__control--with-cancel-btn': !hiddenCancel,
-        'tr-search': role === RoleEnum.Trainer
+        'tr-search': role === RoleEnum.Trainer,
       }"
     >
     </ion-searchbar>
@@ -69,7 +69,10 @@
         :key="searchResult.id"
         @click="handleClick(searchResult)"
       >
-        <search-result :item="searchResult" :showRating="!isFacilityTab" />
+      <facility-item class="mb-10" v-if="!Capacitor?.isNativePlatform() && role === RoleEnum.User"
+      :facility="searchResult"
+      />
+      <search-result v-else :item="searchResult" :showRating="!isFacilityTab" />
       </div>
       <ion-label class="no-found-msg label" v-else>{{ noFoundMsg }}</ion-label>
     </ion-content>
@@ -200,6 +203,8 @@ import { hoursDuration } from "@/const/hours-durations";
 import { minutesDuration } from "@/const/minutes-durations";
 import { Emitter, EventType } from "mitt";
 import useRoles from "@/hooks/useRole";
+import FacilityItem from "../FacilityItem.vue";
+import { Capacitor } from "@capacitor/core";
 
 const { role }= useRoles()
 
@@ -325,7 +330,7 @@ const handleClick = (result: FacilitySearchResult) => {
     emits("handle-item-click", result);
   } else {
     router.push({
-      name: isFacilityTab.value ? EntitiesEnum.Facility : EntitiesEnum.Trainer,
+      name: isFacilityTab.value ? (Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails) : EntitiesEnum.Trainer,
       params: { id: result.id },
     });
   }
@@ -729,6 +734,15 @@ defineExpose({
     font-size: 16px;
     font-weight: 500;
     --color: var(--gray-500);
+  }
+}
+.mb-10 {
+    margin-bottom: 10px;
+}
+.small-search {
+  justify-content: center;
+  ion-searchbar{
+    max-width: 500px;
   }
 }
 </style>
