@@ -1,11 +1,22 @@
 <template>
+  <div>
+    <ion-item class="title ion-text-start">
+      <ion-icon
+        class=""
+        mode="ios"
+        color="medium"
+        :icon="chevronBackOutline">
+      </ion-icon>
+      <span @click="navigate(EntitiesEnum.DashboardDropinList)" class="medium ion-padding-end clickable">Drop-Ins</span>
+    </ion-item>
+  </div>
   <ion-grid fixed>
     <ion-row>
       <ion-col size="12">
         <div class="pass-list ion-margin-top">
           <div class="d-flex justify-content-between pass-list__top">
             <div class="ion-padding-vertical">
-              <ion-button
+              <!-- <ion-button
                 class="button-rounded ion-margin-end"
                 :fill="filter==='all'?'solid':'outline'"
                 @click="handleFilter('all')">
@@ -22,45 +33,46 @@
                 :fill="filter==='expired'?'solid':'outline'"
                 @click="handleFilter('expired')">
                 Expired
-              </ion-button>
+              </ion-button> -->
             </div>
-            <!-- <div class="ion-padding-vertical">
+            <div class="ion-padding-vertical">
               <ion-button
                 @click="navigate(EntitiesEnum.DashboardDropinCreate)"
                 class=""
                 fill="solid"
                 >Create Drop ins</ion-button
               >
-            </div> -->
-            <div class="ion-padding-vertical">
-              <ion-button
-                @click="navigate(EntitiesEnum.DashboardDropinViewList)"
-                class=""
-                fill="solid"
-                >View Drop-Ins</ion-button
-              >
             </div>
           </div>
-        </div>
+        </div>        
         <ion-spinner
           v-if="loadingFacilityDropin"
           name="lines"
           class="spinner"
         />
         <div v-else>
-          <div class="card-background" v-if="!dropins || !dropins.length">
+          <pass-dropins-list :dataList="dropins" :unit="'Days'"  @delete="isDelete" @edit="isEditPass"/>
+          <!-- <pass-dropin-data-table :dropins="dropins"/> -->
+        </div>
+        <div class="card-background" v-if="!dropins || !dropins.length">
             <empty-block
-              title="Customers list Empty"
+              title="Drop-ins Empty"
               hideButton
-              text="No drop-ins sold yet"
+              text="No drop-ins created yet"
               icon= "assets/icon/dropin.svg"
             />
           </div>
-          <pass-dropin-data-table :dropins="dropins" v-else/>
-        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
+  <discard-changes
+      :is-open="isDeleteModalOpen"
+      @close="deleteModalClosed"
+      title="Do you want to delete drop-in?"
+      text="gym drop-in will be deleted"
+      cancelButton="Cancel"
+      button="Delete"
+    />
 </template>
 
 <script setup lang="ts">
@@ -76,17 +88,22 @@ import {
   IonCol
 } from "@ionic/vue";
 import {
-  GetCustomersByFacilityItemsDocument,
+  // GetCustomersByFacilityItemsDocument,
+  FacilityItemsByFacilityIdAndTypeDocument,
+  DeleteFacilityItemDocument
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
+import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
 
 const router = useRouter();
 const filter = ref<string>("all");
@@ -95,31 +112,58 @@ const currentFacility = useFacilityStore();
 const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
+const isDeleteModalOpen = ref(false);
+const store = usePassDropinsItemsStore();
+const selectedDropin = ref(null);
 
+store.clearState();
+// Dropins start
 const {
   result: dropinResult,
   loading: loadingFacilityDropin,
-  onResult
-} = useQuery(GetCustomersByFacilityItemsDocument, {
+  refetch
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
   item_type: "DROPIN"
 });
 
 const dropins = computed(() => {
-  return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
-    if (filter.value === "all") {
-      return true;
-    }
-    else if (filter.value === "active") {
-      return item.is_active_pass;
-    }
-    else if (filter.value === "expired") {
-      return !item.is_active_pass;
-    }
-  })
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
+
 const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
+}
+
+const isDelete = (data: any) => {
+  isDeleteModalOpen.value = true;
+  selectedDropin.value = data;
+};
+
+const { mutate } = useMutation(DeleteFacilityItemDocument);
+
+const deleteModalClosed = (approved: boolean) => {
+  isDeleteModalOpen.value = false;
+  if (approved) {
+    mutate({
+      id: selectedDropin?.value?.id,
+    })
+    .then(() => {
+      refetch();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+};
+const isEditPass = (data: any) => {
+  store.setData(data);
+  router.push({
+    name: EntitiesEnum.DashboardDropinCreate,
+    params: {
+      id: data.id
+    },
+  });
 }
 </script>
 
@@ -173,5 +217,16 @@ ion-label {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.title {
+  cursor: pointer;
+  padding: 0;
+  display: block;
+  font: 400 24px var(--ion-font-family);
+  --background: transparent;
+  ion-icon {
+    margin-right: 8px;
+    margin-left: -6px;
+  }
 }
 </style>
