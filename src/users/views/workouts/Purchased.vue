@@ -7,7 +7,7 @@
         @handle-item-click="onItemClick"
         :route-name="EntitiesEnum.UserPurchasedWorkouts"
       /> -->
-      <page-header title="Purchased workouts" />
+      <page-header title="My Library" />
     </template>
 
     <template #content>

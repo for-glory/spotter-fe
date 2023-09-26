@@ -7,7 +7,7 @@
   <video-player
     :autoplay="autoplay"
     class="video-player vjs-big-play-centered"
-    :src="pathUrl"
+    :src="`${VUE_APP_CDN}${pathUrl}`"
     crossorigin="anonymous"
     playsinline
     controls
@@ -22,7 +22,7 @@
   />
 </template>
 <script setup lang="ts">
-import { shallowRef, withDefaults, defineProps, defineEmits } from "vue";
+import { shallowRef, withDefaults, defineProps, defineEmits, ref } from "vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { VideoJsPlayer } from "video.js";
 import { VideoPlayer } from "@videojs-player/vue";
@@ -47,7 +47,7 @@ const emits = defineEmits<{
   (e: "back"): void;
   (e: "ended"): void;
 }>();
-
+const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const player = shallowRef<VideoJsPlayer>();
 const handleMounted = (payload: any) => {
   player.value = payload.player;

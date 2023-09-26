@@ -20,6 +20,20 @@
           @on-change="setWorkoutType"
           :options="workoutTypes || []"
         />
+        <div 
+          class="d-flex flex-wrap gap-12"
+          style="margin-top: 8px;"
+        >
+          <div 
+            v-for="(type) in workoutTypes"
+            :key="type.id"
+            class="type-item"
+            @click="selectType(type)"
+            :class="{ 'selected-type': isSelectedType(type) }"
+          >
+            {{ type.name }}
+          </div>
+        </div>
       </div>
       <div class="filters-item">
         <div class="actions">
@@ -129,6 +143,18 @@ onResult((bodyPartsResult) => {
       };
     }) || [];
 });
+
+const selectedTypes = ref<Array<any>>([]);
+const isSelectedType = (type: any) => {
+  return selectedTypes.value.includes(type.id);
+};
+const selectType = (type: any) => {
+  if(!isSelectedType(type)) {
+    selectedTypes.value.push(type.id);
+  } else {
+    selectedTypes.value = selectedTypes.value.filter((selectedType) => selectedType !== type.id);
+  }
+};
 
 const onSelectAllBodyParts = () => {
   selectAllBodyParts.value = !selectAllBodyParts.value;
@@ -278,5 +304,17 @@ const onConfirm = () => {
   .confirm-btn {
     flex: 1 1 calc(50% - 16px);
   }
+}
+.type-item {
+  padding: 10.5px 12px;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  color: #797979;
+  font-size: 14px;
+  font-family: --var(Yantramanav);
+}
+.selected-type {
+  border-color: #e1dbc5;
+  color: #e1dbc5;
 }
 </style>
