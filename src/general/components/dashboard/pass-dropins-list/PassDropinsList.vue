@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col class="ion-no-padding" size="4" v-for="item in dataList">
         <div class="list-container">
-          <ion-item class="thumbnail-container ion-no-padding">
+          <ion-item class="thumbnail-container ion-no-padding" lines="none">
             <ion-avatar slot="start">
               <img src="assets/backgrounds/banner1.jpeg" />
             </ion-avatar>
@@ -16,17 +16,17 @@
               </h3>
             </ion-label>
           </ion-item>
-          <ion-item>
+          <ion-item lines="none">
             <ion-label>
               <p>
                 Duration
               </p>
               <h4>
-                {{ item.duration }} Month
+                {{ item.duration }} {{ unit }}
               </h4>
             </ion-label>
           </ion-item>
-          <ion-item>
+          <ion-item lines="none">
             <ion-label>
               <p>
                 Features
@@ -36,7 +36,7 @@
               </h4>
             </ion-label>
           </ion-item>
-          <ion-item>
+          <ion-item lines="none">
             <ion-label>
               <p>
                 Pass Fee
@@ -65,20 +65,22 @@ import { defineProps, withDefaults } from "vue";
 
 withDefaults(
   defineProps<{
-    dataList: any;
+    dataList: any,
+    unit: string
   }>(),
   {
-    dataList: []
+    dataList: [],
+    unit: ''
   }
 );
 
 const emits = defineEmits<{
-  (e: "delete", isConfirmed: boolean): void;
+  (e: "delete", data: any): void;
   (e: "edit", data: any): void;
 }>();
 
 const toDelete = (pass: any) => {
-  emits("delete",true);
+  emits("delete",pass);
   // router.push({
   //   params: pass
   // });

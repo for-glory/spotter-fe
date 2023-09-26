@@ -1,4 +1,15 @@
 <template>
+  <div>
+    <ion-item class="title ion-text-start">
+      <ion-icon
+        class=""
+        mode="ios"
+        color="medium"
+        :icon="chevronBackOutline">
+      </ion-icon>
+      <span @click="navigate(EntitiesEnum.DashboardDropinList)" class="medium ion-padding-end clickable">Drop-Ins</span>
+    </ion-item>
+  </div>
   <ion-grid fixed>
     <ion-row>
       <ion-col size="12">
@@ -40,7 +51,7 @@
           class="spinner"
         />
         <div v-else>
-          <pass-dropins-list :dataList="dropins"  @delete="isDelete" @edit="isEditPass"/>
+          <pass-dropins-list :dataList="dropins" :unit="'Days'"  @delete="isDelete" @edit="isEditPass"/>
           <!-- <pass-dropin-data-table :dropins="dropins"/> -->
         </div>
         <div class="card-background" v-if="!dropins || !dropins.length">
@@ -78,19 +89,21 @@ import {
 } from "@ionic/vue";
 import {
   // GetCustomersByFacilityItemsDocument,
-  FacilityItemsByFacilityIdAndTypeDocument
+  FacilityItemsByFacilityIdAndTypeDocument,
+  DeleteFacilityItemDocument
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
 import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
 
 const router = useRouter();
 const filter = ref<string>("all");
@@ -100,83 +113,51 @@ const navigate = (name: EntitiesEnum) => {
   router.push({ name });
 };
 const isDeleteModalOpen = ref(false);
+const store = usePassDropinsItemsStore();
+const selectedDropin = ref(null);
 
+store.clearState();
 // Dropins start
 const {
   result: dropinResult,
-  loading: loadingFacilityDropin
+  loading: loadingFacilityDropin,
+  refetch
 } = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,
   item_type: "DROPIN"
 });
 
 const dropins = computed(() => {
-  console.log("### dropinResult ", dropinResult.value?.facilityItemsByFacilityIdAndType);
   return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
 
-// Dropins End
-
-// const {
-//   result: dropinResult,
-//   loading: loadingFacilityDropin,
-//   onResult
-// } = useQuery(GetCustomersByFacilityItemsDocument, {
-//   facility_id: currentFacility.facility.id,
-//   item_type: "DROPIN"
-// });
-
-// const dropins = computed(() => {
-//   return dropinResult.value?.getCustomersByFacilityItems?.data.filter(item => {
-//     if (filter.value === "all") {
-//       return true;
-//     }
-//     else if (filter.value === "active") {
-//       return item.is_active_pass;
-//     }
-//     else if (filter.value === "expired") {
-//       return !item.is_active_pass;
-//     }
-//   })
-// });
 const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
 }
 
-const isDelete = (flag: Boolean) => {
-  console.log("Is delete");
+const isDelete = (data: any) => {
   isDeleteModalOpen.value = true;
+  selectedDropin.value = data;
 };
+
+const { mutate } = useMutation(DeleteFacilityItemDocument);
 
 const deleteModalClosed = (approved: boolean) => {
   isDeleteModalOpen.value = false;
   if (approved) {
-    console.log("aasdasda")
-    // deleteFacility({ id : currentFacilityId})
-    // .then(async () => {
-    //   const toast = await toastController.create({
-    //     message: "Gym was deleted successfully",
-    //     duration: 2000,
-    //     icon: "assets/icon/success.svg",
-    //     cssClass: "success-toast",
-    //   });
-    //   toast.present();
-    //   goBack();
-    // })
-    // .catch(async (error) => {
-    //   const toast = await toastController.create({
-    //     message: "Something went wrong. Please try again.",
-    //     icon: "assets/icon/info.svg",
-    //     cssClass: "danger-toast",
-    //   });
-    //   toast.present();
-    //   throw new Error(error);
-    // });
+    mutate({
+      id: selectedDropin?.value?.id,
+    })
+    .then(() => {
+      refetch();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 };
 const isEditPass = (data: any) => {
-  console.log('edit pass data: ', data)
-  // navigate(EntitiesEnum.DashboardDropinCreate);
+  store.setData(data);
   router.push({
     name: EntitiesEnum.DashboardDropinCreate,
     params: {
@@ -236,5 +217,16 @@ ion-label {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+.title {
+  cursor: pointer;
+  padding: 0;
+  display: block;
+  font: 400 24px var(--ion-font-family);
+  --background: transparent;
+  ion-icon {
+    margin-right: 8px;
+    margin-left: -6px;
+  }
 }
 </style>
