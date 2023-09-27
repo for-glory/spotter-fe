@@ -34,11 +34,19 @@
     @change="tabsChanged"
   />
   <blurred-screen-modal
+    id="blur"
     :is-open="isOpenBlurredScreenModal"
     :preview-url="dailyData?.previewUrl"
     @visibility="isOpenBlurredScreenModal = false"
     @purchase-daily="purchaseWorkout"
     :disabled="addToCartLoading"
+  />
+  <purchase-modal 
+    id="full"
+    :isOpen="isOpenPurchaseModal"
+    :dailyId="selectedDailyId"
+    :cartId="cartId"
+    @purchase-daily="onPurchase"
   />
 </template>
 
@@ -78,6 +86,7 @@ import MyVideoPlayer from "@/general/components/VideoPlayer.vue";
 import WorkoutsPreviewSwiper from "@/users/views/workouts/components/WorkoutsPreviewSwiper.vue";
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 import { TABS } from "@/const/user-workouts-tabs";
+import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
 
 const router = useRouter();
 const itemSelected = ref<Workout | null>(null);
@@ -87,6 +96,7 @@ const activePage = ref<number>(1);
 const totalWorkouts = ref<number>(0);
 const searchQuery = ref<string>("");
 const isOpenBlurredScreenModal = ref(false);
+const isOpenPurchaseModal = ref(false);
 const selectedDailyId = ref<number>();
 
 const { result: workoutsResult, loading: workoutsLoading } = useQuery(
@@ -104,7 +114,7 @@ const { result: workoutsResult, loading: workoutsLoading } = useQuery(
 );
 
 const workouts = computed(() => workoutsResult.value?.workouts?.data.filter((workout: any) => !workout.was_ordered_by_me));
-
+const cartId = ref<number>();
 const tabsChanged = (name: EntitiesEnum) => {
   router.push({
     name,
@@ -133,15 +143,8 @@ const purchaseWorkout = () => {
   })
     .then((res) => {
       isOpenBlurredScreenModal.value = false;
-      router.push({
-        name: EntitiesEnum.WorkoutOrder,
-        params: {
-          id: selectedDailyId.value,
-        },
-        query: {
-          cart_id: res?.data?.addToCart?.id,
-        },
-      });
+      cartId.value = res?.data?.addToCart?.id;
+      isOpenPurchaseModal.value = true;
     })
     .catch(async () => {
       const toast = await toastController.create({
@@ -153,6 +156,15 @@ const purchaseWorkout = () => {
       toast.present();
     });
 };
+
+const onPurchase = () => {
+  isOpenPurchaseModal.value = false;
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: { orderId: selectedDailyId.value },
+    query: { cart_id: cartId.value },
+  });
+}
 </script>
 
 <style scoped lang="scss">
@@ -309,10 +321,5 @@ const purchaseWorkout = () => {
   justify-content: center;
   bottom: calc(84px + var(--ion-safe-area-bottom));
   --btn-min-width: 120px;
-}
-
-ion-modal {
-  --width: 100%;
-  --height: 100%;
 }
 </style>

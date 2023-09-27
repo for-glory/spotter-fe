@@ -265,7 +265,10 @@ ion-content {
 .swipe-animation {
   animation: moveUpDown 2s ease-in-out infinite;
 }
-
+ion-modal {
+  --width: 100%;
+  --height: 100%;
+}
 @keyframes moveUpDown {
   0%, 100% {
     transform: translateY(0);
