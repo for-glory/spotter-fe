@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult,'p-0': noPadding, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User,'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }"
   >
     <ion-back-button
       v-if="backBtn"
@@ -22,7 +22,7 @@
         'search-form__control--on-focus': isFocused,
         'search-form__control--with-back-btn': backBtn,
         'search-form__control--with-cancel-btn': !hiddenCancel,
-        'tr-search': role === RoleEnum.Trainer
+        'tr-search': role === RoleEnum.Trainer,
       }"
     >
     </ion-searchbar>
@@ -69,7 +69,10 @@
         :key="searchResult.id"
         @click="handleClick(searchResult)"
       >
-        <search-result :item="searchResult" :showRating="!isFacilityTab" />
+      <facility-item class="mb-10" v-if="!Capacitor?.isNativePlatform() && role === RoleEnum.User"
+      :facility="searchResult"
+      />
+      <search-result v-else :item="searchResult" :showRating="!isFacilityTab" />
       </div>
       <ion-label class="no-found-msg label" v-else>{{ noFoundMsg }}</ion-label>
     </ion-content>
@@ -211,6 +214,8 @@ import { Emitter, EventType } from "mitt";
 import useRoles from "@/hooks/useRole";
 import DailyFilterModal from "@/general/components/modals/workout/DailyFilterModal.vue";
 import { useUserStore } from "@/general/stores/user";
+import FacilityItem from "../FacilityItem.vue";
+import { Capacitor } from "@capacitor/core";
 
 const { role }= useRoles()
 
@@ -226,8 +231,8 @@ const props = withDefaults(
     filters?: any;
     noFoundMsg?: string;
     filtersBtn?: boolean;
-    extraPadding?:boolean;
-    
+    extraPadding?:boolean
+    noPadding?:boolean;
   }>(),
   {
     backBtn: false,
@@ -239,6 +244,7 @@ const props = withDefaults(
     customNavigation: false,
     filters: {},
     noFoundMsg: "No results found...",
+    noPadding:false
   }
 );
 
@@ -337,7 +343,7 @@ const handleClick = (result: FacilitySearchResult) => {
     emits("handle-item-click", result);
   } else {
     router.push({
-      name: isFacilityTab.value ? EntitiesEnum.Facility : EntitiesEnum.Trainer,
+      name: isFacilityTab.value ? (Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails) : EntitiesEnum.Trainer,
       params: { id: result.id },
     });
   }
@@ -667,6 +673,10 @@ defineExpose({
   padding: calc(16px + var(--ion-safe-area-top)) 24px 0 12px;
 }
 
+.p-0 {
+  padding: 0 !important;
+}
+
 .no-found-msg {
   width: 100%;
   margin: 20vh 0;
@@ -730,8 +740,7 @@ defineExpose({
 }
 
 .search-form-user {
-  padding: 24px;
-  padding-bottom: 0;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
   ion-searchbar {
     font-family: "Yantramanav";
     --color: var(--fitnesswhite);
@@ -745,6 +754,15 @@ defineExpose({
     font-size: 16px;
     font-weight: 500;
     --color: var(--gray-500);
+  }
+}
+.mb-10 {
+    margin-bottom: 10px;
+}
+.small-search {
+  justify-content: center;
+  ion-searchbar{
+    max-width: 500px;
   }
 }
 </style>

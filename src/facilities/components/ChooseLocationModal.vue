@@ -7,7 +7,7 @@
       </ion-label>
       <template v-if="type !== EntitiesEnum.Address">
         <template v-if="forAddress">
-          <search-form placeholder="Enter address name" hide-results hidden-cancel></search-form>
+          <search-form placeholder="Enter address name" :no-padding="role === RoleEnum.User ? true : false" :extra-padding="true" hide-results hidden-cancel></search-form>
           <div class="address-list hide-scrollbar">
             <ion-item lines="full">
                 <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
@@ -106,6 +106,7 @@ import {
   City,
   State,
   CitiesDocument,
+RoleEnum,
 } from "@/generated/graphql";
 import {
   NativeGeocoderResult,
@@ -116,6 +117,7 @@ import { useNewEventStore } from "@/general/stores/new-event";
 import { useRoute } from "vue-router";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
+import useRoles from "@/hooks/useRole";
 
 const route = useRoute();
 
@@ -147,7 +149,7 @@ const { load: getCities, refetch: getCityByName } = useLazyQuery(
   }
 );
 getCities();
-
+const { role } = useRoles()
 const present = () => {
   chooseModal?.value?.$el.present();
 };

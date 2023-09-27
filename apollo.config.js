@@ -3,7 +3,7 @@ module.exports = {
     service: {
       name: "Spotter",
       // URL to the GraphQL API
-      url: "https://api.spotterfitness.com/graphql",
+      url: process.env.VUE_APP_BACKEND_API_URL,
     },
     // Files processed by the extension
     includes: ["src/**/*.vue", "src/**/*.js"],

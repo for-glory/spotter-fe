@@ -7,29 +7,46 @@
       <div class="preferences">
         <ion-spinner v-if="loading" class="spinner" />
         <div class="radiobutton__group" v-else>
-          <ion-radio-group @ionChange="onChange($event)" :value="selectedItem">
-            <div class="radiobutton__container">
-              <ion-item class="radiobutton">
-                Display gyms
-                <ion-radio
-                  class="radiobutton__radio"
-                  slot="end"
-                  :value="EntitiesEnum.Facilities"
-                />
-              </ion-item>
-            </div>
+          <div class="toggle-btns" v-if="role === RoleEnum.User">
+            <base-toggle
+              :value="selectedItem === EntitiesEnum.Facilities"
+              content="Display gyms"
+              @click="onChange(EntitiesEnum.Facilities)"
+            />
+            <base-toggle
+              :value="selectedItem === EntitiesEnum.Trainers"
+              content="Display trainers"
+              @click="onChange(EntitiesEnum.Trainers)"
+            />
+          </div>
+          <div class="radio-btns" v-if="role !== RoleEnum.User">
+            <ion-radio-group
+              @ionChange="onRadioChange($event)"
+              :value="selectedItem"
+            >
+              <div class="radiobutton__container">
+                <ion-item class="radiobutton">
+                  Display gyms
+                  <ion-radio
+                    class="radiobutton__radio"
+                    slot="end"
+                    :value="EntitiesEnum.Facilities"
+                  />
+                </ion-item>
+              </div>
 
-            <div class="radiobutton__container">
-              <ion-item class="radiobutton">
-                Display trainers
-                <ion-radio
-                  class="radiobutton__radio"
-                  slot="end"
-                  :value="EntitiesEnum.Trainers"
-                />
-              </ion-item>
-            </div>
-          </ion-radio-group>
+              <div class="radiobutton__container">
+                <ion-item class="radiobutton">
+                  Display trainers
+                  <ion-radio
+                    class="radiobutton__radio"
+                    slot="end"
+                    :value="EntitiesEnum.Trainers"
+                  />
+                </ion-item>
+              </div>
+            </ion-radio-group>
+          </div>
         </div>
       </div>
     </template>
@@ -44,15 +61,22 @@ import {
   IonSpinner,
   toastController,
 } from "@ionic/vue";
-import { MeDocument } from "@/generated/graphql";
+import {
+  MeDocument,
+  RoleEnum,
+  UpdateUserDocument,
+  SettingsCodeEnum,
+} from "@/generated/graphql";
+import BaseToggle from "@/general/components/base/BaseToggle.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRouter } from "vue-router";
-import { UpdateUserDocument, SettingsCodeEnum } from "@/generated/graphql";
 import { ref } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import useId from "@/hooks/useId";
+import useRoles from "@/hooks/useRole";
+
 import {
   IonRadioGroupCustomEvent,
   RadioGroupChangeEventDetail,
@@ -60,6 +84,7 @@ import {
 
 const selectedItem = ref("");
 const router = useRouter();
+const { role } = useRoles();
 
 const { id } = useId();
 
@@ -90,24 +115,28 @@ const showToast = async (msg: string, key: string, icon: string) => {
   return toast.present();
 };
 
-const onChange = (
+const onRadioChange = (
   ev: IonRadioGroupCustomEvent<RadioGroupChangeEventDetail<string>>
 ) => {
-  selectedItem.value = ev.target.value;
+  onChange(ev.target.value);
+};
+
+const onChange = (value: EntitiesEnum) => {
+  selectedItem.value = value;
   mutate({
     id,
     input: {
       settings: [
         {
           code: SettingsCodeEnum.DisplayPreference,
-          value: ev.target.value,
+          value: value,
         },
       ],
     },
   })
     .then(() => {
       refetch();
-      showToast("Preferences succesfully updated", "success", "success");
+      showToast("Preferences successfully updated", "success", "success");
     })
     .catch(() => {
       showToast("Something went wrong. Try again.", "danger", "info");
@@ -134,6 +163,11 @@ const onBack = () => {
 
   &__group {
     padding: 24px;
+    .toggle-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
   }
 
   &__radio {
@@ -152,6 +186,7 @@ const onBack = () => {
     }
   }
 }
+
 .spinner {
   display: block;
   pointer-events: none;

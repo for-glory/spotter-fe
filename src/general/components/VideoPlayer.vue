@@ -99,7 +99,6 @@ const player = ref<typeof VideoPlayer>();
 
 const handleMounted = async (payload: any) => {
   player.value = payload.player;
-  console.log(player.value);
   if(props.freeDuration === 0 || props.autoplay){
     await player.value?.play();
   }

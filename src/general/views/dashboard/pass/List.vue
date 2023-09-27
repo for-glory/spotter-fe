@@ -26,10 +26,10 @@
             </div>
             <div class="ion-padding-vertical">
               <ion-button
-                @click="navigate(EntitiesEnum.DashboardPassCreate)"
+                @click="navigate(EntitiesEnum.DashboardPassViewList)"
                 class="ion-margin-end"
                 fill="solid">
-                Create Passes
+                View Gym Pass
               </ion-button>
             </div>
           </div>
@@ -40,7 +40,19 @@
           class="spinner"
         />
         <div v-else>
-          <pass-subscriber-data-table :passes="passes" />
+          <div  v-if="!passes || !passes.length">
+            <empty-block
+              class="empty-block"
+              title="Members List Empty"
+              hideButton
+              text="No Gym pass sold yet"
+              icon= "assets/icon/gym-user-icon.svg"
+            />
+          </div>
+          <div v-else>
+            <pass-subscriber-data-table :passes="passes" @passDetails="gymPassDetails"/>
+          </div>
+          
         </div>
       </ion-col>
     </ion-row>
@@ -65,6 +77,7 @@ import { ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const router = useRouter();
 const currentFacility = useFacilityStore();
@@ -99,6 +112,17 @@ const passes = computed(() => {
 });
 const handleFilter = (filterStr: string) => {
   filter.value = filterStr;
+}
+
+const gymPassDetails = (data: any) => {
+  console.log('edit pass data: ', data);
+  router.push({
+    name: EntitiesEnum.DashboardDropinsPassDetail,
+    params: {
+        id: data.id,
+        data: data.isGymDetails
+    }
+  })
 }
 </script>
 

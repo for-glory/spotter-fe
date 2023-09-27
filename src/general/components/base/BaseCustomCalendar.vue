@@ -18,7 +18,14 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, defineProps, withDefaults, defineEmits } from "vue";
+import { ref, defineProps, withDefaults, defineEmits, computed, watch } from "vue";
+
+const date = ref('')
+//const date = computed(() => new Date(new Date().getFullYear(), 0, 1));
+
+watch(date, async (newDate, oldDate) => {
+  alert(newDate)
+})
 
 withDefaults(
   defineProps<{
@@ -28,7 +35,7 @@ withDefaults(
   {
     attrs: [
       {
-        key: "today",
+        key: "2023-09-26",
         highlight: {
           style: {
             backgroundColor: "var(--gold)",
@@ -45,9 +52,8 @@ const emits = defineEmits<{
   (e: "month-changed", selected: any): void;
 }>();
 
-const date = ref(new Date(new Date().getFullYear(), 0, 1));
-
 const dateChanged = (event: any) => {
+  console.log('date change');
   emits("month-changed", event);
 };
 </script>

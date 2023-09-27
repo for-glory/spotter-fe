@@ -129,12 +129,12 @@
           :class="getMenuItemClass(EntitiesEnum.DashboardClientDailys)"
           @click="onHandleClickMenu(EntitiesEnum.DashboardClientDailys)"
         >
-          <ion-icon src="assets/icon/daily.svg" />
+          <ion-icon src="assets/icon/dailys.svg" />
           <ion-text>Dailys</ion-text>
         </div>
         <!-- @todo: need to done this view -->
         <div :class="getMenuItemClass(EntitiesEnum.TrainerUserProfile)">
-          <ion-icon src="assets/icon/daily.svg" />
+          <ion-icon src="assets/icon/trainers.svg" />
           <ion-text>Trainers</ion-text>
         </div>
         <div
@@ -148,7 +148,7 @@
           :class="getMenuItemClass(EntitiesEnum.Gyms)"
           @click="onHandleClickMenu(EntitiesEnum.Gyms)"
         >
-          <ion-icon src="assets/icon/gym.svg" />
+          <ion-icon src="assets/icon/booking.svg" />
           <ion-text>Gym</ion-text>
         </div>
         <div
@@ -164,7 +164,7 @@
           :class="getMenuItemClass(EntitiesEnum.ProfileBookingHistory)"
           @click="onHandleClickMenu(EntitiesEnum.ProfileBookingHistory)"
         >
-          <ion-icon src="assets/icon/booking.svg" />
+          <ion-icon src="assets/icon/add-user.svg" />
           <ion-text>Booking History</ion-text>
         </div>
         <div

@@ -64,7 +64,6 @@ const onSwiper = (swiper: any) =>{
 
 watch(() => swiperRef.value?.activeIndex,
 (newVal) => {
-  console.log(newVal);
   activeIndex.value = newVal as number;
   id.value = workouts.value[activeIndex.value]?.id;
 });

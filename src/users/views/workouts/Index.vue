@@ -131,7 +131,6 @@ const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
 
 const purchaseWorkout = () => {
-  console.log(selectedDailyId.value);
   addToCartMutation({
     input: {
       purchasable_id: selectedDailyId.value,

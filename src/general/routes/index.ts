@@ -211,6 +211,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileCalendar,
+    path: "/profile/calendar",
+    component: () => import("@/general/views/profile/Calendar.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfilePronounce,
     path: "/profile/pronounce",
     component: () => import("@/general/views/profile/Pronounce.vue"),
@@ -505,7 +513,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardTrainingsCalendar,
-        path: "trainings-calendar",
+        path: "trainings-calendar/:date?/:id(\\d+)?",
         component: () =>
           import("@/general/views/dashboard/bookings/trainings-calendar.vue"),
       },
@@ -523,12 +531,28 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardEventDetail,
+        path: "event/:id(\\d+)",
+        component: () => import("@/general/views/dashboard/events/Details.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardCreateEvent,
         path: "create-event",
         component: () =>
           import("@/general/views/dashboard/events/CreateEvent.vue"),
         meta: {
           middleware: [gymOwnerSubscription],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardEditEvent,
+        path: "event/:id(\\d+)/edit",
+        component: () => import("@/general/views/dashboard/events/EditEvent.vue"),
+        meta: {
+          middleware: [auth],
         },
       },
       {
@@ -699,8 +723,24 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardPassViewList,
+        path: "pass/listpasses",
+        component: () => import("@/general/views/dashboard/pass/ListPases.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardDropinsPassDetail,
+        path: "pass-dropin/details/:id?",
+        component: () => import("@/general/views/dashboard/PassDropinsDetails.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardPassCreate,
-        path: "pass/create-pass",
+        path: "pass/create-pass/:id?",
         component: () =>
           import("@/general/views/dashboard/pass/CreatePass.vue"),
         meta: {
@@ -724,8 +764,16 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardDropinViewList,
+        path: "dropin/listdropin",
+        component: () => import("@/general/views/dashboard/dropins/ListDropin.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardDropinCreate,
-        path: "dropin/create-drop-in",
+        path: "dropin/create-drop-in/:id?",
         component: () =>
           import("@/general/views/dashboard/dropins/CreateDropin.vue"),
         meta: {

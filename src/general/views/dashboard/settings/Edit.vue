@@ -18,6 +18,7 @@
         subscriptionType !== SubscriptionsTierEnum.Gold
         " />
                     </template>
+                    <ChooseBlock class="delete-account" v-if="role === RoleEnum.User" is-web-item title="Delete account" :detail-icon="false" danger-title />
                 </div>
             </div>
         </div>
@@ -25,15 +26,7 @@
             <edit-trainer :isWebView="true" v-if="filter === EntitiesEnum.ProfileEditTrainer"></edit-trainer>
             <div v-else class="edit-profile-component d-flex-col h-100">
                 <div class="edit-profile-component-content d-flex-col h-100">
-                    <Email v-if="filter === EntitiesEnum.ProfileEmail"/>
-                    <ChangePassword v-else-if="filter === EntitiesEnum.ProfilePassword"></ChangePassword>
-
-                    <Languages v-else-if="filter === EntitiesEnum.ProfileLanguages"></Languages>
-                    <AppMode v-else-if="filter === EntitiesEnum.ProfileAppMode"></AppMode>
-                    <Notifications v-else-if="filter === EntitiesEnum.ProfileNotifications"></Notifications>
-                    <SocialMedia v-else-if="filter === EntitiesEnum.ProfileAddSocialLink"></SocialMedia>
-                    <OrderConfirmation v-else-if="filter === EntitiesEnum.ProfileOrderConfirmation"></OrderConfirmation>
-                    <Location v-else-if="filter === EntitiesEnum.ProfileLocation" />
+                    <component :is="settingsCompo[filter]"></component>
                 </div>
             </div>
         </div>
@@ -70,9 +63,12 @@ import ChangePassword from "./ChangePassword.vue";
 import Languages from "./Languages.vue";
 import AppMode from "./AppMode.vue";
 import Notifications from "./Notifications.vue";
-import SocialMedia from "./SocialMedia.vue";
 import OrderConfirmation from "./OrderConfirmation.vue";
 import Location from "./Location.vue";
+import EditeProfile from "./client/EditProfile.vue";
+import Preference from "./client/Preference.vue";
+import Pronounce from "./client/Pronounce.vue";
+import SocialMedia from "./SocialMedia.vue";
 
 withDefaults(
     defineProps<{
@@ -82,7 +78,9 @@ withDefaults(
         isWebView: false,
     }
 );
-const filter = ref<EntitiesEnum>(EntitiesEnum.ProfileEditTrainer);
+const { role } = useRoles();
+
+const filter = ref<EntitiesEnum>(role === RoleEnum.Trainer ? EntitiesEnum.ProfileEditTrainer : EntitiesEnum.ProfileEdit);
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
@@ -92,6 +90,19 @@ const router = useRouter();
 const route = useRoute();
 const { type: subscriptionType } = useSubscription();
 
+const settingsCompo = {
+    [EntitiesEnum.ProfileEdit]: EditeProfile,
+    [EntitiesEnum.ProfileEmail]: Email,
+    [EntitiesEnum.ProfilePassword]: ChangePassword,
+    [EntitiesEnum.ProfileLanguages]: Languages,
+    [EntitiesEnum.ProfileAppMode]: AppMode,
+    [EntitiesEnum.ProfileNotifications]: Notifications,
+    [EntitiesEnum.ProfilePreferences]: Preference,
+    [EntitiesEnum.ProfileLocation]: Location,
+    [EntitiesEnum.ProfilePronounce]: Pronounce,
+    [EntitiesEnum.ProfileOrderConfirmation]: OrderConfirmation,
+    [EntitiesEnum.ProfileAddSocialLink]:SocialMedia
+}
 const { id } = useId();
 
 let abort: any;
@@ -220,7 +231,6 @@ const onBack = () => {
     router.go(-1);
 };
 
-const { role } = useRoles();
 
 const menuType =
     role === RoleEnum.OrganizationOwner ||
@@ -229,7 +239,6 @@ const menuType =
         ? EntitiesEnum.Facility
         : role;
 const menu = editProfileMenu[menuType];
-console.log("menu1", menu);
 
 const webItemClick = (name: EntitiesEnum) => {
     console.log("name", name);    
@@ -344,7 +353,9 @@ const trainerType = computed<TrainerTypeEnum>(
         font-size: 20px;
     }
 }
-
+.delete-account {
+    margin-top: 20px;
+}
 .edit-profile-component {
     padding-left: 35px;
     padding-top: 14px;

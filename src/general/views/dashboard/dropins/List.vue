@@ -24,12 +24,20 @@
                 Expired
               </ion-button>
             </div>
-            <div class="ion-padding-vertical">
+            <!-- <div class="ion-padding-vertical">
               <ion-button
                 @click="navigate(EntitiesEnum.DashboardDropinCreate)"
                 class=""
                 fill="solid"
                 >Create Drop ins</ion-button
+              >
+            </div> -->
+            <div class="ion-padding-vertical">
+              <ion-button
+                @click="navigate(EntitiesEnum.DashboardDropinViewList)"
+                class=""
+                fill="solid"
+                >View Drop-Ins</ion-button
               >
             </div>
           </div>
@@ -40,7 +48,15 @@
           class="spinner"
         />
         <div v-else>
-          <pass-dropin-data-table :dropins="dropins"/>
+          <div class="card-background" v-if="!dropins || !dropins.length">
+            <empty-block
+              title="Customers list Empty"
+              hideButton
+              text="No drop-ins sold yet"
+              icon= "assets/icon/dropin.svg"
+            />
+          </div>
+          <pass-dropin-data-table :dropins="dropins" v-else/>
         </div>
       </ion-col>
     </ion-row>
@@ -64,6 +80,7 @@ import {
 } from "@/generated/graphql";
 import PassSubscriberDataTable from "@/general/components/dataTables/PassSubscriberDataTable.vue";
 import PassDropinDataTable from "@/general/components/dataTables/PassDropinDataTable.vue";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { chevronBackOutline } from "ionicons/icons";
 import { ref, computed } from "vue";

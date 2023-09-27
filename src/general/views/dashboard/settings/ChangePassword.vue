@@ -9,7 +9,7 @@
                 <base-input from-settings v-model:value="newPasswordInput" label="New password" :error-message="newPasswordError" :disabled="loading"
                     type="password" placeholder="Enter your new password" class="password__input" />
                 <base-input from-settings v-model:value="passwordConfirmationInput" label="Confirm password" :error-message="passwordConfirmationError"
-                    type="password" placeholder="Enter your new password again" class="password__input" />
+                    type="password" :placeholder="role === RoleEnum.User ? 'Confirm password' : 'Enter your new password again'" class="password__input" />
             </div>
         </template>
     </ComponentBaseLayout>
@@ -26,9 +26,11 @@ import { computed } from "vue";
 import { humanizeString } from "@/utils/textUtils";
 import { toastController } from "@ionic/vue";
 import ComponentBaseLayout from "./ComponentBaseLayout.vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const router = useRouter();
-
+const { role } = useRoles();
 const { mutate, onDone, loading, error } = useMutation(UpdatePasswordDocument);
 
 const { value: passwordInput, errorMessage: passwordInputError } =

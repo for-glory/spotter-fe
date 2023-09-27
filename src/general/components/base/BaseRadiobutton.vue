@@ -5,7 +5,7 @@
     :class="{
       'radiobutton--checked': isChecked,
       'radiobutton--light': light,
-      'radiobutton__trainer': role === RoleEnum.Trainer
+      'radiobutton__trainer': (role === RoleEnum.Trainer || role === RoleEnum.User)
     }"
   >
     <slot name="icon"></slot>

@@ -6,7 +6,7 @@
         {{ title.charAt(0) }}
       </template>
     </ion-thumbnail>
-    <div class="item__holder">
+    <div :class="['item__holder', { 'user-item': role === RoleEnum.User }]">
       <div class="item__header" :class="{ 'item__header--offset': $slots.end }">
         <ion-label class="item__title">
           {{ title }}
@@ -29,6 +29,8 @@ import { IonThumbnail, IonItem, IonLabel, IonText } from "@ionic/vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import { defineProps } from "vue";
 import RatingNumber from "@/general/components/RatingNumber.vue";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 defineProps<{
   title: string;
   avatarUrl?: string;
@@ -36,6 +38,8 @@ defineProps<{
   date?: string;
   rating?: number | string;
 }>();
+
+const { role } = useRoles()
 </script>
 
 <style scoped lang="scss">
@@ -101,6 +105,12 @@ defineProps<{
 
   &__holder {
     width: calc(100% - 68px);
+  }
+}
+
+.user-item {
+  .item__title, .item__date {
+    font-family: Yantramanav;
   }
 }
 </style>

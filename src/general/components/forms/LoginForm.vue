@@ -1,11 +1,10 @@
 <template>
-  <ion-text v-if="!isNative">
+  <ion-text class="mt-2" v-if="!isNative">
     Don't have an account?
     <a :href="'#'" @click.prevent="openModal"> Sign up </a>
   </ion-text>
   <div
-    class="mt-2"
-    :class="isNative && 'native login-form-container ion-padding'"
+    :class="{ 'mt-2': !isNative, 'native login-form-container ion-padding' : isNative }"
   >
     <base-form class="authentication-form" @submit.prevent="onSubmit">
       <base-input

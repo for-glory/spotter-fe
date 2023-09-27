@@ -5,27 +5,38 @@ type ProfileMenu = Record<string, ProfileMenuItem[]>;
 
 export const profileMenu: ProfileMenu = {
   USER: [
-    {
-      name: EntitiesEnum.ProfileIdentityVerification,
-      label: "Identify verification",
-      icon: "identity",
-    },
+    // {
+    //   name: EntitiesEnum.ProfileIdentityVerification,
+    //   label: "Identify verification",
+    //   icon: "identity",
+    // },
     {
       name: EntitiesEnum.ProfileEdit,
       label: "Edit profile",
       icon: "edit",
     },
     {
+      name: EntitiesEnum.ProfileCalendar,
+      label: "Calendar",
+      icon: "calendar-outline",
+    },
+    {
       name: EntitiesEnum.ProfilePaymentMethods,
       label: "Payment methods",
       icon: "payment",
-      isTrusted: true,
+      // isTrusted: true,
+    },
+
+    {
+      name: EntitiesEnum.ProfilePreferences,
+      label: "Preferences",
+      icon: "preferences",
     },
     {
       name: EntitiesEnum.ProfileBookingHistory,
       label: "Booking history",
       icon: "history",
-      isTrusted: true,
+      // isTrusted: true,
     },
   ],
   TRAINER: [
