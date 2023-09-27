@@ -566,6 +566,14 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardClientPurchasedDailys,
+        path: "purchased-dailys",
+        component: () => import("@/general/views/dashboard/workout/user/Purchased.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardCreateWorkout,
         path: "workout/create",
         component: () =>

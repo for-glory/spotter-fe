@@ -62,6 +62,7 @@ import { VideoPlayer } from "@videojs-player/vue";
 import { useRouter } from "vue-router";
 import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
+import { Capacitor } from "@capacitor/core";
 
 const props = withDefaults(
   defineProps<{
@@ -162,7 +163,11 @@ const getDurationText = (value: number) => {
 };
 
 const onBack = () => {
-  router.push({ name: props.backName });
+  if(props.backName === EntitiesEnum.UserWorkouts && !Capacitor.isNativePlatform()) {
+    router.push({ name: EntitiesEnum.DashboardClientDailys });
+  } else {
+    router.push({ name: props.backName });
+  }
 };
 
 const handleVideoEnded = () => {

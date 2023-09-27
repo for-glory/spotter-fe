@@ -58,7 +58,7 @@ const id = ref<number>();
 
 const onSwiper = (swiper: any) =>{
   swiperRef.value = swiper;
-  id.value = workouts.value[0].id;
+  id.value = workouts?.value[0]?.id;
   let currentIndex = workouts.value?.findIndex((daily: any) => daily.id === id.value);
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
@@ -68,7 +68,7 @@ watch(() => swiperRef.value?.activeIndex,
 (newVal) => {
   console.log(newVal);
   activeIndex.value = newVal as number;
-  id.value = workouts.value[activeIndex.value].id;
+  id.value = workouts.value[activeIndex.value]?.id;
 });
 
 </script>

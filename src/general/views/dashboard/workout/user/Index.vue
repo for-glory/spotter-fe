@@ -19,8 +19,15 @@
         class="page-content ion-padding-horizontal w-100 h-100" 
       >
         <workouts-preview-swiper 
+          v-if="workouts.length"
           :workouts="workouts" 
           @trialEnd="onTrialEnd"
+        />
+        <base-empty-page
+          v-else
+          icon="energy"
+          title="Dailys Empty"
+          context="No dailys are posted yet..."
         />
       </div>
     </div>
@@ -30,7 +37,7 @@
     v-if="!workoutsLoading"
     :tabs="TABS"
     class="page-tabs"
-    :value="EntitiesEnum.UserWorkouts"
+    :value="EntitiesEnum.DashboardClientDailys"
     @change="tabsChanged"
   />
   <blurred-screen-modal
@@ -85,8 +92,9 @@ import { FreeMode } from "swiper";
 import MyVideoPlayer from "@/general/components/VideoPlayer.vue";
 import WorkoutsPreviewSwiper from "@/users/views/workouts/components/WorkoutsPreviewSwiper.vue";
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
-import { TABS } from "@/const/user-workouts-tabs";
+import { TabItem } from "@/interfaces/TabItem";
 import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
+import BaseEmptyPage from "@/general/components/base/BaseEmptyPage.vue";
 
 const router = useRouter();
 const itemSelected = ref<Workout | null>(null);
@@ -98,6 +106,17 @@ const searchQuery = ref<string>("");
 const isOpenBlurredScreenModal = ref(false);
 const isOpenPurchaseModal = ref(false);
 const selectedDailyId = ref<number>();
+
+const TABS: TabItem[] = [
+  {
+    name: EntitiesEnum.DashboardClientDailys,
+    label:'Trending'
+  },
+  {
+    name: EntitiesEnum.DashboardClientPurchasedDailys,
+    label:'My Library'
+  },
+];
 
 const { result: workoutsResult, loading: workoutsLoading } = useQuery(
   WorkoutsDocument,

@@ -26,8 +26,15 @@
         :class="{'ios-app-top': isPlatform('ios')}"
       >
         <workouts-preview-swiper 
+          v-if="workouts.length"
           :workouts="workouts" 
           @trialEnd="onTrialEnd"
+        />
+        <base-empty-page
+          v-else
+          icon="energy"
+          title="Dailys Empty"
+          context="No dailys are posted yet..."
         />
       </div>
     </template>
@@ -77,6 +84,7 @@ import { FreeMode } from "swiper";
 import MyVideoPlayer from "@/general/components/VideoPlayer.vue";
 import WorkoutsPreviewSwiper from "@/users/views/workouts/components/WorkoutsPreviewSwiper.vue";
 import BlurredScreenModal from "./components/BlurredScreenModal.vue";
+import BaseEmptyPage from "@/general/components/base/BaseEmptyPage.vue";
 
 const router = useRouter();
 const itemSelected = ref<Workout | null>(null);

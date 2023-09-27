@@ -7,7 +7,7 @@
         v-else
         :height="800"
         :width="400"
-        :back-name="EntitiesEnum.UserPurchasedWorkouts"
+        :back-name="Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys"
         :daily="dailyData"
         class="trial-video-player"
         @back="closeVideo"
@@ -66,6 +66,7 @@ import InstructionTipModal from "./components/InstructionTipModal.vue";
 import BlurredScreenModal from "./components/BlurredScreenModal.vue";
 import { EntitiesEnum } from "@/const/entities";
 import router from "@/router";
+import { Capacitor } from '@capacitor/core';
 
 const trialMode = ref(true);
 const isOpenInstructionTipModal = ref(false);

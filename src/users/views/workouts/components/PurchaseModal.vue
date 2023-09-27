@@ -360,5 +360,6 @@ const formatNumber = (num: number) => {
 }
 ion-modal {
   --border-radius: 12px;
+  z-index: 6000000 !important;
 }
 </style>
