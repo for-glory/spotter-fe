@@ -22,7 +22,7 @@
               :key="workout.id"
               v-for="workout in workouts"
               :to="{
-                name: EntitiesEnum.UserExercisesList,
+                name: EntitiesEnum.UserPurchasedWorkout,
                 params: { id: workout.id },
               }"
             >

@@ -12,13 +12,12 @@
     crossorigin="anonymous"
     playsinline
     controls
-    :poster="photoUrl"
+    :poster="props.photoUrl"
     :volume="0.6"
-    :height="height"
-    :width="width"
+    :height="props.height"
+    :width="props.width"
     :playback-rates="[0.7, 1.0, 1.5, 2.0]"
     :preferFullWindow="true"
-    :duration="0.1"
     @mounted="handleMounted"
     @play="handlePlay"
     @pause="handlePlause"
@@ -33,7 +32,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     pathUrl: string;
     height: number;
@@ -41,12 +40,14 @@ withDefaults(
     photoUrl: string;
     autoplay?: boolean;
     freeDuration?: number;
+    backName?: EntitiesEnum;
   }>(),
   {
     width: 320,
     photoUrl: "",
     autoplay: false,
-    freeDuration: 10,
+    freeDuration: 0,
+    backName: EntitiesEnum.UserWorkouts,
   }
 );
 
@@ -79,7 +80,7 @@ const handlePlause = () => {
 
 watch(() => totalTime.value,
 () => {
-  if(totalTime.value >= 10) {
+  if(props.freeDuration > 0 && totalTime.value >= props.freeDuration) {
     player.value?.pause();
     player.value?.currentTime(0)
     emits('trialEnd');
@@ -87,7 +88,7 @@ watch(() => totalTime.value,
 });
 
 const onBack = () => {
-  router.push({ name: EntitiesEnum.UserWorkouts });
+  router.push({ name: props.backName });
 };
 
 const handleVideoEnded = () => {
