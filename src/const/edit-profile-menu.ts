@@ -6,6 +6,10 @@ type EditProfileMenu = Record<string, EditProfileMenuItem[]>;
 export const editProfileMenu: EditProfileMenu = {
   USER: [
     {
+      name: EntitiesEnum.ProfileEdit,
+      label: "Edit profile picture"
+    },
+    {
       name: EntitiesEnum.ProfileEmail,
       label: "Change email",
     },
@@ -13,27 +17,36 @@ export const editProfileMenu: EditProfileMenu = {
       name: EntitiesEnum.ProfilePassword,
       label: "Change password",
     },
-    // {
-    //   name: EntitiesEnum.ProfileLanguages,
-    //   label: "Language",
-    //   value: EntitiesEnum.Language,
-    // },
-    // {
-    //   name: EntitiesEnum.ProfileAppMode,
-    //   label: "App mode",
-    //   value: EntitiesEnum.AppMode,
-    // },
-    // {
-    //   name: EntitiesEnum.ProfileNotifications,
-    //   label: "Notifications",
-    // },
+    {
+      name: EntitiesEnum.ProfileLanguages,
+      label: "Language",
+      value: EntitiesEnum.Language,
+    },
+    {
+      name: EntitiesEnum.ProfileAppMode,
+      label: "App mode",
+      value: EntitiesEnum.AppMode,
+    },
+    {
+      name: EntitiesEnum.ProfileNotifications,
+      label: "Notifications",
+    },
     {
       name: EntitiesEnum.ProfilePreferences,
       label: "Preferences",
     },
+    // {
+    //   name: EntitiesEnum.ProfileAddSocialLink,
+    //   label: "Add social links",
+    // },
     {
       name: EntitiesEnum.ProfileLocation,
       label: "Location",
+    },
+    {
+      name: EntitiesEnum.ProfilePronounce,
+      label: "Pronouns",
+      value: EntitiesEnum.ProfilePronounce,
     },
   ],
   TRAINER: [

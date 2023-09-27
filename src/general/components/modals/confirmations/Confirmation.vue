@@ -1,6 +1,6 @@
 <template>
   <ion-modal ref="modal" :is-open="isVisible" :backdrop-dismiss="false">
-    <div class="wrapper">
+    <div :class="['wrapper', { 'user-confirm-modal': role === RoleEnum.User }]">
       <ion-icon
         src="assets/icon/close.svg"
         @click="handleCancel"
@@ -17,10 +17,10 @@
           </ion-text>
         </div>
         <div class="modal__footer">
-          <ion-button @click="handleCancel" class="modal__button">
+          <ion-button @click="handleCancel" class="modal__button cancel">
             {{ cancelButtonText }}
           </ion-button>
-          <ion-button @click="handleDiscard" class="modal__button secondary">
+          <ion-button @click="handleDiscard" :class="['modal__button', 'secondary', { 'white': confirmBtnWhite }]">
             {{ buttonText }}
           </ion-button>
         </div>
@@ -30,6 +30,8 @@
 </template>
 
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 import { IonModal, IonText, IonButton, IonIcon, IonImg } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
 
@@ -40,9 +42,11 @@ withDefaults(
     buttonText: string;
     isVisible: boolean;
     cancelButtonText?: string;
+    confirmBtnWhite?: boolean; 
   }>(),
   {
     cancelButtonText: "Cancel",
+    confirmBtnWhite: false
   }
 );
 
@@ -50,6 +54,8 @@ const emits = defineEmits<{
   (e: "decline", isConfirmed: boolean): void;
   (e: "discard", isConfirmed: boolean): void;
 }>();
+
+const { role } = useRoles();
 
 const handleCancel = () => {
   emits("decline", false);
@@ -165,5 +171,27 @@ ion-modal::part(backdrop) {
       }
     }
   }
+}
+
+.user-confirm-modal {
+  .modal__text, ion-button {
+    font-family: Yantramanav;
+  }
+
+  ion-button {
+    font-weight: 700;
+  }
+   .cancel {
+     color: var(--main-color);
+   }
+
+   .secondary {
+    color: var(--gold);
+   }
+
+   .white {
+    color: var(--fitnesswhite);
+   }
+
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem }" :fill="itemOutline ? 'outline' : 'none'" :lines="isWebItem ? 'none' : ''">
-    <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer}" slot="start">
+    <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer, 'danger-title': dangerTitle}" slot="start">
       <ion-icon
         v-if="icon"
         :src="`assets/icon/${icon}.svg`"
@@ -11,7 +11,7 @@
     <ion-text class="choose-place__value" :class="{'native-app': role === RoleEnum.Trainer }">
       {{ value }}
     </ion-text>
-    <ion-icon
+    <ion-icon v-if="detailIcon"
       class="choose-place__icon"
       slot="end"
       src="assets/icon/arrow-next.svg"
@@ -41,13 +41,16 @@ withDefaults(
     disabled?: boolean;
     isWebItem?: boolean;
     itemOutline?: boolean;
-    isLightItem?: boolean
+    isLightItem?: boolean;
+    detailIcon?: boolean;
+    dangerTitle?:boolean;
   }>(),
   {
     disabled: false,
     isWebItem: false,
     itemOutline: false,
-    isLightItem: false
+    isLightItem: false,
+    detailIcon: true
   }
 );
 
@@ -120,5 +123,12 @@ const onClick = () => {
       font-style: normal;
       font-weight: 400;
     }
+}
+
+.danger-title {
+  color: var(--color-red);
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: 300;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User,'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult,'p-0': noPadding, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User,'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }"
   >
     <ion-back-button
       v-if="backBtn"
@@ -221,6 +221,7 @@ const props = withDefaults(
     noFoundMsg?: string;
     filtersBtn?: boolean;
     extraPadding?:boolean
+    noPadding?:boolean;
   }>(),
   {
     backBtn: false,
@@ -232,6 +233,7 @@ const props = withDefaults(
     customNavigation: false,
     filters: {},
     noFoundMsg: "No results found...",
+    noPadding:false
   }
 );
 
@@ -654,6 +656,10 @@ defineExpose({
 
 .search-form-padding {
   padding: calc(16px + var(--ion-safe-area-top)) 24px 0 12px;
+}
+
+.p-0 {
+  padding: 0 !important;
 }
 
 .no-found-msg {

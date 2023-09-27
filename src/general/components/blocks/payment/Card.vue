@@ -1,7 +1,8 @@
 <template>
-  <div class="card__container">
+  <div :class="['card__container', { 'user-card-container': role === RoleEnum.User }]">
     <div class="card__content">
       <ion-icon src="assets/icon/payment/card.svg" class="card__icon" />
+      <ion-icon src="assets/visa.svg" v-if="role === RoleEnum.User" class="visa-logo" />
       <div class="card__number">
         <div class="hidden-numbers">
           <ion-icon
@@ -52,8 +53,10 @@
 </template>
 
 <script setup lang="ts">
+import useRoles from "@/hooks/useRole";
 import { IonText, IonIcon } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits } from "vue";
+import { RoleEnum } from "@/generated/graphql";
 
 const props = withDefaults(
   defineProps<{
@@ -78,6 +81,8 @@ const onDelete = () => {
     emits("delete");
   }
 };
+
+const { role } = useRoles()
 </script>
 <style scoped lang="scss">
 .card {
@@ -165,5 +170,25 @@ const onDelete = () => {
 }
 .card__holder {
   max-width: 30%;
+}
+
+.user-card-container {
+  background: var(--gray-700)
+      url("../../../../../public/assets/icon/payment/spotter-card.svg") no-repeat
+      50% 50%;
+      .visa-logo {
+        position: absolute;
+        font-size: 34px;
+        top: 2px;
+        right: 15px;
+      }
+
+      .card__footer {
+        font-family: Yantramanav;
+
+        .desrc {
+          color: var(--gray-400);
+        }
+      }
 }
 </style>

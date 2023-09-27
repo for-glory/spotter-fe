@@ -2,7 +2,7 @@
   <div
     class="holder-content ion-padding-horizontal"
     :class="{ 'holder-content--empty': !loading }"
-    v-if="role !== RoleEnum.Trainer"
+    v-if="(role !== RoleEnum.Trainer && role !== RoleEnum.User)"
   >
     <div class="banner">
       <ion-icon src="assets/icon/arrow-back.svg" />

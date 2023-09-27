@@ -1,6 +1,6 @@
 <template>
   <div class="photo-loader" @click="openLoadOptions">
-    <div class="photo-preview" v-if="type === 'avatar'">
+    <div :class="['photo-preview', { 'web-img': webImg }]" v-if="type === 'avatar'">
       <img
         class="photo-preview__img"
         :src="value || `assets/icon/${icon}.svg`"
@@ -49,11 +49,14 @@ import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import PhotoCropper from "@/general/components/modals/crop/PhotoCropper.vue";
 import CircleProgress from "@/general/components/CircleProgress.vue";
 import { Capacitor } from '@capacitor/core';
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
 enum actionTypesEnum {
   Delete = "DELETE",
   MakeAPhoto = "MAKE_A_PHOTO",
   PhotoLibrary = "PHOTO_LIBRARY",
+  TakePhoto = "TAKE_PHOTO"
 }
 
 const props = withDefaults(
@@ -64,11 +67,13 @@ const props = withDefaults(
     type?: string;
     loading?: boolean;
     progress?: number;
+    webImg?: boolean;
   }>(),
   {
     icon: "person",
     circleShape: false,
     type: "default",
+    webImg: false
   }
 );
 
@@ -76,6 +81,7 @@ const emits = defineEmits<{
   (e: "change", value?: string): void;
 }>();
 
+const { role } = useRoles()
 const value = ref<string | undefined>(props.photo);
 const uploadedImage = ref<string>("");
 const isCropperOpen = ref<boolean>(false);
@@ -98,6 +104,7 @@ const openLoadOptions = async (): Promise<void> => {
             data: {
               type: actionTypesEnum.Delete,
             },
+            cssClass: role === RoleEnum.User ? "danger-tr-sheet-btn" : ""
           },
         ]
       : []),
@@ -106,16 +113,19 @@ const openLoadOptions = async (): Promise<void> => {
       data: {
         type: actionTypesEnum.MakeAPhoto,
       },
+      cssClass: role === RoleEnum.User ? "success-tr-sheet-btn" : ""
     },
     {
       text: "Photo library",
       data: {
         type: actionTypesEnum.PhotoLibrary,
       },
+      cssClass: role === RoleEnum.User ? "success-tr-sheet-btn" : ""
     },
     {
       text: "Cancel",
       role: "cancel",
+      cssClass: role === RoleEnum.User ?  "cancel-tr-sheet-btn" : ""
     },
   ];
   const webButtons = [
@@ -136,14 +146,27 @@ const openLoadOptions = async (): Promise<void> => {
         type: actionTypesEnum.PhotoLibrary,
       },
     },
-    {
-      text: "Cancel",
-      role: "cancel",
-    },
+    ...(role === RoleEnum.User ? [{
+      text: "Take photo",
+      data: {
+        type: actionTypesEnum.MakeAPhoto,
+      },
+      cssClass: role === RoleEnum.User ? "success-tr-sheet-btn" : ""
+    }]: []),
+    ...( role !== RoleEnum.User 
+      ?
+        [
+          {
+          text: "Cancel",
+          role: "cancel",
+        }
+      ] 
+      : []),
   ];
   const actionSheet = await actionSheetController.create({
     mode: "ios",
-    buttons: Capacitor.isNativePlatform()?mobileButtons:webButtons
+    buttons: Capacitor.isNativePlatform()?mobileButtons:webButtons,
+    cssClass: role === RoleEnum.User ? 'trainer-sheet' : ''
   });
 
   await actionSheet.present();
@@ -306,6 +329,20 @@ const getCroppedImg = (image: string) => {
     flex-direction: column;
     justify-content: center;
     background: rgba(#262626, 0.8);
+  }
+}
+
+.web-img {
+  width: 198px;
+  height: 198px;
+
+  .photo-preview__icon {
+    width: 68px;
+    height: 68px;
+
+    ion-icon {
+      font-size: 32px;
+    }
   }
 }
 </style>

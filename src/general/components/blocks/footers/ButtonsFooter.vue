@@ -1,5 +1,5 @@
 <template>
-  <div class="buttons__container" :class="role === RoleEnum.Trainer ? 'buttons__container__trainer' : ''">
+  <div class="buttons__container" :class="(role === RoleEnum.Trainer || role === RoleEnum.User) ? 'buttons__container__trainer' : ''">
     <ion-button
       @click="$emit('handle-click')"
       class="submit-btn"

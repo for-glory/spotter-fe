@@ -1,5 +1,5 @@
 <template>
-  <base-layout hide-navigation-menu>
+  <base-layout :hide-navigation-menu="role !== RoleEnum.User ? true : false ">
     <template #header>
       <page-header back-btn @back="onBack" title="Payment methods">
         <template #custom-btn>
@@ -47,13 +47,19 @@
           <add-card-button class="add-card-btn" @click="onCardCreation" />
         </template>
       </div>
-      <div v-if="!editMode" class="separator">
-        <ion-text class="optional">or other payment methods</ion-text>
-      </div>
-      <div v-if="!editMode" class="payment__methods">
-        <!-- @click="handleAdditionalPaymentMethod(paymentMethod.key)" -->
-        <payment-method icon="paypal" title="PayPal" />
-      </div>
+      <template v-if="role !== RoleEnum.User">
+        <div v-if="!editMode" class="separator">
+          <ion-text class="optional">or other payment methods</ion-text>
+        </div>
+        <div v-if="!editMode" class="payment__methods">
+          <!-- @click="handleAdditionalPaymentMethod(paymentMethod.key)" -->
+          <payment-method icon="paypal" title="PayPal" />
+        </div>
+      </template>
+    </template>
+
+    <template  #footer>
+      <buttons-footer main-button-text="Confirm"/>
     </template>
   </base-layout>
   <confirmation
@@ -69,6 +75,7 @@
 <script setup lang="ts">
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import ButtonsFooter from "@/general/components/blocks/footers/ButtonsFooter.vue";
 import { IonText, IonButton, IonIcon } from "@ionic/vue";
 import PaymentMethod from "@/general/components/blocks/payment/PaymentMethod.vue";
 import { ref, onMounted, onUnmounted } from "vue";
@@ -84,8 +91,10 @@ import {
   StripeCardsQuery,
   StripeCard,
   DetachCardDocument,
+RoleEnum,
 } from "@/generated/graphql";
 import { useMutation, useQuery } from "@vue/apollo-composable";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const errorMessage = ref("");
@@ -93,6 +102,7 @@ const editMode = ref(false);
 const cards = ref<StripeCard[]>([]);
 const curCartId = ref("");
 const interval = ref(null);
+const { role } = useRoles();
 
 const backendStripe = new BackendStripe(
   process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
@@ -198,6 +208,7 @@ const onDelete = (id: string) => {
   &__container {
     height: 170px;
     display: flex;
+    padding-right: 10px;
   }
 
   &__title {

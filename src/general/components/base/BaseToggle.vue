@@ -1,18 +1,26 @@
 <template>
   <div
     class="base-toggle-container"
-    :class="{ 'base-toggle-container--loading': loading, 'base-toggle-trainer': role === RoleEnum.Trainer }"
+    :class="{ 'base-toggle-container--loading': loading, 'base-toggle-trainer': (role === RoleEnum.Trainer || role === RoleEnum.User) }"
   >
     <ion-spinner v-if="loading" name="lines" class="spinner" />
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
     <div class="toggle-container">
-      <ion-text class="toggle-content">
-        {{ content }}
-      </ion-text>
-      <ion-toggle
+      <div class="toggle-content">
+        <div class="start">
+          <IonImg v-if="img" :src="`assets/icon/${img}`" />
+          <ion-text :class="{ 'font-lato': fontLato }">
+            {{ content }}
+          </ion-text>
+        </div>
+        <ion-toggle
         @ionChange="onChange($event.target.checked)"
         :checked="inputValue"
-      />
+        />
+      </div>
+      <div v-if="description" class="description">
+        {{ description }}
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +34,7 @@ export default {
 <script setup lang="ts">
 import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
-import { IonText, IonToggle, IonLabel, IonSpinner } from "@ionic/vue";
+import { IonText, IonToggle, IonLabel, IonSpinner, IonIcon, IonImg } from "@ionic/vue";
 import { defineProps, defineEmits, computed } from "vue";
 
 const { role } = useRoles();
@@ -36,6 +44,9 @@ const props = defineProps<{
   content: string;
   loading?: boolean;
   class?: string;
+  img?:string
+  description?:string
+  fontLato?:boolean
 }>();
 
 const emits = defineEmits<{
@@ -84,7 +95,8 @@ ion-toggle {
 .toggle-container {
   display: flex;
   min-height: 48px;
-  flex-direction: row;
+  flex-direction: column;
+  gap: 14px;
   border-radius: 8px;
   align-items: center;
   padding: 8px 16px 8px;
@@ -94,11 +106,33 @@ ion-toggle {
   .base-toggle-container--loading & {
     opacity: 0.5;
   }
+
+  .description {
+    color: var(--gray-500);
+    font-family: Lato;
+    font-size: 12px;
+    font-weight: 400;
+  }
 }
 .toggle-content {
   font-weight: 300;
   font-size: 14px;
   color: var(--ion-color-white);
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+
+  .start {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    ion-img {
+      width: 24px;
+      height: 24px;
+    }
+  }
 }
 
 .spinner {
@@ -117,4 +151,12 @@ ion-toggle {
     font-family: "Yantramanav";
   }
 }
+
+.font-lato {
+  font-family: Lato;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+}
+
 </style>

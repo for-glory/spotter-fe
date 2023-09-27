@@ -1,5 +1,10 @@
 <template>
-  <div class="base-input-container" :class="{ 'form-row__input' : role === RoleEnum.Trainer,'form-row__input__web': fromSettings}">
+  <div class="base-input-container" 
+  :class="{ 
+    'form-row__input' : (role === RoleEnum.Trainer || role === RoleEnum.User),
+    'form-row__input__web': fromSettings, 
+    'font-lato': (role === RoleEnum.User && fromSettings)
+  }">
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
     <transition name="border">
       <ion-item
@@ -91,6 +96,8 @@ const props = withDefaults(
     fromSettings: false
   }
 );
+console.log("props", props);
+
 const { role } = useRoles();
 const emits = defineEmits<{
   (e: "update:value", updatedValue: string): void;
@@ -208,6 +215,12 @@ ion-note {
   }
   ion-item {
     --border-color: rgba(255, 255, 255, 0.60);
+  }
+}
+
+.font-lato {
+  ion-label, ion-input {
+    font-family: "Lato" !important;
   }
 }
 </style>
