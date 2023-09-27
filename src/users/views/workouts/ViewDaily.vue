@@ -5,8 +5,8 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :pathUrl="videoUrl || ''"
-        :photoUrl="previewUrl || ''"
+        :pathUrl="dailyData?.video || ''"
+        :photoUrl="dailyData?.previewUrl || ''"
         :height="800"
         :width="400"
         :back-name="EntitiesEnum.UserPurchasedWorkouts"
@@ -15,6 +15,7 @@
         @ended="videoEndedHandle"
         @trialEnd="onTrialEnd"
         autoplay
+        :title="dailyData?.title"
       >
         <template #custom-header-btn>
           <ion-button
@@ -31,10 +32,10 @@
   <instruction-tip-modal
     :is-open="isOpenInstructionTipModal"
     @visibility="isOpenInstructionTipModal = false"
-    :instruction-tip="workoutInstructionTip"
+    :instruction-tip="dailyData?.description"
     showFooter
-    :title="title"
-    :trainer="trainer"
+    :title="dailyData?.title"
+    :trainer="dailyData?.trainer"
   />
 </template>
 
@@ -82,20 +83,8 @@ gotWorkout((response) => {
   console.log(response.data)
 });
 
-const videoUrl = computed<string>(
-  () => result?.value?.workout?.video ?? ""
-);
-const title = computed<string>(
-  () => result?.value?.workout?.title
-);
-const trainer = computed<string>(
-  () => result?.value?.workout?.trainer
-);
-const previewUrl = computed<string>(
-  () => result?.value?.workout?.previewUrl ?? ""
-);
-const workoutInstructionTip = computed<string>(
-  () => result?.value?.workout?.description ?? ""
+const dailyData = computed<any>(
+  () => result?.value?.workout
 );
 
 const closeVideo = () => {

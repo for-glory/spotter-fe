@@ -1,5 +1,5 @@
 <template>
-  <page-header class="header" back-btn @back="onBack" transparent>
+  <page-header class="header" back-btn @back="onBack" transparent :title="freeDuration === 0 ? `Playing ${ title }` : ''">
     <template #custom-btn>
       <slot name="custom-header-btn"></slot>
     </template>
@@ -41,6 +41,7 @@ const props = withDefaults(
     autoplay?: boolean;
     freeDuration?: number;
     backName?: EntitiesEnum;
+    title?: string;
   }>(),
   {
     width: 320,
