@@ -5,8 +5,6 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :height="800"
-        :width="400"
         :back-name="Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys"
         :daily="dailyData"
         class="trial-video-player"

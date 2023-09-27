@@ -5,8 +5,6 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :height="800"
-        :width="400"
         :freeDuration="10"
         :daily="dailyData"
         class="trial-video-player"

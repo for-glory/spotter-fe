@@ -15,8 +15,6 @@
           ref="trialVideoPlayer"
           :pathUrl="workout?.video || ''"
           :photoUrl="workout?.previewUrl || ''"
-          :height="800"
-          :width="400"
           :freeDuration="10"
           :daily="workout"
           :backBtn="false"
