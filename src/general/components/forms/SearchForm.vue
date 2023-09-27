@@ -719,8 +719,7 @@ defineExpose({
 }
 
 .search-form-user {
-  padding: 24px;
-  padding-bottom: 0;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
   ion-searchbar {
     font-family: "Yantramanav";
     --color: var(--fitnesswhite);
