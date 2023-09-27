@@ -1,19 +1,28 @@
 <template>
-  <ion-modal
-    class="instruction-tip-modal"
-    :is-open="isOpen"
-    ref="modal"
-    trigger="open-modal"
-    :initial-breakpoint="0.4"
-    :breakpoints="[0, 0.4, 1]"
-    :backdrop-dismiss="true"
-    @didDismiss="handleOpen"
-  >
-    <ion-content class="instruction-tip-content">
-      <ion-label class="instruction-tip-label">Instruction Tip</ion-label>
-      <ion-text color="secondary" v-html="instructionTip" />
-    </ion-content>
-  </ion-modal>
+  <div v-if="isOpen" class="w-100 h-100">
+    <ion-modal
+      class="instruction-tip-modal"
+      :is-open="isOpen"
+      ref="modal"
+      trigger="open-modal"
+      :initial-breakpoint="0.4"
+      :breakpoints="[0, 0.4, 1]"
+      :backdrop-dismiss="true"
+      @didDismiss="handleOpen"
+    >
+      <ion-content class="instruction-tip-content">
+        <ion-label class="instruction-tip-label">Instruction Tip</ion-label>
+        <ion-text color="secondary" v-html="instructionTip" />
+      </ion-content>
+    </ion-modal>
+    <div v-if="showFooter" class="d-flex align-items-center justify-content-between w-100 footer">
+      <div class="d-flex-col align-items-start" style="gap: 4px;">
+        <ion-text class="font-bold font-16 color-fitness-white">{{ title }}</ion-text>
+        <ion-text class="font-medium font-14 color-gray">{{ trainer.first_name + " " + trainer.last_name }}</ion-text>
+      </div>
+      <ion-button clas="color-dark-gray" style="flex: 1;">Add review</ion-button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,13 +32,21 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { IonModal, IonContent, IonText, IonLabel } from "@ionic/vue";
+import { IonModal, IonContent, IonText, IonLabel, } from "@ionic/vue";
 import { defineProps, defineEmits } from "vue";
 
-defineProps<{
-  isOpen: boolean;
-  instructionTip: string;
-}>();
+withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    instructionTip: string;
+    title?: string;
+    trainer?: any;
+    showFooter?: boolean
+  }>(),
+  {
+    showFooter: false,
+  }
+);
 
 const emits = defineEmits<{
   (e: "visibility", isOpen: boolean): void;
@@ -94,5 +111,20 @@ const handleOpen = () => {
   font-weight: 500;
   line-height: 1.5;
   color: var(--ion-color-light);
+}
+.footer {
+  background-color: #161616;
+  position: fixed;
+  bottom: 0;
+  z-index: 3000000;
+  padding: 20px 24px 44px 24px;
+  gap: 12px;
+}
+.font-16 {
+  font-size: 16px;
+}
+ion-button {
+  font-weight: bold;
+  font-size: 16px;
 }
 </style>

@@ -32,6 +32,9 @@
     :is-open="isOpenInstructionTipModal"
     @visibility="isOpenInstructionTipModal = false"
     :instruction-tip="workoutInstructionTip"
+    showFooter
+    :title="title"
+    :trainer="trainer"
   />
 </template>
 
@@ -81,6 +84,12 @@ gotWorkout((response) => {
 
 const videoUrl = computed<string>(
   () => result?.value?.workout?.video ?? ""
+);
+const title = computed<string>(
+  () => result?.value?.workout?.title
+);
+const trainer = computed<string>(
+  () => result?.value?.workout?.trainer
 );
 const previewUrl = computed<string>(
   () => result?.value?.workout?.previewUrl ?? ""
