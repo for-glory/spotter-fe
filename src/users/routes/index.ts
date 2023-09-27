@@ -263,7 +263,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.UserPurchasedWorkouts,
-    path: "/users/workouts/purchased",
+    path: "/users/dailys/purchased",
     component: () => import("@/users/views/workouts/Purchased.vue"),
     meta: {
       middleware: [auth],
