@@ -1,55 +1,92 @@
 <template>
   <base-layout>
-    <template #header>
-      <ion-buttons>
-        <ion-back-button
-          class="back-btn"
-          icon="assets/icon/arrow-back.svg"
-          @click="handleBack"
-        >
-        </ion-back-button>
-      </ion-buttons>
-      <search-form hide-results @search="searchWorkouts" />
+    <template v-if="workoutsLoaded" #header>
+      <search-form 
+        hide-results
+        filtersBtn
+        @search="searchWorkouts"
+        @apply-filters="applyFilter"
+        :class="{'ios-app-top': isPlatform('ios')}"
+      />
     </template>
     <template #content>
       <div class="holder-content ion-padding-horizontal">
         <ion-spinner v-if="!workoutsLoaded" name="lines" class="spinner" />
-        <template v-else-if="workouts && workouts.length">
-          <ion-title slot="start" class="title">Workouts</ion-title>
-          <activity
-            v-for="workout in workouts"
-            :key="workout.id"
-            :activity="workout"
-            @click="openActivity(workout.id)"
-          />
-          <ion-infinite-scroll
-            threshold="100px"
-            class="infinite-scroll"
-            @ionInfinite="loadMoreWorkouts"
-            v-if="workouts.length < totalWorkouts"
-          >
-            <ion-infinite-scroll-content
-              loading-spinner="lines"
-              loading-text="Loading more..."
+        <div v-else-if="view === 'library'">
+          <template v-if="myWorkouts && myWorkouts.length">
+            <ion-title slot="start" class="title">My Library</ion-title>
+            <activity
+              v-for="workout in myWorkouts"
+              :key="workout.id"
+              :activity="workout"
+              :type="'daily'"
+              :duration="allMyDailys?.find((daily)=>daily.id===workout.id)?.duration"
+              :dailyType="allMyDailys?.find((daily)=>daily.id===workout.id)?.type.name"
+              :trainer="allMyDailys?.find((daily)=>daily.id===workout.id)?.trainer"
+              @click="openActivity(workout.id)"
+            />
+            <ion-infinite-scroll
+              threshold="100px"
+              class="infinite-scroll"
+              @ionInfinite="loadMoreMyWorkouts"
+              v-if="myWorkouts.length < myTotalWorkouts"
             >
-            </ion-infinite-scroll-content>
-          </ion-infinite-scroll>
-        </template>
-        <empty-block
-          v-else
-          title="Empty here"
-          button-text="Explore more"
-          text="No workouts were found"
-          @button-click="router.push({ name: EntitiesEnum.UserWorkouts })"
-        />
+              <ion-infinite-scroll-content
+                loading-spinner="lines"
+                loading-text="Loading more..."
+              >
+              </ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+          </template>
+          <empty-block
+            v-else
+            title="Empty here"
+            button-text="Explore more"
+            text="No workouts were found"
+            @button-click="router.push({ name: EntitiesEnum.UserWorkouts })"
+          />
+        </div>
+        <div v-else-if="view === 'trending'">
+          <template v-if="workouts && workouts.length">
+            <activity
+              v-for="workout in workouts"
+              :key="workout.id"
+              :activity="workout"
+              :type="'daily'"
+              :duration="allDailys?.find((daily)=>daily.id===workout.id)?.duration"
+              :dailyType="allDailys?.find((daily)=>daily.id===workout.id)?.type.name"
+              :trainer="allDailys?.find((daily)=>daily.id===workout.id)?.trainer"
+              @click="openActivity(workout.id)"
+            />
+            <ion-infinite-scroll
+              threshold="100px"
+              class="infinite-scroll"
+              @ionInfinite="loadMoreWorkouts"
+              v-if="workouts.length < totalWorkouts"
+            >
+              <ion-infinite-scroll-content
+                loading-spinner="lines"
+                loading-text="Loading more..."
+              >
+              </ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+          </template>
+          <empty-block
+            v-else
+            title="Empty here"
+            button-text="Explore more"
+            text="No workouts were found"
+            @button-click="router.push({ name: EntitiesEnum.UserWorkouts })"
+          />
+        </div>
       </div>
     </template>
   </base-layout>
 
   <page-tabs
+    v-if="!showFilterModal && workoutsLoaded"
     :tabs="tabs"
     class="page-tabs"
-    :value="EntitiesEnum.ActivitiesNearby"
     @change="tabsChanged"
   />
 </template>
@@ -63,6 +100,7 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   InfiniteScrollCustomEvent,
+  isPlatform
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
@@ -76,8 +114,10 @@ import {
   WorkoutsQuery,
   QueryWorkoutsOrderByColumn,
   SortOrder,
+  MyWorkoutsDocument,
+  MyWorkoutsQuery
 } from "@/generated/graphql";
-import { ref } from "vue";
+import { defineProps, computed,ref } from "vue";
 import { ActivityItem } from "@/interfaces/ActivityItem";
 import { useRouter } from "vue-router";
 import { discoverTabs } from "@/const/tabs";
@@ -85,20 +125,43 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const router = useRouter();
 
-const tabs: TabItem[] = discoverTabs;
+const tabs: TabItem[] = [
+  {
+    name: EntitiesEnum.Trending,
+    label: "Trending",
+  },
+  {
+    name: EntitiesEnum.Dailys,
+    label: "Library",
+  },
+];
 
 const workoutsLoaded = ref<boolean>(false);
 const activePage = ref<number>(1);
 const totalWorkouts = ref<number>(0);
 const searchQuery = ref<string>("");
+const view = ref<string>("trending");
+const showFilterModal = ref<boolean>(false);
+
+const myWorkoutsLoaded = ref<boolean>(false);
+const myActivePage = ref<number>(1);
+const myTotalWorkouts = ref<number>(0);
 
 const tabsChanged = (name: EntitiesEnum) => {
-  router.push({
-    name,
-  });
+  switch(name) {
+    case EntitiesEnum.Trending :
+      view.value = 'trending';
+      updateWorkouts();
+      break;
+    
+    case EntitiesEnum.Dailys :
+      view.value = 'library';
+      updateMyWorkouts();
+      break;
+  }
 };
 
-const { refetch: updateWorkouts, onResult: gotWorkouts } =
+const { result: workoutsResult, refetch: updateWorkouts, onResult: gotWorkouts } =
   useQuery<WorkoutsQuery>(
     WorkoutsDocument,
     {
@@ -113,12 +176,44 @@ const { refetch: updateWorkouts, onResult: gotWorkouts } =
     }
   );
 
+const { result: myWorkoutsResult, refetch: updateMyWorkouts, onResult: gotMyWorkouts } =
+  useQuery<MyWorkoutsQuery>(
+    MyWorkoutsDocument,
+    {
+      first: 6,
+      page: myActivePage.value,
+      dynamic_search: searchQuery.value,
+      orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+      order: SortOrder.Desc,
+    },
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
+
+const allDailys = computed(() => workoutsResult.value?.workouts?.data);
+const allMyDailys = computed(() => myWorkoutsResult.value?.myWorkouts?.data)
+
 const loadMoreWorkouts = (ev: InfiniteScrollCustomEvent) => {
   if (workouts.value && workouts.value.length < totalWorkouts.value) {
     activePage.value++;
     updateWorkouts({
       first: 6,
       page: activePage.value,
+      dynamic_search: searchQuery.value,
+      orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+      order: SortOrder.Desc,
+    })?.then(() => {
+      ev.target.complete();
+    });
+  }
+};
+const loadMoreMyWorkouts = (ev: InfiniteScrollCustomEvent) => {
+  if (myWorkouts.value && myWorkouts.value.length < myTotalWorkouts.value) {
+    activePage.value++;
+    updateMyWorkouts({
+      first: 6,
+      page: myActivePage.value,
       dynamic_search: searchQuery.value,
       orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
       order: SortOrder.Desc,
@@ -158,20 +253,65 @@ gotWorkouts((response) => {
       : [...workouts.value, ...newWorkouts];
 });
 
+gotMyWorkouts((response) => {
+  totalWorkouts.value = response.data.myWorkouts?.paginatorInfo.total ?? 0;
+
+  const newWorkouts: ActivityItem[] =
+    response.data?.myWorkouts?.data.map((workout) => ({
+      name: workout.title,
+      id: workout.id,
+      rating: String(workout.trainer.score?.toFixed(1)),
+      photo: workout.previewUrl || undefined,
+    })) ?? [];
+
+  if (
+    workoutsLoaded.value &&
+    myWorkouts.value?.length &&
+    myWorkouts.value.findIndex(
+      (workout) => newWorkouts.length && workout.id === newWorkouts[0].id
+    ) > -1
+  )
+    return;
+
+  myWorkoutsLoaded.value = true;
+
+  myWorkouts.value =
+    !myWorkouts.value ||
+    response.data.myWorkouts?.paginatorInfo.firstItem === null ||
+    response.data.myWorkouts?.paginatorInfo.firstItem === 1
+      ? newWorkouts
+      : [...myWorkouts.value, ...newWorkouts];
+});
+
 const workouts = ref<ActivityItem[] | null>(null);
+const myWorkouts = ref<ActivityItem[] | null>(null);
 
 const searchWorkouts = (query: string) => {
-  activePage.value = 1;
-  totalWorkouts.value = 0;
-  workoutsLoaded.value = false;
-  searchQuery.value = query;
-  updateWorkouts({
-    first: 6,
-    page: activePage.value,
-    dynamic_search: searchQuery.value,
-    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    order: SortOrder.Desc,
-  });
+  if(view.value === 'trending') {
+    activePage.value = 1;
+    totalWorkouts.value = 0;
+    workoutsLoaded.value = false;
+    searchQuery.value = query;
+    updateWorkouts({
+      first: 6,
+      page: activePage.value,
+      dynamic_search: searchQuery.value,
+      orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+      order: SortOrder.Desc,
+    });
+  } else {
+    myActivePage.value = 1;
+    myTotalWorkouts.value = 0;
+    myWorkoutsLoaded.value = false;
+    searchQuery.value = query;
+    updateMyWorkouts({
+      first: 6,
+      page: myActivePage.value,
+      dynamic_search: searchQuery.value,
+      orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+      order: SortOrder.Desc,
+    });
+  }
 };
 
 const openActivity = (activityId: string | number) => {
@@ -182,6 +322,19 @@ const openActivity = (activityId: string | number) => {
     },
   });
 };
+
+const applyFilter = (data: any) => {
+  console.log(data);
+  workoutsLoaded.value = false;
+  updateWorkouts({
+    first: 6,
+    page: activePage.value,
+    dynamic_search: searchQuery.value,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    order: SortOrder.Desc,
+    has_body_parts: data.tags
+  });
+}
 
 const handleBack = () => {
   router.go(-1);
@@ -238,7 +391,7 @@ const handleBack = () => {
   left: 0;
   right: 0;
   display: flex;
-  z-index: 21000;
+  z-index: 20000;
   position: fixed;
   align-items: center;
   pointer-events: none;
@@ -262,4 +415,5 @@ const handleBack = () => {
   margin-top: 16px;
   margin-bottom: -24px;
 }
+
 </style>

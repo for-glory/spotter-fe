@@ -11,7 +11,7 @@
       <ion-img :src="pathUrl"></ion-img>
     </div>
     <div class="d-flex justify-content-between workout-item__inner">
-      <div class="d-flex-col align-items-start" :class="hidden ?  'justify-content-end' : 'justify-content-between'">
+      <div class="d-flex-col align-items-start" :class="hidden || !share ?  'justify-content-end' : 'justify-content-between'">
         <ion-button
           v-show="share && !hidden"
           class="workout-item__btn"
@@ -44,7 +44,7 @@
           </ion-text>
         </div>
       </div>
-      <div class="d-flex-col justify-content-between align-items-end">
+      <div v-if="showStatus" class="d-flex-col justify-content-between align-items-end">
         <ion-button
           v-if="hide && (!hidden || isShowButtonVisible)"
           class="workout-item__btn workout-item__btn--hide"
@@ -117,9 +117,11 @@ const props = withDefaults(
     hidden?: boolean;
     disabled?: boolean;
     isShowButtonVisible?: boolean;
+    showStatus?: boolean
   }>(),
   {
     isShowButtonVisible: true,
+    showStatus: true
   }
 );
 

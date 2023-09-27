@@ -1,60 +1,172 @@
 <template>
-  <page-header class="header" back-btn @back="onBack" transparent>
+  <page-header class="header" :back-btn="backBtn" @back="onBack" transparent :title="freeDuration === 0 ? `Playing ${ title }` : ''">
     <template #custom-btn>
       <slot name="custom-header-btn"></slot>
     </template>
   </page-header>
   <video-player
-    :autoplay="autoplay"
     class="video-player vjs-big-play-centered"
-    :src="pathUrl"
+    :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
     playsinline
-    controls
-    :poster="photoUrl"
+    :controls="freeDuration === 0 || showControl"
+    :poster="daily?.previewUrl"
     :volume="0.6"
-    :height="height"
-    :width="width"
+    :height="props.height"
+    :width="props.width"
     :playback-rates="[0.7, 1.0, 1.5, 2.0]"
     :preferFullWindow="true"
     @mounted="handleMounted"
+    @play="handlePlay"
+    @pause="handlePlause"
     @ended="handleVideoEnded"
   />
+  <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
+    <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
+    <ion-text class="daily-info">
+      <ion-icon icon="assets/icon/time.svg" />
+      <span>
+        <template v-if="daily?.duration">
+          <ion-text color="light" class="daily-info-dot">
+            &nbsp;&#183;&nbsp;
+          </ion-text>
+          {{ getDurationText(daily?.duration) }}
+        </template>
+        {{ type }}
+        <ion-text color="light" class="daily-info-dot">
+          &nbsp;&#183;&nbsp;
+        </ion-text>
+        {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
+      </span>
+    </ion-text>
+  </div>
+  <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-end gap-16 details__right">
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.recommended_count ?? 0) }}</ion-text>
+    </div>
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.views_count ?? 0) }}</ion-text>
+    </div>
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.reviews_count ?? 0) }}</ion-text>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
-import { shallowRef, withDefaults, defineProps, defineEmits } from "vue";
+import { shallowRef, withDefaults, defineProps, defineEmits, ref, watch } from "vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import { VideoJsPlayer } from "video.js";
 import { VideoPlayer } from "@videojs-player/vue";
+import { useRouter } from "vue-router";
+import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
+import { Capacitor } from "@capacitor/core";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     pathUrl: string;
     height: number;
     width: number;
     photoUrl: string;
     autoplay?: boolean;
+    freeDuration?: number;
+    backName?: EntitiesEnum;
+    title?: string;
+    daily?: any;
+    backBtn?: boolean;
+    showControl?: boolean;
   }>(),
   {
     width: 320,
     photoUrl: "",
     autoplay: false,
+    freeDuration: 0,
+    backName: EntitiesEnum.UserWorkouts,
+    backBtn: true,
+    showControl: false,
   }
 );
 
 const emits = defineEmits<{
   (e: "back"): void;
   (e: "ended"): void;
+  (e: "trialEnd"): void;
 }>();
+const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
+const player = ref<typeof VideoPlayer>();
 
-const player = shallowRef<VideoJsPlayer>();
-const handleMounted = (payload: any) => {
+const handleMounted = async (payload: any) => {
   player.value = payload.player;
+  if(props.freeDuration === 0 || props.autoplay){
+    await player.value?.play();
+  }
+};
+
+watch(() => props.autoplay,
+  (newVal) => {
+    if(newVal === true) {
+      player.value?.play();
+    } else {
+      player.value?.pause();
+    }
+  }
+);
+
+const timer = ref<any>(null);
+const totalTime = ref<number>(0);
+const router = useRouter();
+
+const handlePlay = () => {
+  timer.value = window.setInterval(function() {
+    totalTime.value += 1;
+  }, 1000);
+}
+
+const handlePlause = () => {
+  if(timer.value) {
+    clearInterval(timer.value);
+  }
+};
+
+watch(() => totalTime.value,
+() => {
+  if(props.freeDuration > 0 && totalTime.value >= props.freeDuration) {
+    player.value?.pause();
+    player.value?.currentTime(0)
+    emits('trialEnd');
+  }
+});
+
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+};
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
 };
 
 const onBack = () => {
-  emits("back");
+  if(props.backName === EntitiesEnum.UserWorkouts && !Capacitor.isNativePlatform()) {
+    router.push({ name: EntitiesEnum.DashboardClientDailys });
+  } else {
+    router.push({ name: props.backName });
+  }
 };
 
 const handleVideoEnded = () => {
@@ -205,5 +317,54 @@ const handleVideoEnded = () => {
 
 .vjs-poster {
   background-size: cover;
+}
+.daily-info {
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 24px;
+  align-items: center;
+  justify-content: flex-start;
+
+  ion-icon {
+    line-height: 1;
+    font-size: 24px;
+    margin-right: 4px;
+    color: var(--ion-color-primary);
+  }
+
+  .workout-item--hidden & {
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      color: inherit;
+    }
+  }
+}
+.daily-info-dot {
+  font-weight: 500;
+  font-size: 16px;
+}
+.details__left {
+  position: absolute;
+  bottom: 64px;
+  left: 24px;
+}
+.details__right {
+  position: absolute;
+  bottom: 140px;
+  right: 24px;
+}
+.w-24 {
+  width: 24px;
+}
+.h-24 {
+  height: 24px;
+}
+.font-18 {
+  font-size: 18px;
+}
+.font-16 {
+  font-size: 16px;
 }
 </style>

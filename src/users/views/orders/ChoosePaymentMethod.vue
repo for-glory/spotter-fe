@@ -8,7 +8,7 @@
       <template v-else>
         <card-form v-if="cardCreation" />
         <div v-else class="cards">
-          <ion-title class="cards__title">Payment Method</ion-title>
+          <ion-title class="cards__title" :class="{ 'text-align-center': !Capacitor.isNativePlatform() }">Payment Method</ion-title>
           <div class="cards__container" v-if="preparedCards?.length">
             <base-carousel
               show-start
@@ -42,27 +42,10 @@
             <add-card-button class="add-card-btn" @click="onCardCreation" />
           </template>
         </div>
-        <div class="separator" v-if="!isZeroPayment">
-          <ion-text class="optional">or pay with</ion-text>
-        </div>
-        <ion-title class="separator text-align-center" v-else
+        <ion-title class="separator text-align-center"
           >Products you've chosen are free. Click "Confirm" button to
           continue.</ion-title
         >
-        <div class="payment__methods">
-          <ion-note v-if="errorMessage">
-            {{ errorMessage }}
-          </ion-note>
-          <payment-method
-            v-for="paymentMethod in paymentMethods"
-            :icon="paymentMethod.icon"
-            :title="paymentMethod.title"
-            :key="paymentMethod.key"
-            :id="paymentMethod.key"
-            :hidden="paymentMethod.isHidden"
-            @click="handleAdditionalPaymentMethod(paymentMethod.key)"
-          />
-        </div>
       </template>
     </template>
     <template #footer>
@@ -109,6 +92,7 @@ import { GetCartDocument, PaymentProvidersEnum } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { navigationAfterPaymentCompleted } from "@/helpers/purchaseRouterNavigation";
 import debounce from "lodash/debounce";
+import { Capacitor } from "@capacitor/core";
 
 const paymentMethods = ref([
   { icon: "apple", title: "Pay", key: "applePay", isHidden: true },

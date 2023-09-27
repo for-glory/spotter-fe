@@ -5,15 +5,11 @@ import { TabItemNew } from "@/interfaces/TabItemnew";
 export const TABS: TabItem[] = [
   {
     name: EntitiesEnum.UserWorkouts,
-    label:'Workouts'
-    // labelActive: "assets/icon/workout.svg",
-    // labelInactive: "assets/icon/workout.svg",
+    label:'Trending'
   },
   {
     name: EntitiesEnum.UserPurchasedWorkouts,
-    label:'Purchased'
-    // labelActive: "assets/icon/workout.svg",
-    // labelInactive: "assets/icon/workout.svg",
+    label:'My Library'
   },
 ];
 

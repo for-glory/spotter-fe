@@ -130,6 +130,7 @@ export enum EntitiesEnum {
   TrainersNearby = "TRAINERS_NEARBY",
   UserWorkouts = "USER_WORKOUTS",
   UserWorkout = "USER_WORKOUT",
+  UserPurchasedWorkout = "USER_PURCHASED_WORKOUT",
   UserWorkoutPayment = "USER_WORKOUT_PAYMENT",
   UserPurchasedWorkouts = "USER_PURCHASED_WORKOUTS",
   FacilitiesOld = "FACILITIES_OLD",
@@ -210,6 +211,8 @@ export enum EntitiesEnum {
   DashboardListGyms = "DASHBOARD_LIST_GYMS",
   DashboardGymCreate = "DASHBOARD_GYM_CREATE",
   DashboardMessage = "DASHBOARD_MESSAGE",
+  DashboardClientDailys = "DASHBOARD_CLIENT_DAILYS",
+  DashboardClientPurchasedDailys = "DASHBOARD_CLIENT_PURCHASED_DAILYS",
   Overview = "Overview",
   FacilityPassList = "FACILITY_PASS_LIST",
   FacilityDropins = "FACILITY_DROPINS",
@@ -227,5 +230,7 @@ export enum EntitiesEnum {
   WorkoutView = "WORKOUT_VIEW",
   WorkoutReviews = "WORKOUT_REVIEWS",
   EditWorkout = "EDIT_WORKOUT",
-  Upcoming = "UPCOMING"
+  Upcoming = "UPCOMING",
+  Dailys = "DAILYS",
+  Trending = "TRENDING",
 }

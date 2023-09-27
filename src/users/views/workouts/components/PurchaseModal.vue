@@ -1,23 +1,6 @@
 <template>
-  <ion-spinner v-if="loading" name="lines" class="spinner" />
-  <base-layout
-    v-else
-    draggable
-    header-fixed
-    hide-navigation-menu
-    :initial-breakpoint="0.4"
-  >
-    <template #header>
-      <page-header back-btn @back="handleBack" :transparent="true" />
-    </template>
-    <template #static>
-      <ion-img
-        v-if="workoutData.media"
-        class="workout__preview"
-        :src="workoutData.media"
-      />
-    </template>
-    <template #draggable>
+  <ion-modal trigger="open-modal" :is-open="isOpen">
+    <ion-content class="modal-content ion-padding">
       <div class="workout">
         <div class="workout__head">
           <ion-title class="workout__label" color="primary">
@@ -100,51 +83,58 @@
           <ion-button expand="block" @click="onPurchase">Purchase Daily</ion-button>
         </div>
       </div>
-    </template>
-  </base-layout>
+    </ion-content>
+  </ion-modal>
 </template>
 
 <script lang="ts">
 export default {
-  name: "WorkoutOrder",
+  name: "PurchaseModal",
 };
 </script>
 
 <script setup lang="ts">
-import {
-  IonSpinner,
-  IonIcon,
-  IonChip,
-  IonTitle,
-  IonText,
-  IonItem,
-  IonImg,
-  IonRadio,
-  IonRadioGroup,
-  IonButton,
-} from "@ionic/vue";
-import { useRoute, useRouter } from "vue-router";
+import { IonModal, IonContent, IonButton } from "@ionic/vue";
+import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import { 
+  MeDocument, 
+  SettingsCodeEnum, 
+  GetCartDocument,
+  PurchasableProductsEnum
+} from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { GetCartDocument, PurchasableProductsEnum } from "@/generated/graphql";
-import { EntitiesEnum } from "@/const/entities";
-import { computed } from "vue";
-import { timeConvertToHuman } from "@/helpers/date-formater";
+import { EntitiesEnum } from '@/const/entities';
+import { Capacitor } from "@capacitor/core";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 
-const route = useRoute();
+const isTrusted = ref(false);
+
+const props = defineProps<{
+  dailyId?: number;
+  cartId?: number;
+  isOpen: boolean;
+}>();
+
+const emits = defineEmits<{
+  (e: "purchaseDaily"): void;
+}>();
+
 const router = useRouter();
-
 const paymentStore = paymentGatewaysStore();
+const dailyId = computed(() => props.dailyId);
+const cartId = computed(() => props.cartId);
 
-const { result, loading } = useQuery(GetCartDocument, {
-  id: route.query.cart_id,
+const { result, loading, refetch, onResult } = useQuery(GetCartDocument, {
+  id: cartId.value,
 });
 
 const workout = computed(
   () =>
-    result.value?.getCart?.items.find(
-      (workout) => workout.productable.id === route.params.id.toString()
-    ).productable
+    result.value?.getCart?.items?.find(
+      (workout) => workout.productable.id === dailyId.value?.toString()
+    )?.productable
 );
 
 const workoutData = computed(() => ({
@@ -162,14 +152,16 @@ const workoutData = computed(() => ({
   reviews_count: workout.value?.reviews_count
 }));
 
+watch(() => props.isOpen,
+() => {
+  if(dailyId.value && props.isOpen){
+    refetch({ id: cartId.value });
+  }
+});
+
 const onPurchase = () => {
   paymentStore.setValue("purchasable", PurchasableProductsEnum.Workout);
-
-  router.push({
-    name: EntitiesEnum.PaymentsMethods,
-    params: { orderId: route.params.id },
-    query: { cart_id: route.query.cart_id },
-  });
+  emits('purchaseDaily');
 };
 
 const handleBack = () => {
@@ -196,117 +188,11 @@ const formatNumber = (num: number) => {
     return (num / 1e3).toFixed(0) + (num >= 1e3 ? ',' : '') + (num % 1e3);
   }
 }
+
+
 </script>
 
 <style scoped lang="scss">
-:deep(.draggable-content) {
-  background: var(--ion-background-color) !important;
-}
-
-:deep(.fixed-holder) {
-  background: var(--ion-background-color) !important;
-}
-
-.spinner {
-  position: fixed;
-  top: 50vh;
-  left: 50vw;
-  --color: var(--ion-color-white);
-}
-
-.text-golden {
-  /* gold */
-  color: #dbb582;
-}
-
-.purchase-workout-content {
-  font-family: "Yantramanav";
-  --padding-top: 24px;
-  --padding-start: 24px;
-  --padding-end: 24px;
-}
-
-.purchase-workout-label {
-  font-family: "Oswald";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 26px;
-  line-height: 130%;
-  margin: 5px 0px;
-
-  /* or 36px */
-  text-align: center;
-}
-
-.purchase-workout-sub-heading {
-  font-family: "Yantramanav";
-  text-align: center;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 150%;
-  margin: 5px 0;
-  text-align: center;
-  color: var(--ion-color-secondary);
-}
-
-.heading {
-  font-family: "Yantramanav";
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%;
-  color: #fff;
-  margin: 0;
-  font-size: 16px;
-}
-
-ion-chip {
-  --color: #dbb582;
-  border: 1px solid;
-  padding-inline: 18px;
-  height: 24px;
-}
-
-.sub-title {
-  margin: 0px;
-  font-size: 14px;
-  font-weight: 300;
-}
-
-.time-icon {
-  vertical-align: middle;
-}
-
-.check-icon {
-  vertical-align: middle;
-}
-
-.purchase-details {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2px 16px;
-  gap: 10px;
-
-  /* dark grey */
-
-  background: #262626;
-  border-radius: 8px;
-  margin: 30px 30px;
-}
-
-.p-section {
-  width: 100%;
-  padding-bottom: 10px;
-}
-
-.p-border {
-  border-bottom: 1px solid var(--gray-600);
-}
-
-.mx-2 {
-  margin: 0px 10px;
-}
-
 .workout {
   padding: 0 24px calc(76px + var(--ion-safe-area-bottom));
 
@@ -471,5 +357,9 @@ ion-chip {
 }
 .font-14 {
   font-size: 14px;
+}
+ion-modal {
+  --border-radius: 12px;
+  z-index: 6000000 !important;
 }
 </style>

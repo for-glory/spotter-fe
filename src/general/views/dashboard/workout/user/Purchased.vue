@@ -1,45 +1,34 @@
 <template>
-  <base-layout>
-    <template #header>
-      <!-- <search-workouts-form
-        purchased
-        placeholder="Search workouts..."
-        @handle-item-click="onItemClick"
-        :route-name="EntitiesEnum.UserPurchasedWorkouts"
-      /> -->
-    </template>
-
-    <template #content>
-      <div class="content">
-        <ion-spinner v-if="loading" name="lines" class="spinner" />
-        <div v-else-if="!loading && workouts.length" class="holder-content">
-          <div class="library-title">
-            <ion-text class="font-bold color-gold font-16">My Library</ion-text>
-          </div>
-          <div class="page-content ion-padding-horizontal">
-            <router-link
-              class="workout"
-              :key="workout.id"
-              v-for="workout in workouts"
-              :to="{
-                name: EntitiesEnum.UserPurchasedWorkout,
-                params: { id: workout.id },
-              }"
-            >
-              <workout-item
-                class="purchaised-workout"
-                :duration="workout.duration"
-                :title="workout.title || ''"
-                :pathUrl="`${workout?.previewUrl}` || ''"
-                :type="workout.type?.name || ''"
-                :trainer="
-                  `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
-                  ''
-                "
-                :showStatus="false"
-              />
-            </router-link>
-          </div>
+  <div>
+    <div class="content">
+      <ion-spinner v-if="loading" name="lines" class="spinner" />
+      <div v-else-if="!loading" class="holder-content">
+        <div v-if="workouts.length" class="library-title">
+          <ion-text class="font-bold color-gold font-16">My Library</ion-text>
+        </div>
+        <div v-if="workouts.length" class="page-content ion-padding-horizontal">
+          <router-link
+            class="workout"
+            :key="workout.id"
+            v-for="workout in workouts"
+            :to="{
+              name: EntitiesEnum.UserPurchasedWorkout,
+              params: { id: workout.id },
+            }"
+          >
+            <workout-item
+              class="purchaised-workout"
+              :duration="workout.duration"
+              :title="workout.title || ''"
+              :pathUrl="`${workout?.previewUrl}` || ''"
+              :type="workout.type?.name || ''"
+              :trainer="
+                `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
+                ''
+              "
+              :showStatus="false"
+            />
+          </router-link>
         </div>
         <base-empty-page
           v-else
@@ -48,14 +37,15 @@
           context="You have not purchased videos yet..."
         />
       </div>
-    </template>
-  </base-layout>
+      
+    </div>
+  </div>
 
   <page-tabs
     v-if="!loading"
     :tabs="TABS"
     class="page-tabs"
-    :value="EntitiesEnum.UserPurchasedWorkouts"
+    :value="EntitiesEnum.DashboardClientPurchasedDailys"
     @change="tabsChanged"
   />
 </template>
@@ -69,12 +59,23 @@ import { MyWorkoutsDocument } from "@/generated/graphql";
 import { computed, onMounted, ref } from "vue";
 import PageTabs from "@/general/components/PageTabs.vue";
 // import PageTabsNew from "@/general/components/PageTabsNew.vue";
-import { TABS } from "@/const/user-workouts-tabs";
 import BaseEmptyPage from "@/general/components/base/BaseEmptyPage.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
+import { TabItem } from "@/interfaces/TabItem";
 
 const router = useRouter();
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
+
+const TABS: TabItem[] = [
+  {
+    name: EntitiesEnum.DashboardClientDailys,
+    label:'Trending'
+  },
+  {
+    name: EntitiesEnum.DashboardClientPurchasedDailys,
+    label:'My Library'
+  },
+];
 
 const { result, loading, refetch } = useQuery(MyWorkoutsDocument, {
   first: 1000,

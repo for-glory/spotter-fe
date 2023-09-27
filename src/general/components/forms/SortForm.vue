@@ -15,11 +15,20 @@
         <div class="actions">
           <ion-label class="label">Intensity Level</ion-label>
         </div>
-        <radio-item-group
-          :value="selectedWorkoutsType"
-          @on-change="setWorkoutType"
-          :options="workoutTypes || []"
-        />
+        <div 
+          class="d-flex flex-wrap gap-12"
+          style="margin-top: 8px;"
+        >
+          <div 
+            v-for="(type) in workoutTypes"
+            :key="type.id"
+            class="type-item"
+            @click="selectType(type)"
+            :class="{ 'selected-type': isSelectedType(type) }"
+          >
+            {{ type.name }}
+          </div>
+        </div>
       </div>
       <div class="filters-item">
         <div class="actions">
@@ -81,7 +90,6 @@ const props = withDefaults(
   }
 );
 
-const selectedWorkoutsType = ref<WorkoutType | null>(null);
 const selectedBodyParts = ref<string[] | null>(null);
 const selectedLocation = ref("");
 const selectAllBodyParts = ref(false);
@@ -130,6 +138,18 @@ onResult((bodyPartsResult) => {
     }) || [];
 });
 
+const selectedTypes = ref<Array<any>>([]);
+const isSelectedType = (type: any) => {
+  return selectedTypes.value.includes(type.id);
+};
+const selectType = (type: any) => {
+  if(!isSelectedType(type)) {
+    selectedTypes.value.push(type.id);
+  } else {
+    selectedTypes.value = selectedTypes.value.filter((selectedType) => selectedType !== type.id);
+  }
+};
+
 const onSelectAllBodyParts = () => {
   selectAllBodyParts.value = !selectAllBodyParts.value;
 
@@ -156,8 +176,8 @@ const params = computed(() => {
     order: SortOrder.Desc,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
   };
-  if (selectedWorkoutsType.value)
-    queryParams.type_id = selectedWorkoutsType.value.id;
+  if (selectedTypes.value)
+    queryParams.type_id = selectedTypes.value;
   if (selectedBodyParts.value)
     queryParams.has_body_parts = selectedBodyParts.value;
   return queryParams;
@@ -173,18 +193,13 @@ const refetchReasult = debounce(() => {
   refetch();
 }, 1000);
 
-const setWorkoutType = (data: WorkoutType): void => {
-  selectedWorkoutsType.value = data;
-  refetchReasult();
-};
-
 const setBodyParts = (data: string[]): void => {
   selectedBodyParts.value = data;
   refetchReasult();
 };
 
 const clearState = () => {
-  selectedWorkoutsType.value = null;
+  selectedTypes.value = [];
   selectedBodyParts.value = null;
   selectedLocation.value = "";
   setAllBodyParts(false);
@@ -192,13 +207,14 @@ const clearState = () => {
 
 const onConfirm = () => {
   modal.value.$el.dismiss();
-  const query: { type: string; bodyParts?: string[]; workoutType?: string } = {
+  const query: { type: string; bodyParts?: string[]; workoutType?: string[] } = {
     type: "allWorkouts",
   };
-  if (selectedWorkoutsType.value?.id)
-    query.workoutType = selectedWorkoutsType.value.id;
+  if (selectedTypes.value)
+    query.workoutType = selectedTypes.value;
   if (selectedBodyParts.value) query.bodyParts = selectedBodyParts.value;
 
+  console.log({query});
   router.push({
     name: props.routeName,
     query,
@@ -278,5 +294,17 @@ const onConfirm = () => {
   .confirm-btn {
     flex: 1 1 calc(50% - 16px);
   }
+}
+.type-item {
+  padding: 10.5px 12px;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  color: #797979;
+  font-size: 14px;
+  font-family: --var(Yantramanav);
+}
+.selected-type {
+  border-color: #e1dbc5;
+  color: #e1dbc5;
 }
 </style>

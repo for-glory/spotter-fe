@@ -32,6 +32,7 @@
               `${workout.trainer?.first_name} ${workout.trainer?.last_name}` ||
               ''
             "
+            :showStatus="false"
           />
         </router-link>
       </div>
@@ -61,55 +62,6 @@ const route = useRoute();
 
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 
-const { result: recommendedResult, loading: recommendedLoading } = useQuery(
-  RecommendedWorkoutsDocument,
-  {
-    page: 1,
-    first: 1000,
-  },
-  () => ({
-    enabled: route?.query?.type === "recommended",
-  })
-);
-
-const recommendedWorkouts = computed(
-  () => recommendedResult.value?.recommendedWorkouts?.data
-);
-
-const {
-  result: recommendedByBodyPartsResult,
-  loading: recommendedByBodyLoading,
-} = useQuery(
-  RecommendedWorkoutsByBodyPartsDocument,
-  {
-    page: 1,
-    first: 1000,
-  },
-  () => ({
-    enabled: route?.query?.type === "recommendedByBodyParts",
-  })
-);
-
-const recommendedWorkoutsByBody = computed(
-  () => recommendedByBodyPartsResult.value?.recommendedWorkoutsByBodyParts?.data
-);
-
-const { result: recommendedByTypeResult, loading: recommendedByTypeLoading } =
-  useQuery(
-    RecommendedWorkoutsByTypeDocument,
-    {
-      page: 1,
-      first: 1000,
-    },
-    () => ({
-      enabled: route?.query?.type === "recommendedByType",
-    })
-  );
-
-const recommendedWorkoutsByType = computed(
-  () => recommendedByTypeResult.value?.recommendedWorkoutsByType?.data
-);
-
 const workoutsParams = () => {
   const params: WorkoutsQueryVariables = {
     first: 10000,
@@ -122,7 +74,7 @@ const workoutsParams = () => {
   if (route?.query?.bodyParts)
     params.has_body_parts = route?.query?.bodyParts as string[];
   if (route?.query?.workoutType)
-    params.type_id = route?.query?.workoutType as string;
+    params.type_id = route?.query?.workoutType as string[];
 
   return params;
 };
@@ -138,11 +90,7 @@ const { result, loading } = useQuery(
 const allWorkouts = computed(() => result.value?.workouts?.data);
 
 const workouts = computed(
-  () =>
-    recommendedWorkouts.value ||
-    recommendedWorkoutsByBody.value ||
-    recommendedWorkoutsByType.value ||
-    allWorkouts.value
+  () =>  allWorkouts.value
 );
 
 const onBack = () => {

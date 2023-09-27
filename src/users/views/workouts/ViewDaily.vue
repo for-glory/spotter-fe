@@ -5,13 +5,14 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :freeDuration="10"
+        :back-name="Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys"
         :daily="dailyData"
         class="trial-video-player"
         @back="closeVideo"
         @ended="videoEndedHandle"
         @trialEnd="onTrialEnd"
         autoplay
+        :title="dailyData?.title"
       >
         <template #custom-header-btn>
           <ion-button
@@ -25,19 +26,13 @@
     </ion-content>
   </ion-page>
 
-  <blurred-screen-modal
-    :is-open="isOpenBlurredScreenModal"
-    :preview-url="dailyData?.previewUrl"
-    @visibility="isOpenBlurredScreenModal = false"
-    @watch-trial-video="trialMode = true"
-    @purchase-daily="purchaseWorkout"
-    :disabled="addToCartLoading"
-  />
-
   <instruction-tip-modal
     :is-open="isOpenInstructionTipModal"
     @visibility="isOpenInstructionTipModal = false"
     :instruction-tip="dailyData?.description"
+    showFooter
+    :title="dailyData?.title"
+    :trainer="dailyData?.trainer"
   />
 </template>
 
@@ -69,14 +64,12 @@ import InstructionTipModal from "./components/InstructionTipModal.vue";
 import BlurredScreenModal from "./components/BlurredScreenModal.vue";
 import { EntitiesEnum } from "@/const/entities";
 import router from "@/router";
+import { Capacitor } from '@capacitor/core';
 
 const trialMode = ref(true);
 const isOpenInstructionTipModal = ref(false);
 const isOpenBlurredScreenModal = ref(false);
 const trialVideoPlayer = ref(null);
-
-const { mutate: addToCartMutation, loading: addToCartLoading } =
-  useMutation(AddToCartDocument);
 
 const route = useRoute();
 
@@ -85,60 +78,18 @@ const { result, onResult: gotWorkout, loading: loadingDaily } = useQuery(Workout
 });
 
 gotWorkout((response) => {
-  if (response.data.workout.was_ordered_by_me) {
-    isOpenBlurredScreenModal.value = isOpenInstructionTipModal.value = false;
-    router.push({
-      name: EntitiesEnum.UserWorkouts,
-    });
-  }
+  console.log(response.data)
 });
 
 const dailyData = computed<any>(
   () => result?.value?.workout
 );
 
-const onTrialEnd = () => {
-  isOpenBlurredScreenModal.value = true;
-};
-
 const closeVideo = () => {
   trialMode.value = false;
   isOpenBlurredScreenModal.value = true;
 };
 
-const purchaseWorkout = () => {
-  addToCartMutation({
-    input: {
-      purchasable_id: route.params.id,
-      purchasable: AddToCartPurchasableEnum.Workout,
-    },
-  })
-    .then((res) => {
-      isOpenBlurredScreenModal.value = false;
-      router.push({
-        name: EntitiesEnum.WorkoutOrder,
-        params: {
-          id: route.params.id,
-        },
-        query: {
-          cart_id: res?.data?.addToCart?.id,
-        },
-      });
-    })
-    .catch(async () => {
-      const toast = await toastController.create({
-        message: "Something went wrong. Try again.",
-        duration: 2000,
-        icon: "assets/icon/info.svg",
-        cssClass: "warning-toast",
-      });
-      toast.present();
-    });
-};
-
-const videoEndedHandle = () => {
-  purchaseWorkout();
-};
 </script>
 
 <style scoped lang="scss">

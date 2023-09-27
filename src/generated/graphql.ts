@@ -4548,6 +4548,24 @@ export type MyWorkoutsQuery = {
         __typename?: "User";
         first_name?: string | null;
         last_name?: string | null;
+        score?: number | null;
+        address?: {
+          __typename?: "Address";
+          lat?: number | null;
+          lng?: number | null;
+        } | null;
+        facilities?: Array<{
+          __typename?: "Facility";
+          media?: Array<{
+            __typename?: "Media";
+            pathUrl: string;
+          } | null> | null;
+          address?: {
+            __typename?: "Address";
+            lat?: number | null;
+            lng?: number | null;
+          } | null;
+        } | null> | null;
       };
       exercises?: Array<{
         __typename?: "WorkoutExercise";
@@ -4561,6 +4579,7 @@ export type MyWorkoutsQuery = {
     paginatorInfo: {
       __typename?: "PaginatorInfo";
       count: number;
+      firstItem?: number | null;
       currentPage: number;
       total: number;
       perPage: number;
@@ -5293,7 +5312,7 @@ export type WorkoutsQueryVariables = Exact<{
   trainer_id?: InputMaybe<Scalars["ID"]>;
   first?: InputMaybe<Scalars["Int"]>;
   page?: InputMaybe<Scalars["Int"]>;
-  type_id?: InputMaybe<Scalars["ID"]>;
+  type_id?: InputMaybe<Array<Scalars["ID"]>>;
   has_body_parts?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   order: SortOrder;
   orderByColumn: QueryWorkoutsOrderByColumn;
@@ -6978,6 +6997,9 @@ export const GetCartDocument = gql`
             preview
             previewUrl
             front_price
+            views_count
+            recommended_count
+            reviews_count
             price
             type {
               id
@@ -7244,6 +7266,14 @@ export const MyWorkoutsDocument = gql`
     myWorkouts(orderBy: $orderBy, first: $first, page: $page) {
       data {
         id
+        preview
+        reviews_count
+        recommended_count
+        total_revenue
+        views_count
+        purchases
+        video
+        videoUrl
         type {
           id
           name
@@ -7252,6 +7282,20 @@ export const MyWorkoutsDocument = gql`
         trainer {
           first_name
           last_name
+          score
+          address {
+            lat
+            lng
+          }
+          facilities {
+            media {
+              pathUrl
+            }
+            address {
+              lat
+              lng
+            }
+          }
         }
         previewUrl
         title
@@ -7888,6 +7932,7 @@ export const WorkoutDocument = gql`
     description
     price
     duration
+    video
     exercises {
       id
       title
@@ -7918,7 +7963,7 @@ export const WorkoutsDocument = gql`
     $trainer_id: ID
     $first: Int
     $page: Int
-    $type_id: ID
+    $type_id: [ID!]
     $has_body_parts: [ID!]
     $order: SortOrder!
     $orderByColumn: QueryWorkoutsOrderByColumn!

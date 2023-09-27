@@ -1,11 +1,13 @@
 <template>
   <ion-modal ref="blurredModal" trigger="open-modal" :is-open="isOpen">
-    <div class="blurred-bg" :style="bgImage"></div>
+    <div class="blurred-bg"></div>
     <ion-content class="modal-content ion-padding">
       <page-header back-btn @back="onBack" class="header" transparent>
       </page-header>
       <div
+        ref="swipeContainer"
         class="modal-buttons ion-padding-horizontal ion-padding-top"
+        :style="{ transform: `translateY(${containerY / 50}px)` }"
         slot="fixed"
       >
         <ion-button
@@ -14,18 +16,18 @@
           :disabled="disabled"
           v-if="isTrusted"
         >
-          Purchase Daily
+          Purchase Daily to watch full video
         </ion-button>
-
-        <ion-button
-          @click="watchTrialVideo"
-          expand="block"
-          fill="outline"
-          color="medium"
-          class="watch-btn"
-        >
-          Watch free-trial video
-        </ion-button>
+        <ion-text class="font-bold color-gray font-16" style="margin-top: 16px;">Swipe to continue</ion-text>
+        <ion-icon 
+          src="assets/icon/swipe-down.svg" 
+          style="
+            width: 48px;
+            height: 88px;
+            margin-top: 16px;
+          " 
+          class="swipe-animation"
+        />
       </div>
     </ion-content>
   </ion-modal>
@@ -40,10 +42,12 @@ export default {
 <script setup lang="ts">
 import { IonModal, IonContent, IonButton } from "@ionic/vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { MeDocument, SettingsCodeEnum } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
+import { EntitiesEnum } from '@/const/entities';
+import { Capacitor } from "@capacitor/core";
 
 const isTrusted = ref(false);
 
@@ -67,9 +71,79 @@ const bgImage = ref(
   `background: no-repeat center/cover url(${props.previewUrl})`
 );
 
-watch(props, (newVal) => {
-  bgImage.value = `background: no-repeat center/cover url(${newVal.previewUrl})`;
+const swipeContainer = ref<any>();
+let startX = 0;
+let startY = 0;
+let deltaX = 0;
+let deltaY = 0;
+let isSwiping = false;
+
+const containerY = ref(0);
+
+onMounted(() => {
+  if(Capacitor.isNativePlatform()){
+    swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
+    swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
+    swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+  } else {
+    swipeContainer?.value?.addEventListener('mousedown', handleTouchStart);
+    swipeContainer?.value?.addEventListener('mousemove', handleTouchMove);
+    swipeContainer?.value?.addEventListener('mouseup', handleTouchEnd);
+  }
 });
+
+watch(() => swipeContainer.value,
+() => {
+  if(swipeContainer.value) {
+    if(Capacitor.isNativePlatform()){
+      swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
+      swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
+      swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+    } else {
+      swipeContainer?.value?.addEventListener('mousedown', handleTouchStart);
+      swipeContainer?.value?.addEventListener('mousemove', handleTouchMove);
+      swipeContainer?.value?.addEventListener('mouseup', handleTouchEnd);
+    }
+  }
+});
+
+
+const handleTouchStart = (event: any) => {
+  if(Capacitor.isNativePlatform()){
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+  } else {
+    startX = event.cur;
+    startY = event.pageY;
+  }
+  isSwiping = true;
+};
+
+const handleTouchMove = (event: any) => {
+  if(Capacitor.isNativePlatform()){
+    deltaX = event.touches[0].clientX - startX;
+    deltaY = event.touches[0].clientY - startY;
+  } else {
+    deltaX = event.pageX - startX;
+    deltaY = event.pageY - startY;
+  }
+  if(isSwiping){
+    containerY.value += deltaY;
+  }
+};
+
+const handleTouchEnd = () => {
+  if (isSwiping && deltaY > 100) {
+    purchaseDaily();
+  } else {
+    containerY.value = 0;
+  }
+  startX = 0;
+  startY = 0;
+  deltaX = 0;
+  deltaY = 0;
+  isSwiping = false;
+};
 
 const purchaseDaily = () => {
   isOpen.value = false;
@@ -93,7 +167,11 @@ gotMe(async (response) => {
 const onBack = () => {
   isOpen.value = false;
   emits("visibility", false);
-  router.go(-1);
+  if(Capacitor.isNativePlatform()){
+    router.push({ name: EntitiesEnum.UserWorkouts });
+  } else {
+    router.push({ name: EntitiesEnum.DashboardClientDailys });
+  }
 };
 
 const watchTrialVideo = () => {
@@ -111,8 +189,9 @@ const watchTrialVideo = () => {
 
 .blurred-bg {
   opacity: 0.5;
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+  filter: blur(10px);
+  -webkit-filter: blur(300px);
+  background-color: rgba(24, 24, 24, 0.68);
   padding: 0;
   margin: 0;
   position: fixed;
@@ -130,13 +209,12 @@ const watchTrialVideo = () => {
 
 ion-modal,
 ion-content {
-  background: transparent;
-  --background: transparent;
+  --background: #2424246a;
 }
 
 .blurred-modal {
   opacity: 0.7;
-  filter: blur(10px);
+  filter: blur(30px);
 }
 
 .header-btn {
@@ -166,23 +244,37 @@ ion-content {
 }
 
 .modal-buttons {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-bottom: calc(20px + var(--ion-safe-area-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  top: 112px;
+  height: calc(100% - 112px);
 
   .button {
     margin-left: 0;
     margin-right: 0;
     margin-bottom: 0;
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    &:not(:first-child) {
-      margin-top: 16px;
-    }
+    margin-top: -112px;
+  }
+}
+.font-16 {
+  font-size: 16px;
+}
+.swipe-animation {
+  animation: moveUpDown 2s ease-in-out infinite;
+}
+ion-modal {
+  --width: 100%;
+  --height: 100%;
+}
+@keyframes moveUpDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px); /* Adjust this value for the desired movement distance */
   }
 }
 </style>

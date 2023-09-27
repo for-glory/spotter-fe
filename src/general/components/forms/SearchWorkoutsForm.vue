@@ -132,7 +132,7 @@ const { result, loading, refetch } = useQuery(WorkoutsDocument, {
   first: 1000,
 });
 
-const searchResults = computed(() => result.value?.workouts?.data ?? []);
+const searchResults = computed(() => result.value?.workouts?.data.filter((workout: any) => !workout.was_ordered_by_me) ?? []);
 
 const search = debounce((event?: SearchbarCustomEvent) => {
   searchQuery.value = event?.detail?.value || "";
