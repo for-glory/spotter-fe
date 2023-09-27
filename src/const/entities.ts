@@ -130,6 +130,8 @@ export enum EntitiesEnum {
   TrainersNearby = "TRAINERS_NEARBY",
   UserWorkouts = "USER_WORKOUTS",
   UserWorkout = "USER_WORKOUT",
+  UserAddReview = "USER_ADD_REVIEW",
+  UserWriteReview = "USER_WRITE_REVIEW",
   UserPurchasedWorkout = "USER_PURCHASED_WORKOUT",
   UserWorkoutPayment = "USER_WORKOUT_PAYMENT",
   UserPurchasedWorkouts = "USER_PURCHASED_WORKOUTS",

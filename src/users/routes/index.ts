@@ -238,6 +238,22 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.UserAddReview,
+    path: "/users/dailys/review/:id",
+    component: () => import("@/users/views/workouts/AddReview.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.UserWriteReview,
+    path: "/users/dailys/recommend/:id",
+    component: () => import("@/users/views/workouts/WriteReview.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.UserWorkouts,
     path: "/users/dailys",
     component: () => import("@/users/views/workouts/Index.vue"),

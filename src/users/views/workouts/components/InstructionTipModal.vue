@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isOpen" class="w-100 h-100">
+  <div v-if="props.isOpen" class="w-100 h-100">
     <ion-modal
       class="instruction-tip-modal"
-      :is-open="isOpen"
+      :is-open="props.isOpen"
       ref="modal"
       trigger="open-modal"
       :initial-breakpoint="0.4"
@@ -12,15 +12,15 @@
     >
       <ion-content class="instruction-tip-content">
         <ion-label class="instruction-tip-label">Instruction Tip</ion-label>
-        <ion-text color="secondary" v-html="instructionTip" />
+        <ion-text color="secondary" v-html="props.instructionTip" />
       </ion-content>
     </ion-modal>
-    <div v-if="showFooter" class="d-flex align-items-center justify-content-between w-100 footer">
+    <div v-if="props.showFooter" class="d-flex align-items-center justify-content-between w-100 footer">
       <div class="d-flex-col align-items-start" style="gap: 4px;">
         <ion-text class="font-bold font-16 color-fitness-white">{{ title }}</ion-text>
-        <ion-text class="font-medium font-14 color-gray">{{ trainer.first_name + " " + trainer.last_name }}</ion-text>
+        <ion-text class="font-medium font-14 color-gray">{{ props.trainer.first_name + " " + props.trainer.last_name }}</ion-text>
       </div>
-      <ion-button clas="color-dark-gray" style="flex: 1;">Add review</ion-button>
+      <ion-button clas="color-dark-gray" style="flex: 1;" @click="handleAddReview" >Add review</ion-button>
     </div>
   </div>
 </template>
@@ -33,20 +33,26 @@ export default {
 
 <script setup lang="ts">
 import { IonModal, IonContent, IonText, IonLabel, } from "@ionic/vue";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
+import { useRouter } from "vue-router";
+import { EntitiesEnum } from '@/const/entities';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isOpen: boolean;
     instructionTip: string;
     title?: string;
     trainer?: any;
-    showFooter?: boolean
+    showFooter?: boolean;
+    id?: number;
   }>(),
   {
     showFooter: false,
   }
 );
+
+const router = useRouter();
+const modal = ref<typeof IonModal>();
 
 const emits = defineEmits<{
   (e: "visibility", isOpen: boolean): void;
@@ -55,6 +61,15 @@ const emits = defineEmits<{
 const handleOpen = () => {
   emits("visibility", false);
 };
+
+const handleAddReview = () => {
+  emits("visibility", false);
+  modal.value?.$el.dismiss();
+  router.push({
+    name: EntitiesEnum.UserWriteReview,
+    params: { id: props.id }
+  });
+}
 </script>
 
 <style scoped lang="scss">

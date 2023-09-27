@@ -33,6 +33,7 @@
     showFooter
     :title="dailyData?.title"
     :trainer="dailyData?.trainer"
+    :id="dailyData?.id"
   />
 </template>
 
