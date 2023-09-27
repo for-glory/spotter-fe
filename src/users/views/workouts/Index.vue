@@ -103,7 +103,7 @@ const { result: workoutsResult, loading: workoutsLoading } = useQuery(
   }
 );
 
-const workouts = computed(() => workoutsResult.value?.workouts?.data);
+const workouts = computed(() => workoutsResult.value?.workouts?.data.filter((workout: any) => !workout.was_ordered_by_me));
 
 const tabsChanged = (name: EntitiesEnum) => {
   router.push({
