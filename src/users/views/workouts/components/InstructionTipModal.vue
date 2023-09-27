@@ -62,9 +62,9 @@ const handleOpen = () => {
   emits("visibility", false);
 };
 
-const handleAddReview = () => {
+const handleAddReview = async () => {
   emits("visibility", false);
-  modal.value?.$el.dismiss();
+  await modal.value?.$el.dismiss();
   router.push({
     name: EntitiesEnum.UserWriteReview,
     params: { id: props.id }
