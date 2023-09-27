@@ -1,5 +1,5 @@
 <template>
-  <base-layout :hideNavigationMenu="isFromModal ? true : false">
+  <base-layout :hideNavigationMenu="(isFromModal || role === RoleEnum.User) ? true : false">
     <template #header>
       <page-header :class="{ 'web-location': isFromModal, 'header': !isFromModal }"
         :back-btn="isFromModal ? false : true"
@@ -35,7 +35,7 @@
           </div>
           <div class="form-row">
             <ion-label
-              class="label"
+              :class="['label',  { 'native-app': role === RoleEnum.User }]"
               v-if="
                 role !== RoleEnum.Manager &&
                 role !== RoleEnum.FacilityOwner &&
@@ -69,7 +69,7 @@
                   : ''
               "
             /> -->
-            <div class="address-container">
+            <div class="address-container" v-if="role !== RoleEnum.User">
               <ion-text class="address-content">
                 Address
               </ion-text>
@@ -80,7 +80,7 @@
                 {{ `${selectedAddress?.countryName}` }}
               </ion-text>
             </div>
-            <GMapAutocomplete
+            <GMapAutocomplete v-if="role !== RoleEnum.User"
                 placeholder="Enter your address"
                 class="search-form__control"
                 :class="{
@@ -89,6 +89,10 @@
                 @place_changed="setPlace"
               >
             </GMapAutocomplete>
+            <choose-block v-else
+              value="318 south 75....."
+              title="Address"
+            />
           </div>
           <div class="form-row" v-if="role === RoleEnum.Trainer">
             <ion-label class="label">
@@ -135,7 +139,7 @@
         </template>
       </div>
     </template>
-    <template v-if="!isFromModal" #footer> 
+    <template v-if="!isFromModal && role !== RoleEnum.User" #footer> 
       <buttons-footer
         main-button-text="Save"
         @click="saveAddress"

@@ -211,6 +211,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileCalendar,
+    path: "/profile/calendar",
+    component: () => import("@/general/views/profile/Calendar.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfilePronounce,
     path: "/profile/pronounce",
     component: () => import("@/general/views/profile/Pronounce.vue"),

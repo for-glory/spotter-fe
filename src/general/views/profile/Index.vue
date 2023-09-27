@@ -97,7 +97,7 @@
             expand="block"
             :disabled="profileOnDeleting"
             @click="showDeleteConfirmationModal"
-            v-if="role !== RoleEnum.Trainer"
+            v-if="role !== RoleEnum.Trainer && role !== RoleEnum.User"
           >
             Delete profile
           </ion-button>
@@ -109,6 +109,7 @@
     :is-visible="showConfirmationModal"
     title="Do you want to log out?"
     description="You will be logged out"
+    confirm-btn-white
     button-text="Log out"
     @discard="onLogoutConfirmed"
     @decline="hideModal"
@@ -353,7 +354,6 @@ const menuType =
     ? EntitiesEnum.Facility
     : role;
 const menu = profileMenu[menuType];
-console.log("menu", menu);
 
 const goTo = async (name: EntitiesEnum) => {
   switch (name) {

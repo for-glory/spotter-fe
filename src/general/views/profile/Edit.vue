@@ -332,6 +332,7 @@ const goTo = (name: EntitiesEnum) => {
 const settings = {
   [EntitiesEnum.Language]: "English",
   [EntitiesEnum.AppMode]: "Dark mode",
+  [EntitiesEnum.ProfilePronounce]: "She",
 };
 
 const isProfile = computed(

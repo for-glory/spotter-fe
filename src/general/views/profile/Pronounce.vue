@@ -5,7 +5,7 @@
     </template>
     <template #content>
       <ion-spinner v-if="loading" class="spinner" />
-      <div class="pronounce" v-else>
+      <div :class="['pronounce',  { 'user-pronounce': role === RoleEnum.User }]" v-else>
         <ion-radio-group @ionChange="onChange" :value="selectedItem">
           <ion-item lines="none" class="radiobutton">
             <ion-label class="radiobutton__label"> They/Them/Theirs </ion-label>
@@ -46,6 +46,7 @@ import { useRouter } from "vue-router";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   MeDocument,
+  RoleEnum,
   SettingsCodeEnum,
   UpdateUserDocument,
   WorkoutType,
@@ -56,6 +57,7 @@ import {
   IonRadioGroupCustomEvent,
   RadioGroupChangeEventDetail,
 } from "@ionic/core";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const { id } = useId();
@@ -68,6 +70,8 @@ const { onResult, refetch, loading } = useQuery(
     fetchPolicy: "no-cache",
   }
 );
+
+const { role } = useRoles();
 
 onResult(({ data }) => {
   selectedItem.value = data.me?.settings?.find(
@@ -166,6 +170,12 @@ const onBack = () => {
     font-size: 14px;
     --color: var(--ion-color-white);
   }
+}
+
+.user-pronounce {
+    .radiobutton__label {
+      font-family: 'Yantramanav';
+    }
 }
 
 .spinner {

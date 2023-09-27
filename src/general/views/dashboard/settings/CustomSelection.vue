@@ -1,5 +1,5 @@
 <template>
-    <div class="select-container flex-2">
+    <div :class="['select-container', 'flex-2', { 'client-select': role === RoleEnum.User }]">
         <div class="select-content" :class="{ 'active': isSelect }">
             <div class="select-wrapper" @click="isSelect = !isSelect">
                 <IonLabel class="item-label">Language</IonLabel>
@@ -25,6 +25,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { IonIcon, IonLabel } from "@ionic/vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const props = defineProps<{
     label: string;
@@ -38,6 +40,8 @@ const emit = defineEmits<{
     (e: 'selectChange', value: string): void;
 }>();
 const isSelect = ref<boolean>(false);
+const { role } = useRoles()
+
 </script>
 <style scoped lang="scss">
 .select-container {
@@ -110,6 +114,12 @@ const isSelect = ref<boolean>(false);
             color: var(--fitnesswhite);
             font-size: 14px;
         }
+    }
+}
+
+.client-select {
+    .custom-select {
+        background: var(--gray-700);
     }
 }
 </style>

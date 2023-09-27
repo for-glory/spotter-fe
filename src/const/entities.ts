@@ -22,6 +22,7 @@ export enum EntitiesEnum {
   ProfileChoosePlace = "PROFILE_CHOOSE_PLACE",
   ProfileOrderConfirmation = "PROFILE_ORDER_CONFIRMATION",
   ProfileMembership = "PROFILE_MEMBERSHIP",
+  ProfileCalendar = "PROFILE_CALENDAR",
   SubscriptionPaymentMethod = "SUBSCRIPTION_PAYMENT_METHOD",
   ProfileScan = "PROFILE_SCAN",
   ProfileEditGym = "PROFILE_EDIT_GYM",

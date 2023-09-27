@@ -31,7 +31,8 @@ const onBack = () => {
     flex-direction: column;
   }
   &__submit-btn {
-    margin: 8px 24px;
+    margin: 0px 24px;
+    font-family: Yantramanav;
   }
 }
 </style>
