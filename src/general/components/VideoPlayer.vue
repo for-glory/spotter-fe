@@ -6,12 +6,11 @@
   </page-header>
   <video-player
     ref="player"
-    autoPlay
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${pathUrl}`"
     crossorigin="anonymous"
     playsinline
-    controls
+    :controls="freeDuration === 0"
     :poster="props.photoUrl"
     :volume="0.6"
     :height="props.height"
@@ -95,6 +94,7 @@ const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
 const player = shallowRef<typeof VideoPlayer>();
 const handleMounted = (payload: any) => {
   player.value = payload.player;
+  player.value?.play();
 };
 
 const timer = ref<any>(null);
