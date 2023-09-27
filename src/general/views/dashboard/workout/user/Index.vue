@@ -24,16 +24,15 @@
         />
       </div>
     </div>
-    <page-tabs
-      v-if="!workoutsLoading"
-      :tabs="TABS"
-      class="page-tabs"
-      :value="EntitiesEnum.UserWorkouts"
-      @change="tabsChanged"
-    />
   </div>
-  
-  
+
+  <page-tabs
+    v-if="!workoutsLoading"
+    :tabs="TABS"
+    class="page-tabs"
+    :value="EntitiesEnum.UserWorkouts"
+    @change="tabsChanged"
+  />
   <blurred-screen-modal
     :is-open="isOpenBlurredScreenModal"
     :preview-url="dailyData?.previewUrl"
@@ -310,5 +309,10 @@ const purchaseWorkout = () => {
   justify-content: center;
   bottom: calc(84px + var(--ion-safe-area-bottom));
   --btn-min-width: 120px;
+}
+
+ion-modal {
+  --width: 100%;
+  --height: 100%;
 }
 </style>

@@ -47,6 +47,7 @@ import { useRouter } from "vue-router";
 import { MeDocument, SettingsCodeEnum } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { EntitiesEnum } from '@/const/entities';
+import { Capacitor } from "@capacitor/core";
 
 const isTrusted = ref(false);
 
@@ -80,43 +81,62 @@ let isSwiping = false;
 const containerY = ref(0);
 
 onMounted(() => {
-  console.log(swipeContainer);
-  swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
-  swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
-  swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+  if(Capacitor.isNativePlatform()){
+    swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
+    swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
+    swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+  } else {
+    swipeContainer?.value?.addEventListener('mousedown', handleTouchStart);
+    swipeContainer?.value?.addEventListener('mousemove', handleTouchMove);
+    swipeContainer?.value?.addEventListener('mouseup', handleTouchEnd);
+  }
 });
 
 watch(() => swipeContainer.value,
 () => {
   if(swipeContainer.value) {
-    console.log(swipeContainer);
-    swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
-    swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
-    swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+    if(Capacitor.isNativePlatform()){
+      swipeContainer?.value?.addEventListener('touchstart', handleTouchStart);
+      swipeContainer?.value?.addEventListener('touchmove', handleTouchMove);
+      swipeContainer?.value?.addEventListener('touchend', handleTouchEnd);
+    } else {
+      swipeContainer?.value?.addEventListener('mousedown', handleTouchStart);
+      swipeContainer?.value?.addEventListener('mousemove', handleTouchMove);
+      swipeContainer?.value?.addEventListener('mouseup', handleTouchEnd);
+    }
   }
 });
 
 
 const handleTouchStart = (event: any) => {
-  startX = event.touches[0].clientX;
-  startY = event.touches[0].clientY;
+  if(Capacitor.isNativePlatform()){
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+  } else {
+    startX = event.cur;
+    startY = event.pageY;
+  }
+  isSwiping = true;
 };
 
 const handleTouchMove = (event: any) => {
-  deltaX = event.touches[0].clientX - startX;
-  deltaY = event.touches[0].clientY - startY;
-  if(deltaY < 0) {
-    containerY.value += deltaY;
+  if(Capacitor.isNativePlatform()){
+    deltaX = event.touches[0].clientX - startX;
+    deltaY = event.touches[0].clientY - startY;
+  } else {
+    deltaX = event.pageX - startX;
+    deltaY = event.pageY - startY;
   }
-  if (deltaY < -50) {
-    isSwiping = true;
+  if(isSwiping){
+    containerY.value += deltaY;
   }
 };
 
 const handleTouchEnd = () => {
-  if (isSwiping) {
+  if (isSwiping && deltaY > 100) {
     purchaseDaily();
-    // containerY.value = 0;
+  } else {
+    containerY.value = 0;
   }
   startX = 0;
   startY = 0;
@@ -147,7 +167,11 @@ gotMe(async (response) => {
 const onBack = () => {
   isOpen.value = false;
   emits("visibility", false);
-  router.push({ name: EntitiesEnum.UserWorkouts });
+  if(Capacitor.isNativePlatform()){
+    router.push({ name: EntitiesEnum.UserWorkouts });
+  } else {
+    router.push({ name: EntitiesEnum.DashboardClientDailys });
+  }
 };
 
 const watchTrialVideo = () => {
