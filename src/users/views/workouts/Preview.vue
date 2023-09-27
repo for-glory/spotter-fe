@@ -5,11 +5,12 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :pathUrl="trialVideo || ''"
-        :photoUrl="previewUrl || ''"
+        :pathUrl="dailyData?.video || ''"
+        :photoUrl="dailyData?.previewUrl || ''"
         :height="800"
         :width="400"
         :freeDuration="10"
+        :daily="dailyData"
         class="trial-video-player"
         @back="closeVideo"
         @ended="videoEndedHandle"
@@ -30,7 +31,7 @@
 
   <blurred-screen-modal
     :is-open="isOpenBlurredScreenModal"
-    :preview-url="previewUrl"
+    :preview-url="dailyData?.previewUrl"
     @visibility="isOpenBlurredScreenModal = false"
     @watch-trial-video="trialMode = true"
     @purchase-daily="purchaseWorkout"
@@ -40,7 +41,7 @@
   <instruction-tip-modal
     :is-open="isOpenInstructionTipModal"
     @visibility="isOpenInstructionTipModal = false"
-    :instruction-tip="workoutInstructionTip"
+    :instruction-tip="dailyData?.description"
   />
 </template>
 
@@ -96,14 +97,8 @@ gotWorkout((response) => {
   }
 });
 
-const trialVideo = computed<string>(
-  () => result?.value?.workout?.video ?? ""
-);
-const previewUrl = computed<string>(
-  () => result?.value?.workout?.previewUrl ?? ""
-);
-const workoutInstructionTip = computed<string>(
-  () => result?.value?.workout?.description ?? ""
+const dailyData = computed<any>(
+  () => result?.value?.workout
 );
 
 const onTrialEnd = () => {

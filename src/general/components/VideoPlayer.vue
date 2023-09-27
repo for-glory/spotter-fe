@@ -23,6 +23,39 @@
     @pause="handlePlause"
     @ended="handleVideoEnded"
   />
+  <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
+    <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
+    <ion-text class="daily-info">
+      <ion-icon icon="assets/icon/time.svg" />
+      <span>
+        <template v-if="daily?.duration">
+          <ion-text color="light" class="daily-info-dot">
+            &nbsp;&#183;&nbsp;
+          </ion-text>
+          {{ getDurationText(daily?.duration) }}
+        </template>
+        {{ type }}
+        <ion-text color="light" class="daily-info-dot">
+          &nbsp;&#183;&nbsp;
+        </ion-text>
+        {{ daily?.trainer?.first_name + ' ' + daily?.trainer?.last_name }}
+      </span>
+    </ion-text>
+  </div>
+  <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-end gap-16 details__right">
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.recommended_count ?? 0) }}</ion-text>
+    </div>
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.views_count ?? 0) }}</ion-text>
+    </div>
+    <div class="d-flex align-items-center gap-12">
+      <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.reviews_count ?? 0) }}</ion-text>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import { shallowRef, withDefaults, defineProps, defineEmits, ref, watch } from "vue";
@@ -42,6 +75,7 @@ const props = withDefaults(
     freeDuration?: number;
     backName?: EntitiesEnum;
     title?: string;
+    daily?: any;
   }>(),
   {
     width: 320,
@@ -87,6 +121,28 @@ watch(() => totalTime.value,
     emits('trialEnd');
   }
 });
+
+const formatNumber = (num: number) => {
+  if(num <= 9) {
+    return num;
+  } else if (num >= 1e6) {
+    return (num / 1e6).toFixed(1) + 'M';
+  } else if (num >= 1e5) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+  }
+};
+
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
 
 const onBack = () => {
   router.push({ name: props.backName });
@@ -240,5 +296,54 @@ const handleVideoEnded = () => {
 
 .vjs-poster {
   background-size: cover;
+}
+.daily-info {
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 24px;
+  align-items: center;
+  justify-content: flex-start;
+
+  ion-icon {
+    line-height: 1;
+    font-size: 24px;
+    margin-right: 4px;
+    color: var(--ion-color-primary);
+  }
+
+  .workout-item--hidden & {
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      color: inherit;
+    }
+  }
+}
+.daily-info-dot {
+  font-weight: 500;
+  font-size: 16px;
+}
+.details__left {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+}
+.details__right {
+  position: fixed;
+  bottom: 140px;
+  right: 24px;
+}
+.w-24 {
+  width: 24px;
+}
+.h-24 {
+  height: 24px;
+}
+.font-18 {
+  font-size: 18px;
+}
+.font-16 {
+  font-size: 16px;
 }
 </style>
