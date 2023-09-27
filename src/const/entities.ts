@@ -205,6 +205,7 @@ export enum EntitiesEnum {
   DashboardListGyms = "DASHBOARD_LIST_GYMS",
   DashboardGymCreate = "DASHBOARD_GYM_CREATE",
   DashboardMessage = "DASHBOARD_MESSAGE",
+  DashboardClientDailys = "DASHBOARD_CLIENT_DAILYS",
   Overview = "Overview",
   FacilityPassList = "FACILITY_PASS_LIST",
   FacilityDropins = "FACILITY_DROPINS",

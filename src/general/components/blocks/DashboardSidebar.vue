@@ -126,8 +126,8 @@
           <ion-text>Dashboard</ion-text>
         </div>
         <div
-          :class="getMenuItemClass(EntitiesEnum.DashboardWorkout)"
-          @click="onHandleClickMenu(EntitiesEnum.DashboardWorkout)"
+          :class="getMenuItemClass(EntitiesEnum.DashboardClientDailys)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardClientDailys)"
         >
           <ion-icon src="assets/icon/daily.svg" />
           <ion-text>Dailys</ion-text>
