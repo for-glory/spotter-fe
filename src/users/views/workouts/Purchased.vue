@@ -7,13 +7,15 @@
         @handle-item-click="onItemClick"
         :route-name="EntitiesEnum.UserPurchasedWorkouts"
       /> -->
-      <page-header title="My Library" />
     </template>
 
     <template #content>
       <div class="content">
         <ion-spinner v-if="loading" name="lines" class="spinner" />
         <div v-else-if="!loading && workouts.length" class="holder-content">
+          <div class="library-title">
+            <ion-text class="font-bold color-gold font-16">My Library</ion-text>
+          </div>
           <div class="page-content ion-padding-horizontal">
             <router-link
               class="workout"
@@ -139,5 +141,11 @@ const tabsChanged = (name: EntitiesEnum) => {
 
 .empty-state {
   margin-top: 20vh;
+}
+.font-16 {
+  font-size: 16px;
+}
+.library-title {
+  padding: 12px;
 }
 </style>

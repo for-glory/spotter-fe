@@ -7,7 +7,7 @@
   >
     <template #header>
       <search-workouts-form
-        placeholder="Search workouts..."
+        placeholder="Search dailys..."
         @handle-item-click="onItemClick"
         :route-name="EntitiesEnum.UserWorkoutList"
         :class="{'ios-app-top': isPlatform('ios')}"

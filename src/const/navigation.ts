@@ -16,7 +16,7 @@ export const navigationMenu: NavigationMenu = {
       label: "Dailys",
       id: "dailys",
       icon: "assets/icon/youtube.svg",
-      category: "/users/workouts",
+      category: "/users/dailys",
     },
     {
       name: EntitiesEnum.Profile,
