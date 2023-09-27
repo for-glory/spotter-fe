@@ -1,17 +1,16 @@
 <template>
-  <page-header class="header" back-btn @back="onBack" transparent :title="freeDuration === 0 ? `Playing ${ title }` : ''">
+  <page-header class="header" :back-btn="backBtn" @back="onBack" transparent :title="freeDuration === 0 ? `Playing ${ title }` : ''">
     <template #custom-btn>
       <slot name="custom-header-btn"></slot>
     </template>
   </page-header>
   <video-player
-    ref="player"
     class="video-player vjs-big-play-centered"
-    :src="`${VUE_APP_CDN}${pathUrl}`"
+    :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
     playsinline
-    :controls="freeDuration === 0"
-    :poster="props.photoUrl"
+    :controls="freeDuration === 0 || showControl"
+    :poster="daily?.previewUrl"
     :volume="0.6"
     :height="props.height"
     :width="props.width"
@@ -75,6 +74,8 @@ const props = withDefaults(
     backName?: EntitiesEnum;
     title?: string;
     daily?: any;
+    backBtn?: boolean;
+    showControl?: boolean;
   }>(),
   {
     width: 320,
@@ -82,6 +83,8 @@ const props = withDefaults(
     autoplay: false,
     freeDuration: 0,
     backName: EntitiesEnum.UserWorkouts,
+    backBtn: true,
+    showControl: false,
   }
 );
 
@@ -91,11 +94,25 @@ const emits = defineEmits<{
   (e: "trialEnd"): void;
 }>();
 const VUE_APP_CDN = ref(process.env.VUE_APP_CDN);
-const player = shallowRef<typeof VideoPlayer>();
-const handleMounted = (payload: any) => {
+const player = ref<typeof VideoPlayer>();
+
+const handleMounted = async (payload: any) => {
   player.value = payload.player;
-  player.value?.play();
+  console.log(player.value);
+  if(props.freeDuration === 0 || props.autoplay){
+    await player.value?.play();
+  }
 };
+
+watch(() => props.autoplay,
+  (newVal) => {
+    if(newVal === true) {
+      player.value?.play();
+    } else {
+      player.value?.pause();
+    }
+  }
+);
 
 const timer = ref<any>(null);
 const totalTime = ref<number>(0);
@@ -325,12 +342,12 @@ const handleVideoEnded = () => {
   font-size: 16px;
 }
 .details__left {
-  position: fixed;
-  bottom: 24px;
+  position: absolute;
+  bottom: 64px;
   left: 24px;
 }
 .details__right {
-  position: fixed;
+  position: absolute;
   bottom: 140px;
   right: 24px;
 }

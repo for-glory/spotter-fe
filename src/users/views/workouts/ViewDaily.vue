@@ -5,11 +5,10 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :pathUrl="dailyData?.video || ''"
-        :photoUrl="dailyData?.previewUrl || ''"
         :height="800"
         :width="400"
         :back-name="EntitiesEnum.UserPurchasedWorkouts"
+        :daily="dailyData"
         class="trial-video-player"
         @back="closeVideo"
         @ended="videoEndedHandle"

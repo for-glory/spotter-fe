@@ -22,30 +22,13 @@
       />
       <div 
         v-else
-        class="page-content ion-padding-horizontal" 
+        class="page-content ion-padding-horizontal w-100 h-100" 
         :class="{'ios-app-top': isPlatform('ios')}"
       >
-        <router-link
-          class="workout"
-          v-for="workout in workouts"
-          :key="workout?.id"
-          :to="{
-            name: EntitiesEnum.UserWorkout,
-            params: { id: workout?.id },
-          }"
-        >
-          <workout-item
-            :title="workout?.title || ''"
-            :pathUrl="`${workout?.previewUrl}` || ''"
-            :duration="workout?.duration"
-            :type="workout?.type?.name || ''"
-            :trainer="
-              `${workout?.trainer?.first_name} ${workout?.trainer?.last_name}` ||
-              ''
-            "
-            :showStatus="false"
-          />
-        </router-link>
+        <workouts-preview-swiper 
+          :workouts="workouts" 
+          @trialEnd="onTrialEnd"
+        />
       </div>
     </template>
   </base-layout>
@@ -57,15 +40,22 @@
     :value="EntitiesEnum.UserWorkouts"
     @change="tabsChanged"
   />
+  <blurred-screen-modal
+    :is-open="isOpenBlurredScreenModal"
+    :preview-url="dailyData?.previewUrl"
+    @visibility="isOpenBlurredScreenModal = false"
+    @purchase-daily="purchaseWorkout"
+    :disabled="addToCartLoading"
+  />
 </template>
 
 <script setup lang="ts">
-import { IonSpinner, isPlatform } from "@ionic/vue";
+import { IonSpinner, isPlatform, toastController } from "@ionic/vue";
 import { TABS } from "@/const/user-workouts-tabs";
 import WorkoutsSwiper from "./components/WorkoutsSwiper.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import {
   RecommendedWorkoutsDocument,
   Workout,
@@ -73,13 +63,20 @@ import {
   RecommendedWorkoutsByTypeDocument,
   WorkoutsDocument,
   QueryWorkoutsOrderByColumn,
-  SortOrder
+  SortOrder,
+  AddToCartDocument,
+  AddToCartPurchasableEnum,
 } from "@/generated/graphql";
 import { computed, ref } from "vue";
 // import PageTabs from "@/general/components/PageTabs.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
 import SearchWorkoutsForm from "@/general/components/forms/SearchWorkoutsForm.vue";
 import WorkoutItem from "@/users/components/Workout.vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { FreeMode } from "swiper";
+import MyVideoPlayer from "@/general/components/VideoPlayer.vue";
+import WorkoutsPreviewSwiper from "@/users/views/workouts/components/WorkoutsPreviewSwiper.vue";
+import BlurredScreenModal from "./components/BlurredScreenModal.vue";
 
 const router = useRouter();
 const itemSelected = ref<Workout | null>(null);
@@ -88,6 +85,8 @@ const workoutsLoaded = ref<boolean>(false);
 const activePage = ref<number>(1);
 const totalWorkouts = ref<number>(0);
 const searchQuery = ref<string>("");
+const isOpenBlurredScreenModal = ref(false);
+const selectedDailyId = ref<number>();
 
 const { result: workoutsResult, loading: workoutsLoading } = useQuery(
   WorkoutsDocument,
@@ -113,6 +112,45 @@ const tabsChanged = (name: EntitiesEnum) => {
 
 const onItemClick = (item: Workout) => {
   itemSelected.value = item;
+};
+
+const onTrialEnd = (id: number) => {
+  isOpenBlurredScreenModal.value = true;
+  selectedDailyId.value = id;
+};
+
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+  useMutation(AddToCartDocument);
+
+const purchaseWorkout = () => {
+  console.log(selectedDailyId.value);
+  addToCartMutation({
+    input: {
+      purchasable_id: selectedDailyId.value,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+      isOpenBlurredScreenModal.value = false;
+      router.push({
+        name: EntitiesEnum.WorkoutOrder,
+        params: {
+          id: selectedDailyId.value,
+        },
+        query: {
+          cart_id: res?.data?.addToCart?.id,
+        },
+      });
+    })
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
 };
 </script>
 
