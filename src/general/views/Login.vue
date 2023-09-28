@@ -6,11 +6,17 @@
         >Log In or Sign Up <br />to Get Started</ion-text
       >
     </div>
-    {{
+    form: {{
       form_data
     }}
-    {{
+    response: {{
       response_data
+    }}
+    errors: {{
+      errors_data
+    }}
+    error: {{
+      error
     }}
     <login-form
       v-model:username="form.username"
@@ -53,8 +59,10 @@ const form = ref<LoginMutationVariables>({
 });
 const form_data = ref<any>();
 const response_data = ref<any>();
+const errors_data = ref<any>();
 onDone(({ data, errors }) => {
   response_data.value = data;
+  errors_data.value = errors;
   if (!data && errors) {
     throw new Error("Invalid Username/Password.");
   }
