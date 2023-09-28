@@ -54,7 +54,7 @@
             title="Library Empty"
             text="You have not uploaded any videos yet..."
             buttonText="Create Dailys"
-            icon="assets/icon/daily.svg"
+            icon="assets/icon/energy.svg"
             @button-click="router.push({ name: EntitiesEnum.CreateWorkout })"
           />
         </div>

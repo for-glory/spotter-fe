@@ -61,6 +61,7 @@
       <empty-block
         title="Library Empty"
         hideButton
+        icon="assets/icon/energy.svg"
         text="You have not uploaded any videos yet..."
         @button-click="router.push({ name: EntitiesEnum.DashboardCreateWorkout })"
       />
