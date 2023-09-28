@@ -1,12 +1,12 @@
 <template>
   <ion-spinner v-if="loading || getCartLoading" name="lines" class="spinner" />
-  <div v-else class="w-100 h-100 d-flex-col align-items-center justify-content-between" style="padding: 24px;">
+  <div v-else class="w-100 h-100 d-flex-col align-items-center justify-content-between">
     <div class="order__head">
       <span class="order__title"> Payment Successfully Complete! </span>
       <ion-text class="font-14 colog-gray">You've purchased a daily, check library to see all bought dailys.</ion-text>
       <div class="workout workout__details">
         <div class="workout__details__head">
-          <strong class="workout__details__title">
+          <strong class="workout__details__title color-gold">
             {{ workoutData.title }}
           </strong>
           <ion-chip
@@ -38,7 +38,9 @@
         </div> 
       </div>
     </div>
-    <ion-button class="w-100" @click="router.push({ name: EntitiesEnum.UserPurchasedWorkouts })">My Library</ion-button>
+    <div class="w-100" style="padding: 0 24px;">
+      <ion-button class="w-100" @click="router.push({ name: EntitiesEnum.UserPurchasedWorkouts })">My Library</ion-button>
+    </div>
   </div>
 </template>
 
