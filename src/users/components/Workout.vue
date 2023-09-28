@@ -60,15 +60,15 @@
         <div class="d-flex-col gap-6">
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(total_revenue ?? 0) }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(total_revenue ?? 0, 'fixed') }}</ion-text>
           </div>
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0) }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white" styl>{{ formatNumber(recommended_count ?? 0, 'normal') }}</ion-text>
           </div>
           <div class="d-flex align-items-center">
             <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(reviews_count ?? 0) }}</ion-text>
+            <ion-text class="font-light font-18 color-fitness-white">{{ formatNumber(reviews_count ?? 0, 'normal') }}</ion-text>
           </div>
         </div>
       </div>
@@ -161,15 +161,17 @@ const shareWorkout = async (event: any) => {
   });
 };
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 

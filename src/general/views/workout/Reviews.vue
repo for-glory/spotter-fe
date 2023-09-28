@@ -14,7 +14,7 @@
             <span class="rating-star__title">{{ score }}</span>
             <star-rating :model-value="score ?? 0" size="medium" />
             <ion-text color="medium" class="rating-star__reviews">
-              based on {{ formatNumber(totalReviewsCount) ?? 0 }} reviews
+              based on {{ formatNumber(totalReviewsCount, 'normal') ?? 0 }} reviews
             </ion-text>
           </div>
           <like-rating
@@ -188,15 +188,17 @@ const onBack = () => {
   router.go(-1);
 };
 
-const formatNumber = (num: number) => {
-  if(num < 1e3) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 

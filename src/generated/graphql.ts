@@ -8729,7 +8729,6 @@ export const DailyAnalyticsForTrainerDocument = gql`
 export const DailyPerformanceForTrainerDocument = gql`
   query dailyPerformance($trainer_id: ID!, $limit: Int) {
     dailyPerformance(trainer_id: $trainer_id, limit: $limit) {
-      date
       count
     }
   }

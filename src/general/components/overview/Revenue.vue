@@ -81,17 +81,19 @@ const todayEarn = computed(() => props.overviewData?.today_earn);
 const earnLastThirtyDays = computed(() => props.overviewData?.earn_last_thirty_days);
 const yearEarn = computed(() => props.overviewData?.year_earn);
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
-}
+};
 
 </script>
 <style scoped lang="scss">

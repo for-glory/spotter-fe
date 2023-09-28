@@ -70,7 +70,7 @@
               layout="icon-start"
               class="tabs__item color-gold"
             >
-              <ion-label>{{ formatNumber(daily.total_revenue) }}</ion-label>
+              <ion-label>{{ formatNumber(daily.total_revenue, 'fixed') }}</ion-label>
               <ion-icon src="assets/icon/dollar-circle.svg" />
             </ion-segment-button>
             <ion-segment-button 
@@ -78,7 +78,7 @@
               layout="icon-start"
               class="tabs__item color-gold"
             >
-              <ion-label>{{ formatNumber(daily.reviews_count) }}</ion-label>
+              <ion-label>{{ formatNumber(daily.reviews_count, 'normal') }}</ion-label>
               <ion-icon 
                 src="assets/icon/messages.svg" 
               />
@@ -88,7 +88,7 @@
               layout="icon-start"
               class="tabs__item color-gold"
             >
-              <ion-label>{{ formatNumber(daily.recommended_count) }}</ion-label>
+              <ion-label>{{ formatNumber(daily.recommended_count, 'normal') }}</ion-label>
               <ion-icon src="assets/icon/heart-filled.svg"></ion-icon>
             </ion-segment-button>
             <ion-segment-button 
@@ -96,7 +96,7 @@
               layout="icon-start"
               class="tabs__item color-gold"
             >
-              <ion-label>{{ formatNumber(daily.views_count) }}</ion-label>
+              <ion-label>{{ formatNumber(daily.views_count, 'normal') }}</ion-label>
               <ion-icon src="assets/icon/eye.svg"></ion-icon>
             </ion-segment-button>
           </ion-segment>
@@ -367,15 +367,17 @@ const getDurationText = (value: number) => {
   }
 };
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 

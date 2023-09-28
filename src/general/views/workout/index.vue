@@ -238,7 +238,7 @@ watch(() => currentTrainer.trainer,
   refetchDailys({ 
     ...payload,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    trainer_id: currentFacility.facility?.id 
+    trainer_id: currentTrainer.trainer?.id 
   });
   refetchDailysAnalytics({
     trainer_id: currentTrainer.trainer?.id,
@@ -258,7 +258,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   } : {
     ...payload,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    trainer_id: currentFacility.facility?.id 
+    trainer_id: currentTrainer.trainer?.id 
   },
   {
     fetchPolicy: "no-cache",

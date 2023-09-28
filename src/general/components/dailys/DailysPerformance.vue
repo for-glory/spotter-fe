@@ -19,7 +19,7 @@
           Purchases
           <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
         </div>
-        {{ formatNumber(totalRevenue) }}
+        {{ formatNumber(totalRevenue, 'fixed') }}
         <ion-text 
           class="font-light color-white"
           :class="isNative ? 'font-12' : 'font-14'"
@@ -189,17 +189,19 @@ const option = {
   },
 };
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num.toFixed(1);
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return (num / 1e3).toFixed(1) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
-}
+};
 </script>
 
 <style lang="scss">
