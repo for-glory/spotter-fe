@@ -122,6 +122,7 @@
 
 <script setup lang="ts">
 import { 
+  Query,
   CreateFacilityItemDocument, 
   UpdateFacilityItemDocument
 } from "@/generated/graphql";
@@ -140,6 +141,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
 import { useNewFacilityStore } from "../../../../facilities/store/new-facility";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 // import { Multiselect } from "vue-multiselect";
 
 const router = useRouter();
@@ -151,11 +153,42 @@ let duration = ref<string>(store?.passDropinsData?.duration || "");
 let planName = ref<string>(store?.passDropinsData?.title || "");
 let planPrice = ref<string>(store?.passDropinsData?.price || "");
 
-// const facilityEquipments = computed(() => []);
-// const facilityAmenities = computed(() => []);
+const currentFacility = useFacilityStore();
 
-const facilityEquipments = computed(() => storeFacility.equipments);
-const facilityAmenities = computed(() => storeFacility.amenities);
+const facilityEquipments = ref([]);
+const facilityAmenities = ref([]);
+
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: currentFacility?.facility?.id,
+  }
+);
+
+onResult((result:any) => {
+  const amenities = result?.data?.facility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = result?.data?.facility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  facilityEquipments.value = amenities;
+  facilityAmenities.value = equipments;
+  storeFacility.setAmenities(amenities);
+  storeFacility.setEquipments(equipments);
+});
 
 const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
   null
@@ -177,7 +210,7 @@ const navigate = (name: EntitiesEnum) => {
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
 const facilityPhotos = computed(() => store.photos);
-const currentFacility = useFacilityStore();
+
 const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useMutation(
   CreateFacilityItemDocument
 );
@@ -340,10 +373,8 @@ const createNewFacilityItemPass = () => {
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
 ) => {
-  facilityEquipments.value = result.equipments;
-  facilityAmenities.value = result.amenities;
-  storeFacility.setEquipments(result.equipments || []);
-  storeFacility.setAmenities(result.amenities || []);
+  storeFacility.setEquipments(facilityEquipments.value || []);
+  storeFacility.setAmenities(facilityAmenities.value || []);
 };
 
 

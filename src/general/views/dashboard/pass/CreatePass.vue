@@ -143,9 +143,10 @@ import { IonButton, IonIcon, IonLabel, toastController, pickerController } from 
 import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import {
+  Query,
   CreateFacilityItemDocument, UpdateFacilityItemDocument
 } from "@/generated/graphql";
 import {
@@ -168,6 +169,44 @@ import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
 import { useRoute } from "vue-router";
 import { object } from "yup";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+
+const currentFacility = useFacilityStore();
+const facilityEquipments = ref([]);
+const facilityAmenities = ref([]);
+const store = useNewFacilityStore();
+
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: currentFacility?.facility?.id,
+  }
+);
+
+onResult((result:any) => {
+  const amenities = result?.data?.facility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = result?.data?.facility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  facilityEquipments.value = amenities;
+  facilityAmenities.value = equipments;
+  store.setAmenities(amenities);
+  store.setEquipments(equipments);
+});
 
 const route = useRoute();
 const passDropinsItemsStore = usePassDropinsItemsStore();
@@ -179,7 +218,6 @@ const navigate = (name: EntitiesEnum) => {
 const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
   null
 );
-const currentFacility = useFacilityStore();
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
 const facilityPhotos = computed(() => store.photos);
@@ -189,8 +227,6 @@ const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useM
 const { mutate: updateFacilityItemPass, onDone: facilityItemPassUpdated } = useMutation(
   UpdateFacilityItemDocument
 );
-const facilityEquipments = computed(() => []);
-const facilityAmenities = computed(() => []);
 let duration = ref<string>(passDropinsItemsStore?.passDropinsData?.duration || "");
 let planName = ref<string>(passDropinsItemsStore?.passDropinsData?.title || "");
 let planPrice = ref<string>(passDropinsItemsStore?.passDropinsData?.price || "");
@@ -345,8 +381,6 @@ const cancel = () => {
       // present the picker
       await picker.present();
     };
-
-const store = useNewFacilityStore();
 
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
