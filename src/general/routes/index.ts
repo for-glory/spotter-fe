@@ -499,6 +499,11 @@ export const routes: Array<RouteRecordRaw> = [
           middleware: [gymOwnerSubscription],
         },
       },
+      { 
+        name: EntitiesEnum.DashboardBookingsHistory,
+        path: "booking-history",
+        component: () => import("@/users/views/booking/BookingHistory.vue")
+      },
       {
         name: EntitiesEnum.DashboardTrainings,
         path: "trainings",
@@ -510,6 +515,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "user/profile/:id(\\d+)",
         component: () =>
           import("@/general/views/dashboard/bookings/user-profile.vue"),
+      },
+      {
+        name:EntitiesEnum.UserDashboardCalendar,
+        path: "user-calendar",
+        component: () => import("@/users/views/dashboards/UserCalendar.vue"),
       },
       {
         name: EntitiesEnum.DashboardTrainingsCalendar,

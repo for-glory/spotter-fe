@@ -1,5 +1,5 @@
 <template>
-  <div :class="['card__container', { 'user-card-container': role === RoleEnum.User }]">
+  <div :class="['card__container', { 'user-card-container': role === RoleEnum.User, 'web-card': isWeb }]">
     <div class="card__content">
       <ion-icon src="assets/icon/payment/card.svg" class="card__icon" />
       <ion-icon src="assets/visa.svg" v-if="role === RoleEnum.User" class="visa-logo" />
@@ -65,10 +65,12 @@ const props = withDefaults(
     expDate: string;
     deletable?: boolean;
     isDefault?: boolean;
+    isWeb?: boolean;
   }>(),
   {
     deletable: false,
     isDefault: false,
+    isWeb: false
   }
 );
 
@@ -189,6 +191,18 @@ const { role } = useRoles()
         .desrc {
           color: var(--gray-400);
         }
+      }
+}
+
+.web-card {
+  background: var(--gray-700)
+      url("../../../../../public/assets/card-bg-web.svg") no-repeat;
+      background-size: 166% 97%;
+
+      .visa-logo {
+        font-size: 38px;
+        top: 5px;
+        right: 20px;
       }
 }
 </style>

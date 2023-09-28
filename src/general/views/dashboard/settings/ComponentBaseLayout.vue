@@ -1,11 +1,13 @@
 <template>
     <div class="edit-profile-component-header">
-        <h3>{{ title }}</h3>
-        <p :class="{ 'light-title': lightSubtitle }" v-if="subTitle">{{ subTitle }}</p>
+        <div :class="{ 'pl-10': paddingLeft }">
+            <h3>{{ title }}</h3>
+            <p :class="{ 'light-title': lightSubtitle }" v-if="subTitle">{{ subTitle }}</p>
+        </div>
         <hr>
     </div>
     <slot name="content"></slot>
-    <div class="footer-btn">
+    <div class="footer-btn" v-if="footer">
         <IonButton color="medium" fill="outline" @click="$emit('cancel')">Cancel</IonButton>
         <IonButton color="primary" @click="$emit('save')" :disabled="disabled">Save</IonButton>
     </div>
@@ -14,12 +16,17 @@
 <script setup lang="ts">
 import { IonButton } from '@ionic/vue';
 
-const props = defineProps<{
+withDefaults(defineProps<{
     title: string;
     subTitle?: string;
     disabled?: boolean;
-    lightSubtitle?:boolean
-}>();
+    lightSubtitle?:boolean;
+    footer?: boolean;
+    paddingLeft?:boolean
+}>(),  {
+    footer: true,
+    paddingLeft: false
+});
 defineEmits<{
     (e: "cancel"): void;
     (e: "save"): void;
@@ -61,6 +68,10 @@ defineEmits<{
 }
 .light-title {
     color: rgba(255, 255, 255, 0.60) !important;
+}
+
+.pl-10 {
+    padding-left: 15px;
 }
 </style>
   
