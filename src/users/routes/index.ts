@@ -174,6 +174,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.UserWorkoutPaymentSuccess,
+    path: "/users/daily-payment/:id/success",
+    component: () => import("@/users/views/orders/DailyPaymentSuccessful.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.Trainer,
     path: "/users/trainers/:id(\\d+)",
     component: () => import("@/users/views/trainers/Detail.vue"),
