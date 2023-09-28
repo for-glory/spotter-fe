@@ -26,18 +26,17 @@
       <ion-row>
         <ion-col size="12">
           <div class="form-row">
-            <div class="label">Upload gym logo</div>
-            <photos-loader
-              class="loader-area"
-              @upload="uploadPhoto"
-              @delete="deletePhoto"
-              @change="uploadPhoto"
-              :circle-shape="false"
-              :photos="facilityPhotos"
-              :loading="photoOnLoad"
-              :progress="percentPhotoLoaded"
-              placeHolderText="Drag and Drop file or Choose file"
-            />
+            <div class="label">Gym logo</div>
+            <div class="loader-area">
+              <ion-img
+                class="image-area"
+                v-if="currentFacility?.facility.media[0]?.pathUrl"
+                :src="currentFacility?.facility.media[0]?.pathUrl"
+              ></ion-img>
+              <template v-else>
+                {{ currentFacility.name?.charAt(0) }}
+              </template>
+            </div>
           </div>
         </ion-col>
       </ion-row>
@@ -291,7 +290,7 @@ const openSimplePicker = async () => {
         text: "Confirm",
         role: "confirm",
         handler: (value) => {
-          duration = value?.months?.text;
+          duration.value = value?.Days?.text;
           console.log('duration: ', duration);
           picker.dismiss(value, "confirm");
         },
@@ -364,11 +363,11 @@ const updateNewFacilityItemPass = () => {
   updateFacilityItemPass({
     id: route.params.id,
     input: {
-      facility_id: currentFacility.facility.id,
+      // facility_id: currentFacility.facility.id,
       title: planName.value,
       price: Number(planPrice.value),
       duration: Number(duration),
-      item_type: "DROPIN",
+      // item_type: "DROPIN",
     },
   })
     .then(async () => {
@@ -392,11 +391,6 @@ const updateNewFacilityItemPass = () => {
       throw new Error(error);
     });
 };
-
-facilityItemPassUpdate(() => {
-  store.clearState();
-  router.go(-1);
-});
 
 // Dropins End
 </script>
@@ -437,12 +431,19 @@ ion-label {
   text-align: center;
   border: 2px dashed var(--gray-500);
   color: var(--gray-400);
-  padding: 16px 32px;
+  // padding: 16px 32px;
   border-radius: 8px;
   line-height: 24px;
   font-size: 14px;
-}
+  height: 88px;
+  width: 88px;
 
+  .image-area{
+    height: 84px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+}
 .input-text-field {
   width: 100%;
   padding: 16px;

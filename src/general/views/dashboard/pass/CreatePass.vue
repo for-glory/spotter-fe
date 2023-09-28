@@ -31,8 +31,18 @@
               Drag and Drop file <br />or<br />Choose file
             </div>
             <photo-loader /> -->
-            <ion-label class="label"> Upload gym logo </ion-label>
-            <photos-loader
+            <ion-label class="label"> Gym logo </ion-label>
+            <div class="loader-area">
+              <ion-img
+                class="image-area"
+                v-if="currentFacility?.facility.media[0]?.pathUrl"
+                :src="currentFacility?.facility.media[0]?.pathUrl"
+              ></ion-img>
+              <template v-else>
+                {{ currentFacility.name?.charAt(0) }}
+              </template>
+            </div>
+            <!-- <photos-loader
               class="loader-area"
               @upload="uploadPhoto"
               @delete="deletePhoto"
@@ -41,7 +51,7 @@
               :photos="facilityPhotos"
               :loading="photoOnLoad"
               :progress="percentPhotoLoaded"
-            />
+            /> -->
           </div>
         </ion-col>
       </ion-row>
@@ -157,6 +167,7 @@ import { FilePreloadDocument, CitiesDocument } from "@/generated/graphql";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
 import { useRoute } from "vue-router";
+import { object } from "yup";
 
 const route = useRoute();
 const passDropinsItemsStore = usePassDropinsItemsStore();
@@ -187,7 +198,7 @@ const isEdit = ref(false);
 isEdit.value = route.params.id ? true : false;
 
 const createNewFacilityItemPass = () => {
-  if (!isEdit) {
+  if (!isEdit.value) {
     createFacilityItemPass({
       input: {
         facility_id: currentFacility.facility.id,
@@ -221,11 +232,11 @@ const createNewFacilityItemPass = () => {
     updateFacilityItemPass({
     id: route.params.id,
       input: {
-        facility_id: currentFacility.facility.id,
+        // facility_id: currentFacility.facility.id,
         title: planName.value,
         price: Number(planPrice.value),
         duration: Number(duration),
-        item_type: "PASS",
+        // item_type: "PASS",
       },
     })
       .then(async () => {
@@ -302,7 +313,7 @@ const cancel = () => {
       // and the array of data that should be rendered in the column
       let colOptions = [
         {
-          name: "months",
+          name: "Months",
           data: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
         },
       ];
@@ -321,7 +332,7 @@ const cancel = () => {
             role: "confirm",
             handler: (value) => {
               // console.log("Got Value", value);
-              duration = value?.months?.text;
+              duration.value = value?.Months?.text;
               console.log('duration: ', duration);
               picker.dismiss(value, "confirm");
             },
@@ -340,8 +351,8 @@ const store = useNewFacilityStore();
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
 ) => {
-  store.setEquipments(result.equipments || []);
-  store.setAmenities(result.amenities || []);
+  // store.setEquipments(result.equipments || []);
+  // store.setAmenities(result.amenities || []);
 };
 
 const onChooseAmenities = () => {
@@ -441,10 +452,18 @@ ion-label {
   text-align: center;
   border: 2px dashed var(--gray-500);
   color: var(--gray-400);
-  padding: 16px 32px;
+  // padding: 16px 32px;
   border-radius: 8px;
   line-height: 24px;
   font-size: 14px;
+  height: 88px;
+  width: 88px;
+
+  .image-area{
+    height: 84px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 }
 
 .input-text-field {
