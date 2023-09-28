@@ -67,7 +67,7 @@
       />
     </div>
     <div class="" v-else>
-      <div v-if="tab === 'dailys'">
+      <div v-if="tab === 'dailys'" class="dailys-container">
         <div v-if="filter==='all'">
           <ion-text 
             class="font-light font-12 color-white"
@@ -505,6 +505,14 @@ const openViewModal = (daily: any) => {
   }
   .gap-16 {
     gap: 16px;
+  }
+}
+.dailys-container {
+  max-height: 60vh;
+  overflow-y: scroll;
+  padding-bottom: 100px;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>
