@@ -69,7 +69,7 @@
               :value="
                 selectedAddress
                   ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
-                  : `${props.data?.address.street}`
+                  : `${props.data?.address.street??''}`
               "
             />
           </div>
@@ -177,14 +177,10 @@
           class="actions-wrapper"
           :class="{ 'actions-wrapper--fixed': footerFixed }"
         > -->
-        <ion-button @click="onBack" >
-          Cancel
-        </ion-button>
         <ion-button style="margin-right: 14px;"
           expand="block"
           class="secondary"
           @click="submitEvent('exit')"
-          fill="outline"
           :disabled="
             !props.edit ? !eventTitle?.length || !eventPhotos?.length || !selectedAddress : false
           "
@@ -192,7 +188,9 @@
           {{ saveButtonText || 'Save' }}
         </ion-button>
         <ion-button
+          style="margin-right: 14px;"
           expand="block"
+          class="secondary"
           @click="submitEvent('next')"
           v-if="nextButton"
           :disabled="
@@ -200,6 +198,14 @@
           "
         >
           {{ nextButtonText || 'Next' }}
+        </ion-button>
+        <ion-button
+          @click="onSkip"
+          class="secondary"
+          fill="outline"
+          v-if="skipButton"
+        >
+        {{ skipButtonText || 'Discard' }}
         </ion-button>
         <!-- </div> -->
       </ion-row>
@@ -301,15 +307,19 @@ const isConfirmedModalOpen = ref(false);
 const onBack = () => {
   isConfirmedModalOpen.value = true;
 };
+const onSkip = () => {
+  isConfirmedModalOpen.value = true;
+}
 
 const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
-    router.go(-1);
+    emits("onSkip");
   }
 };
 const emits = defineEmits<{
   (e: "submit", data?: any, type?: string): void;
+  (e: "onSkip"): void;
 }>();
 
 const props = withDefaults(
@@ -320,6 +330,8 @@ const props = withDefaults(
     saveButtonText?: string;
     nextButtonText?: string;
     nextButton?: boolean;
+    skipButtonText?: string;
+    skipButton?: boolean;
     footerFixed?: boolean;
   }>(), {}
 );
