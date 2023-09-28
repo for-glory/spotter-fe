@@ -9,6 +9,9 @@
     {{
       form_data
     }}
+    {{
+      response_data
+    }}
     <login-form
       v-model:username="form.username"
       v-model:password="form.password"
@@ -49,7 +52,9 @@ const form = ref<LoginMutationVariables>({
   password: "",
 });
 const form_data = ref<any>();
+const response_data = ref<any>();
 onDone(({ data, errors }) => {
+  response_data.value = data;
   if (!data && errors) {
     throw new Error("Invalid Username/Password.");
   }
