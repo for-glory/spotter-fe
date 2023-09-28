@@ -41,7 +41,7 @@
           <ion-icon src="assets/icon/eye.svg" class="normal-icon"></ion-icon>
         </ion-text>
         <ion-text class="font-semibold font-18 color-white">
-          {{ formatNumber(summaryData?.viewsPerDaily, 'fixed') }}
+          {{ formatNumber(summaryData?.viewsPerDaily, 'fixed') }} %
         </ion-text>
       </div>
       <div 

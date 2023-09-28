@@ -622,10 +622,11 @@ ion-button#cancel {
   }
 }
 .details {
-  position: fixed;
+  position: absolute;
   padding: 16px;
   padding-bottom: 24px;
   bottom: 0;
+  z-index: 1000001;
 
   &__left {
     left: 24px;
