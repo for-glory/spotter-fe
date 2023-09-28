@@ -143,7 +143,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="d-flex gap-16 common-style">
+      <div v-else class="dailys-container d-flex gap-16 common-style">
         <div class="w-half d-flex-col gap-16">
           <dailys-analytics :daily="dailysData[0]" @watch-daily="openViewModal(dailysData[0])" />
           <dailys-performance 
@@ -302,7 +302,7 @@ const onDelete = () => {
 gotDailysData(({ data }) => {
   let dailys = allDailys.value;
   dailys.sort((a: any, b: any) => {
-    return a.total_revenue - b.total_revenue;
+    return b.total_revenue - a.total_revenue;
   });
   summaryData.value.topDailys = dailys.slice(0, 10);
   let recentDailys = allDailys.value;

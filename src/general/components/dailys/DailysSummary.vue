@@ -53,7 +53,7 @@
           <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
         </ion-text>
         <ion-text class="font-semibold font-18 color-white">
-          {{ formatNumber(summaryData?.totalRevenue, 'fixed') }}
+          $  {{ formatNumber(summaryData?.totalRevenue, 'fixed') }}
         </ion-text>
       </div>
     </div>
