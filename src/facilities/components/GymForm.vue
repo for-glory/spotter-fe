@@ -448,7 +448,7 @@ const onSaveAndExit = () => {
 };
 
 const onNext = () => {
-  emits("edit", {
+  emits("submit", {
     title: facilityTitle.value,
     description: facilityDescription.value,
     photos: facilityPhotos.value,

@@ -10,7 +10,10 @@
           save-button-text="Save and Exit"
           next-button-text="Next"
           next-button
+          skip-button
+          skip-button-text="Exit"
           @submit="createEvent"
+          @onSkip="onSkip"
         />
       </div>
     </template>
@@ -68,6 +71,12 @@ const createEvent = (input: CreateEventInput, type: string) => {
   exitType.value = type;
   createEventMutate({ input: { ...input, facility_id: route.params.facility_id } });
 };
+
+const onSkip = () => {
+  router.push({
+    name: EntitiesEnum.DashboardOverview,
+  });
+}
 
 const eventForm = ref<typeof EventForm | null>(null);
 
