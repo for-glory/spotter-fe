@@ -38,7 +38,7 @@
         </div> 
       </div>
     </div>
-    <div class="w-100" style="padding: 0 24px;">
+    <div class="w-100" style="padding: 0 24px 24px;">
       <ion-button class="w-100" @click="router.push({ name: EntitiesEnum.UserPurchasedWorkouts })">My Library</ion-button>
     </div>
   </div>
