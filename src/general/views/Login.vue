@@ -6,6 +6,9 @@
         >Log In or Sign Up <br />to Get Started</ion-text
       >
     </div>
+    {{
+      
+    }}
     <login-form
       v-model:username="form.username"
       v-model:password="form.password"
@@ -45,7 +48,7 @@ const form = ref<LoginMutationVariables>({
   username: "",
   password: "",
 });
-
+const form_data = ref<any>();
 onDone(({ data, errors }) => {
   if (!data && errors) {
     throw new Error("Invalid Username/Password.");
@@ -71,6 +74,7 @@ onError(() => {
 });
 
 const handleSubmit = (formData: LoginMutationVariables) => {
+  form_data.value = { ...formData };
   login({ ...formData });
 };
 </script>
