@@ -1,24 +1,33 @@
 <template>
-    <div class="dashboard web-bookings d-flex-col h-100">
+    <div class="dashboard web-bookings d-flex-col h-100" :class="{ 'user-payment': role === RoleEnum.User }">
         <div class="d-flex align-items-center page-header">
-            <ion-button class="common-back-btn" fill="clear" @click="router.back()">
+            <ion-button class="common-back-btn" v-if="role !== RoleEnum.User" fill="clear" @click="router.back()">
                 <ion-icon src="assets/icon/arrow-back.svg" />
             </ion-button>
             <ion-title class="banner__title">Payment method</ion-title>
         </div>
-        <div class="cards__container" v-if="preparedCards?.length">
-            <base-carousel show-start :items="preparedCards" :slides-offset-after="16" :slides-offset-before="16">
+        <div class="cards__container">
+            <IonSpinner class="spinner" name="lines" v-if="loading"></IonSpinner>
+            <base-carousel v-else-if="preparedCards?.length" show-start :items="preparedCards" :slides-offset-after="16" :slides-offset-before="16">
                 <template #start>
                     <ion-button class="add-card">
                         <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" />
                     </ion-button>
                 </template>
                 <template v-slot:default="preparedCards">
-                    <card v-for="card in preparedCards" :key="card.id" :card-holder="card.card_holder"
+                    <card v-for="card in preparedCards" :is-web="role === RoleEnum.User ? true : false" :key="card.id" :card-holder="card.card_holder"
                         :card-number="card.pm_last_four" :exp-date="card.exp_month + '/' + card.exp_year"
                         :is-default="card.is_default" class="card-slide" />
-                </template>
+                </template>                
             </base-carousel>
+        <div class="add-new-card" v-else>
+            <AddCardButton :is-web="true" />
+        </div>
+        </div>
+        <div class="payment-footer" v-if="role === RoleEnum.User">
+            <IonButton>
+                {{ preparedCards?.length ? "Confirm" : "Creare card" }}
+            </IonButton>
         </div>
     </div>
     <IonModal class="payment-modal-wrapper" :is-open="isPaymentModal" @didDismiss="isPaymentModal = false">
@@ -46,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonModal, IonImg, IonLabel } from "@ionic/vue";
+import { IonIcon, IonTitle, IonButton, IonModal, IonImg, IonLabel, IonSpinner } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
 import { Cards } from "@/services/stripe/cards";
 import Card from "@/general/components/blocks/payment/Card.vue";
@@ -54,10 +63,12 @@ import { computed, ref } from "vue";
 import { BackendStripe } from "@/services/stripe/stripe";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import dayjs from "dayjs";
-import { FacilityDocument } from "@/generated/graphql";
+import { FacilityDocument, RoleEnum } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import Order from "@/users/components/Order.vue";
+import useRoles from "@/hooks/useRole";
+import AddCardButton from "@/general/components/blocks/payment/AddCardButton.vue";
 
 const VUE_APP_STRIPE_PUBLIC_KEY = process.env.VUE_APP_STRIPE_PUBLIC_KEY;
 const backendStripe = new BackendStripe(VUE_APP_STRIPE_PUBLIC_KEY || "");
@@ -69,6 +80,7 @@ const route = useRoute();
 const cardsContainer = new Cards();
 const isPaymentModal = ref<boolean>(false);
 const selectedDay = ref(dayjs());
+const { role } = useRoles();
 
 const { result, loading } = useQuery(FacilityDocument, {
     id: route.params.id,
@@ -216,6 +228,32 @@ cardsResult((response) => {
                 }
             }
         }
+    }
+}
+.spinner {
+    display: block;
+    margin: 25vh auto;
+}
+.add-new-card {
+    margin-left: 15px;
+}
+.user-payment {
+    padding: 24px 40px 40px;
+    .cards__container {
+        flex: 2;
+    }
+}
+
+.payment-footer {
+    display: flex;
+    justify-content: center;
+    ion-button {
+        width: 327px;
+        color: var(--gray-700);
+        text-align: center;
+        font-family: Yantramanav;
+        font-size: 16px;
+        font-weight: 500;
     }
 }
 </style>
