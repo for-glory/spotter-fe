@@ -5,18 +5,18 @@
         <div class="list-container">
           <ion-item class="thumbnail-container ion-no-padding" lines="none">
             <ion-avatar slot="start">
-              <img src="assets/backgrounds/banner1.jpeg" />
+              <img :src="item.facility.media[0].pathUrl" />
             </ion-avatar>
             <ion-label>
-              <p>
-                {{ item.title }}
-              </p>
+              <!-- <p>
+                Title
+              </p> -->
               <h3>
-                Basic Plan
+                {{ item.title }}
               </h3>
             </ion-label>
           </ion-item>
-          <ion-item lines="none">
+          <ion-item class="ion-no-padding" lines="none">
             <ion-label>
               <p>
                 Duration
@@ -26,7 +26,7 @@
               </h4>
             </ion-label>
           </ion-item>
-          <ion-item lines="none">
+          <ion-item class="ion-no-padding" lines="none">
             <ion-label>
               <p>
                 Features
@@ -36,13 +36,13 @@
               </h4>
             </ion-label>
           </ion-item>
-          <ion-item lines="none">
+          <ion-item class="ion-no-padding" lines="none">
             <ion-label>
               <p>
                 Pass Fee
               </p>
               <h4>
-                ${{ item.price }}
+                ${{ formatNumber(item.price) }}
               </h4>
             </ion-label>
           </ion-item>
@@ -90,6 +90,10 @@ const toEdit = (pass: any) => {
   console.log('toEdit', pass);
   emits("edit", pass);
 }
+
+const formatNumber = ((num: any) => {
+  return parseFloat(num).toFixed(2)
+})
 
 </script>
 

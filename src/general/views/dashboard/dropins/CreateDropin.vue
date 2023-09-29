@@ -24,24 +24,6 @@
   <div class="form-body">
     <ion-grid fixed>
       <ion-row>
-        <ion-col size="12">
-          <div class="form-row">
-            <div class="label">Upload gym logo</div>
-            <photos-loader
-              class="loader-area"
-              @upload="uploadPhoto"
-              @delete="deletePhoto"
-              @change="uploadPhoto"
-              :circle-shape="false"
-              :photos="facilityPhotos"
-              :loading="photoOnLoad"
-              :progress="percentPhotoLoaded"
-              placeHolderText="Drag and Drop file or Choose file"
-            />
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Title of Drop in </ion-label>
@@ -65,23 +47,6 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="12" size-md="6">
-          <div class="form-row">
-            <ion-label class="label"> Choose equipment and amenitites </ion-label>
-            <!-- <input
-              class="input-text-field"
-              type="text"
-              placeholder="e.g: Cycling classes"
-              name="features"
-            /> -->
-             <choose-block
-              class="equipment-amenitites-field"
-              title="Equipment and amenities"
-              @handle-click="onChooseAmenities"
-              :value="facilityEquipments?.length + facilityAmenities?.length || ''"
-            />
-          </div>
-        </ion-col>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Cost </ion-label>
@@ -123,6 +88,7 @@
 
 <script setup lang="ts">
 import { 
+  Query,
   CreateFacilityItemDocument, 
   UpdateFacilityItemDocument
 } from "@/generated/graphql";
@@ -141,6 +107,7 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
 import { useNewFacilityStore } from "../../../../facilities/store/new-facility";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 // import { Multiselect } from "vue-multiselect";
 
 const router = useRouter();
@@ -152,11 +119,42 @@ let duration = ref<string>(store?.passDropinsData?.duration || "");
 let planName = ref<string>(store?.passDropinsData?.title || "");
 let planPrice = ref<string>(store?.passDropinsData?.price || "");
 
-// const facilityEquipments = computed(() => []);
-// const facilityAmenities = computed(() => []);
+const currentFacility = useFacilityStore();
 
-const facilityEquipments = computed(() => storeFacility.equipments);
-const facilityAmenities = computed(() => storeFacility.amenities);
+const facilityEquipments = ref([]);
+const facilityAmenities = ref([]);
+
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: currentFacility?.facility?.id,
+  }
+);
+
+onResult((result:any) => {
+  const amenities = result?.data?.facility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = result?.data?.facility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  facilityEquipments.value = amenities;
+  facilityAmenities.value = equipments;
+  storeFacility.setAmenities(amenities);
+  storeFacility.setEquipments(equipments);
+});
 
 const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
   null
@@ -178,7 +176,7 @@ const navigate = (name: EntitiesEnum) => {
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
 const facilityPhotos = computed(() => store.photos);
-const currentFacility = useFacilityStore();
+
 const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useMutation(
   CreateFacilityItemDocument
 );
@@ -291,7 +289,7 @@ const openSimplePicker = async () => {
         text: "Confirm",
         role: "confirm",
         handler: (value) => {
-          duration = value?.months?.text;
+          duration.value = value?.Days?.text;
           console.log('duration: ', duration);
           picker.dismiss(value, "confirm");
         },
@@ -312,7 +310,7 @@ const createNewFacilityItemPass = () => {
       facility_id: currentFacility.facility.id,
       title: planName.value,
       price: Number(planPrice.value),
-      duration: Number(duration),
+      duration: Number(duration.value),
       item_type: "DROPIN",
     },
   })
@@ -341,10 +339,8 @@ const createNewFacilityItemPass = () => {
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
 ) => {
-  facilityEquipments.value = result.equipments;
-  facilityAmenities.value = result.amenities;
-  storeFacility.setEquipments(result.equipments || []);
-  storeFacility.setAmenities(result.amenities || []);
+  storeFacility.setEquipments(facilityEquipments.value || []);
+  storeFacility.setAmenities(facilityAmenities.value || []);
 };
 
 
@@ -364,11 +360,11 @@ const updateNewFacilityItemPass = () => {
   updateFacilityItemPass({
     id: route.params.id,
     input: {
-      facility_id: currentFacility.facility.id,
+      // facility_id: currentFacility.facility.id,
       title: planName.value,
       price: Number(planPrice.value),
-      duration: Number(duration),
-      item_type: "DROPIN",
+      duration: Number(duration.value),
+      // item_type: "DROPIN",
     },
   })
     .then(async () => {
@@ -392,11 +388,6 @@ const updateNewFacilityItemPass = () => {
       throw new Error(error);
     });
 };
-
-facilityItemPassUpdate(() => {
-  store.clearState();
-  router.go(-1);
-});
 
 // Dropins End
 </script>
@@ -437,12 +428,19 @@ ion-label {
   text-align: center;
   border: 2px dashed var(--gray-500);
   color: var(--gray-400);
-  padding: 16px 32px;
+  // padding: 16px 32px;
   border-radius: 8px;
   line-height: 24px;
   font-size: 14px;
-}
+  height: 88px;
+  width: 88px;
 
+  .image-area{
+    height: 84px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+}
 .input-text-field {
   width: 100%;
   padding: 16px;

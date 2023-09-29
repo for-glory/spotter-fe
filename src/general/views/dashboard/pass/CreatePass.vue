@@ -24,28 +24,6 @@
   <div class="form-body">
     <ion-grid fixed>
       <ion-row>
-        <ion-col size="12">
-          <div class="form-row">
-            <!-- <div class="label">Upload gym logo</div>
-            <div class="loader-area">
-              Drag and Drop file <br />or<br />Choose file
-            </div>
-            <photo-loader /> -->
-            <ion-label class="label"> Upload gym logo </ion-label>
-            <photos-loader
-              class="loader-area"
-              @upload="uploadPhoto"
-              @delete="deletePhoto"
-              @change="uploadPhoto"
-              :circle-shape="false"
-              :photos="facilityPhotos"
-              :loading="photoOnLoad"
-              :progress="percentPhotoLoaded"
-            />
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Title of Gym pass </ion-label>
@@ -68,27 +46,6 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="12" size-md="6">
-          <div class="form-row">
-            <ion-label class="label"> Choose equipment and amenitites </ion-label>
-            <!-- <input
-              class="input-text-field"
-              type="text"
-              placeholder="e.g: Cycling classes"
-              name="features"
-            /> -->
-             <choose-block
-              class="equipment-amenitites-field"
-              title="Equipment and amenities"
-              @handle-click="onChooseAmenities"
-              :value="facilityEquipments?.length + facilityAmenities?.length || ''"
-            />
-          </div>
-          <!-- <div class="form-row">
-            <ion-label class="label"> Choose equipment and amenitites </ion-label>
-           
-          </div> -->
-        </ion-col>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Set the price for gym pass (USD $) </ion-label>
@@ -133,9 +90,10 @@ import { IonButton, IonIcon, IonLabel, toastController, pickerController } from 
 import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import {
+  Query,
   CreateFacilityItemDocument, UpdateFacilityItemDocument
 } from "@/generated/graphql";
 import {
@@ -157,6 +115,45 @@ import { FilePreloadDocument, CitiesDocument } from "@/generated/graphql";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { usePassDropinsItemsStore } from "@/general/stores/usePassDropinsItemsStore";
 import { useRoute } from "vue-router";
+import { object } from "yup";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+
+const currentFacility = useFacilityStore();
+const facilityEquipments = ref([]);
+const facilityAmenities = ref([]);
+const store = useNewFacilityStore();
+
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: currentFacility?.facility?.id,
+  }
+);
+
+onResult((result:any) => {
+  const amenities = result?.data?.facility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = result?.data?.facility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  facilityEquipments.value = amenities;
+  facilityAmenities.value = equipments;
+  store.setAmenities(amenities);
+  store.setEquipments(equipments);
+});
 
 const route = useRoute();
 const passDropinsItemsStore = usePassDropinsItemsStore();
@@ -168,7 +165,6 @@ const navigate = (name: EntitiesEnum) => {
 const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
   null
 );
-const currentFacility = useFacilityStore();
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
 const facilityPhotos = computed(() => store.photos);
@@ -178,8 +174,6 @@ const { mutate: createFacilityItemPass, onDone: facilityItemPassCreated } = useM
 const { mutate: updateFacilityItemPass, onDone: facilityItemPassUpdated } = useMutation(
   UpdateFacilityItemDocument
 );
-const facilityEquipments = computed(() => []);
-const facilityAmenities = computed(() => []);
 let duration = ref<string>(passDropinsItemsStore?.passDropinsData?.duration || "");
 let planName = ref<string>(passDropinsItemsStore?.passDropinsData?.title || "");
 let planPrice = ref<string>(passDropinsItemsStore?.passDropinsData?.price || "");
@@ -187,13 +181,13 @@ const isEdit = ref(false);
 isEdit.value = route.params.id ? true : false;
 
 const createNewFacilityItemPass = () => {
-  if (!isEdit) {
+  if (!isEdit.value) {
     createFacilityItemPass({
       input: {
         facility_id: currentFacility.facility.id,
         title: planName.value,
         price: Number(planPrice.value),
-        duration: Number(duration),
+        duration: Number(duration.value),
         item_type: "PASS",
       },
     })
@@ -221,11 +215,11 @@ const createNewFacilityItemPass = () => {
     updateFacilityItemPass({
     id: route.params.id,
       input: {
-        facility_id: currentFacility.facility.id,
+        // facility_id: currentFacility.facility.id,
         title: planName.value,
         price: Number(planPrice.value),
-        duration: Number(duration),
-        item_type: "PASS",
+        duration: Number(duration.value),
+        // item_type: "PASS",
       },
     })
       .then(async () => {
@@ -302,7 +296,7 @@ const cancel = () => {
       // and the array of data that should be rendered in the column
       let colOptions = [
         {
-          name: "months",
+          name: "Months",
           data: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
         },
       ];
@@ -321,7 +315,7 @@ const cancel = () => {
             role: "confirm",
             handler: (value) => {
               // console.log("Got Value", value);
-              duration = value?.months?.text;
+              duration.value = value?.Months?.text;
               console.log('duration: ', duration);
               picker.dismiss(value, "confirm");
             },
@@ -335,13 +329,11 @@ const cancel = () => {
       await picker.present();
     };
 
-const store = useNewFacilityStore();
-
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
 ) => {
-  store.setEquipments(result.equipments || []);
-  store.setAmenities(result.amenities || []);
+  // store.setEquipments(result.equipments || []);
+  // store.setAmenities(result.amenities || []);
 };
 
 const onChooseAmenities = () => {
@@ -441,10 +433,18 @@ ion-label {
   text-align: center;
   border: 2px dashed var(--gray-500);
   color: var(--gray-400);
-  padding: 16px 32px;
+  // padding: 16px 32px;
   border-radius: 8px;
   line-height: 24px;
   font-size: 14px;
+  height: 88px;
+  width: 88px;
+
+  .image-area{
+    height: 84px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 }
 
 .input-text-field {
