@@ -92,7 +92,7 @@ const toEdit = (pass: any) => {
 }
 
 const formatNumber = ((num: any) => {
-  return (Math.round((num / 100) * 100) / 100).toFixed(2)
+  return (parseFloat(num)/100).toFixed(2)
 })
 
 </script>
