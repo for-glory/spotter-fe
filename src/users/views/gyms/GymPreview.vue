@@ -171,9 +171,6 @@ import { ellipsisVertical } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import Follow from "@/general/components/blocks/Follow.vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
-import { ReviewsDocument } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
-import { useRoute } from "vue-router";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -312,13 +309,8 @@ const handleMore = async () => {
         });
     }
 };
-const route = useRoute();
-const docList = ["Gym Items", "Cardio Items", "Cycling Items"];
-const { result: reviewsResult } = useQuery(ReviewsDocument, {
-  id: route.params.id,
-});
-console.log('result',reviewsResult);
 
+const docList = ["Gym Items", "Cardio Items", "Cycling Items"];
 const user = computed(() => {
     // return result.value?.user;
     return {

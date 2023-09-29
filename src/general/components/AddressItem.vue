@@ -60,9 +60,8 @@ withDefaults(
 .address--trainer {
   font-family: "Yantramanav";
   color: var(--fitnesswhite);
-  ion-icon {
-    // color: var(--gold) !important;
-    margin-left: -3px;
-  }
+  // ion-icon {
+  //   color: var(--gold) !important;
+  // }
 }
 </style>

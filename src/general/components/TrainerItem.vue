@@ -1,22 +1,22 @@
 <template>
-  <!-- <router-link
+  <router-link
     class="item-wrap"
     :to="{ name: role === RoleEnum.User ? EntitiesEnum.BookTrainer : EntitiesEnum.Trainer, params: { id: trainer?.id } }"
-  > -->
-    <ion-item @click="handleRouting" lines="none" :class="['trainer-item', 'wrap-item', { 'user-item': role === RoleEnum.User}]">
+  >
+    <ion-item lines="none" :class="['trainer-item', 'wrap-item', { 'user-item': role === RoleEnum.User}]">
       <avatar
         class="trainer-item__avatar"
         :src="trainer.avatarUrl"
         :symbols="symbols"
       />
-      <div class="d-flex trainer-detail-wrapper">
-        <div :class="['trainer-item__inner', { 'user-inner': endButton && Capacitor.isNativePlatform() }]">
+      <div class="d-flex">
+        <div :class="['trainer-item__inner', { 'user-inner': endButton }]">
           <div class="trainer-item__head">
             <ion-label class="trainer-item__title">
               {{ trainer.first_name }} {{ trainer.last_name }}
             </ion-label>
             <rating-number class="trainer-item__rating">
-              {{ trainer?.score?.toFixed(1) }}
+              {{ String(trainer.score?.toFixed(1)) }}
             </rating-number>
             <div class="trainer-item__end">
               <slot name="end"></slot>
@@ -27,15 +27,14 @@
           </address-item>
         </div>
         <div class="end-button" v-if="endButton">
-          <ion-button @click.stop
-          ="handleBookBtn()">
+          <ion-button>
             {{ endButton }}
           </ion-button>
         </div>
       </div>
 
     </ion-item>
-  <!-- </router-link> -->
+  </router-link>
 </template>
 
 <script setup lang="ts">
@@ -47,8 +46,6 @@ import AddressItem from "@/general/components/AddressItem.vue";
 import Avatar from "@/general/components/blocks/Avatar.vue";
 import { EntitiesEnum } from "@/const/entities";
 import useRoles from "@/hooks/useRole";
-import { useRouter } from "vue-router";
-import { Capacitor } from "@capacitor/core";
 
 const props = defineProps<{
   trainer: User;
@@ -56,15 +53,6 @@ const props = defineProps<{
 }>();
 
 const { role } = useRoles();
-const router = useRouter();
-
-const handleRouting = () => {
-  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.Trainer : EntitiesEnum.TrainerPreview, params: { id: props.trainer?.id } })
-}
-
-const handleBookBtn = () => {
-  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.BookTrainer : EntitiesEnum.TrainerBooking, params: { id: props.trainer?.id } })
-}
 
 const address = computed(() => {
   return (
@@ -96,7 +84,7 @@ const symbols = computed(() => {
   --padding-bottom: 16px;
   --background: var(--gray-700);
   --padding-start: 16px;
-  --padding-end: 10px;
+  --padding-end: var(--container-offset);
   --inner-padding-start: 0;
   --inner-padding-end: 0;
 
@@ -115,7 +103,7 @@ const symbols = computed(() => {
   }
 
   &__inner {
-    max-width: calc(100vw - 250px);
+    max-width: calc(100vw - 148px);
   }
 
   &__head {
@@ -175,9 +163,7 @@ const symbols = computed(() => {
 }
 
 .user-item {
-  &:not(:first-child) {
-    margin-top: 16px;
-  }
+
   .trainer-item {
     &__title {
       color: var(--fitnesswhite);
@@ -194,10 +180,6 @@ const symbols = computed(() => {
     &__rating {
       font-family: Yantramanav;
     }
-  }
-  .trainer-detail-wrapper {
-    width: 100%;
-    justify-content: space-between;
   }
 }
 </style>

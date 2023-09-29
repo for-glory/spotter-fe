@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonBackButton, IonLabel, IonSpinner, IonItem, IonCheckbox, IonTitle, IonToolbar, modalController } from "@ionic/vue";
+import { IonBackButton, IonLabel, IonSpinner, IonItem, IonCheckbox, IonTitle, IonToolbar } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -107,7 +107,6 @@ const facilitiesParams: FacilitiesQueryVariables = {
 const store = useSelectedAddressStore();
 
 const onResultItemClick = (facility: FacilitySearchResult, index:number) => {
-  
   if(role === RoleEnum.Trainer || role === RoleEnum.User)  {
     facilities.value?.map((e, i)=>{
       if(i !== index){
@@ -115,14 +114,11 @@ const onResultItemClick = (facility: FacilitySearchResult, index:number) => {
       }
     })
     facility.isSelected = !facility.isSelected;
-    selectFacilities = facility.isSelected ? facility : null;  
-    if(props.fromModal){
-      modalController.dismiss();
-    }  
+    selectFacilities = facility.isSelected ? facility : null;    
   }else {
+    store.setAssignedFacility(facility);
     handleBack();
   }
-  store.setAssignedFacility(facility);
 };
 
 const search = (query?: string) => {

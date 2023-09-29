@@ -28,11 +28,11 @@
         <ion-text class="order__label">{{ timeSectionTitle }}</ion-text>
         <ion-text class="order__info">{{ orderTime }}</ion-text>
       </div>
-      <template v-if="trainerCart">
+      <template>
         <IonItem class="info-item" lines="none">
           <IonIcon src="assets/icon/info.svg" slot="start" />
           <div class="info-text">Once time payment for getting you verified</div>
-          <IonLabel slot="end">${{trainerCart.front_total}}</IonLabel>
+          <IonLabel slot="end">$10,00</IonLabel>
         </IonItem>
       </template>
       <div v-if="!hidePrice" class="order__item">
@@ -51,7 +51,7 @@ import EventInfo from "@/general/components/Event.vue";
 import { EntitiesEnum } from "@/const/entities";
 import SearchResult from "@/users/views/facilities/SearchResult.vue";
 import dayjs from "dayjs";
-import { Cart, RoleEnum } from "@/generated/graphql";
+import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
 
 const { role }  = useRoles();
@@ -68,7 +68,6 @@ withDefaults(
     orderDate?: object | string;
     orderTime?: string;
     dateFormat?: string;
-    trainerCart?: Cart
   }>(),
   {
     hidePrice: false,
@@ -169,7 +168,6 @@ withDefaults(
     font-family: Yantramanav;
     font-size: 16px;
     font-weight: 500;
-    margin-left: 16px;
   }
 }
 </style>

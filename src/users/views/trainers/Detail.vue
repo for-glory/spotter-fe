@@ -1,11 +1,27 @@
 <template>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
-  <detail v-else :name="fullName" :likes="user?.positive_reviews_count || 0" :total-rating="user?.score || '0.0'"
-    :dislikes="user?.negative_reviews_count || 0" :is-followed="isFollowed"
-    :photos-url="photosWithUrl && photosWithUrl[0] ? (photosWithUrl as string[]) : undefined" :address="address"
-    @handle-book="onBook" :is-trusted="isTrusted" @handle-edit="onEdit" @handle-follow="handleFollow" :certificatesTitle="user?.certificates?.length ? 'Certificates' : undefined
-      " :labilitiesTitle="user?.weiver_and_labilities?.length ? 'Waiver and Labilities' : undefined
-    " :viewAllLink="EntitiesEnum.TrainerReviews" :symbols="symbols">
+  <detail
+    v-else
+    :name="fullName"
+    :likes="user?.positive_reviews_count || 0"
+    :total-rating="user?.score || '0.0'"
+    :dislikes="user?.negative_reviews_count || 0"
+    :is-followed="isFollowed"
+    :photos-url="photosWithUrl && photosWithUrl[0] ? (photosWithUrl as string[]) : undefined"
+    :address="address"
+    @handle-book="onBook"
+    :is-trusted="isTrusted"
+    @handle-edit="onEdit"
+    @handle-follow="handleFollow"
+    :certificatesTitle="
+      user?.certificates?.length ? 'Certificates' : undefined
+    "
+    :labilitiesTitle="
+      user?.weiver_and_labilities?.length ? 'Waiver and Labilities' : undefined
+    "
+    :viewAllLink="reviews?.length ? EntitiesEnum.TrainerReviews : undefined"
+    :symbols="symbols"
+  >
     <template #info>
       <div class="info">
         <div class="info__block">
@@ -24,87 +40,42 @@
         </div>
       </div>
     </template>
-    <template #reviews v-if="role !== RoleEnum.User">
-        <review-slides :reviews="reviews" heightFixed v-if="reviews?.length" />
-        <ion-text color="secondary" class="no-reviews" v-else>
-          There are no reviews yet...
-        </ion-text>
+    <template #reviews>
+      <review-slides :reviews="reviews" heightFixed v-if="reviews?.length" />
+      <ion-text color="secondary" class="no-reviews" v-else>
+        There are no reviews yet...
+      </ion-text>
     </template>
-    <template #offering v-else>
-        <div class="offerings">
-          <ion-text class="section-title">Offerings</ion-text>
-          <ion-segment mode="ios" v-model="activeSegment">
-            <ion-segment-button :value="segment.name" v-for="segment in segmentTabs">
-              <ion-icon :src="segment.icon"></ion-icon>
-            </ion-segment-button>
-          </ion-segment>
-          <div class="offer-card" v-if="activeSegment === EntitiesEnum.Facilities">
-            <div class="offer-item d-flex" :key="item.id" v-for="item in passList">
-              <div class="header-section events d-flex-col align-items-start">
-                <div class="name">{{ item.name }}</div>
-                <div class="only-address">
-                  {{ item.address }}
-                </div>
-              </div>
-              <div class="detail-section justify-content-end">
-                <ion-button @click="handleBuy">Book</ion-button>
-              </div>
-            </div>
-          </div>
-          <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
-            <div class="offer-item" :key="item.id" v-for="item in offerList">
-              <div class="header-section">
-                <div class="name">{{ item.name }}</div>
-                <div class="trainer">{{ item.trainer }}</div>
-              </div>
-              <div class="detail-section">
-                <div class="time">
-                  <ion-icon src="assets/icon/time.svg"></ion-icon>
-                  <ion-text>{{ item.time }}</ion-text>
-                  <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
-                  <ion-text>{{ item.type }}</ion-text>
-                </div>
-                <ion-button @click="handleBuy">Buy</ion-button>
-              </div>
-            </div>
-          </div>
-          <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-            <div class="offer-item" :key="item.id" v-for="item in offerEvents">
-              <div class="header-section events">
-                <div class="name">{{ item.name }}</div>
-                <div class="event-time">
-                  <ion-icon src="assets/icon/time.svg"></ion-icon>
-                  <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
-                </div>
-              </div>
-              <ion-label class="date-label">{{ item.date }}</ion-label>
-              <div class="detail-section">
-                <div class="time">
-                  <ion-icon src="assets/icon/location.svg"></ion-icon>
-                  <ion-text>{{ item.address }}</ion-text>
-                </div>
-                <ion-button>Register</ion-button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
     <template #certificates>
-      <div v-for="certificate in user?.certificates" :key="certificate.id" @click="onOpenDocumet(certificate.pathUrl)">
-        <advantage-item icon="assets/icon/advantages/certificate.svg" :title="certificate.title || ''" />
+      <div
+        v-for="certificate in user?.certificates"
+        :key="certificate.id"
+        @click="onOpenDocumet(certificate.pathUrl)"
+      >
+        <advantage-item
+          icon="assets/icon/advantages/certificate.svg"
+          :title="certificate.title || ''"
+        />
       </div>
     </template>
     <template #labilities>
-      <div v-for="lability in user?.weiver_and_labilities" :key="lability.id" id="open-pdf-modal"
-        @click="onOpenDocumet(lability.pathUrl)">
-        <advantage-item icon="assets/icon/advantages/certificate.svg" :title="lability.title || ''" />
+      <div
+        v-for="lability in user?.weiver_and_labilities"
+        :key="lability.id"
+        id="open-pdf-modal"
+        @click="onOpenDocumet(lability.pathUrl)"
+      >
+        <advantage-item
+          icon="assets/icon/advantages/certificate.svg"
+          :title="lability.title || ''"
+        />
       </div>
     </template>
   </detail>
 </template>
 
 <script setup lang="ts">
-import { IonText, IonSpinner, actionSheetController, IonButton, IonSegment, IonSegmentButton, IonLabel, IonIcon } from "@ionic/vue";
+import { IonText, IonSpinner, actionSheetController } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
 import Detail from "@/general/components/Detail.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -119,7 +90,6 @@ import {
   SettingsCodeEnum,
   TrainerTypeEnum,
   MeDocument,
-  RoleEnum,
 } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
@@ -131,12 +101,9 @@ import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 import { Browser } from "@capacitor/browser";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import { Share } from "@capacitor/share";
-import useRoles from "@/hooks/useRole";
-import { ellipse } from "ionicons/icons";
 
 const route = useRoute();
 const router = useRouter();
-const { role } = useRoles();
 
 const isFollowed = ref(false);
 const isTrusted = ref(false);
@@ -146,106 +113,6 @@ const paymentProductsStore = paymentGatewaysStore();
 const { result: reviewsResult } = useQuery(ReviewsDocument, {
   id: route.params.id,
 });
-const activeSegment = ref<EntitiesEnum>(
-  EntitiesEnum.Facilities
-);
-
-const segmentTabs = [
-  {
-    name: EntitiesEnum.Facilities,
-    icon: "assets/icon/trainers.svg",
-  },
-
-  {
-    name: EntitiesEnum.CreateDailys,
-    icon: "assets/icon/dailys.svg",
-  },
-  {
-    name: EntitiesEnum.Events,
-    icon: "assets/icon/events.svg",
-  },
-];
-const passList = [
-  {
-    id: 1,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Basic",
-  },
-  {
-    id: 2,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Standard",
-  },
-  {
-    id: 3,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Standard",
-  }
-];
-const offerList = [{
-  id: 1,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}, {
-  id: 2,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Standard",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-
-}, {
-  id: 3,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}];
-const offerEvents = [{
-  id: 1,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}, {
-  id: 2,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-
-}, {
-  id: 3,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}];
-const handleBuy = () => {
-  router.push({ name: EntitiesEnum.FacilitySubscription });
-};
 
 const reviews = computed(() =>
   reviewsResult?.value?.reviews?.data.reduce(
@@ -463,7 +330,6 @@ ion-text {
     --color: var(--white);
   }
 }
-
 .info {
   display: flex;
   justify-content: space-between;
@@ -524,199 +390,5 @@ ion-text {
   line-height: 1.5;
   border-radius: 8px;
   background: var(--gray-700);
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-
-  &__icon {
-    font-size: 24px;
-  }
-
-  &__likes,
-  &__dislikes {
-    font-family: "Yantramanav";
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  &__likes {
-    color: var(--ion-color-success-tint);
-  }
-
-  &__dislikes {
-    color: var(--ion-color-danger-tint);
-  }
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  margin-right: 8px;
-  color: var(--fitnesswhite);
-  font-family: "Yantramanav";
-}
-
-.offerings {
-  margin-top: 16px;
-  padding: 0 16px;
-
-  ion-segment {
-    margin-top: 16px;
-    --background: var(--gray-700);
-    height: 36px;
-
-    ion-segment-button {
-      --indicator-color: var(--gold);
-      --color: var(--gray-500);
-      --color-checked: var(--gray-800);
-      margin: 0;
-    }
-  }
-}
-
-.offer-card {
-  margin-top: 16px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--gray-700);
-  max-height: 212px;
-  overflow: auto;
-
-  .offer-item {
-    padding: 6px 10px;
-    border-radius: 8px;
-    background: var(--gray-800);
-    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.25);
-    width: 100%;
-    margin-bottom: 8px;
-
-    .header-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      margin-bottom: 10px;
-
-      &.events {
-        margin-bottom: 0;
-      }
-
-      .name {
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 150%;
-        color: var(--fitnesswhite);
-      }
-
-      .trainer {
-        color: var(--gray-400);
-        font-size: 14px;
-        font-weight: 500;
-      }
-    }
-
-    .only-address {
-      font-family: "Yantramanav";
-      font-size: 14px;
-      font-weight: 300;
-    }
-
-    .price {
-      color: var(--gray-400);
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .date-label {
-      font-size: 14px;
-      color: var(--grey-text);
-      display: block;
-      line-height: 21px;
-      margin: 0;
-    }
-
-    .detail-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-
-      .time {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 4px;
-
-        ion-icon {
-          font-size: 24px;
-          color: var(--gold);
-        }
-
-        ion-text {
-          font-family: "Yantramanav";
-          font-size: 14px;
-          font-weight: 300;
-          color: var(--gray-400);
-          line-height: 21px;
-        }
-
-        .dot-icon {
-          font-size: 5px;
-        }
-      }
-
-      .total {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        color: var(--ion-color-white);
-        gap: 4px;
-
-        ion-text {
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 150%;
-        }
-
-        ion-icon {
-          font-size: 24px;
-        }
-      }
-
-      ion-button {
-        height: 30px;
-        --border-radius: 4px;
-        color: var(--gray-700);
-        font-size: 14px;
-        font-weight: 600;
-        min-width: 117px;
-      }
-    }
-  }
-}
-
-.event-time {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  ion-icon {
-    color: var(--gold);
-    font-size: 24px;
-  }
-
-  .fs-14 {
-    font-size: 14px;
-    font-weight: 500;
-  }
-}
-.align-items-start {
-  align-items: flex-start !important;
-}
-.justify-content-end {
-  justify-content: end !important;
 }
 </style>

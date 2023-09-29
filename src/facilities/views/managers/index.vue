@@ -83,7 +83,6 @@ import {
   IonLabel,
   IonSegment,
   IonSegmentButton,
-  IonSpinner
 } from "@ionic/vue";
 import {
   Query,

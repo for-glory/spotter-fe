@@ -82,8 +82,7 @@ import {
   IonLabel,
   IonSegment,
   IonSegmentButton,
-  IonModal,
-  IonSpinner
+  IonModal
 } from "@ionic/vue";
 import {
   PaymentGatewayRefundDocument,

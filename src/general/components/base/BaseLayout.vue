@@ -118,8 +118,7 @@ import {
   IonContent,
   IonFooter,
   IonBackdrop,
-  isPlatform,
-  IonSpinner
+  isPlatform
 } from "@ionic/vue";
 import {
   Query,

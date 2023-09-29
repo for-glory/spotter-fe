@@ -156,8 +156,7 @@ import {
 	IonCol,
   IonSelect,
   IonSelectOption,
-  toastController,
-  IonSpinner
+  toastController
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";

@@ -10,39 +10,69 @@
       icon="assets/icon/arrow-back.svg"
     >
     </ion-back-button>
-    <div class="position-relative">
-      <ion-searchbar ref="searchBar" @ion-change="search" @ion-focus="focusHandle" show-clear-button="never"
-        class="search-form__control" search-icon="assets/icon/search.svg" :placeholder="placeholder" :class="{
-          'search-form__control--on-focus': isFocused,
-          'search-form__control--with-back-btn': backBtn,
-          'search-form__control--with-cancel-btn': !hiddenCancel,
-          'tr-search': role === RoleEnum.Trainer,
-        }">
-      </ion-searchbar>
-      <ion-button fill="clear" color="primary" v-if="filtersBtn" @click="showFilters" class="search-form__filters">
-        <ion-icon slot="icon-only" icon="assets/icon/sort.svg" />
-      </ion-button>
-    </div>
+    <ion-searchbar
+      ref="searchBar"
+      @ion-change="search"
+      @ion-focus="focusHandle"
+      show-clear-button="never"
+      class="search-form__control"
+      search-icon="assets/icon/search.svg"
+      :placeholder="placeholder"
+      :class="{
+        'search-form__control--on-focus': isFocused,
+        'search-form__control--with-back-btn': backBtn,
+        'search-form__control--with-cancel-btn': !hiddenCancel,
+        'tr-search': role === RoleEnum.Trainer,
+      }"
+    >
+    </ion-searchbar>
 
-    <ion-button v-if="!hiddenCancel" fill="clear" color="medium" @click="clearForm" :disabled="!isFocused"
-      class="search-form__clear-btn" :class="{
+    <ion-button
+      fill="clear"
+      color="primary"
+      v-if="filtersBtn"
+      @click="showFilters"
+      class="search-form__filters"
+    >
+      <ion-icon slot="icon-only" icon="assets/icon/sort.svg" />
+    </ion-button>
+
+    <ion-button
+      v-if="!hiddenCancel"
+      fill="clear"
+      color="medium"
+      @click="clearForm"
+      :disabled="!isFocused"
+      class="search-form__clear-btn"
+      :class="{
         'search-form__clear-btn--hidden': !isFocused,
-      }">
+      }"
+    >
       Cancel
     </ion-button>
 
-    <ion-content v-if="!hideResults" :class="{
-      'search-form__results--with-back-btn': backBtn,
-    }" class="search-form__results ion-padding-horizontal">
-      <ion-spinner v-if="facilityLoading || trainerLoading" name="lines" class="spinner" />
-      <div v-else-if="!facilityLoading && searchResults?.length" v-for="searchResult in searchResults"
-        :key="searchResult.id" @click="handleClick(searchResult)">
-        <facility-item class="mb-10"
-          v-if="!Capacitor?.isNativePlatform() && role === RoleEnum.User && type !== EntitiesEnum.Trainers"
-          :facility="(searchResult as any)" />
-        <search-result v-else-if="type == EntitiesEnum.Facilities" :item="searchResult" :showRating="!isFacilityTab" />
-        <trainer-item class="ion-margin-bottom" v-else :key="searchResult.id" :trainer="(searchResult as User)"
-          end-button="Book" />
+    <ion-content
+      v-if="!hideResults"
+      :class="{
+        'search-form__results--with-back-btn': backBtn,
+      }"
+      class="search-form__results ion-padding-horizontal"
+    >
+      <ion-spinner
+        v-if="facilityLoading || trainerLoading"
+        name="lines"
+        class="spinner"
+      />
+      <div
+        v-else-if="!facilityLoading && searchResults?.length"
+        v-for="searchResult in searchResults"
+        :key="searchResult.id"
+        @click="handleClick(searchResult)"
+      >
+      <facility-item class="mb-10" v-if="!Capacitor?.isNativePlatform() && role === RoleEnum.User"
+      :facility="searchResult"
+      />
+      <search-result v-else :item="searchResult" :showRating="!isFacilityTab" />
       </div>
       <ion-label class="no-found-msg label" v-else>{{ noFoundMsg }}</ion-label>
     </ion-content>
@@ -59,33 +89,51 @@
     <span class="filters-modal__handle"></span>
     <div :class="['filters-modal__content', { 'user-filter-modal': role === RoleEnum.User }]">
       <div class="form-row">
-        <ion-label>{{ role === RoleEnum.User ? "Date" : "Start date" }}</ion-label>
-        <choose-block title="Date from" class="form-row__control" :value="filterStartDate ? dayjs(filterStartDate).format('D MMMM') : ''
-          " @handle-click="
-    showDatePikerModal(DateFieldsEnum.StartDate, filterStartDate, {
-      title: 'Start date',
-    })
-    " />
+        <ion-label>{{ role === RoleEnum.User ? "Date" : "Start date"}}</ion-label>
+        <choose-block
+          title="Date from"
+          class="form-row__control"
+          :value="
+            filterStartDate ? dayjs(filterStartDate).format('D MMMM') : ''
+          "
+          @handle-click="
+            showDatePikerModal(DateFieldsEnum.StartDate, filterStartDate, {
+              title: 'Start date',
+            })
+          "
+        />
         <wheel-picker :options="startTimeOptions" name="startTime">
           <template #button>
-            <choose-block title="Time from" :value="filterStartTime" class="form-row__control"
-              @handle-click="openPicker('startTime')" />
+            <choose-block
+              title="Time from"
+              :value="filterStartTime"
+              class="form-row__control"
+              @handle-click="openPicker('startTime')"
+            />
           </template>
         </wheel-picker>
       </div>
       <div class="form-row">
         <ion-label>End date</ion-label>
-        <choose-block title="Date to" class="form-row__control"
-          :value="filterEndDate ? dayjs(filterEndDate).format('D MMMM') : ''" @handle-click="
+        <choose-block
+          title="Date to"
+          class="form-row__control"
+          :value="filterEndDate ? dayjs(filterEndDate).format('D MMMM') : ''"
+          @handle-click="
             showDatePikerModal(DateFieldsEnum.EndDate, filterEndDate, {
               min: filterStartDate ?? undefined,
               title: 'End date',
             })
-            " />
+          "
+        />
         <wheel-picker :options="endTimeOptions" name="endTime">
           <template #button>
-            <choose-block title="Time to" :value="filterEndTime" class="form-row__control"
-              @handle-click="openPicker('endTime')" />
+            <choose-block
+              title="Time to"
+              :value="filterEndTime"
+              class="form-row__control"
+              @handle-click="openPicker('endTime')"
+            />
           </template>
         </wheel-picker>
       </div>
@@ -93,7 +141,11 @@
         <ion-button @click="resetFilters" expand="block" class="secondary">
           Reset
         </ion-button>
-        <ion-button expand="block" @click="applyFilters" :disabled="!filterStartDate && !filterEndDate">
+        <ion-button
+          expand="block"
+          @click="applyFilters"
+          :disabled="!filterStartDate && !filterEndDate"
+        >
           Show results
         </ion-button>
       </div>
@@ -133,13 +185,12 @@ import {
   IonModal,
   toastController,
   IonContent,
-  PickerColumnOption,
+  PickerColumnOption
 } from "@ionic/vue";
 import {
   FacilitiesDocument,
   FacilitiesQuery,
   RoleEnum,
-  User,
   UsersDocument,
   UsersQuery,
 } from "@/generated/graphql";
@@ -153,7 +204,6 @@ import dayjs from "dayjs";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
 import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import TrainerItem from "@/general/components/TrainerItem.vue";
 import {
   DatePickerModalResult,
   DatePickerOptions,
@@ -167,7 +217,7 @@ import { useUserStore } from "@/general/stores/user";
 import FacilityItem from "../FacilityItem.vue";
 import { Capacitor } from "@capacitor/core";
 
-const { role } = useRoles();
+const { role }= useRoles()
 
 const props = withDefaults(
   defineProps<{
@@ -181,8 +231,8 @@ const props = withDefaults(
     filters?: any;
     noFoundMsg?: string;
     filtersBtn?: boolean;
-    extraPadding?: boolean;
-    noPadding?: boolean;
+    extraPadding?:boolean
+    noPadding?:boolean;
   }>(),
   {
     backBtn: false,
@@ -194,7 +244,7 @@ const props = withDefaults(
     customNavigation: false,
     filters: {},
     noFoundMsg: "No results found...",
-    noPadding: false
+    noPadding:false
   }
 );
 
@@ -240,25 +290,22 @@ const searchResults = computed(() =>
   isFacilityTab.value
     ? (facilityResult.value?.facilities?.data as FacilitySearchResult[])
     : trainerResult.value?.users?.data.reduce(
-      (acc: FacilitySearchResult[], cur) => {
-        acc.push({
-          id: cur.id,
-          name: `${cur.first_name} ${cur.last_name}`,
-          first_name: cur.first_name,
-          last_name: cur.last_name,
-          address: {
-            street: cur.facilities?.length
-              ? cur.facilities[0]?.address?.street
-              : "",
-          },
-          media: [{ pathUrl: cur.avatarUrl || "" }],
-          avatarUrl: cur.avatarUrl,
-          score: (cur?.score && cur?.score > 0) ? cur?.score : 0.0,
-        });
-        return acc;
-      },
-      []
-    )
+        (acc: FacilitySearchResult[], cur) => {
+          acc.push({
+            id: cur.id,
+            name: `${cur.first_name} ${cur.last_name}`,
+            address: {
+              street: cur.facilities?.length
+                ? cur.facilities[0]?.address?.street
+                : "",
+            },
+            media: [{ pathUrl: cur.avatarUrl || "" }],
+            score: cur.score || "0.0",
+          });
+          return acc;
+        },
+        []
+      )
 );
 
 const search = debounce((event?: SearchbarCustomEvent) => {
@@ -270,11 +317,11 @@ const search = debounce((event?: SearchbarCustomEvent) => {
   props.type === EntitiesEnum.Facilities
     ? facilityRefetch(params.value)
     : trainerRefetch({
-      first: 100,
-      search: searchQuery.value?.length > 2 ? searchQuery.value : undefined,
-      role: RoleEnum.Trainer,
-      ...props.filters,
-    });
+        first: 100,
+        search: searchQuery.value?.length > 2 ? searchQuery.value : undefined,
+        role: RoleEnum.Trainer,
+        ...props.filters,
+      });
 }, 1000);
 
 watch(
@@ -283,11 +330,11 @@ watch(
     props.type === EntitiesEnum.Facilities
       ? facilityRefetch(params.value)
       : trainerRefetch({
-        first: 100,
-        search: searchQuery.value?.length > 2 ? searchQuery.value : undefined,
-        role: RoleEnum.Trainer,
-        ...props.filters,
-      });
+          first: 100,
+          search: searchQuery.value?.length > 2 ? searchQuery.value : undefined,
+          role: RoleEnum.Trainer,
+          ...props.filters,
+        });
   }
 );
 
@@ -370,7 +417,7 @@ const resetFilters = () => {
     filterEndDate.value =
     filterStartTime.value =
     filterEndTime.value =
-    null;
+      null;
   emits("reset-filters");
   filtersModal.value?.$el.dismiss();
 };
@@ -504,7 +551,6 @@ defineExpose({
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
 }
-
 .search-form {
   display: flex;
   position: relative;
@@ -600,8 +646,7 @@ defineExpose({
 
   &__filters {
     margin: 0;
-    right: 16px;
-    bottom: 8px;
+    right: 36px;
     width: 32px;
     z-index: 50;
     height: 32px;
@@ -614,9 +659,9 @@ defineExpose({
     --padding-top: 0;
     --padding-bottom: 0;
 
-    // .search-form--on-focus & {
-    //   right: 90px;
-    // }
+    .search-form--on-focus & {
+      right: 90px;
+    }
 
     ion-icon {
       font-size: 1em;
@@ -686,7 +731,6 @@ defineExpose({
     }
   }
 }
-
 .tr-search {
   font-family: Yantramanav;
   font-size: 14px;
@@ -697,7 +741,6 @@ defineExpose({
 
 .search-form-user {
   padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
-
   ion-searchbar {
     font-family: "Yantramanav";
     --color: var(--fitnesswhite);
@@ -706,7 +749,6 @@ defineExpose({
     border: 0.8px solid var(--gray-500);
     border-radius: 8px;
   }
-
   .search-form__clear-btn {
     font-family: "Yantramanav";
     font-size: 16px;
@@ -725,19 +767,13 @@ defineExpose({
     }
   }
 }
-
 .mb-10 {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
-
 .small-search {
   justify-content: center;
-  .position-relative {
+  ion-searchbar{
     max-width: 500px;
   }
-}
-.position-relative {
-  position: relative;
-  width: 100%;
 }
 </style>

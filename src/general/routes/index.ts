@@ -677,30 +677,6 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        name: EntitiesEnum.Trainers,
-        path: "trainers/:type?",
-        component: () => import("@/users/views/dashboard-trainers/Index.vue"),
-        meta: {
-          middleware: [auth],
-        },
-      },
-      {
-        name: EntitiesEnum.TrainerPreview,
-        path: "trainers/:id(\\d+)",
-        component: () => import("@/users/views/dashboard-trainers/TrainerPreview.vue"),
-        meta: {
-          middleware: [auth],
-        },
-      },
-      {
-        name: EntitiesEnum.TrainerBooking,
-        path: "trainers/:id(\\d+)/booking",
-        component: () => import("@/users/views/dashboard-trainers/TrainerBooking.vue"),
-        meta: {
-          middleware: [auth],
-        },
-      },
-      {
         name: EntitiesEnum.GymDetails,
         path: "gym-preview/:id",
         component: () => import("@/users/views/gyms/GymPreview.vue"),

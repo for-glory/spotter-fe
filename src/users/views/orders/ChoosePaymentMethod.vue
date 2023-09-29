@@ -154,7 +154,7 @@ onMounted(() => {
       checkIfGpayAvailable();
       checkIfApplepayAvailable();
     });
-  // addPaypal();
+  addPaypal();
 
   interval.value = setInterval(() => {
     refetch();
