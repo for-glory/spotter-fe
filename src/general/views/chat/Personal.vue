@@ -4,13 +4,13 @@
       <room-header
         back-btn
         :is-online="isOnline(data.chats?.participantId)"
-        :title="data.chats?.roomName || ''"
+        :title="data.chats?.roomName || 'Tamra Dae'"
         :avatar-src="data.chats?.avatar || ''"
         @back="onBack"
       />
     </template>
     <template #content>
-      <div ref="messagesContainer" class="messages__container">
+      <div ref="messagesContainer" :class="['messages__container', { 'user-msg-container': role === RoleEnum.User }]">
         <div>
           <template v-for="(message, idx) in data.messages" :key="message.id">
             <message
@@ -376,6 +376,13 @@ const onBack = () => {
     height: 100%;
     z-index: -1;
     background: url("../../../../public/assets/icon/chat-circles.png") 50% 50% /
+      cover repeat;
+  }
+}
+
+.user-msg-container {
+  &:after {
+    background: url("../../../../public/assets/chat-background.svg") 95% 50% /
       cover repeat;
   }
 }

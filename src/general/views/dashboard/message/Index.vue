@@ -7,13 +7,13 @@
                 <div
                   :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
                   @click="handleTab(RoomType.Chat)">
-                  Chats
+                  {{ role === RoleEnum.User ? "Approved" : "Chats" }}
                 </div>
                 <div
                   :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'"
                   @click="handleTab(RoomType.Request)"
                 >
-                Requests
+                {{ role === RoleEnum.User ? "Pending" : "Requests" }}
                 </div>
               </div>
               <template v-if="activeTab === RoomType.Chat">
@@ -27,7 +27,7 @@
                     <list-empty
                       v-if="!data.chats.length"
                       :title="currenTab"
-                      :chats="false"
+                      :chats="true"
                     />
                     <template v-else>
                       <transition-group name="list" tag="ion-item-sliding">
@@ -64,7 +64,7 @@
                     <list-empty
                       v-if="!data.chats.length"
                       :title="currenTab"
-                      :chats="false"
+                      :chats="true"
                     />
                     <template v-else>
                       <transition-group name="list" tag="ion-item-sliding">
@@ -94,13 +94,11 @@
       </div>
       <div class="flex-2">
         <div class="box" v-if="selectedRoom.id">
-              <div class="header">
-                <img class="chatImage" :src="selectedRoom.avatar" />
-                <span class="username">{{ selectedRoom.roomName }}</span>
-                <img class="ellipse" src="assets/Ellipse.svg" v-if="selectedRoom.participantId ? isOnline(selectedRoom.participantId) : false" />
-              </div>
+              <ChatHeader :avatar="selectedRoom.avatar"
+                          :room-name="selectedRoom.roomName"
+                          :is-online="selectedRoom.participantId ? isOnline(selectedRoom.participantId) : false" />
               <!-- <div class="chat"> -->
-                <personal class="chat" :id="roomId"/>
+                <personal class="chat" :room-type="selectedRoom?.type" :id="roomId"/>
                 <!-- <chat-message
                   content="your what do youe ant is nice!"
                   avatar="assets/backgrounds/avatar1.png"
@@ -152,12 +150,16 @@
                 </div>
               </div> -->
             </div>
-            <div v-else class="d-flex align-items-center justify-content-center h-100">
+            <div v-else-if="role !== RoleEnum.User" class="d-flex align-items-center justify-content-center h-100">
               <div class="d-flex-col align-items-center m-auto">
                 <ion-icon src="assets/icon/dashboard/email.svg" class="form-row fs-48"></ion-icon>
                 <ion-label class="label fs-24 font-medium">Message Empty</ion-label>
                 <ion-text class="label fs-16 font-light">You have no active message</ion-text>
               </div>
+            </div>
+            <div class="box" v-else> 
+              <ChatHeader />
+              <personal class="chat" :show-messages="false" :room-type="selectedRoom?.type" :id="roomId" />
             </div>
       </div>
     </div>
@@ -183,6 +185,7 @@ import { onValue } from "firebase/database";
 import useId from "@/hooks/useId";
 import { mapChats, mapRequests } from "@/helpers/chats/chatroom";
 import { useMutation } from "@vue/apollo-composable";
+import ChatHeader from "@/general/components/dashboard/chat/ChatHeader.vue";
 
 const { id } = useId();
 
@@ -301,7 +304,11 @@ const isOnline = (id: number) => {
 };
 
 const onOpen = (event: any, room: any) => {
+  console.log('call open=====');
+  
   selectedRoom.value = room;
+  console.log(selectedRoom.value);
+  
 };
 
 const onDelete = (e: any, roomId: string) => {
@@ -418,24 +425,7 @@ onMounted(() => {
   justify-content: space-between;
   height: 100%;
 }
-.chatImage {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-.username {
-  font-family: Lato;
-  color: var(--fitnesswhite);
-  font-size: 15px;
-}
-.header {
-  padding: 20px;
-  border-bottom: 1px solid var(--gray-60);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
+
 .message {
   height: calc(100vh - 120px);
   ion-grid {
@@ -516,12 +506,6 @@ onMounted(() => {
     font-size: 10px;
     font-style: italic;
   }
-}
-.ellipse {
-  // color: #2ED47A;
-  width: 6px;
-  height: 6px;
-  margin-left: 30px;
 }
 .spinner {
   display: block;

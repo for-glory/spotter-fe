@@ -14,7 +14,7 @@
     </template>
     <template #content>
       <ion-spinner v-if="loading" class="spinner" />
-      <div class="radiobutton__group" v-else>
+      <div :class="['radiobutton__group',  { 'user-choose-place': role === RoleEnum.User }]" v-else>
         <ion-radio-group v-model="chosenPlace">
           <div
             class="radiobutton__container"
@@ -46,7 +46,7 @@
             </ion-item>
             <choose
               title="Choose gym location"
-              :value="store.facility?.name"
+              :value="role === RoleEnum.User ? selectedGym?.name : store.facility?.name"
               @handle-click="onChooseGym"
               class="choose-gym"
             />
@@ -93,9 +93,12 @@ import {
   UserDocument,
   TrainerTypeEnum,
   SettingsCodeEnum,
+RoleEnum,
 } from "@/generated/graphql";
 import { computed } from "@vue/reactivity";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import useRoles from "@/hooks/useRole";
+import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 
 const DescriptionOfPlaces = {
   trainerGym: "Training in trainer’s gym",
@@ -105,7 +108,11 @@ const DescriptionOfPlaces = {
 
 const router = useRouter();
 const route = useRoute();
+const { role } = useRoles();
 const store = paymentGatewaysStore();
+const selectedAddress = useSelectedAddressStore()
+const selectedGym = computed(() => selectedAddress?.assignedFacility);
+
 const chosenPlace = ref(store.place?.value);
 
 const { result, loading } = useQuery<Pick<Query, "user">>(UserDocument, {
@@ -176,6 +183,9 @@ watch(
 );
 
 const onChooseGym = () => {
+  if (role === RoleEnum.User) {
+    return router.push({ name: EntitiesEnum.ChooseGymAccount });
+  }
   router.push({ name: EntitiesEnum.ChooseGym });
 };
 
@@ -239,5 +249,11 @@ const onBack = () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.user-choose-place {
+  .radiobutton__label, .radiobutton {
+    font-family: Yantramanav;
+  }
 }
 </style>

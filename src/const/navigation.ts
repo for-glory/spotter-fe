@@ -8,7 +8,7 @@ export const navigationMenu: NavigationMenu = {
     {
       name: EntitiesEnum.Dashboard,
       label: "Dashboard",
-      icon: "assets/icon/dashboard.svg",
+      icon: "assets/icon/overview.svg",
       category: "/dashboard",
     },
     {
@@ -19,10 +19,12 @@ export const navigationMenu: NavigationMenu = {
       category: "/users/dailys",
     },
     {
-      name: EntitiesEnum.Profile,
+      name: EntitiesEnum.Facilities,
       label: "Trainers",
       icon: "assets/icon/trainers.svg",
-      category: "/profile",
+      category: "/facilities",
+      queryParam: EntitiesEnum.Trainers,
+      queryKey: "type",
     },
     {
       // name: EntitiesEnum.Facilities,
@@ -43,6 +45,8 @@ export const navigationMenu: NavigationMenu = {
       id: "workout",
       icon: "assets/icon/booking.svg",
       category: "/facilities",
+      queryParam: EntitiesEnum.Facilities,
+      queryKey: "type"
     },
   ],
   TRAINER: [

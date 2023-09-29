@@ -13,13 +13,13 @@
 
       <ion-title class="modal__title">Terms of use</ion-title>
       <div class="modal__content">
-        <p class="modal__text warning">
+        <p :class="['modal__text', 'warning', { 'native-app': role === RoleEnum.User}]">
           <ion-text class="modal__text warning" color="success">
             Please review our terms. In case you decline them - the training
             will be skipped
           </ion-text>
         </p>
-        <ion-text color="secondary" class="modal__text">
+        <ion-text color="secondary" :class="['modal__text',  {'native-app': role === RoleEnum.User}]">
           What we expect from you, which establishes certain rules for using our
           services Content in Google services, which describes the intellectual
           property rights to the content you find in our services — whether that
@@ -36,10 +36,10 @@
         </ion-text>
       </div>
       <div class="modal__footer">
-        <ion-button @click="handleDecline" class="modal__button secondary">
+        <ion-button @click="handleDecline" :class="['modal__button', 'secondary', {'native-app': role === RoleEnum.User}]">
           Decline
         </ion-button>
-        <ion-button @click="handleAgree" class="modal__button">
+        <ion-button @click="handleAgree" :class="['modal__button', { 'user-confirm-btn': role === RoleEnum.User }]">
           Agree
         </ion-button>
       </div>
@@ -50,7 +50,8 @@
 <script setup lang="ts">
 import { IonModal, IonTitle, IonText, IonButton, IonIcon } from "@ionic/vue";
 import { defineProps, defineEmits, ref } from "vue";
-
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql"
 const props = defineProps<{
   isConfirmed: boolean;
 }>();
@@ -62,6 +63,7 @@ const emits = defineEmits<{
   (e: "agree", isConfirmed: boolean): void;
 }>();
 
+const { role } = useRoles()
 const handleDecline = () => {
   isOpen.value = false;
   emits("decline", props.isConfirmed);
@@ -147,5 +149,12 @@ ion-modal::part(backdrop) {
   --min-height: 16px;
   --min-width: 16px;
   z-index: 5;
+}
+
+.user-confirm-btn {
+  color: var(--gray-700);
+  font-family: Yantramanav;
+  font-size: 16px;
+  font-weight: 500;
 }
 </style>

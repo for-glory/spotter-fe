@@ -1,10 +1,15 @@
 <template>
   <ion-modal ref="modal" class="modal" swipeToClose cssClass="auto-height">
-    <div class="modal__content">
+    <div :class="['modal__content', { 'user-modal-content': role === RoleEnum.User }]">
       <span class="modal__closed"></span>
-      <ion-label class="modal__title">
+      <ion-label class="modal__title" v-if="role !== RoleEnum.User">
         {{ props?.options?.title || "Start date" }}
       </ion-label>
+      <IonButtons v-else>
+        <ion-button fill="clear" class="back-btn">
+          <IonIcon src="assets/icon/arrow-back.svg"></IonIcon>
+        </ion-button>
+      </IonButtons>
       <base-calendar
         :selected="selectedDate"
         @change-day="dayChanged"
@@ -20,16 +25,18 @@
 </template>
 
 <script lang="ts" setup>
-import { IonButton, IonLabel, IonModal } from "@ionic/vue";
+import { IonButton, IonButtons, IonIcon, IonLabel, IonModal } from "@ionic/vue";
 import BaseCalendar from "@/general/components/base/BaseCalendar.vue";
 import { defineExpose, defineEmits, ref } from "vue";
 import {
   DatePickerModalResult,
   DatePickerModalOptions,
 } from "@/interfaces/DatePickerModal";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
 const modal = ref<typeof IonModal | null>(null);
-
+const { role } = useRoles()
 const emits = defineEmits<{
   (e: "cancel"): void;
   (e: "select", selected?: DatePickerModalResult): void;
@@ -105,6 +112,24 @@ const resetAndClose = () => {
 
   .choose-btn {
     margin: 0 8px;
+  }
+  .back-btn {
+    height: 36px;
+    width: 36px;
+    --border-radius: 50%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+}
+
+.user-modal-content {
+  .choose-btn {
+    color: var(--gray-700);
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-weight: 500;
   }
 }
 </style>

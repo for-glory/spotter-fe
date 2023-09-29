@@ -46,7 +46,6 @@ const segmentChanged = (event: SegmentCustomEvent) => {
 const getTabImage = (tabName: EntitiesEnum) => {
   const tab = props.tabs?.find((t) => t.name == tabName);
   // alert(tab);
-  console.log(tab)
   return tab ? (tab.name == props.value ? tab.labelActive : tab.labelInactive) : "";
 };
 </script>
