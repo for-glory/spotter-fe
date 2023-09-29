@@ -4,8 +4,11 @@
 		ref="eventForm"
 		:data="eventData"
 		@submit="updateEvent"
+    @onSkip="handleCancel"
 		submit-button-text="Update"
 		:loading="eventOnUpdating || eventLoading"
+    skip-button
+    skip-button-text="Discard"
 	/>
   <discard-changes
     :is-open="isConfirmedModalOpen"
@@ -26,6 +29,7 @@ import {
 } from "@/generated/graphql";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
+import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
 const route = useRoute();
@@ -90,6 +94,10 @@ const updateEvent = (input: UpdateEventInput) => {
 
 const eventForm = ref<typeof EventForm | null>(null);
 
+const handleCancel = () => {
+  eventForm.value?.clearStore();
+  router.push({ name: EntitiesEnum.DashboardEvent });
+};
 eventUpdated(() => {
   showSuccessToast();
   eventForm.value?.clearStore();

@@ -23,9 +23,9 @@
 
     <template #footer>
       <ion-button
-        @click="confirmOrder"
-        class="submit-btn"
+        :class="['submit-btn', { 'user-submit-btn': role === RoleEnum.User }]"
         :disabled="disabledBtn"
+        @click="$router.push({ name: EntitiesEnum.ConfirmOrder })"
       >
         Next</ion-button
       >
@@ -44,6 +44,7 @@ import { useQuery } from "@vue/apollo-composable";
 import {
   PurchasableProductsEnum,
   Query,
+  RoleEnum,
   UserAvailabilityDocument,
   UserAvailabilityQuery,
 } from "@/generated/graphql";
@@ -53,6 +54,7 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
+import useRoles from "@/hooks/useRole";
 
 dayjs.extend(utc);
 
@@ -61,6 +63,7 @@ const route = useRoute();
 const selectedDay = ref(dayjs.utc());
 const selectedTime = ref<Dayjs | null>(null);
 const paymentStore = paymentGatewaysStore();
+const { role } = useRoles();
 
 const { result, loading } = useQuery<Pick<Query, "user">>(GetTrainerDocument, {
   id: route.params.id,
@@ -225,5 +228,12 @@ const confirmOrder = async () => {
 
 .submit-btn {
   width: 100%;
+}
+
+.user-submit-btn {
+  color: var(--gray-700);
+  font-family: Yantramanav;
+  font-size: 16px;
+  font-weight: 500;
 }
 </style>

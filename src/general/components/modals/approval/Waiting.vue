@@ -1,17 +1,21 @@
 <template>
   <ion-modal ref="modal" :is-open="isOpen" :backdrop-dismiss="false">
-    <div class="wrapper">
+    <div :class="['wrapper', { 'user-wrapper': role === RoleEnum.User }]">
       <ion-icon
         src="assets/icon/close.svg"
         @click="closeModal"
         class="close-btn"
       ></ion-icon>
       <ion-img class="modal__img" src="assets/unsplash.png" />
+      <div class="waiting-info" v-if="role === RoleEnum.User">
+        <ion-icon src="assets/icon/info.svg" />
+        <div>Waiting time up to 6 hours...</div>
+      </div>
       <div class="ion-padding-horizontal">
-        <ion-title class="modal__title"> Waiting for approving... </ion-title>
+        <ion-title class="modal__title">{{ role === RoleEnum.User ? "Pending approval" : "Waiting for approving..."}} </ion-title>
         <div class="modal__content">
           <ion-text color="secondary" class="modal__text">
-            Your training is waiting for being approved by trainer
+            {{ role !== RoleEnum.User ? "Your training is waiting for being approved by trainer" : "Please be patient while we wait for your trainer's approval"}}
           </ion-text>
         </div>
         <div class="modal__footer">
@@ -25,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import useRoles from "@/hooks/useRole";
 import {
   IonModal,
   IonTitle,
@@ -34,6 +39,7 @@ import {
   IonImg,
 } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
+import { RoleEnum } from "@/generated/graphql"
 
 withDefaults(
   defineProps<{
@@ -43,6 +49,8 @@ withDefaults(
     isOpen: false,
   }
 );
+
+const { role } = useRoles()
 
 const emits = defineEmits<{
   (e: "close"): void;
@@ -134,5 +142,50 @@ ion-modal::part(backdrop) {
   --min-height: 16px;
   --min-width: 16px;
   z-index: 5;
+}
+
+.user-wrapper {
+  .modal__text, .modal__button {
+    font-family: Yantramanav;
+  }
+
+  .modal__img {
+    opacity: .4;
+  }
+}
+
+.waiting-info {
+  display: flex;
+  height: 30px;
+  gap: 8px;
+  align-items: center;
+  position: absolute;
+  top: 116px;
+  left: 16px;
+  width: 90%;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.44);
+
+  &::before {
+    position: absolute;
+    background: var(--gold);
+    height: 2px;
+    content: '';
+    width: 127px;
+    bottom: -2px;
+    left: 0;
+  }
+  ion-icon {
+    font-size: 24px;
+    color: var(--fitnesswhite);
+  }
+
+  div {
+    color: var(--fitnesswhite);
+    text-align: center;
+    text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.24);
+    font-family: Yantramanav;
+    font-size: 14px;
+    font-weight: 400;
+  }
 }
 </style>

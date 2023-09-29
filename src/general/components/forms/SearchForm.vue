@@ -87,9 +87,9 @@
     @willDismiss="isFiltersOpen = false"
   >
     <span class="filters-modal__handle"></span>
-    <div class="filters-modal__content">
+    <div :class="['filters-modal__content', { 'user-filter-modal': role === RoleEnum.User }]">
       <div class="form-row">
-        <ion-label>Start date</ion-label>
+        <ion-label>{{ role === RoleEnum.User ? "Date" : "Start date"}}</ion-label>
         <choose-block
           title="Date from"
           class="form-row__control"
@@ -754,6 +754,17 @@ defineExpose({
     font-size: 16px;
     font-weight: 500;
     --color: var(--gray-500);
+  }
+}
+
+.user-filter-modal {
+  .form-row {
+    ion-label {
+      color: var(--fitnesswhite);
+      font-family: Yantramanav;
+      font-size: 16px;
+      font-weight: 500;
+    }
   }
 }
 .mb-10 {

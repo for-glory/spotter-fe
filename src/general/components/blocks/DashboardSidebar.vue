@@ -161,22 +161,22 @@
       </div>
       <div class="main-menu" v-if="role === RoleEnum.User">
         <div
-          :class="getMenuItemClass(EntitiesEnum.ProfileBookingHistory)"
-          @click="onHandleClickMenu(EntitiesEnum.ProfileBookingHistory)"
+          :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.DashboardBookingsHistory : EntitiesEnum.ProfileBookingHistory)"
+          @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.DashboardBookingsHistory : EntitiesEnum.ProfileBookingHistory)"
         >
           <ion-icon src="assets/icon/add-user.svg" />
           <ion-text>Booking History</ion-text>
         </div>
         <div
-          :class="getMenuItemClass(EntitiesEnum.PaymentsMethods)"
-          @click="onHandleClickMenu(EntitiesEnum.DashboardGettingPaid)"
+          :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.GymPaymentMethod : EntitiesEnum.PaymentsMethods)"
+          @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.GymPaymentMethod : EntitiesEnum.DashboardGettingPaid)"
         >
           <ion-icon src="assets/icon/Card.svg" />
           <ion-text>Payment Method</ion-text>
         </div>
         <div
-          :class="getMenuItemClass(EntitiesEnum.DashboardCalendar)"
-          @click="onHandleClickMenu(EntitiesEnum.DashboardCalendar)"
+          :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.UserDashboardCalendar : EntitiesEnum.DashboardCalendar)"
+          @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.UserDashboardCalendar : EntitiesEnum.DashboardCalendar)"
         >
           <ion-icon src="assets/icon/calendar.svg" />
           <ion-text>Calender</ion-text>
@@ -315,6 +315,7 @@ import { useProfileStore } from "../../stores/profile";
 import { setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
+import useId from "@/hooks/useId";
 
 const props = withDefaults(
   defineProps<{
@@ -332,6 +333,7 @@ const router = useRouter();
 const activeFacilityId = ref<string | null>(props.facilities[0]?.id);
 const isOpenFacilityDropdown = ref<boolean>(false);
 const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
+const { id } = useId();
 
 if (!facilityStore.facility?.id && props.facilities.length) {
   facilityStore.setFacility(props.facilities[0]);
@@ -412,7 +414,14 @@ const address = computed(() => {
 });
 
 const onHandleClickMenu = (pathName: string) => {
-  console.log(pathName);
+  if(role === RoleEnum.User && pathName === EntitiesEnum.GymPaymentMethod) {
+    return router.push({
+      name: pathName,
+      params: {
+        id: id
+      }
+    })
+  }
   router.push({ name: pathName });
 };
 

@@ -13,7 +13,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.Facilities,
-    path: "/users/facilities",
+    path: "/users/facilities/:type?",
     component: () => import("@/users/views/facilities/Index.vue"),
     meta: {
       middleware: [auth],

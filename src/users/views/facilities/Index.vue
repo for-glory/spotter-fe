@@ -23,7 +23,7 @@
         :type="activeTab"
         @handle-focus="isSearchOnFocus = true"
         @handle-blur="isSearchOnFocus = false"
-        :filters-btn="activeTab === EntitiesEnum.Trainers"
+        :filters-btn="(route.params?.type === EntitiesEnum.Trainers || activeTab === EntitiesEnum.Trainers)"
         @apply-filters="applyFilters"
         @reset-filters="resetFilters"
       />
@@ -72,7 +72,7 @@
     class="page-tabs"
     :value="activeTab"
     @change="tabsChanged"
-    v-if="activeTab && !isSearchOnFocus"
+    v-if="showTabs && !route.params?.type && activeTab && !isSearchOnFocus"
   />
   <Onboarding
     :steps="steps"
@@ -101,6 +101,8 @@ import { OnboardingStep } from "@/ts/types/onboardingStep";
 import { MapFilters, PositionLatLng } from "@/ts/types/map";
 import debounce from "lodash/debounce";
 import { TabItemNew } from "@/interfaces/TabItemnew";
+import { useRoute } from "vue-router";
+import PageTabs from "@/general/components/PageTabs.vue";
 
 const locations = ref<MapMarkerItem[]>([]);
 const selectedItem = ref<string | null>(null);
@@ -108,9 +110,11 @@ const isMapFullscreen = ref<boolean>(false);
 const layout = ref<typeof BaseLayout | null>(null);
 const isSearchOnFocus = ref<boolean>(false);
   const props = withDefaults(defineProps<{
-    isWebView?:boolean
+    isWebView?:boolean,
+    showTabs?: boolean
   }>(),  {
-    isWebView: false
+    isWebView: false,
+    showTabs: true
   });
 
 const tabs: TabItem[] = [
@@ -124,6 +128,7 @@ const tabs: TabItem[] = [
   },
 ];
 
+const route = useRoute();
 onMounted(() => {
   if(props.isWebView) {
     useCurrentLocation.value = true;
@@ -133,7 +138,7 @@ onMounted(() => {
 const preferredTab: EntitiesEnum = localStorage.getItem(
   "preferred_booking_tab"
 ) as EntitiesEnum;
-const activeTab = ref<EntitiesEnum>(preferredTab ?? EntitiesEnum.Facilities);
+const activeTab = ref<EntitiesEnum>((preferredTab && !route.params?.type) ? EntitiesEnum.Facilities : "" as any);
 
 const tabsChanged = (ev: EntitiesEnum) => {
   if (ev) activeTab.value = ev;
@@ -224,6 +229,13 @@ const steps: OnboardingStep[] = [
 
 const router = useRouter();
 const { isOnboardingDone } = useSettings();
+
+router.beforeResolve((to)=> {
+  if(to.params.type){
+    activeTab.value = to.params.type as any;
+  }
+  console.log("activeTab.value", activeTab.value);
+});
 
 const onboardingFinished = () => {
   router.push({ name: EntitiesEnum.TrainerDemo });

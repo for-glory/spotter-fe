@@ -8562,6 +8562,9 @@ export const FacilityItemsByFacilityIdAndTypeDocument = gql`
         price
         facility {
           id
+          media {
+            pathUrl
+          }
         }
         product_id
         duration

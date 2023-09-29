@@ -6,12 +6,12 @@
       :key="item.name"
       v-for="item in items"
       class="navigation-btn"
-      @click="navigate(item.name)"
+      @click="navigate(item.name, item)"
       :class="{
         'navigation-btn--main': item.isMainButton,
-        'navigation-btn--active': Boolean(
-          route.path.match(item.category ?? '')
-        ),
+        'navigation-btn--active': (
+          item?.queryParam === route.params[item.queryKey as any] &&
+          Boolean(route.path.match(item.category ?? '')) ),
       }">
 
          <!-- :disabled=" role !== RoleEnum.Trainer &&
@@ -31,16 +31,14 @@
 
       <div class="navigation-btn__inner">
         <div class="navigation-btn__icon" :class="{ 
-          'hover-icon': Boolean(
-          route.path.match(item.category ?? '')),
+          'hover-icon': (Boolean(route.path.match(item.category ?? '')) && item.queryParam === route.params[item.queryKey as any]),
           'drop-ins hover-icon' : item.name===EntitiesEnum.FacilityDropins&&Boolean(
           route.path.match(item.category ?? ''))
          }">
           <ion-icon :src="item.icon"></ion-icon>
         </div>
         <span :class="{
-          'gold-color': Boolean(
-          route.path.match(item.category ?? '')),
+          'gold-color': (Boolean(route.path.match(item.category ?? '')) && item.queryParam === route.params[item.queryKey as any]),
         }">
           {{ item.label }}
         </span>
@@ -50,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, nextTick } from "vue";
 import { IonButton, IonIcon } from "@ionic/vue";
 import { NavigationItem } from "@/interfaces/NavigationItem";
 import { useRoute, useRouter } from "vue-router";
@@ -68,8 +66,17 @@ const router = useRouter();
 const { role } = useRoles()
 const { type: subscriptionType } = useSubscription();
 
-const navigate = (name: string) => {
-  router.push({ name });
+const navigate = (name: string, item:NavigationItem) => {
+  if(item.queryParam){
+    router.push({ 
+      name, 
+      params: {
+        type: item.queryParam
+      },
+    });
+  }else {
+    router.push({ name });
+  }
 };
 </script>
 

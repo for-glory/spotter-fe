@@ -33,9 +33,10 @@
 import { IonIcon, IonTextarea, IonText } from "@ionic/vue";
 import { defineEmits, defineProps, ref } from "vue";
 import { usePhotoLoader } from "@/hooks/usePhotoLoader";
-import { ChatMessageTypeEnum } from "@/generated/graphql";
+import { ChatMessageTypeEnum, RoleEnum } from "@/generated/graphql";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { uuidv4 } from "@firebase/util";
+import useRoles from "@/hooks/useRole";
 
 const props = defineProps<{
   disabled: boolean;
@@ -50,6 +51,7 @@ const emits = defineEmits<{
 }>();
 
 const messageText = ref("");
+const { role } = useRoles()
 
 const sendPhoto = (photoValue: string) => {
   const file = dataURItoFile(photoValue, uuidv4());
@@ -60,7 +62,7 @@ const { openLoadOptions } = usePhotoLoader(sendPhoto);
 
 const handleOpenLoadOptions = () => {
   if (!props.disabled) {
-    openLoadOptions();
+    openLoadOptions(undefined, role === RoleEnum.User ? true : false);
   }
 };
 

@@ -2,6 +2,14 @@
   <base-layout>
     <template #header>
       <page-header title="Dashboard">
+        <template #avatar-field>
+          <ion-avatar class="header__photo" @click="$router.push({ name: EntitiesEnum.Profile })">
+            <ion-img v-if="userStore.avatarUrl" :src="userStore.avatarUrl"></ion-img>
+            <template v-else>
+              {{ userStore.avatarUrl.first_name?.charAt(0) }}
+            </template>
+          </ion-avatar>
+        </template>
         <template #custom-btn>
           <ion-button @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
@@ -151,7 +159,7 @@ export default {
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
-import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
+import { IonButton, IonIcon, IonText, IonSpinner, IonAvatar, IonImg } from "@ionic/vue";
 import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
@@ -182,10 +190,15 @@ import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const { id } = useId();
 const unreadMessages = ref<number[]>([]);
+const userStore = useUserStore();
+console.log(userStore);
+
 
 const {
   result: eventsResult,
@@ -673,5 +686,12 @@ const openEvent = (id: string | number) => {
 .spinner {
   display: block;
   margin: 64px auto;
+}
+
+.header__photo {
+  min-width: 26px;
+  min-height: 26px;
+  max-width: 26px;
+  max-height: 26px;
 }
 </style>

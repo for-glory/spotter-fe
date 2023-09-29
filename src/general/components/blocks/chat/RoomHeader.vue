@@ -1,5 +1,5 @@
 <template>
-  <ion-toolbar class="header">
+  <ion-toolbar :class="['header', { 'user-header': role === RoleEnum.User }]">
     <ion-buttons slot="start">
       <ion-button v-if="backBtn" class="back-btn" @click="emits('back')">
         <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
@@ -31,6 +31,8 @@ import {
 } from "@ionic/vue";
 import { defineProps, withDefaults, defineEmits, computed } from "vue";
 import Avatar from "@/general/components/blocks/Avatar.vue";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const props = withDefaults(
   defineProps<{
@@ -44,6 +46,8 @@ const props = withDefaults(
     title: null,
   }
 );
+
+const { role } = useRoles();
 
 const symbols = computed(
   () =>
@@ -132,5 +136,16 @@ const emits = defineEmits<{
   --icon-padding-top: 0;
   --min-height: 32px;
   --min-width: 32px;
+}
+
+.user-header {
+  .header {
+    &__title{
+      gap: 6px;
+    }
+    &__title-room {
+      color: var(--fitnesswhite);
+    }
+  }
 }
 </style>

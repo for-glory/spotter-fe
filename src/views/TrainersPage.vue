@@ -1,13 +1,13 @@
 <template>
   <ion-toolbar class="header" v-if="loading || trainers?.length">
     <ion-title slot="start" class="title">
-      <template v-if="!selected">Trainers Nearby</template>
+      <template v-if="!selected && role !== RoleEnum.User">Trainers Nearby</template>
       <template
         v-else-if="selectedTrainer?.trainer_type === TrainerTypeEnum.Freelancer"
       >
         Selected
       </template>
-      <template v-else>
+      <template v-else-if="role !== RoleEnum.User">
         {{ selectedFacility?.name }}
         <address-item class="radiobutton__address">
           {{ selectedFacility?.address?.street }}
@@ -44,6 +44,7 @@
           :key="trainer.id"
           :trainer="trainer"
           v-for="trainer in trainers"
+          end-button="Book"
         />
       </template>
       <template v-else-if="selected">
@@ -80,12 +81,16 @@ import {
   UsersDocument,
   RoleEnum,
   TrainerTypeEnum,
+Trainer,
 } from "@/generated/graphql";
 import { useMapPage } from "@/hooks/useMapPage";
 import { MapFilters, MapMarkerItem } from "@/ts/types/map";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import { useLazyQuery } from "@vue/apollo-composable";
+import useRoles from "@/hooks/useRole";
+import router from "@/router";
+import { EntitiesEnum } from "@/const/entities";
 
 const props = defineProps<{
   filters?: MapFilters;
@@ -101,6 +106,8 @@ const emits = defineEmits<{
 }>();
 
 type Trainers = NonNullable<UsersQuery["users"]>["data"];
+
+const { role } = useRoles()
 
 const near = computed(() =>
   props.filters
@@ -232,6 +239,15 @@ watch(
 const toggleModal = () => {
   emits("toggle-modal");
 };
+
+const goToBooking = (trainer:Trainer) => {
+  console.log("trainer", trainer);
+  
+  router.push({
+    name: EntitiesEnum.BookTrainer,
+    params: { id: trainer.id },
+  })
+}
 </script>
 
 <style lang="scss" scoped>

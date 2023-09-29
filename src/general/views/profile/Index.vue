@@ -8,6 +8,7 @@
         "
         :chat-btn="role === RoleEnum.Trainer ? true : false"
         title="Settings"
+        @back="$router.push({ name: EntitiesEnum.Dashboard })"
       >
       </page-header>
     </template>

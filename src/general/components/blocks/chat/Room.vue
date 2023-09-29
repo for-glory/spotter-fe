@@ -1,6 +1,6 @@
 <template>
   <ion-item-sliding>
-    <ion-item @click="$emit('open')" side="end" lines="none" class="user-item">
+    <ion-item @click="$emit('open')" side="end" lines="none" :class="['user-item', { 'user-request-item': (role === RoleEnum.User && type === RoomType.Request) }]">
       <avatar
         class="user-item__avatar"
         :is-online="isOnline"
@@ -91,8 +91,10 @@ import {
 import Avatar from "@/general/components/blocks/Avatar.vue";
 import { defineProps, defineEmits } from "vue";
 import { RoomType } from "@/ts/enums/chat";
+import { RoleEnum } from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
-defineProps<{
+const props = defineProps<{
   roomName: string;
   avatarUrl: any;
   roomId: string;
@@ -104,12 +106,15 @@ defineProps<{
   unread?: number;
   currentTab?: string;
 }>();
+console.log(props);
 
 defineEmits<{
   (e: "open", roomId: number): void;
   (e: "delete", roomId: number): void;
   (e: "approve", roomId: number): void;
 }>();
+
+const { role } = useRoles();
 </script>
 
 <style scoped lang="scss">
@@ -158,8 +163,8 @@ defineEmits<{
   }
 
   &__unread {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     background: var(--gold);
     border-radius: 43px;
     color: var(--gray-700);
@@ -249,5 +254,15 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.user-request-item {
+
+  .user-item__title, 
+  .user-item__last-message,
+   .address-icon, 
+   .time-icon {
+      color: var(--gray-500);
+    }
 }
 </style>

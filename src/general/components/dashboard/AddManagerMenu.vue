@@ -1,26 +1,24 @@
 <template>
-	<ion-menu side="end" content-id="main-content" class="add-manager-panel">
+	<ion-menu menu-id="add-manager-menu" side="end" content-id="main-content" class="add-manager-panel">
     <ion-header>
       <ion-toolbar class="title">
-        <ion-menu-toggle class="back-btn" :auto-hide="false">
-          <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
-        </ion-menu-toggle>
+        <!-- <ion-menu-toggle class="back-btn" :auto-hide="false"> -->
+          <ion-icon class="back-btn" src="assets/icon/arrow-back.svg" @click="onBack"></ion-icon>
+        <!-- </ion-menu-toggle> -->
         <ion-title>Add new manager</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
       <div class="tile">
         <base-input
-          label="First name"
-          v-model:value="firstName"
-          :error-message="firstNameError"
-          placeholder="First Name"
-          name="firstName"
+          label="Full name"
+          placeholder="First name, Last name"
+          name="first-last-name"
           class="form-row__control"
           required
         />
       </div>
-      <div class="tile">
+      <!-- <div class="tile">
         <base-input
           label="Last name"
           v-model:value="lastName"
@@ -30,7 +28,7 @@
           class="form-row__control"
           required
         />
-      </div>
+      </div> -->
       <div class="tile">
         <base-input
           label="Email"
@@ -42,10 +40,11 @@
       </div>
       <div class="tile">
         <base-input
-          label="Postal Code"
+          label="Phone"
           v-model:value="postal"
-          name="postal"
+          name="phone"
           class="form-row__control"
+          placeholder="Enter phone number"
         />
       </div>
       <div class="tile">
@@ -58,25 +57,43 @@
             })
           "
         ></ion-input> -->
-        <base-input
+        <!-- <base-input
           v-model:value="birth"
           type="date"
           name="birth"
           class="form-row__control"
-        />
+        /> -->
+        <ion-item class="address-input ion-no-padding" lines="none">
+          <choose-block
+            title="Date of birth"
+            :value="birth ? dayjs(birth).format('D MMMM') : ''"
+            @handle-click="showDatePikerModal(DateFieldsEnum.birth, {title: 'Date of birth',})"
+          />
+        </ion-item>
       </div>
       <div class="tile">
         <ion-label>Address</ion-label>
-        <GMapAutocomplete
-          placeholder="Enter your address"
-          class="search-form__control form-row__control"
-          @place_changed="setPlace"
-        >
-        </GMapAutocomplete>
+        <ion-item class="address-input" lines="none">
+          <GMapAutocomplete
+            placeholder="Enter your address"
+            class="search-form__control form-row__control"
+            @place_changed="setPlace"
+          >
+          </GMapAutocomplete>
+        </ion-item>
       </div>
       <div class="tile">
         <ion-label>Employment Type</ion-label>
-        <ion-input placeholder="Full Time"></ion-input>
+        <ion-item class="address-input" lines="none">
+          <!-- <ion-input placeholder="Full Time"></ion-input> -->
+          <ion-select
+            interface="popover"
+            placeholder="Select type"
+          >
+            <ion-select-option>Full Time</ion-select-option>
+            <ion-select-option>Contract</ion-select-option>
+          </ion-select>
+        </ion-item>
       </div>
       <div class="tile">
         <base-input
@@ -87,11 +104,20 @@
         />
       </div>
       <ion-menu-toggle>
-        <ion-button @click="addManager">Add Manager</ion-button>
+        <ion-button class="add-manager-btn" @click="addManager">Add Manager</ion-button>
       </ion-menu-toggle>
     </ion-content>
   </ion-menu>
   <!-- <date-picker-modal ref="datePickerModal" @select="dateSelected" /> -->
+  <date-picker-modal ref="datePickerModal" @select="dateSelected" />
+  <discard-changes
+    :is-open="isConfirmedModalOpen"
+    @close="discardModalClosed"
+    title="Do you want to discard changes?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Discard changes"
+  />
 </template>
 
 <script setup lang="ts">
@@ -106,7 +132,8 @@ import {
   IonContent,
   IonToolbar,
   IonLabel,
-  IonHeader
+  IonHeader,
+  menuController
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
@@ -140,7 +167,18 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 
+interface MenuCustomEvent<T = any> extends CustomEvent {
+  detail: T;
+  target: HTMLIonMenuElement;
+}
+enum DateFieldsEnum {
+  birth = "BIRTH_DATE"
+}
+const isConfirmedModalOpen = ref(false);
+
+const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const filter = ref<string>('profile');
 const imageUrl = ref<string>('');
 
@@ -327,40 +365,40 @@ const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
     subThoroughfare: '',
     areasOfInterest: []
   }
-  for (let i=0; i < gmObj.address_components.length; i++)
+  for (let i=0; i < gmObj?.address_components.length; i++)
   {
-    if(gmObj.address_components[i].types.includes("postal_code"))
+    if(gmObj?.address_components[i]?.types.includes("postal_code"))
     {
-      address.postalCode = gmObj.address_components[i].long_name;
+      address.postalCode = gmObj?.address_components[i]?.long_name;
     }
-    if(gmObj.address_components[i].types.includes("locality"))
+    if(gmObj?.address_components[i]?.types.includes("locality"))
     {
-      address.locality = gmObj.address_components[i].long_name;
+      address.locality = gmObj?.address_components[i]?.long_name;
     }
-    if(gmObj.address_components[i].types.includes("subLocality"))
+    if(gmObj?.address_components[i]?.types.includes("subLocality"))
     {
-      address.subLocality = gmObj.address_components[i].long_name;
+      address.subLocality = gmObj?.address_components[i]?.long_name;
     }
-    if(gmObj.address_components[i].types.includes("country"))
+    if(gmObj?.address_components[i]?.types.includes("country"))
     {
-      address.countryName = gmObj.address_components[i].long_name;
-      address.countryCode = gmObj.address_components[i].short_name;
+      address.countryName = gmObj?.address_components[i]?.long_name;
+      address.countryCode = gmObj?.address_components[i]?.short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
+    if(gmObj?.address_components[i]?.types.includes("administrative_area_level_1"))
     {
-      address.administrativeArea = gmObj.address_components[i].short_name;
+      address.administrativeArea = gmObj?.address_components[i]?.short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
+    if(gmObj?.address_components[i]?.types.includes("administrative_area_level_2"))
     {
-      address.subAdministrativeArea = gmObj.address_components[i].long_name;
+      address.subAdministrativeArea = gmObj?.address_components[i]?.long_name;
     }
-    if(gmObj.address_components[i].types.includes("street_number"))
+    if(gmObj?.address_components[i]?.types.includes("street_number"))
     {
-      street_number = gmObj.address_components[i].long_name;
+      street_number = gmObj?.address_components[i]?.long_name;
     }
-    if(gmObj.address_components[i].types.includes("route"))
+    if(gmObj?.address_components[i]?.types.includes("route"))
     {
-      route = gmObj.address_components[i].long_name;
+      route = gmObj?.address_components[i]?.long_name;
     }
   }
   address.thoroughfare = street_number + " " + route
@@ -376,7 +414,7 @@ const setPlace = (place: any) => {
         name: address.locality,
         state_code: address.administrativeArea,
       })?.then(async (res) => {
-        const res_city = res.data.cities.data[0];
+        const res_city = res?.data?.cities?.data[0];
         console.log("selected city", res_city)
         selectedState.value = res_city.state;
         selectedCity.value = res_city;
@@ -417,6 +455,35 @@ getCities();
 //   }
 // };
 
+const showDatePikerModal = (
+  field: string,
+  options?: DatePickerOptions
+) => {
+  datePickerModal.value?.present({ field, options });
+};
+
+const dateSelected = (result: DatePickerModalResult) => {
+  if (result.date) {
+    console.log('selected date: ', result?.date);
+  }
+};
+
+const onBack = () => {
+  menuController.enable(false);
+  menuController.close();
+  isConfirmedModalOpen.value = true;
+};
+
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
+    // router.push({
+    //   name: router?.currentRoute?.value?.name,
+    //   params: { step: 'upload' },
+    // });
+  }
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -432,13 +499,13 @@ getCities();
 .back-btn {
   position: absolute;
   inset: 0;
-  padding-top: 9px;
-  padding-bottom: 9px;
+  padding: 9px;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 24px;
+  z-index: 999;
 }
 
 .tile {
@@ -481,5 +548,43 @@ ion-input {
 }
 ion-label {
   font: 400 14px/1 var(--ion-font-family);
+}
+.address-input {
+  --color: var(--ion-color-white);
+  --background: var(--gray-700);
+  --border-radius: 8px;
+  --border-width: 1px;
+  --border-color: var(--gray-600);
+  --highlight-color-focused: var(--gray-500);
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --min-height: 46px;
+  font-size: 14px;
+  .choose-place {
+    width: 100%;
+  }
+  .form-row__control {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+  ion-input {
+    border: none !important;
+  }
+  ion-select {
+    width: 100%;
+  }
+}
+.add-manager-btn {
+  margin-top: 20.4%;
+}
+
+@media (max-width: 767px) {
+  .add-manager-panel {
+    --width: 100% !important;
+  }
 }
 </style>

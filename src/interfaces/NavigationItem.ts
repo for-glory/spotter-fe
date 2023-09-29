@@ -7,4 +7,6 @@ export type NavigationItem = {
   isMainButton?: boolean;
   isActive?: boolean;
   notBasicSubscription?: boolean;
+  queryParam?: string;
+  queryKey?: string;
 };

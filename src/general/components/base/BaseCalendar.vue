@@ -252,5 +252,16 @@ ion-datetime {
       color: var(--fitnesswhite) !important;
     }
   }
+
+  .time__label{
+    font-family: "Yantramanav";
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .carousel__item {
+    font-family: "Yantramanav";
+  }
 }
 </style>

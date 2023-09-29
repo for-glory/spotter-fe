@@ -152,7 +152,7 @@
             />
           </div>
           <div class="ion-text-center"  v-for="dropin in dropins">
-            <ion-title class="offering-title">${{dropin.price}}</ion-title>
+            <ion-title class="offering-title">${{ formatNumber(dropin.price)}}</ion-title>
             <ion-text>1 Day</ion-text>
             <ion-text>{{dropin.title}}</ion-text>
           </div>
@@ -167,7 +167,7 @@
             />
           </div>
           <div class="ion-text-center"  v-for="pass in passes">
-            <ion-title class="offering-title">${{pass.price}}</ion-title>
+            <ion-title class="offering-title">${{ formatNumber(pass.price )}}</ion-title>
             <ion-text>1 Month</ion-text>
             <ion-text>{{pass.title }}</ion-text>
           </div>
@@ -339,7 +339,7 @@
                     />
                   </div>
                   <div class="ion-text-center"  v-for="dropin in dropins">
-                    <ion-title class="offering-title">${{dropin.price}}</ion-title>
+                    <ion-title class="offering-title">${{ formatNumber(dropin.price )}}</ion-title>
                     <ion-text>1 Day</ion-text>
                     <ion-text>{{dropin.title}}</ion-text>
                   </div>
@@ -354,7 +354,7 @@
                     />
                   </div>
                   <div class="ion-text-center" v-for="pass in passes" > 
-                    <ion-title class="offering-title">${{pass.price}}</ion-title>
+                    <ion-title class="offering-title">${{ formatNumber(pass.price )}}</ion-title>
                     <ion-text>1 Month</ion-text>
                     <ion-text>{{pass.title }}</ion-text>
                   </div>
@@ -956,7 +956,9 @@ const dropins = computed(() => {
 });
 
 // Dropins End
-
+const formatNumber = ((num: any) => {
+  return (Math.round((num / 100) * 100) / 100).toFixed(2);
+})
 </script>
 
 <style scoped lang="scss">
@@ -1208,8 +1210,8 @@ const dropins = computed(() => {
   background-color: #262626;
   border-radius: 8px;
   padding: 8px;
-  justify-content: center;
-  gap: 20px;
+  justify-content: left;
+  gap: 10px;
   // ion-title {
   //   font-size: 16px !important;
   //   font-family: 'Yantramanav';

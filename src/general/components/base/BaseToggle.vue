@@ -18,7 +18,7 @@
         :checked="inputValue"
         />
       </div>
-      <div v-if="description" class="description">
+      <div v-if="description" :class="['description',  { 'active-dec': inputValue }]">
         {{ description }}
       </div>
     </div>
@@ -35,7 +35,7 @@ export default {
 import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
 import { IonText, IonToggle, IonLabel, IonSpinner, IonIcon, IonImg } from "@ionic/vue";
-import { defineProps, defineEmits, computed } from "vue";
+import { defineProps, defineEmits, computed, ref } from "vue";
 
 const { role } = useRoles();
 const props = defineProps<{
@@ -98,7 +98,6 @@ ion-toggle {
   flex-direction: column;
   gap: 14px;
   border-radius: 8px;
-  align-items: center;
   padding: 8px 16px 8px;
   background: var(--gray-700);
   justify-content: space-between;
@@ -157,6 +156,10 @@ ion-toggle {
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
+}
+
+.active-dec {
+  color: var(--gold) !important;
 }
 
 </style>

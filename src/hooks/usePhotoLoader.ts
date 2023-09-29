@@ -1,19 +1,25 @@
 import { actionSheetController, alertController, isPlatform } from "@ionic/vue";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { Ref } from "vue";
+import { Capacitor } from "@capacitor/core";
+import useRoles from "./useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 enum actionTypesEnum {
   Delete = "DELETE",
   MakeAPhoto = "MAKE_A_PHOTO",
   PhotoLibrary = "PHOTO_LIBRARY",
+  UploadFile = "UPLOAD_FILE"
 }
 
 export const usePhotoLoader = (setValue: (photo?: string) => void) => {
+  const { role } = useRoles();
   const openLoadOptions = async (
-    value?: Ref<string | undefined>
+    value?: Ref<string | undefined>, uploadBtn = false
   ): Promise<void> => {
     const actionSheet = await actionSheetController.create({
       mode: "ios",
+      cssClass: role === RoleEnum.User ? "native-app" : "",
       buttons: [
         ...(value?.value
           ? [
@@ -38,6 +44,16 @@ export const usePhotoLoader = (setValue: (photo?: string) => void) => {
             type: actionTypesEnum.PhotoLibrary,
           },
         },
+        ...(uploadBtn 
+          ? [
+            {
+              text: "Upload file",
+              data: {
+                type: actionTypesEnum.UploadFile,
+              }
+            },
+          ] 
+          : []),
         {
           text: "Cancel",
           role: "cancel",
@@ -48,12 +64,13 @@ export const usePhotoLoader = (setValue: (photo?: string) => void) => {
     await actionSheet.present();
 
     const { data } = await actionSheet.onWillDismiss();
-    const type: actionTypesEnum = data.type;
+    const type: actionTypesEnum = data?.type;
 
     const actions = {
       [actionTypesEnum.Delete]: () => setValue(),
       [actionTypesEnum.MakeAPhoto]: () => getPhoto(CameraSource.Camera),
       [actionTypesEnum.PhotoLibrary]: () => getPhoto(CameraSource.Photos),
+      [actionTypesEnum.UploadFile]: () => uploadFile()
     };
 
     if (actions[type]) {
@@ -93,6 +110,10 @@ export const usePhotoLoader = (setValue: (photo?: string) => void) => {
 
     setValue(`data:image/jpeg;base64,${image.base64String}`);
   };
+
+  const uploadFile = () => {
+    console.log('uploadFile');
+  }
 
   return {
     getPhoto,

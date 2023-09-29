@@ -5,8 +5,9 @@
 			has-skip-button
 			@submit="createEvent"
 			@onSkip="handleCancel"
-			skipText="Cancel"
 			:loading="eventOnCreation"
+      skip-button
+      skip-button-text="Discard"
 		/>
 	</div>
   <discard-changes

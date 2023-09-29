@@ -14,7 +14,7 @@
         <list-empty
           v-if="!data.chats.length"
           :title="currenTab"
-          :chats="false"
+          :chats="role === RoleEnum.User ? true : false"
         />
         <template v-else>
           <transition-group name="list" tag="ion-item-sliding">

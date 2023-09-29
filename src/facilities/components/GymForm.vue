@@ -125,7 +125,7 @@
         expand="block"
         class="secondary create-btn cursor-pointer"
         @click="onSaveAndExit"
-        v-if="!nextButton"
+        v-if="!edit"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
@@ -136,7 +136,7 @@
         expand="block"
         class="secondary create-btn cursor-pointer"
         @click="onNext"
-        v-if="nextButton"
+        v-if="edit"
         :disabled="
           !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
         "
@@ -448,7 +448,7 @@ const onSaveAndExit = () => {
 };
 
 const onNext = () => {
-  emits("edit", {
+  emits("submit", {
     title: facilityTitle.value,
     description: facilityDescription.value,
     photos: facilityPhotos.value,

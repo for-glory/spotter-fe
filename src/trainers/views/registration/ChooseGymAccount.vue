@@ -1,5 +1,5 @@
 <template>
-  <base-layout :class="{ 'trainer-gym': role === RoleEnum.Trainer }" hide-navigation-menu>
+  <base-layout :class="{ 'trainer-gym': (role === RoleEnum.Trainer || role === RoleEnum.User) }" hide-navigation-menu>
     <template #header>
       <IonToolbar :class="['gym-toolbar',  { 'web-toolbar': fromModal }]">
         <ion-back-button slot="start"
@@ -15,7 +15,7 @@
         <search-form
           ref="searchForm"
           :type="EntitiesEnum.Facilities"
-          :placeholder="role=== RoleEnum.Trainer ? 'Enter name or adress of gym...' : undefined"
+          :placeholder="placeholder"
           hide-results
           extraPadding
           @search="search"
@@ -25,7 +25,7 @@
 
     </template>
     <template #content>
-      <div class="holder-content ion-padding-horizontal">
+      <div :class="['holder-content', 'ion-padding-horizontal', { 'flex-class': (role === RoleEnum.Trainer || role === RoleEnum.User) }]">
         <ion-spinner name="lines" class="spinner" v-if="facilityLoading" />
         <search-result
           :item="facility"
@@ -55,7 +55,7 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import SearchForm from "@/general/components/forms/SearchForm.vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
   FacilitiesDocument,
   FacilitiesQuery,
@@ -72,14 +72,24 @@ import useRoles from "@/hooks/useRole";
 const props = defineProps<{
   fromModal?:boolean
 }>();
-console.log("props", props);
-
-
 
 const router = useRouter();
 const { role } = useRoles();
+
+const placeholder = computed(() => {
+  switch (role) {
+    case RoleEnum.Trainer:
+    case RoleEnum.User:
+      return 'Enter name or adress of gym...';
+  
+    default:
+      return undefined;
+    }
+  }
+);
+
 const handleBack = () => {
-  if(role === RoleEnum.Trainer){
+  if(role === RoleEnum.Trainer || role === RoleEnum.User) {
     store.setAssignedFacility(selectFacilities);
   }
   router.go(-1);
@@ -97,7 +107,7 @@ const facilitiesParams: FacilitiesQueryVariables = {
 const store = useSelectedAddressStore();
 
 const onResultItemClick = (facility: FacilitySearchResult, index:number) => {
-  if(role === RoleEnum.Trainer)  {
+  if(role === RoleEnum.Trainer || role === RoleEnum.User)  {
     facilities.value?.map((e, i)=>{
       if(i !== index){
         e.isSelected = false
@@ -219,6 +229,12 @@ onMounted(() => {
   .web-toolbar {
     --padding-start: 18px;
     --padding-end: 14px;
+  }
+
+  .flex-class {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
 </style>

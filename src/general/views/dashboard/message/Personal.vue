@@ -1,24 +1,30 @@
 <template>
-	<div ref="messagesContainer" class="messages__container" :class="role === RoleEnum.Trainer ? 'messages_container__trainer' : ''">
+	<div ref="messagesContainer" class="messages__container" 
+    :class="{
+      'messages_container__trainer': role === RoleEnum.Trainer,
+      'messages__container__user': role === RoleEnum.User,
+      }">
 		<div>
-			<template v-for="(message, idx) in data.messages" :key="message.id">
-				<message
-					:content="message.content"
-					:timestamp="message.timestamp"
-					:date="message.date"
-					:content-type="message.contentType"
-					:current-user="message.isCurUserMessage"
-					:show-date="showDate(idx)"
-					:approvable="isApprovable(message.type, idx)"
-					:training-id="message?.trainingId"
-					@delete-message="onDeleteMessage"
-					:message-id="message.id"
-					:deleteable="message.isCurUserMessage"
-				/>
-			</template>
+      <template v-if="showMessages">
+        <template  v-for="(message, idx) in data.messages" :key="message.id">
+          <message
+            :content="message.content"
+            :timestamp="message.timestamp"
+            :date="message.date"
+            :content-type="message.contentType"
+            :current-user="message.isCurUserMessage"
+            :show-date="showDate(idx)"
+            :approvable="isApprovable(message.type, idx)"
+            :training-id="message?.trainingId"
+            @delete-message="onDeleteMessage"
+            :message-id="message.id"
+            :deleteable="message.isCurUserMessage"
+          />
+        </template>
+    </template>
 		</div>
 	</div>
-	<chat-footer @send="onSend" :disabled="data.chats?.locked" />
+	<chat-footer @send="onSend" :disabled="data.chats?.locked || !roomId" />
 </template>
 
 <script setup lang="ts">
@@ -51,9 +57,12 @@ import { RoomType } from "@/ts/enums/chat";
 
 const props = withDefaults(
   defineProps<{
-    id: string;
+    roomId: string;
+    roomType?:RoomType;
+    showMessages?:boolean
   }>(),
   {
+    showMessages: true
   }
 );
 
@@ -376,6 +385,9 @@ const onBack = () => {
       z-index: 1;
       // background: url("/public/assets/icon/chat-bg.svg") cover repeat;
     }
+  }
+  &__user {
+  background: url("../../../../../public/assets/icon/chat-bg.svg") center no-repeat;
   }
 }
 </style>
