@@ -51,7 +51,8 @@ import {
   IonModal,
   IonTitle,
   IonImg,
-  IonAvatar
+  IonAvatar,
+  IonSpinner
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";

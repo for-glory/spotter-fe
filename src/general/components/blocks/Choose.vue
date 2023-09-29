@@ -1,5 +1,5 @@
 <template>
-  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem }" :fill="itemOutline ? 'outline' : 'none'" :lines="isWebItem ? 'none' : ''">
+  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem }" :fill="itemOutline ? 'outline' : undefined" :lines="isWebItem ? 'none' : undefined">
     <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer, 'danger-title': dangerTitle}" slot="start">
       <ion-icon
         v-if="icon"
@@ -73,9 +73,12 @@ const onClick = () => {
   --inner-padding-start: 14px;
   --inner-padding-end: 14px;
   font-family: "Yantramanav";
+  &::part(native){
+    border-radius: 8px;
+  }
   &.web-item {
     --background: transparent;
-    --border-color: var(--gold);
+    // --border-color: var(--gold);
   }
 
   &__label {
