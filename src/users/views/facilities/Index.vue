@@ -138,7 +138,7 @@ onMounted(() => {
 const preferredTab: EntitiesEnum = localStorage.getItem(
   "preferred_booking_tab"
 ) as EntitiesEnum;
-const activeTab = ref<EntitiesEnum>((preferredTab && !route.params?.type) ? EntitiesEnum.Facilities : "" as any);
+const activeTab = ref<EntitiesEnum>((preferredTab && !route.params?.type) ? EntitiesEnum.Facilities : route.params?.type as any);
 
 const tabsChanged = (ev: EntitiesEnum) => {
   if (ev) activeTab.value = ev;
@@ -176,12 +176,14 @@ const mapPosition = ref<MapFilters>({
 const { onResult, loading: meLoading } = useQuery(MeDocument);
 
 onResult(({ data }) => {
-  activeTab.value =
+  if (!route.params?.type) {
+    activeTab.value =
     data.me?.settings?.find(
       (setting: any) =>
-        setting.setting.code === SettingsCodeEnum.DisplayPreference
-    )?.value || EntitiesEnum.Facilities;
-  localStorage.setItem("preferred_booking_tab", activeTab.value);
+      setting.setting.code === SettingsCodeEnum.DisplayPreference
+      )?.value || EntitiesEnum.Facilities;
+      localStorage.setItem("preferred_booking_tab", activeTab.value);
+    }
 
   useCurrentLocation.value =
     data.me?.settings?.find(

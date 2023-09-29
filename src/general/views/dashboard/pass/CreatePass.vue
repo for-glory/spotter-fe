@@ -71,8 +71,8 @@
               @click="cancel"
               >Cancel</ion-button
             >
-            <ion-button type="submit" v-if="!isEdit" @click="createNewFacilityItemPass" :disabled="!isValidForm">Create</ion-button>
-            <ion-button type="submit" v-else @click="createNewFacilityItemPass" :disabled="!isValidForm">Save</ion-button>
+            <ion-button type="submit" v-if="!isEdit" @click="createNewFacilityItemPass">Create</ion-button>
+            <ion-button type="submit" v-else @click="createNewFacilityItemPass">Save</ion-button>
           </div>
         </ion-col>
         <ion-col size="0" size-md="3"></ion-col>
@@ -176,16 +176,7 @@ const { mutate: updateFacilityItemPass, onDone: facilityItemPassUpdated } = useM
 );
 let duration = ref<string>(passDropinsItemsStore?.passDropinsData?.duration || "");
 let planName = ref<string>(passDropinsItemsStore?.passDropinsData?.title || "");
-let planPrice = ref<string|number>(Number(passDropinsItemsStore?.passDropinsData?.price)? Number(passDropinsItemsStore?.passDropinsData?.price)/100 : "");
-
-const isValidForm = computed(
-  () =>
-    duration.value &&
-    planName.value &&
-    planPrice.value &&
-    Number(planPrice.value)
-);
-
+let planPrice = ref<string>(passDropinsItemsStore?.passDropinsData?.price || "");
 const isEdit = ref(false);
 isEdit.value = route.params.id ? true : false;
 
@@ -195,7 +186,7 @@ const createNewFacilityItemPass = () => {
       input: {
         facility_id: currentFacility.facility.id,
         title: planName.value,
-        price: Math.floor(Number(planPrice.value)*100),
+        price: Number(planPrice.value),
         duration: Number(duration.value),
         item_type: "PASS",
       },
@@ -226,7 +217,7 @@ const createNewFacilityItemPass = () => {
       input: {
         // facility_id: currentFacility.facility.id,
         title: planName.value,
-        price: Math.floor(Number(planPrice.value)*100),
+        price: Number(planPrice.value),
         duration: Number(duration.value),
         // item_type: "PASS",
       },

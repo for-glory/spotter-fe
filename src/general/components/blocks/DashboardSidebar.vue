@@ -133,7 +133,7 @@
           <ion-text>Dailys</ion-text>
         </div>
         <!-- @todo: need to done this view -->
-        <div :class="getMenuItemClass(EntitiesEnum.TrainerUserProfile)">
+        <div :class="getMenuItemClass(EntitiesEnum.Trainers)" @click="onHandleClickMenu(EntitiesEnum.Trainers,EntitiesEnum.Trainers)">
           <ion-icon src="assets/icon/trainers.svg" />
           <ion-text>Trainers</ion-text>
         </div>
@@ -413,13 +413,22 @@ const address = computed(() => {
   }
 });
 
-const onHandleClickMenu = (pathName: string) => {
-  if(role === RoleEnum.User && pathName === EntitiesEnum.GymPaymentMethod) {
-    return router.push({
-      name: pathName,
-      params: {
+const onHandleClickMenu = (pathName: string,type: EntitiesEnum | null = null) => {
+  if(role === RoleEnum.User) {
+    let params = {};
+    if(type && pathName !== EntitiesEnum.GymPaymentMethod) {
+      params = {
+        type: type
+      }
+    }
+    else {
+      params = {
         id: id
       }
+    }
+    return router.push({
+      name: pathName,
+      params
     })
   }
   router.push({ name: pathName });

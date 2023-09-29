@@ -3,6 +3,7 @@
     hide-navigation-menu
     :header-fixed="false"
     :content-full-height="false"
+    v-if="!isWebView"
   >
     <template #header>
       <page-header
@@ -69,6 +70,64 @@
       </div>
     </template>
   </base-layout>
+  <template v-else>
+      <ion-spinner v-if="loading" class="spinner" />
+      <div :class="['radiobutton__group',  { 'user-choose-place': role === RoleEnum.User, 'pt-6': isWebView }]" v-else>
+        <ion-radio-group v-model="chosenPlace">
+          <div
+            class="radiobutton__container"
+            v-if="trainerType !== TrainerTypeEnum.Freelancer"
+          >
+            <ion-label class="radiobutton__label">
+              Training will be in trainer’s gym
+            </ion-label>
+            <ion-item class="radiobutton" :fill="isWebView ? 'outline' : undefined" :lines="isWebView ? 'none' : 'inset'">
+              {{ DescriptionOfPlaces.trainerGym }}
+              <ion-radio
+                class="radiobutton__radio"
+                slot="end"
+                :value="PlaceType.TrainerGym"
+              />
+            </ion-item>
+          </div>
+          <div class="radiobutton__container">
+            <ion-label class="radiobutton__label">
+              You’ll be charged for trainer visiting gym with you
+            </ion-label>
+            <ion-item class="radiobutton" :fill="isWebView ? 'outline' : undefined" :lines="isWebView ? 'none' : 'inset'">
+              {{ DescriptionOfPlaces.userGym }}
+              <ion-radio
+                class="radiobutton__radio"
+                slot="end"
+                :value="PlaceType.UserGym"
+              />
+            </ion-item>
+            <choose
+              title="Choose gym location"
+              :value="role === RoleEnum.User ? selectedGym?.name : store.facility?.name"
+              :is-web-item="isWebView"
+              :item-outline="isWebView"
+              @handle-click="onChooseGym"
+              class="choose-gym"
+            />
+          </div>
+
+          <div class="radiobutton__container">
+            <ion-label class="radiobutton__label">
+              All details will be defined with trainer in chat
+            </ion-label>
+            <ion-item class="radiobutton" :fill="isWebView ? 'outline' : undefined" :lines="isWebView ? 'none' : 'inset'">
+              {{ DescriptionOfPlaces.userHome }}
+              <ion-radio
+                class="radiobutton__radio"
+                slot="end"
+                :value="PlaceType.UserHome"
+              />
+            </ion-item>
+          </div>
+        </ion-radio-group>
+      </div>
+    </template>
 </template>
 
 <script setup lang="ts">
@@ -80,6 +139,7 @@ import {
   IonItem,
   IonLabel,
   IonSpinner,
+modalController,
 } from "@ionic/vue";
 import { PlaceType } from "@/ts/enums/user";
 import Choose from "@/general/components/blocks/Choose.vue";
@@ -99,12 +159,22 @@ import { computed } from "@vue/reactivity";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import useRoles from "@/hooks/useRole";
 import { useSelectedAddressStore } from "@/trainers/store/selected-address";
+import { Capacitor } from "@capacitor/core";
+import ChooseGymAccount from "@/trainers/views/registration/ChooseGymAccount.vue";
 
 const DescriptionOfPlaces = {
   trainerGym: "Training in trainer’s gym",
   userGym: "Training in my gym",
   userHome: "Travel to my location",
 };
+
+const props = withDefaults(
+  defineProps<{
+    isWebView?: boolean;
+  }>(),{
+    isWebView: false
+  }
+);
 
 const router = useRouter();
 const route = useRoute();
@@ -182,9 +252,22 @@ watch(
   }
 );
 
-const onChooseGym = () => {
+const onChooseGym = async () => {
   if (role === RoleEnum.User) {
-    return router.push({ name: EntitiesEnum.ChooseGymAccount });
+    if(Capacitor.isNativePlatform()){
+      router.push({ name: EntitiesEnum.ChooseGymAccount });
+    }
+    else {
+      const modal = await modalController.create({
+        component: ChooseGymAccount,
+        cssClass: 'tr-choose-gym-modal',
+        componentProps: {
+          fromModal: true
+        }
+      })
+      modal.present()
+    }
+    return;
   }
   router.push({ name: EntitiesEnum.ChooseGym });
 };
@@ -209,6 +292,9 @@ const onBack = () => {
   font-size: 14px;
   color: var(--ion-color-white);
   margin-top: 8px;
+  &::part(native){
+    border-radius: 8px;
+  }
 
   &__container {
     margin-bottom: 24px;
@@ -255,5 +341,8 @@ const onBack = () => {
   .radiobutton__label, .radiobutton {
     font-family: Yantramanav;
   }
+}
+.pt-6 {
+  padding-top: 6px;
 }
 </style>

@@ -1,14 +1,15 @@
 
 <template>
-    <div class="dashboard d-flex-col h-100">
+    <IonSpinner name="lines" class="spinner" v-if="loading"></IonSpinner>
+    <div v-else class="dashboard d-flex-col h-100">
         <div class="d-flex align-items-center page-header">
             <ion-button class="common-back-btn" fill="clear" @click="router.back()">
                 <ion-icon src="assets/icon/arrow-back.svg" />
             </ion-button>
-            <ion-title class="banner__title">Gabby’s gym</ion-title>
+            <ion-title class="banner__title">Profile</ion-title>
         </div>
-        <div class="d-flex gap-24 flex-2 overflow-hidden">
-            <div class="overflow-auto hide-scrollbar">
+        <div class="d-flex gap-30 flex-2 overflow-hidden">
+            <div class="overflow-auto hide-scrollbar flex-2">
                 <div class="user-container">
                     <div class="photo">
                         <ion-img v-if="user?.avatarUrl" :src="user?.avatarUrl" />
@@ -18,29 +19,45 @@
                         </ion-button>
                     </div>
                     <div class="content">
-                        <div class="header d-flex align-items-center mb-24 justify-content-between">
+                        <div class="header d-flex gap-16 align-items-center mb-24 justify-content-between">
                             <div>
                                 <strong class="username">
-                                    Gabby Gym
+                                    {{ user?.first_name }} {{ user?.last_name }}
                                 </strong>
                                 <ion-text class="address" color="secondary" v-if="user?.address?.street">
                                     <ion-icon src="assets/icon/address.svg" class="address__icon" />
-                                    Dallas, Wall Street, 24
+                                    {{ user?.address?.street }}
                                 </ion-text>
                             </div>
-                            <follow class="follow" :is-followed="false" @handle-click="$emit('handle-follow')" />
+                            <div class="info flex-2">
+                                <div class="info-item">
+                                    <strong class="info-item__title">${{ hourlyRate }}</strong>
+                                    <ion-text color="secondary" class="font-light">Hourly rate</ion-text>
+                                </div>
+                                <div class="info-item">
+                                    <strong class="info-item__title">
+                                        {{ user?.trainings_count }}+
+                                    </strong>
+                                    <ion-text color="secondary" class="font-light">Completed</ion-text>
+                                </div>
+                                <div class="info-item">
+                                    <strong class="info-item__title">{{ user?.reviews_count }}</strong>
+                                    <ion-text color="secondary" class="font-light">Reviews</ion-text>
+                                </div>
+                            </div>
                         </div>
-                        <div class="info-section" v-if="specialNeeds?.length">
+                        <div class="info-section">
                             <ion-text class="info-section__title mb-10">Description:</ion-text>
                             <ion-text class="info-section__desc">Want your body to be healthy? Join our program with
                                 directions according to body’s goals. Increasing physical strength is the goal of strenght
                                 training.</ion-text>
                         </div>
-                        <div class="reviews d-flex justify-content-between">
-                            <div class="d-flex align-items-center flex-2">
+                        <div class="reviews-wrapper">
+                            <div class="reviews">
                                 <div class="d-flex">
                                     <ion-text class="reviews__title">Reviews</ion-text>
-                                    <div class="review-badge">4.8</div>
+                                    <div class="review-badge">{{ (user?.score && user?.score > 0) ? user.score?.toString() :
+                                        '0.0' }}</div>
                                 </div>
                                 <ion-text class="rating rating__likes">
                                     <ion-icon src="assets/icon/like.svg" class="rating__icon" />
@@ -55,26 +72,10 @@
                                 <ion-text class="end-content__title" @click="viewAllReview">View All</ion-text>
                             </div>
                         </div>
-                        <div class="d-flex gap-30">
-                            <div class="document-cards">
-                                <ion-text class="section-title">Equipment</ion-text>
-                                <div class="doc-items">
-                                    <advantage-item v-for="(item, index) in docList" :key="index"
-                                        :icon="'assets/icon/certificate.svg'" :title="item" />
-                                </div>
-                            </div>
-                            <div class="document-cards">
-                                <ion-text class="section-title">Amenities</ion-text>
-                                <div class="doc-items">
-                                    <advantage-item v-for="(item, index) in docList" :key="index"
-                                        :icon="'assets/icon/certificate.svg'" :title="item" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-1">
+            <div class="overflow-auto hide-scrollbar flex-1">
                 <div class="offerings">
                     <ion-text class="section-title">Offerings</ion-text>
                     <ion-segment mode="ios" v-model="activeSegment">
@@ -82,41 +83,23 @@
                             <ion-icon :src="segment.icon"></ion-icon>
                         </ion-segment-button>
                     </ion-segment>
-                    <div class="ion-margin-top offer-card" v-if="activeSegment === EntitiesEnum.FacilityPassList">
-                        <div class="offer-item" :key="item.id" v-for="item in passList">
-                            <div class="header-section events">
-                                <div class="name">{{ item.name }}</div>
-                                <div class="price">
-                                    {{ item.price }}
+                    <div class="offer-card hide-scrollbar" v-if="activeSegment === EntitiesEnum.Facilities">
+                        <div class="offer-item d-flex align-items-center justify-content-between" :key="item?.id"
+                            v-for="item in user?.facilities">
+                            <div class="d-flex-col gap-4">
+                                <div class="header-section events">
+                                    <div class="name">{{ item?.name }}</div>
+                                </div>
+                                <div class="detail-section">
+                                    <div class="only-address">
+                                        {{ item?.address?.street }}
+                                    </div>
                                 </div>
                             </div>
-                            <ion-label class="date-label">{{ item.time }}</ion-label>
-                            <div class="detail-section">
-                                <div class="only-address">
-                                    {{ item.address }}
-                                </div>
-                                <ion-button @click="handleBuy">Buy</ion-button>
-                            </div>
+                            <ion-button @click="handleBuy">Book</ion-button>
                         </div>
                     </div>
-                    <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Facilities">
-                        <div class="offer-item" :key="item.id" v-for="item in passList">
-                            <div class="header-section events">
-                                <div class="name">{{ item.name }}</div>
-                                <div class="price">
-                                    {{ item.price }}
-                                </div>
-                            </div>
-                            <ion-label class="date-label">{{ item.type }}</ion-label>
-                            <div class="detail-section">
-                                <div class="only-address">
-                                    {{ item.address }}
-                                </div>
-                                <ion-button @click="handleBuy">Subscribe</ion-button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
+                    <div class="offer-card hide-scrollbar" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
                         <div class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
@@ -129,11 +112,11 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type }}</ion-text>
                                 </div>
-                                <ion-button @click="handleBuy">Subscribe</ion-button>
+                                <ion-button @click="handleBuy">Buy</ion-button>
                             </div>
                         </div>
                     </div>
-                    <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
+                    <div class="offer-card hide-scrollbar" v-else-if="activeSegment === EntitiesEnum.Events">
                         <div class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
@@ -153,39 +136,46 @@
                         </div>
                     </div>
                 </div>
+                <div class="document-cards">
+                    <ion-text class="section-title">Equipment</ion-text>
+                    <div class="doc-items">
+                        <advantage-item v-for="(item, index) in docList" :key="index" :icon="'assets/icon/certificate.svg'"
+                            :title="item" />
+                    </div>
+                </div>
+                <div class="document-cards">
+                    <ion-text class="section-title">Amenities</ion-text>
+                    <div class="doc-items">
+                        <advantage-item v-for="(item, index) in docList" :key="index" :icon="'assets/icon/certificate.svg'"
+                            :title="item" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
     
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
-import { useRouter } from "vue-router";
+import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonSegment, IonSegmentButton, IonLabel, IonSpinner } from "@ionic/vue";
+import { useRoute, useRouter } from "vue-router";
 import { ellipse } from "ionicons/icons";
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Share } from "@capacitor/share";
-import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
-import Follow from "@/general/components/blocks/Follow.vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
-import { ReviewsDocument } from "@/generated/graphql";
+import { Query, SettingsCodeEnum, TrainerTypeEnum, UserDocument } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { useRoute } from "vue-router";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 dayjs.extend(relativeTime);
 const router = useRouter();
-const segmentValue = ref('trainer');
 const activeSegment = ref<EntitiesEnum>(
     EntitiesEnum.Facilities
 );
 
 const segmentTabs = [
-    {
-        name: EntitiesEnum.FacilityPassList,
-        icon: "assets/icon/pass-list.svg",
-    },
     {
         name: EntitiesEnum.Facilities,
         icon: "assets/icon/gym-person.svg",
@@ -199,32 +189,6 @@ const segmentTabs = [
         name: EntitiesEnum.Events,
         icon: "assets/icon/events.svg",
     },
-];
-const passList = [
-    {
-        id: 1,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Basic",
-    },
-    {
-        id: 2,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Standard",
-    },
-    {
-        id: 3,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Standard",
-    }
 ];
 const offerList = [{
     id: 1,
@@ -278,7 +242,18 @@ const offerEvents = [{
     date: "17 June",
     address: "Light Street, 1",
 }];
+const route = useRoute();
+const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
+    UserDocument,
+    {
+        id: route.params.id,
+    }
+);
+onResult(() => {
+    console.log('user response', result.value?.user);
 
+});
+const user = computed(() => result?.value?.user);
 const handleMore = async () => {
     console.log("call more");
     const actionSheet = await actionSheetController.create({
@@ -312,38 +287,8 @@ const handleMore = async () => {
         });
     }
 };
-const route = useRoute();
-const docList = ["Gym Items", "Cardio Items", "Cycling Items"];
-const { result: reviewsResult } = useQuery(ReviewsDocument, {
-  id: route.params.id,
-});
-console.log('result',reviewsResult);
 
-const user = computed(() => {
-    // return result.value?.user;
-    return {
-        id: "1",
-        title: "Nick Fox",
-        address: {
-            street: "Arizona, Phoenix, USA",
-        },
-        start_date: "10 month",
-        userId: "5328",
-        first_name: "Nick",
-        last_name: "Fox",
-        avatarUrl: "https://picsum.photos/200/300",
-        created_at: new Date().setFullYear(2022, 10),
-        positive_reviews_count: 160,
-        negative_reviews_count: 48,
-        quizzes: [
-            {
-                code: "DISCOVER_YOUR_NEEDS",
-                answers:
-                    "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
-            }
-        ]
-    };
-});
+const docList = ["Gym Items", "Cardio Items", "Cycling Items"];
 
 const symbols = computed(() => {
     return (
@@ -352,9 +297,22 @@ const symbols = computed(() => {
     );
 });
 
-const specialNeeds = computed<string | null>(() => {
-    const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
-    return answers ? answers : null;
+// const specialNeeds = computed<string | null>(() => {
+//     const answers = user.value?.quizzes?.find(e => e?.code === 'DISCOVER_YOUR_NEEDS')?.answers;
+//     return answers ? answers : null;
+// });
+const hourlyRate = computed(() => {
+    let rate;
+    if (result?.value?.user?.trainer_type === TrainerTypeEnum.Freelancer) {
+        rate = result.value?.user?.settings?.find(
+            (setting) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
+        );
+    } else {
+        rate = result.value?.user?.settings?.find(
+            (setting) => setting.setting?.code === SettingsCodeEnum.HourlyRate
+        );
+    }
+    return rate?.value ? getSumForPayment(rate.value, true) : "0.00";
 });
 const handleBuy = () => {
     router.push({
@@ -460,12 +418,16 @@ const viewAllReview = () => {
     }
 }
 
+.reviews-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 36px;
+}
+
 .reviews {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    margin-bottom: 16px;
-    margin-top: 20px;
 
     &__title {
         font-size: 16px;
@@ -493,15 +455,8 @@ const viewAllReview = () => {
     &__dislikes {
         font-size: 12px;
         font-weight: 500;
+        color: var(--gold);
         align-items: center;
-    }
-
-    &__likes {
-        color: #2ED47A;
-    }
-
-    &__dislikes {
-        color: #DC5858;
     }
 }
 
@@ -523,6 +478,47 @@ const viewAllReview = () => {
     font-weight: 500;
     color: var(--gold);
     margin-right: 12px;
+}
+
+.info {
+    gap: 10px;
+    padding: 8px;
+    display: flex;
+    border-radius: 8px;
+    background: var(--gray-700);
+    justify-content: space-between;
+    max-width: 343px;
+}
+
+.info-item {
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 6px 8px;
+    position: relative;
+    text-align: center;
+
+    &:first-child~& {
+        &:before {
+            top: 50%;
+            left: 0;
+            width: 1px;
+            content: "";
+            height: 32px;
+            margin-top: -16px;
+            position: absolute;
+            background-color: var(--gray-600);
+        }
+    }
+
+    &__title {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.5;
+        margin-bottom: 4px;
+        color: var(--ion-color-white);
+    }
 }
 
 .info-section {
@@ -576,6 +572,8 @@ const viewAllReview = () => {
     padding: 6px 10px;
     border-radius: 8px;
     background: var(--gray-700);
+    max-height: 213px;
+    overflow: auto;
 
     .offer-item {
         padding: 6px 10px;
@@ -584,6 +582,7 @@ const viewAllReview = () => {
         box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.25);
         width: 100%;
         margin-bottom: 8px;
+        min-height: 70px;
 
         .header-section {
             display: flex;
@@ -672,6 +671,7 @@ const viewAllReview = () => {
             font-family: "Yantramanav";
             font-size: 14px;
             font-weight: 300;
+            line-height: 21px;
         }
 
         ion-button {
@@ -841,6 +841,11 @@ const viewAllReview = () => {
 
 .overflow-auto {
     overflow: auto;
+}
+
+.spinner {
+    display: block;
+    margin: 64px auto;
 }
 </style>
     

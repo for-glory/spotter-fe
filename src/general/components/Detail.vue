@@ -82,6 +82,7 @@
             <slot name="reviews"></slot>
           </div>
         </div>
+        <slot name="offering"></slot>
         <div
           class="advantages__container"
           v-if="$slots.advantages && showAdvantages"
