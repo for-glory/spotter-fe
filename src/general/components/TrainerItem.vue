@@ -1,46 +1,58 @@
 <template>
   <router-link
     class="item-wrap"
-    :to="{ name: EntitiesEnum.Trainer, params: { id: trainer?.id } }"
+    :to="{ name: role === RoleEnum.User ? EntitiesEnum.BookTrainer : EntitiesEnum.Trainer, params: { id: trainer?.id } }"
   >
-    <ion-item lines="none" class="trainer-item wrap-item">
+    <ion-item lines="none" :class="['trainer-item', 'wrap-item', { 'user-item': role === RoleEnum.User}]">
       <avatar
         class="trainer-item__avatar"
         :src="trainer.avatarUrl"
         :symbols="symbols"
       />
-      <div class="trainer-item__inner">
-        <div class="trainer-item__head">
-          <ion-label class="trainer-item__title">
-            {{ trainer.first_name }} {{ trainer.last_name }}
-          </ion-label>
-          <rating-number class="trainer-item__rating">
-            {{ String(trainer.score?.toFixed(1)) }}
-          </rating-number>
-          <div class="trainer-item__end">
-            <slot name="end"></slot>
+      <div class="d-flex">
+        <div :class="['trainer-item__inner', { 'user-inner': endButton }]">
+          <div class="trainer-item__head">
+            <ion-label class="trainer-item__title">
+              {{ trainer.first_name }} {{ trainer.last_name }}
+            </ion-label>
+            <rating-number class="trainer-item__rating">
+              {{ String(trainer.score?.toFixed(1)) }}
+            </rating-number>
+            <div class="trainer-item__end">
+              <slot name="end"></slot>
+            </div>
           </div>
+          <address-item class="trainer-item__address" v-if="address">
+            {{ address }}
+          </address-item>
         </div>
-        <address-item class="trainer-item__address" v-if="address">
-          {{ address }}
-        </address-item>
+        <div class="end-button" v-if="endButton">
+          <ion-button>
+            {{ endButton }}
+          </ion-button>
+        </div>
       </div>
+
     </ion-item>
   </router-link>
 </template>
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import { User } from "@/generated/graphql";
-import { IonItem, IonLabel } from "@ionic/vue";
+import { RoleEnum, User } from "@/generated/graphql";
+import { IonItem, IonLabel, IonButton } from "@ionic/vue";
 import RatingNumber from "@/general/components/RatingNumber.vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import Avatar from "@/general/components/blocks/Avatar.vue";
 import { EntitiesEnum } from "@/const/entities";
+import useRoles from "@/hooks/useRole";
 
 const props = defineProps<{
   trainer: User;
+  endButton?: string;
 }>();
+
+const { role } = useRoles();
 
 const address = computed(() => {
   return (
@@ -126,6 +138,48 @@ const symbols = computed(() => {
 
   &__rating {
     margin-left: 12px;
+  }
+}
+
+.user-inner {
+  max-width: 135px;
+}
+
+.end-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-button {
+    width: 70px;
+    height: 30px;
+    color: var(--gray-700);
+    text-align: center;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 600;
+    --border-radius: 4px;
+  }
+}
+
+.user-item {
+
+  .trainer-item {
+    &__title {
+      color: var(--fitnesswhite);
+      font-family: Yantramanav;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+    }
+    
+    &__address {
+      color: var(--gray-400);
+    }
+    
+    &__rating {
+      font-family: Yantramanav;
+    }
   }
 }
 </style>

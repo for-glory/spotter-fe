@@ -3,15 +3,18 @@
     class="message__row"
     :class="{
       'message__row--current-user': currentUser,
+      'message__row__user': (role === RoleEnum.User && !Capacitor.isNativePlatform()),
       'row_align-center': contentType !== ChatMessageTypeEnum.Message,
-      'message__row__trainer': role === RoleEnum.Trainer
+      'user-items-center': contentType !== ChatMessageTypeEnum.Message,
+      'message__row__trainer': (!Capacitor.isNativePlatform() && (role === RoleEnum.Trainer || role === RoleEnum.User)),
     }"
   >
     <div v-if="showDate" class="message__date">{{ date }}</div>
     <div class="message__container">
-      <div class="user-detail-wrapper" v-if="contentType === ChatMessageTypeEnum.Message && role === RoleEnum.Trainer" :class="currentUser ? 'user-detail-wrapper--current-user' : ''">
+      <div class="user-detail-wrapper" v-if="showSendBy" :class="currentUser ? 'user-detail-wrapper--current-user' : ''">
         <img src="https://picsum.photos/200/300">
         <ion-label class="label">{{ currentUser ? 'You' : 'Alice James' }}</ion-label>
+        <div class="user-detail-imestamp">11:20</div>
       </div>
       <img
         v-if="contentType === ChatMessageTypeEnum.Attachment"
@@ -34,7 +37,7 @@
         class="message__content"
       >
         <div class="message__content-main justify-content-between">
-          <div class="d-flex">
+          <div :class="['d-flex', { 'system-msg': isSystemMessage }]">
               <div v-if="isSystemMessage" class="system-icon__container">
               <ion-icon
                 :src="`assets/icon/chat/${contentType}.svg`"
@@ -78,7 +81,7 @@
           ></ion-progress-bar>
         </div>
       </div>
-      <div class="message__timestamp">
+      <div v-if="Capacitor.isNativePlatform() && !isSystemMessage" class="message__timestamp">
         {{ timestamp }}
       </div>
     </div>
@@ -128,6 +131,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
 import { RoomType } from "@/ts/enums/chat";
 import useRoles from "@/hooks/useRole";
+import { Capacitor } from "@capacitor/core";
 
 const props = withDefaults(
   defineProps<{
@@ -157,6 +161,16 @@ const { role } = useRoles();
 const emits = defineEmits<{
   (e: "delete-message", id: number): void;
 }>();
+
+const showSendBy = computed(() => {
+  if(props.contentType === ChatMessageTypeEnum.Message && !Capacitor.isNativePlatform()) {
+    if (role === RoleEnum.Trainer || role === RoleEnum.User) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+})
 
 const isSystemMessage = computed(() =>
   [
@@ -275,8 +289,16 @@ const onHandleDeclineOrder = () => {
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
+  font-family: Poppins;
   &--current-user {
     justify-content: flex-end;
+  }
+  .user-detail-imestamp {
+    color: var(--fitnesswhite);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+    margin-left: 10px;
   }
   img {
     width: 16px;
@@ -285,7 +307,6 @@ const onHandleDeclineOrder = () => {
     border-radius: 50%;
   }
   .label{
-    font-family: "Lato";
     font-size: 15px;
     font-weight: 500;
     color: var(--fitnesswhite);
@@ -454,6 +475,27 @@ const onHandleDeclineOrder = () => {
     }
   .message__content-additional--light {
     color: var(--gray-500);
+  }
+}
+
+.system-msg {
+  color: var(--gold);
+  font-family: Yantramanav;
+  font-size: 14px;
+  font-weight: 400;
+
+  .system-icon__container {
+    margin-right: 8px;
+  }
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.message__row__user {
+  &.user-items-center {
+    align-items: center !important;
   }
 }
 </style>

@@ -28,6 +28,13 @@
         <ion-text class="order__label">{{ timeSectionTitle }}</ion-text>
         <ion-text class="order__info">{{ orderTime }}</ion-text>
       </div>
+      <template>
+        <IonItem class="info-item" lines="none">
+          <IonIcon src="assets/icon/info.svg" slot="start" />
+          <div class="info-text">Once time payment for getting you verified</div>
+          <IonLabel slot="end">$10,00</IonLabel>
+        </IonItem>
+      </template>
       <div v-if="!hidePrice" class="order__item">
         <ion-text class="order__label">Total</ion-text>
         <ion-text class="order__info">${{ hourlyRate }}</ion-text>
@@ -37,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonText } from "@ionic/vue";
+import { IonIcon, IonItem, IonLabel, IonText } from "@ionic/vue";
 import TrainerItem from "@/general/components/TrainerItem.vue";
 import { defineProps, withDefaults } from "vue";
 import EventInfo from "@/general/components/Event.vue";
@@ -131,6 +138,35 @@ withDefaults(
     color: var(--fitnesswhite);
   }
   .facility-item__address {
+    font-weight: 500;
+  }
+
+  .order__container {
+    border: none;
+  }
+}
+
+.info-item {
+  --background: var(--gray-700);
+  border-radius: 8px;
+  border: 0.8px solid var(--gray-500);
+  margin-bottom: 12px;
+  ion-icon {
+    color: var(--gold);
+    margin-inline-end: 8px
+  }
+
+  .info-text {
+    color: var(--gray-400);
+    font-family: Yantramanav;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  ion-label { 
+    color: #FFF;
+    font-family: Yantramanav;
+    font-size: 16px;
     font-weight: 500;
   }
 }

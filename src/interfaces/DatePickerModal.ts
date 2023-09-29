@@ -13,4 +13,5 @@ export type DatePickerOptions = {
   min?: number;
   max?: number;
   title?: string;
+  showTitle? :boolean;
 };

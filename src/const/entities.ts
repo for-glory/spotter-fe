@@ -40,6 +40,7 @@ export enum EntitiesEnum {
   ManagerPasswordSet = "MANAGER_PASSWORD_SET",
   Quizz = "QUIZZ",
   Facilities = "FACILITIES",
+  FacilitiesWithType = "FACILITIES_WITH_TYPE",
   Membership="MEMBERSHIP",
   ChangeMembership = "CHANGE_MEMBERSHIP",
   Facility = "FACILITY",

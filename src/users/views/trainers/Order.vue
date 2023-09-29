@@ -25,7 +25,7 @@
             :is-mobile="isMo"
           />
         </div>
-        <div class="training-place__container" v-if="showChoosePlace">
+        <div :class="['training-place__container', { 'user-place__container': role === RoleEnum.User  }]" v-if="showChoosePlace">
           <ion-text class="training-place__title">
             Choose place of training session
           </ion-text>
@@ -41,7 +41,7 @@
     <template #footer>
       <ion-button
         @click="confirmOrder"
-        class="submit-btn"
+        :class="['submit-btn', { 'native-app': role === RoleEnum.User }]"
         :disabled="disabled || addToCartLoading"
       >
         Confirm
@@ -87,6 +87,8 @@ import {
   AddTrainingToCartDocument,
   AvailableTrainingOptionsEnum,
   CreateChatDocument,
+RoleEnum,
+PurchasableProductsEnum,
 } from "@/generated/graphql";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
@@ -95,12 +97,14 @@ import { PlaceType } from "@/ts/enums/user";
 import { toastController } from "@ionic/core";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
 
 const isConfirmed = ref(false);
 const router = useRouter();
 const route = useRoute();
 const store = paymentGatewaysStore();
 const loading = ref(true);
+const { role } = useRoles();
 
 const stopLoading = debounce(() => {
   loading.value = false;
@@ -196,6 +200,19 @@ const getParams = () => {
 };
 
 const confirmOrder = () => {
+  // if (role === RoleEnum.User) {
+  //   router.push({
+  //     name: EntitiesEnum.PaymentSuccess,
+  //     params: {
+  //       id: route.params.id,
+  //     },
+  //     query: {
+  //       session: EntitiesEnum.Trainer
+  //     }
+  //   })
+
+  //   return;
+  // }
   addToCartMutation({
     input: getParams(),
   })
@@ -271,5 +288,14 @@ const discardModalClosed = () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.user-place__container {
+  .training-place__title {
+    color: var(--fitnesswhite);
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-weight: 500;
+  }
 }
 </style>

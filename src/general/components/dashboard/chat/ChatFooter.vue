@@ -92,7 +92,7 @@ const { openLoadOptions } = usePhotoLoader(sendPhoto);
 
 const handleOpenLoadOptions = () => {
   if (!props.disabled) {
-    openLoadOptions();
+    openLoadOptions(undefined, role === RoleEnum.User ? true : false);
   }
 };
 

@@ -4,7 +4,7 @@
             <ion-title class="banner__title">Gyms Nearby</ion-title>
         </div>
         <div class="position-relative">
-            <mapSection :is-web-view="true"></mapSection>
+            <mapSection :show-tabs="false" :is-web-view="true"></mapSection>
         </div>
         <!-- <IonContent>
             <div class="search-bar">

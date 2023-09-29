@@ -2,12 +2,12 @@
   <ion-spinner v-if="loading || getCartLoading" name="lines" class="spinner" />
   <base-layout v-else>
     <template #content>
-      <div class="order__head">
-        <span class="order__title"> Payment Complete! </span>
+      <div :class="['order__head',  { 'user-order': role === RoleEnum.User }]">
+        <span class="order__title"> {{ title }} </span>
         <span class="order__description">
-          You've successfully booked your {{ curSession }}
+          {{ description }}
         </span>
-        {{ item.start_date }}
+        {{ item?.start_date }}
       </div>
       <order-item
         hide-price
@@ -22,7 +22,7 @@
       />
     </template>
     <template #footer>
-      <div class="buttons__container">
+      <div :class="['buttons__container', { 'user-buttons__container': role === RoleEnum.User }]">
         <ion-button class="secondary" @click="handleRemind" v-if="!isFacility"
           >Remind me</ion-button
         >
@@ -48,22 +48,44 @@ import {
   EventDocument,
   FacilityDocument,
   GetCartDocument,
+  RoleEnum,
   UserDocument,
 } from "@/generated/graphql";
 import { computed } from "vue";
 import { IonSpinner } from "@ionic/vue";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const route = useRoute();
 const store = paymentGatewaysStore();
+const { role } = useRoles();
 
 const { result, loading: getCartLoading } = useQuery(GetCartDocument, {
   id: route?.query?.cartId,
 });
 
 const item = computed(() => result.value?.getCart?.items[0]?.productable);
+console.log("item", item.value);
+
+const title = computed(() => {
+  switch (role) {
+    case RoleEnum.User:
+      return "Payment successfully completed!";
+    default:
+      return "Payment Complete!"
+  }
+});
+
+const description = computed(() => {
+  switch (role) {
+    case RoleEnum.User:
+      return "You've booked a new session with your trainer";  
+    default:
+      return `You've successfully booked your ${curSession}`
+  }
+})
 
 const sessionQuantity = computed(() =>
   result.value?.getCart?.items[0]?.productable?.is_unlimited_checkin
@@ -133,6 +155,14 @@ const time = computed(() =>
 
 const handleClick = () => {
   store.clearCart();
+  if(role === RoleEnum.User){
+    return router.push({
+              name: EntitiesEnum.Facilities,
+              params: {
+                type: EntitiesEnum.Trainers
+              }
+          });
+  }
   router.push({
     name: EntitiesEnum.Facilities,
   });
@@ -228,5 +258,28 @@ const handleRemind = async () => {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.user-order {
+  .order {
+    &__title {
+      color: var(--gold);
+      text-align: center;
+      font-family: Yantramanav;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    &__description {
+      font-family: Yantramanav;
+      padding: 0 26px;
+    }
+  }
+}
+
+.user-buttons__container {
+  .secondary, .submit-btn {
+    font-family: Yantramanav;
+  }
 }
 </style>

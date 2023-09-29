@@ -8,7 +8,7 @@
       'user-header': role === RoleEnum.User
     }"
   >
-    <ion-buttons slot="start">
+    <ion-buttons class="start-buttons" slot="start">
       <ion-button v-if="backBtn" class="back-btn" @click="emits('back')">
         <ion-icon src="assets/icon/arrow-back.svg" />
       </ion-button>
@@ -230,5 +230,10 @@ const emits = defineEmits<{
     color: var(--fitnesswhite);
     line-height: 30px;
   }
+
+
+.start-buttons {
+  padding-left: 8px;
+}
 }
 </style>
