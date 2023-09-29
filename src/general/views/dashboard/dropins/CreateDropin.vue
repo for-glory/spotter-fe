@@ -72,8 +72,8 @@
               @click="router.go(-1);"
               >Cancel</ion-button
             >
-            <ion-button type="submit" v-if="isEdit" @click="updateNewFacilityItemPass">Save</ion-button>
-            <ion-button type="submit" v-else @click="createNewFacilityItemPass">Create</ion-button>
+            <ion-button type="submit" v-if="isEdit" @click="updateNewFacilityItemPass" :disabled="!isValidForm">Save</ion-button>
+            <ion-button type="submit" v-else @click="createNewFacilityItemPass" :disabled="!isValidForm">Create</ion-button>
           </div>
         </ion-col>
         <ion-col size="0" size-md="3"></ion-col>
@@ -117,7 +117,15 @@ const storeFacility = useNewFacilityStore();
 const isEdit = ref(false);
 let duration = ref<string>(store?.passDropinsData?.duration || "");
 let planName = ref<string>(store?.passDropinsData?.title || "");
-let planPrice = ref<string>(store?.passDropinsData?.price || "");
+let planPrice = ref<string|number>(Number(store?.passDropinsData?.price)? Number(store?.passDropinsData?.price)/100 : "");
+
+const isValidForm = computed(
+  () =>
+    duration.value &&
+    planName.value &&
+    planPrice.value &&
+    Number(planPrice.value)
+);
 
 const currentFacility = useFacilityStore();
 
@@ -309,7 +317,7 @@ const createNewFacilityItemPass = () => {
     input: {
       facility_id: currentFacility.facility.id,
       title: planName.value,
-      price: Number(planPrice.value),
+      price: Math.floor(Number(planPrice.value)*100),
       duration: Number(duration.value),
       item_type: "DROPIN",
     },
@@ -362,7 +370,7 @@ const updateNewFacilityItemPass = () => {
     input: {
       // facility_id: currentFacility.facility.id,
       title: planName.value,
-      price: Number(planPrice.value),
+      price: Math.floor(Number(planPrice.value)*100),
       duration: Number(duration.value),
       // item_type: "DROPIN",
     },
