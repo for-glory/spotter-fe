@@ -24,23 +24,6 @@
   <div class="form-body">
     <ion-grid fixed>
       <ion-row>
-        <ion-col size="12">
-          <div class="form-row">
-            <div class="label">Gym logo</div>
-            <div class="loader-area">
-              <ion-img
-                class="image-area"
-                v-if="currentFacility?.facility.media[0]?.pathUrl"
-                :src="currentFacility?.facility.media[0]?.pathUrl"
-              ></ion-img>
-              <template v-else>
-                {{ currentFacility.name?.charAt(0) }}
-              </template>
-            </div>
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Title of Drop in </ion-label>
@@ -64,23 +47,6 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="12" size-md="6">
-          <div class="form-row">
-            <ion-label class="label"> Choose equipment and amenitites </ion-label>
-            <!-- <input
-              class="input-text-field"
-              type="text"
-              placeholder="e.g: Cycling classes"
-              name="features"
-            /> -->
-             <choose-block
-              class="equipment-amenitites-field"
-              title="Equipment and amenities"
-              @handle-click="onChooseAmenities"
-              :value="facilityEquipments?.length + facilityAmenities?.length || ''"
-            />
-          </div>
-        </ion-col>
         <ion-col size="12" size-md="6">
           <div class="form-row">
             <ion-label class="label"> Cost </ion-label>
@@ -344,7 +310,7 @@ const createNewFacilityItemPass = () => {
       facility_id: currentFacility.facility.id,
       title: planName.value,
       price: Number(planPrice.value),
-      duration: Number(duration),
+      duration: Number(duration.value),
       item_type: "DROPIN",
     },
   })
@@ -397,7 +363,7 @@ const updateNewFacilityItemPass = () => {
       // facility_id: currentFacility.facility.id,
       title: planName.value,
       price: Number(planPrice.value),
-      duration: Number(duration),
+      duration: Number(duration.value),
       // item_type: "DROPIN",
     },
   })
