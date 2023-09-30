@@ -52,7 +52,9 @@
         <week-calendar
             v-model="selectedDate"
             :bookings="bookings"
+            :featureSelectionOnly="true"
             @handle-view="onViewCalendar"
+            @handle-date-change="onDateChange"
         />
         <div class="events__container">
             <items-header
@@ -159,6 +161,7 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const router = useRouter();
 const { id } = useId();
+const selectedDate = ref<Dayjs | null>(null);
 
 const {
     result: eventsResult,
@@ -185,6 +188,7 @@ const {
         fetchPolicy: "no-cache",
     }
 );
+
 
 const {
     result: trainingsResult,
@@ -307,8 +311,6 @@ const bookings = computed(() => {
     return availability;
 });
 
-const selectedDate = ref<Dayjs | null>(null);
-
 const activeTab = ref<EntitiesEnum>(
     (localStorage.getItem("trainer_schedule_active_tab") as EntitiesEnum) ??
         EntitiesEnum.Trainings
@@ -384,6 +386,25 @@ const openEvent = (id: string) => {
         },
     });
 };
+
+const onDateChange = () =>{
+    if (activeTab.value === EntitiesEnum.Trainings) {
+        updateTrainings({
+            page: 0,
+            first: 4,
+            filters: {
+                start_date: selectedDate.value? selectedDate.value.format("YYYY-MM-DD HH:mm:ss") : dayjs().format("YYYY-MM-DD HH:mm:ss"),
+                states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
+            },
+            orderBy: [
+                {
+                    column: QueryTrainerTrainingsOrderByColumn.StartDate,
+                    order: SortOrder.Asc,
+                },
+            ],
+        });
+    }
+}
 </script>
 
 <style scoped lang="scss">

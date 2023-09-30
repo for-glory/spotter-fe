@@ -262,6 +262,8 @@ ion-datetime {
 
   .carousel__item {
     font-family: "Yantramanav";
+    cursor: pointer;
+    user-select: none;
   }
 }
 </style>

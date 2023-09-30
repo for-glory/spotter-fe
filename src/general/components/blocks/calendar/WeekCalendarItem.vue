@@ -4,6 +4,7 @@
       :class="{
         'calendar-item__date--current': isCurrent,
         'calendar-item__date--highlighted': highlighted,
+        'calendar-item__date--selectable': selectable,
       }"
       class="calendar-item__date"
     >
@@ -32,9 +33,11 @@ const props = withDefaults(
     dateTime: Dayjs;
     highlighted: boolean;
     isVisible?: boolean;
+    selectable?: boolean;
   }>(),
   {
     isVisible: false,
+    selectable: false,
   }
 );
 
@@ -87,6 +90,9 @@ const isCurrent = computed(
     &--highlighted {
       background: var(--gold);
       color: var(--gray-700);
+    }
+    &--selectable {
+      cursor: pointer;
     }
   }
 
