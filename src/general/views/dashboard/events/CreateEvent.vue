@@ -22,8 +22,6 @@ import {
   IonIcon,
   IonTitle,
 } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useRouter,useRoute } from "vue-router";
