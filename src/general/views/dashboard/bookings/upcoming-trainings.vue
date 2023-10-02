@@ -32,7 +32,8 @@ import {
     QueryEventsOrderByColumn,
     SortOrder,
     QueryTrainerTrainingsOrderByColumn,
-    TrainingStatesEnum
+    TrainingStatesEnum,
+Training
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -95,118 +96,17 @@ const {
 const trainings = computed(() =>
     trainingsResult?.value?.trainerTrainings?.data
         ?
-        // trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
-        //     id: training.id,
-        //     title: `${training.user.first_name} ${training.user.last_name}`,
-        //     address: {
-        //       street: training.user.address?.street,
-        //     },
-        //     media: training.user.media,
-        //     start_date: training.start_date,
-        //     state: training.state,
-        //     userId: training.user.id,
-        //   }))
-        [
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 1,
+        trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
+            id: training.id,
+            title: `${training.user.first_name} ${training.user.last_name}`,
+            address: {
+              street: training.user.address?.street,
             },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 2,
-            },
-            {
-                id: 3,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Accepted,
-                userId: 3,
-            },
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitForReschedule,
-                userId: 1,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitingForApproval,
-                userId: 2,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Started,
-                userId: 2,
-            },
-            {
-                id: 3,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.Accepted,
-                userId: 3,
-            },
-            {
-                id: 1,
-                title: "John John Dee",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitForReschedule,
-                userId: 1,
-            },
-            {
-                id: 2,
-                title: "Nick Fox",
-                address: {
-                    street: "Summer Gym, Wall Street, 24",
-                },
-                media: "",
-                start_date: new Date(),
-                state: TrainingStatesEnum.WaitingForApproval,
-                userId: 2,
-            },
-        ]
+            media: training.user.media,
+            start_date: training.start_date,
+            state: training.state,
+            userId: training.user.id,
+          }))
         : []
 );
 

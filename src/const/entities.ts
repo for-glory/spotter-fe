@@ -45,6 +45,8 @@ export enum EntitiesEnum {
   ChangeMembership = "CHANGE_MEMBERSHIP",
   Facility = "FACILITY",
   Trainers = "TRAINERS",
+  TrainerPreview = "TRAINER_PREVIEW",
+  TrainerBooking = "TRAINER_BOOKING",
   Trainer = "TRAINER",
   ChatList = "CHAT",
   ChatPersonal = "CHAT_PERSONAL",
