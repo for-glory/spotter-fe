@@ -3,6 +3,7 @@
     lines="none" 
     style="z-index: -5"
     class="relative"
+    @click.stop="handlePlay"
   >
     <video 
       v-show="shouldPlay"
@@ -12,7 +13,7 @@
       autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
     />
-    <div @click="handlePlay" class="shadow" />
+    <div  class="shadow" />
   </ion-item>
 </template>
 
@@ -68,6 +69,7 @@ watch(() => shouldPlay.value,
 });
 
 const handlePlay = () => {
+  console.log("************");
   if(videoRef.value.paused) {
     videoRef.value.play();
   } else {

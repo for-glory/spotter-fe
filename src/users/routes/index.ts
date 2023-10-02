@@ -174,6 +174,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.UserWorkoutPaymentSuccess,
+    path: "/payment-success",
+    component: () => import("@/users/views/orders/DailyPaymentSuccessful.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.Trainer,
     path: "/users/trainers/:id(\\d+)",
     component: () => import("@/users/views/trainers/Detail.vue"),
@@ -233,6 +241,22 @@ export const routes: Array<RouteRecordRaw> = [
     name: EntitiesEnum.EventOrder,
     path: "/users/activites/order/:id(\\d+)",
     component: () => import("@/general/views/events/Order.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.UserAddReview,
+    path: "/users/dailys/review/:id",
+    component: () => import("@/users/views/workouts/AddReview.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.UserWriteReview,
+    path: "/users/dailys/recommend/:id",
+    component: () => import("@/users/views/workouts/WriteReview.vue"),
     meta: {
       middleware: [auth],
     },

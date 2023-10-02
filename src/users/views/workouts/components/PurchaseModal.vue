@@ -62,17 +62,17 @@
         </div>
         <div class="workout__details__status d-flex align-items-center justify-content-between w-100">
           <div class="d-flex-col align-items-center">
-            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.recommended_count) }}</ion-text>
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.recommended_count, 'normal') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Likes</ion-text>
           </div>
           <div class="split" />
           <div class="d-flex-col align-items-center">
-            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.views_count) }}</ion-text>
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.views_count, 'noraml') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Views</ion-text>
           </div>
           <div class="split" />
           <div class="d-flex-col align-items-center">
-            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.reviews_count) }}</ion-text>
+            <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.reviews_count, 'normal') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Reviews</ion-text>
           </div>
         </div>
@@ -177,18 +177,19 @@ const getDurationText = (value: number) => {
     return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
   }
 };
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return (num / 1e3).toFixed(0) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
-}
-
+};
 
 </script>
 

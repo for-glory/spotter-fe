@@ -21,6 +21,17 @@
     @pause="handlePlause"
     @ended="handleVideoEnded"
   />
+  <!-- <div class="w-100 h-100" style="padding: 12px;">
+    <video
+      class="video-player vjs-big-play-centered"
+      style="object-fit: cover;"
+      :src="`${VUE_APP_CDN}${daily?.video}`"
+      :controls="freeDuration === 0 || showControl"
+      :poster="daily?.previewUrl"
+      :height="props.height"
+      :width="props.width"
+    />
+  </div> -->
   <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
     <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
     <ion-text class="daily-info">
@@ -43,15 +54,15 @@
   <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-end gap-16 details__right">
     <div class="d-flex align-items-center gap-12">
       <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.recommended_count ?? 0) }}</ion-text>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.recommended_count ?? 0, 'normal') }}</ion-text>
     </div>
     <div class="d-flex align-items-center gap-12">
       <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.views_count ?? 0) }}</ion-text>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.views_count ?? 0, 'normal') }}</ion-text>
     </div>
     <div class="d-flex align-items-center gap-12">
       <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.reviews_count ?? 0) }}</ion-text>
+      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily?.reviews_count ?? 0, 'normal') }}</ion-text>
     </div>
   </div>
 </template>
@@ -139,15 +150,17 @@ watch(() => totalTime.value,
   }
 });
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 

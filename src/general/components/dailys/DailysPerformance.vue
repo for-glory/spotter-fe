@@ -9,7 +9,7 @@
     <div>
       <div 
         v-if="performanceData.length"
-        class="d-flex-col font-semibold color-gold gap-8 w-30 d-flex-col justify-content-center"
+        class="d-flex-col font-semibold color-gold gap-8 d-flex-col justify-content-center"
         :class="isNative ? 'font-18' : 'font-20'"
       >
         <div 
@@ -19,7 +19,7 @@
           Purchases
           <ion-icon src="assets/icon/dollar-circle.svg" class="normal-icon"></ion-icon>
         </div>
-        {{ totalRevenue }}
+        $ {{ formatNumber(totalRevenue, 'fixed') }}
         <ion-text 
           class="font-light color-white"
           :class="isNative ? 'font-12' : 'font-14'"
@@ -189,6 +189,19 @@ const option = {
   },
 };
 
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 </script>
 
 <style lang="scss">

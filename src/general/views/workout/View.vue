@@ -60,19 +60,19 @@
                   <div class="d-flex-col gap-8">
                     <div class="d-flex align-items-center gap-12" @click.stop="showReviews">
                       <ion-icon src="assets/icon/messages.svg" class="w-24 h-24 color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(daily.reviews_count ?? 0, 'normal') }}</ion-text>
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('purchases', daily)">
                       <ion-icon src="assets/icon/dollar-circle.svg" class="w-24 h-24 color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.purchased_users?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.purchased_users?.length ?? 0, 'normal') }}</ion-text>
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('likes', daily)">
                       <ion-icon src="assets/icon/heart-filled.svg" class="w-24 h-24 color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.recommended_users?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.recommended_users?.length ?? 0, 'normal') }}</ion-text>
                     </div>
                     <div class="d-flex align-items-center gap-12" @click.stop="showWorkoutModal('views', daily)">
                       <ion-icon src="assets/icon/eye.svg" class="w-24 h-24  color-gold"></ion-icon>
-                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.viewed_users?.length ?? 0) }}</ion-text>
+                      <ion-text class="font-light font-16 color-fitness-white">{{ formatNumber(dailyStatus?.workout?.viewed_users?.length ?? 0, 'normal') }}</ion-text>
                     </div>
                   </div>
                   <div class="d-flex align-items-center gap-12 justify-content-end">
@@ -366,15 +366,17 @@ const showReviews = (daily: any) => {
   router.push({ name: EntitiesEnum.WorkoutReviews, params: { id: id.value } });
 };
 
-const formatNumber = (num: number) => {
-  if(num <= 9) {
-    return num;
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(1) + 'M';
-  } else if (num >= 1e5) {
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
     return (num / 1e3).toFixed(1) + 'k';
   } else {
-    return Math.floor(num / 1e3) + (num >= 1e3 ? ',' : '') + (num % 1e3);
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 
@@ -620,10 +622,11 @@ ion-button#cancel {
   }
 }
 .details {
-  position: fixed;
+  position: absolute;
   padding: 16px;
   padding-bottom: 24px;
   bottom: 0;
+  z-index: 1000001;
 
   &__left {
     left: 24px;

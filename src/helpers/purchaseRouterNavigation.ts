@@ -8,11 +8,19 @@ export const navigationToSuccessPage = (
   orderId: string,
   cartId: string
 ) => {
-  router.push({
-    name: EntitiesEnum.PaymentSuccess,
-    params: { id: orderId },
-    query: { session, cartId },
-  });
+  if(session === EntitiesEnum.Workout.toLocaleLowerCase()){
+    router.push({
+      name: EntitiesEnum.UserWorkoutPaymentSuccess,
+      params: { id: orderId },
+      query: { session, cartId },
+    });
+  } else {
+    router.push({
+      name: EntitiesEnum.PaymentSuccess,
+      params: { id: orderId },
+      query: { session, cartId },
+    });
+  }
 };
 
 export const navigationAfterPaymentCompleted = (
@@ -47,12 +55,17 @@ export const navigationAfterPaymentCompleted = (
       );
       break;
     case PurchasableProductsEnum.Workout:
-      router.push({
-        name: EntitiesEnum.UserExercisesList,
-        params: {
-          id: orderId,
-        },
-      });
+      // router.push({
+      //   name: EntitiesEnum.UserExercisesList,
+      //   params: {
+      //     id: orderId,
+      //   },
+      // });
+      navigationToSuccessPage(
+        EntitiesEnum.Workout.toLowerCase(),
+        orderId,
+        cartId
+      );
       break;
     default:
       break;
