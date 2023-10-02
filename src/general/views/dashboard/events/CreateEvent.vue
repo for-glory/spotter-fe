@@ -22,21 +22,21 @@ import {
   IonIcon,
   IonTitle,
 } from "@ionic/vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import EventForm from "@/general/components/forms/EventForm.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useRouter,useRoute } from "vue-router";
 import { ref } from "vue";
 import { toastController } from "@ionic/vue";
-import { CreateEventDocument, CreateEventInput } from "@/generated/graphql";
+import { CreateEventDocument, CreateEventInput, RoleEnum } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import useRoles from "@/hooks/useRole";
 
 const router = useRouter();
 const route = useRoute();
 const currentFacility = useFacilityStore();
+const { role } = useRoles()
 const goToDashboard = () => {
   // isConfirmedModalOpen.value = true;
   eventForm.value?.clearStore();
@@ -60,7 +60,10 @@ const {
 } = useMutation(CreateEventDocument);
 
 const createEvent = (input: CreateEventInput) => {
-  createEventMutate({ input: { ...input, facility_id: currentFacility.facility.id } });
+  if (role === RoleEnum.FacilityOwner)
+    createEventMutate({ input: { ...input, facility_id: currentFacility.facility.id } });
+  else if(role === RoleEnum.Trainer)
+    createEventMutate({ input });
 };
 
 const handleCancel = () => {
