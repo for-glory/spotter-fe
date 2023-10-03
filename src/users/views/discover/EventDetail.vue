@@ -1,109 +1,18 @@
 <template>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
   <div v-else>
-    <div :class="{ 'user-detail-container': role === RoleEnum.User }" v-if="!Capacitor.isNativePlatform()">
-      <div>
-        <div class="btn-back" @click="onBack">
-          <ion-icon class="white" src="assets/icon/arrow-back.svg" />
-          {{eventData?.title}}
-        </div>
-      </div>
-      <ion-row :class="['detail-container']">
-        <ion-col size="12" :size-lg="role !== RoleEnum.User ? '9' : '12'">
-          <div class="event-detail">
-            <div>
-              <div class="event-detail__img">
-                        <ion-img :src="eventData?.media" />
-                        <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
-                            <ion-icon :icon="ellipsisVertical" />
-                        </ion-button>
-                    </div>
-              <div class="d-flex ion-justify-content-between align-items-center">
-                <div>
-                  <ion-title class="event-detail__title" v-html="eventData?.title || ''"> </ion-title>
-                  <div class="event-detail__address" >
-                    <img src="assets/location.svg" />
-                    <span> {{eventData?.address || ''}} </span>
-                  </div>
-                </div>
-                <info
-                  :start-date="eventData?.startDate || ''"
-                  start-date-label="Start date"
-                  :price="`$${eventData?.price}`"
-                  price-label="Entry"
-                  :members="`${eventData?.bookedCount}/${eventData?.maxParticipants}`"
-                  members-label="Members"
-                />
-                <follow />
-              </div>
-      
-              <div class="mt-3">
-                <h4>Description:</h4>
-                <ion-text class="description">{{ eventData?.description || '' }}</ion-text>
-                
-                <div v-if="eventData?.amenities.length">
-                  <h4 class="ion-padding-top">Amenities</h4>
-                  <div class="d-flex ion-wrap">
-                    <advantage-item
-                      v-for="(amenity, index) in eventData?.amenities"
-                      :icon="amenityIcon(amenity)"
-                      :title="amenity?.name"
-                      :key="index"
-                      light-item
-                    />
-                  </div>
-                </div>
-                <div v-if="eventData?.equipments.length">
-                  <h4 class="ion-padding-top">Equipments</h4>
-                  <div class="d-flex ion-wrap">
-                    <advantage-item
-                      v-for="(equipment, index) in eventData?.equipments"
-                      :icon="amenityIcon(equipment)"
-                      :title="equipment?.name"
-                      :key="index"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ion-col>
-        <ion-col size="12" size-lg="3" v-if="role !== RoleEnum.User">
-          <div class="event-action">
-            <ion-button
-              expand="block"
-              class="primary btn-event" style="margin-bottom: 20px;"  @click="shareEvent">
-              Share Event 
-              <img src="assets/icon/export.svg" />
-            </ion-button>
-      
-            <ion-button
-              expand="block"
-              class="primary btn-event" style="margin-bottom: 20px;" @click="editEvent">
-              Edit
-            </ion-button>
-      
-            <ion-button
-              expand="block"
-              class="btn-event"
-              color="danger" fill="outline" @click="showModal">
-              Delete
-            </ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </div>
     <detail
-      v-else
-      hiddenReviews
+      :hidden-reviews="true"
+      fav-btn
+      :showShareButton="false"
+      upload-btn
       :name="eventData?.title"
       :photos-url="eventData?.media"
       :address="eventData?.address"
       footer-subtitle="Event"
-      buttonText="Purchase Entry"
+      buttonText="Register"
       advantagesTitle="Amenities"
       equipmentsTitle="Equipments"
-      :show-share-button="eventData?.trainerId !== id"
       :edit-button="eventData?.trainerId === id"
       @handle-book="onBook"
       @handle-edit="onEdit"
@@ -115,6 +24,7 @@
     >
       <template #info>
         <info
+          is-native
           :start-date="eventData?.startDate || ''"
           start-date-label="Start date"
           :price="`$${eventData?.price}`"
@@ -157,17 +67,9 @@
   />
 </template>
 
-<script lang="ts">
-export default {
-  name: "EventDetail",
-};
-</script>
-
 <script setup lang="ts">
-import { IonText, IonSpinner, actionSheetController, IonRow, IonCol, IonButton, IonIcon, IonImg } from "@ionic/vue";
+import { IonText, IonSpinner, actionSheetController} from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
-import { ellipsisVertical } from "ionicons/icons";
-import EventDetail from "@/general/components/EventDetail.vue";
 import Detail from "@/general/components/Detail.vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
@@ -192,7 +94,6 @@ import useId from "@/hooks/useId";
 import { Share } from "@capacitor/share";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
-import { Capacitor } from "@capacitor/core";
 import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 

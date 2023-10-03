@@ -492,6 +492,30 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardUserOverview,
+        path: "user-overview",
+        component: () => import("@/general/views/dashboard/UserOverview.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardUserCalendar,
+        path: "web-user-calendar",
+        component: () => import("@/general/views/dashboard/WebUserCalendar.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
+        name: EntitiesEnum.DashboardDiscover,
+        path: "discover",
+        component: () => import("@/general/views/dashboard/Discover.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardBookings,
         path: "bookings",
         component: () => import("@/general/views/dashboard/bookings/index.vue"),

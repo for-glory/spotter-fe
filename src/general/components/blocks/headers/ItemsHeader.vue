@@ -1,5 +1,5 @@
 <template>
-  <ion-toolbar class="items-header">
+  <ion-toolbar :class="['items-header', { 'user-items-header': role === RoleEnum.User || !Capacitor.isNativePlatform() }]">
     <ion-title slot="start" class="items-header__title">{{ title }} </ion-title>
     <ion-button
       slot="end"
@@ -15,19 +15,25 @@
 </template>
 <!-- v-if="!hideViewMore" -->
 <script setup lang="ts">
+import { RoleEnum } from "@/generated/graphql";
 import { IonToolbar, IonButton, IonTitle } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
+import useRoles from "@/hooks/useRole";
+import { Capacitor } from "@capacitor/core";
 
 withDefaults(
   defineProps<{
     title: string;
     linkTo?: string;
     hideViewMore?: boolean;
+    role?:RoleEnum
   }>(),
   {
     linkTo: "all",
   }
 );
+
+const { role } = useRoles()
 
 defineEmits<{
   (e: "handle-view"): void;
@@ -49,8 +55,8 @@ defineEmits<{
     line-height: 1.5;
     --padding-top: 0;
     --padding-bottom: 0;
-    --padding-start: 0;
-    --padding-end: 0;
+    --padding-start: 8px;
+    --padding-end: 8px;
     font-family: "Yantramanav";
   }
 
@@ -62,6 +68,14 @@ defineEmits<{
     padding-left: 0;
     line-height: 150%;
     color: var(--ion-color-white);
+  }
+}
+
+.user-items-header {
+  --background: transparent;
+
+  ion-title {
+    color: var(--fitnesswhite);
   }
 }
 </style>

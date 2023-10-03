@@ -3,6 +3,7 @@
     ref="modal"
     :is-open="!isConfirmed && isOpen"
     :backdrop-dismiss="false"
+    :class="{ 'web-terms-condition-modal': isWeb }"
   >
     <div class="wrapper">
       <ion-icon
@@ -54,6 +55,7 @@ import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql"
 const props = defineProps<{
   isConfirmed: boolean;
+  isWeb?: boolean;
 }>();
 
 const isOpen = ref(!props.isConfirmed);
@@ -156,5 +158,17 @@ ion-modal::part(backdrop) {
   font-family: Yantramanav;
   font-size: 16px;
   font-weight: 500;
+}
+
+.web-terms-condition-modal {
+  &::part(content){
+    max-width: 480px;
+    height: fit-content;
+  }
+
+  .modal__content {
+    height: fit-content;
+    overflow: auto;
+  }
 }
 </style>

@@ -15,6 +15,7 @@
     <template #content>
       <base-calendar
         class="calendar"
+        @date-changed="goToDetail"
         :attributes="calendarOption"
         @month-changed="monthChanged"
       />
@@ -31,6 +32,7 @@ import { UserAvailabilityDocument } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import useId from "@/hooks/useId";
+import { EntitiesEnum } from "@/const/entities";
 import { computed } from "vue";
 
 const router = useRouter();
@@ -62,6 +64,12 @@ const monthChanged = (date: any) => {
       .format("YYYY-MM-DD HH:mm:ss"),
   });
 };
+
+const goToDetail = () => {
+  router.push({
+    name: EntitiesEnum.ActivityOnDate
+  })
+}
 
 const bookings = computed(() => {
   const availability = [];

@@ -145,17 +145,28 @@ const {
     fetchPolicy: "no-cache",
   }
 );
-
+const dummyFacility = [{
+  media: [
+    {
+      pathUrl: "assets/backgrounds/Gym_1.png"
+    }
+  ],
+  name: "Diamond Gym",
+  score: "4.6",
+  address: {
+    street: "Light Street, 24"
+  }
+}];
 const tabs: TabItem[] = [
   {
     name: EntitiesEnum.Facilities,
-    // label: "Gyms",
+    label: "Gyms",
     labelActive: "assets/icon/gym-icon.svg",
     labelInactive: "assets/icon/gym-icon.svg",
   },
   {
     name: EntitiesEnum.Trainers,
-    // label: "Trainers",
+    label: "Trainers",
     labelActive: "assets/icon/dropinsActive.png",
     labelInactive: "assets/icon/dropins.png",
   },

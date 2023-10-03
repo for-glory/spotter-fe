@@ -15,6 +15,10 @@
           >
             <ion-icon icon="assets/icon/more.svg" />
           </ion-button>
+          <ion-button v-if="uploadBtn"
+          >
+            <ion-icon icon="assets/icon/upload.svg" />
+          </ion-button>
         </template>
       </page-header>
     </template>
@@ -49,7 +53,7 @@
             </ion-text>
           </div>
           <follow
-            v-if="!hiddenReviews && !isMyProfile"
+            v-if="(!hiddenReviews && !isMyProfile) || favBtn"
             class="follow"
             :is-followed="isFollowed"
             @handle-click="$emit('handle-follow')"
@@ -215,6 +219,8 @@ const props = withDefaults(
     ordered?: boolean;
     symbols?: string;
     isTrusted?: boolean;
+    favBtn?: boolean;
+    uploadBtn?: boolean
   }>(),
   {
     buttonText: "Book now",
@@ -233,6 +239,7 @@ const props = withDefaults(
     ordered: false,
     symbols: "",
     isTrusted: true,
+    uploadBtn: false
   }
 );
 const emits = defineEmits<{

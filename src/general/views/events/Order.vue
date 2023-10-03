@@ -19,9 +19,28 @@
         <ion-button class="button--submit" expand="block" @click="onConfirm">
           Confirm
         </ion-button>
+        <template>
+          <ion-button
+          color="medium"
+          expand="block"
+          fill="outline"
+          :class="{ 'native-app': role === RoleEnum.User }"
+          >
+          Cancel session
+        </ion-button>
+      </template>
       </div>
     </template>
   </base-layout>
+  <confirmation
+    :is-visible="showConfirmationModal"
+    title="Do you want to cancel training?"
+    description="Training will be deleted from your upcoming events"
+    button-text="Cancel session"
+    cancel-button-text="No, keep session"
+    @discard="onCancelTraining"
+    @decline="hideModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -29,17 +48,22 @@ import { IonButton, IonSpinner } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import Order from "@/users/components/Order.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useRoute, useRouter } from "vue-router";
 import { EntitiesEnum } from "@/const/entities";
-import { computed } from "vue";
-import { GetCartDocument, PurchasableProductsEnum } from "@/generated/graphql";
+import { computed, ref } from "vue";
+import { GetCartDocument, PurchasableProductsEnum, RoleEnum } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
+import useRoles from "@/hooks/useRole";
+
 
 const router = useRouter();
 const route = useRoute();
 const paymentProductsStore = paymentGatewaysStore();
+const { role } = useRoles();
+const showConfirmationModal = ref(false);
 
 const onConfirm = () => {
   paymentProductsStore.clearCart();
@@ -72,6 +96,14 @@ const displayDate = computed(() => event.value?.start_date);
 const dispayTime = computed(() =>
   dayjs(new Date(event.value?.start_date).getTime()).format("hh:mm A")
 );
+
+const onCancelTraining = () => {
+  console.log('onCancelTraining');
+}
+
+const hideModal = () => {
+  console.log('hideModal');  
+}
 </script>
 
 <style scoped lang="scss">
@@ -89,7 +121,9 @@ const dispayTime = computed(() =>
 .holder-button {
   padding-inline: 24px;
   padding-bottom: calc(20px + var(--ion-safe-area-top));
-
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   .button {
     margin: 0;
   }

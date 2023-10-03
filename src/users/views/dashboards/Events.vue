@@ -5,7 +5,23 @@
     </template>
     <template #content>
       <div class="events__container">
-        <template v-if="selectedEvents &&
+        <template v-if="role === RoleEnum.User">
+            <UpcomingItem
+            v-for="event in selectedEvents"
+            :key="event.id"
+            :title="event.title"
+            :subtitle="event.subtitle"
+            :is-short-time="true"
+            :img-src="event.imgSrc"
+            :location="event.location"
+            :days="event.days"
+            :is-upcomming="activeTab === EntitiesEnum.Trainings ? false : true"
+            :upcoming-type="event.upcomingType"
+            :square-img="activeTab === EntitiesEnum.Trainings ? false : true"
+            :role="RoleEnum.User"
+            />
+          </template>
+        <template v-else-if="selectedEvents &&
           selectedEvents.length &&
           !isTrainingsLoading &&
           !isEventsLoading &&
@@ -33,7 +49,7 @@
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
       </div>
-      <page-tabs :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+      <PageTabsNew :tabs="tabs" :is-icon="true" class="page-tabs" :value="activeTab" @change="tabsChanged" />
     </template>
   </base-layout>
 </template>
@@ -42,10 +58,12 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import PageTabs from "@/general/components/PageTabs.vue";
+import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, ref } from "vue";
 import EventItem from "@/general/components/EventItem.vue";
+import UpcomingItem from "@/general/components/dashboard/UpcomingItem.vue";
 import { useQuery } from "@vue/apollo-composable";
 import {
   FacilityItemPass,
@@ -58,6 +76,7 @@ import {
   SortOrder,
   Training,
   Event,
+RoleEnum,
 } from "@/generated/graphql";
 import { useRouter } from "vue-router";
 import {
@@ -68,25 +87,32 @@ import {
 } from "@ionic/vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import dayjs from "dayjs";
+import useRoles from "@/hooks/useRole";
+import { dummyDropins, dummyPasses, dummyTraings, upcomingEvent } from "@/const/users";
 
 const router = useRouter();
+const { role } = useRoles()
 
-const tabs: TabItem[] = [
+const tabs: TabItemNew[] = [
   {
-    name: EntitiesEnum.Facilities,
-    label: "assets/icon/dumbbellActive.png",
+    name:  EntitiesEnum.Facilities,
+    labelActive: "assets/icon/gym-user-icon.svg",
+    labelInactive: "assets/icon/gym-user-icon.svg",
   },
   {
     name: EntitiesEnum.FacilityDropins,
-    label: "assets/icon/dropins.png",
+    labelActive: "assets/icon/facilities.svg",
+    labelInactive: "assets/icon/facilities.svg",
   },
   {
     name: EntitiesEnum.Trainings,
-    label: "assets/icon/Trainer.png",
+    labelActive: "assets/trainers.svg",
+    labelInactive: "assets/trainers.svg",
   },
   {
     name: EntitiesEnum.Events,
-    label: "assets/icon/facilities.png",
+    labelActive: "assets/icon/events.svg",
+    labelInactive: "assets/icon/events.svg",
   },
 ];
 
@@ -246,12 +272,24 @@ const activeTab = ref<EntitiesEnum>(
 const selectedEvents = computed(() => {
   switch (activeTab.value) {
     case EntitiesEnum.Trainings:
+      if(!trainings.value?.length){
+        return dummyTraings;
+      }
       return trainings.value;
 
     case EntitiesEnum.Events:
+      if(!events.value?.length){
+        return upcomingEvent;
+      }
       return events.value;
 
+     case EntitiesEnum.FacilityDropins:
+         return dummyDropins;
+
     default:
+      if(!facilities.value?.length){
+        return dummyPasses;
+      }
       return facilities.value;
   }
 });

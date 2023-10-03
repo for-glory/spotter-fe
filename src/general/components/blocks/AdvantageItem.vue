@@ -1,5 +1,5 @@
 <template>
-  <div class="certificate">
+  <div :class="['certificate', { 'light-certificate': lightItem }]">
     <ion-icon :src="icon" class="certificate-icon" />
     {{ title }}
   </div>
@@ -12,6 +12,7 @@ import { defineProps } from "vue";
 defineProps<{
   icon: string;
   title: string;
+  lightItem?: boolean;
 }>();
 </script>
 
@@ -34,5 +35,9 @@ defineProps<{
     font-size: 24px;
     margin-right: 8px;
   }
+}
+
+.light-certificate {
+  color: var(--grey-text);
 }
 </style>

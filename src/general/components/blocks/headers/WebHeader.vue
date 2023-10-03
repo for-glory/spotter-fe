@@ -1,12 +1,12 @@
 <template>
   <IonHeader class="web-header" mode="ios">
-    <IonToolbar class="ion-no-border">
+    <IonToolbar :class="['ion-no-border', { 'rm-p': !backBtn }]">
       <IonButtons slot="start">
         <IonButton class="back-btn" v-if="backBtn" @click="$emit('back')">
           <IonIcon src="assets/icon/arrow-back.svg" />
         </IonButton>
       </IonButtons>
-      <IonTitle>{{ title }}</IonTitle>
+      <IonTitle :class="{'gold-title':goldTitle}">{{ title }}</IonTitle>
     </IonToolbar>
   </IonHeader>
 </template>
@@ -22,6 +22,7 @@ import {
 interface WebHeaderProps {
   title: string;
   backBtn: boolean;
+  goldTitle?: boolean;
 }
 
 interface WebHeaderEmits {
@@ -30,6 +31,7 @@ interface WebHeaderEmits {
 
 withDefaults(defineProps<WebHeaderProps>(), {
   backBtn: true,
+  goldTitle: false
 });
 
 defineEmits<WebHeaderEmits>();
@@ -60,6 +62,13 @@ defineEmits<WebHeaderEmits>();
     margin-inline: 0;
     text-align: start;
     padding-inline: 35px;
+  }
+
+  .gold-title {
+    color: var(--gold);
+  }
+  .rm-p {
+    padding-inline: 0;
   }
 }
 </style>

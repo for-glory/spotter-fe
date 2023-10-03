@@ -190,6 +190,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.UserEventDetail,
+    path: "/users/user-event-detail/:id(\\d+)",
+    component: () => import("@/users/views/discover/EventDetail.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.Facility,
     path: "/users/facilities/:id(\\d+)",
     component: () => import("@/users/views/facilities/Details.vue"),
@@ -220,6 +228,19 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       middleware: [auth],
     },
+  },
+  {
+    name: EntitiesEnum.ActivityOnDate,
+    path: "/users/dashboard/activity-on-date",
+    component: () => import("@/users/views/dashboards/ActivityOnDate.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.ActivityDetail,
+    path: "/users/dashboard/activity-on-date/:type",
+    component: () => import("@/users/views/dashboards/ActivityDetail.vue"),
   },
   {
     name: EntitiesEnum.ActivitiesNearby,

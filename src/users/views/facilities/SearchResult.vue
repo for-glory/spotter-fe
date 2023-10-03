@@ -3,16 +3,16 @@
     <ion-thumbnail class="search-result__photo">
       <img v-if="photo?.length" :src="photo" class="search-result__img" />
       <template v-else>
-        {{ item.name?.charAt(0) }}
+        {{ item?.name?.charAt(0) }}
       </template>
     </ion-thumbnail>
     <div class="search-result__holder">
       <div class="search-result__header">
         <div class="search-result__header__main">
-          <ion-label class="search-result__title">{{ item.name }}</ion-label>
-          <rating-number v-if="showRating" class="search-result__rating">
+          <ion-label class="search-result__title">{{ item?.name }}</ion-label>
+          <rating-number v-if="showRating && item?.score" class="search-result__rating">
             {{
-              item.score?.toString().includes(".")
+              item?.score?.toString().includes(".")
                 ? item?.score
                 : `${item?.score}.0` || "0.0"
             }}
@@ -23,12 +23,12 @@
         </div>
       </div>
       <address-item
-        v-if="item.address?.street?.length"
+        v-if="item?.address?.street?.length"
         class="facility-item__address"
       >
         {{ item.address?.street }}
       </address-item>
-      <workout-type-item v-if="item.type" class="facility-item__address">
+      <workout-type-item v-if="item?.type" class="facility-item__address">
         {{ item?.type }}
       </workout-type-item>
     </div>
@@ -59,7 +59,7 @@ const props = withDefaults(
 );
 const { role } = useRoles()
 const photo = computed(() => {
-  return props.item.media?.length ? props.item.media[0]?.pathUrl : "";
+  return props.item?.media?.length ? props.item?.media[0]?.pathUrl : "";
 });
 </script>
 

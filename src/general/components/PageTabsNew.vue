@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div :class="{ 'web-segments': isWeb, 'native-segments': Capacitor.isNativePlatform() }">
     <ion-segment
       id="page-tabs"
       mode="ios"
-      class="tabs ion-margin-top"
+      :class="['tabs', 'ion-margin-top']"
       @ionChange="segmentChanged"
       :value="value || (tabs && tabs[0].name)"
     >
@@ -14,7 +14,8 @@
         v-for="tab in tabs"
         :disabled="tab.disabled"
       >
-      <img :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
+      <img v-if="!isIcon" :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
+      <IonIcon v-else :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" />
         <!-- <img v-if="props.type === 'image'" :src="getTabImage(tab.name)" style="width: 24px; height: 24px;" /> -->
         <!-- <span v-else>{{ tab.labelActive }}</span> -->
       </ion-segment-button>
@@ -24,15 +25,21 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
-import { IonSegment, IonSegmentButton, SegmentCustomEvent } from "@ionic/vue";
+import { IonIcon, IonSegment, IonSegmentButton, SegmentCustomEvent } from "@ionic/vue";
 import { TabItem } from "@/interfaces/TabItem";
 import { EntitiesEnum } from "@/const/entities";
+import { Capacitor } from "@capacitor/core";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   tabs?: TabItem[];
   value?: EntitiesEnum;
-  type?: 'image'
-}>();
+  type?: 'image';
+  isWeb?:boolean;
+  isIcon?:boolean;
+}>(), {
+  isWeb: false,
+  isIcon:false
+});
 
 const emit = defineEmits<{
   (e: "change", value: EntitiesEnum): void;
@@ -80,5 +87,30 @@ const getTabImage = (tabName: EntitiesEnum) => {
       padding: 0;
     }
   }
+}
+
+.native-segments {
+    ion-segment-button {
+      --color: var(--gray-500);
+      --color-checked: var(--gray-800);
+    }
+}
+
+.web-segments {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  ion-segment {
+    max-width: 500px;
+    width: 500px;
+    padding-left: 29px;
+    padding-right: 29px;
+
+    &-button {
+      --color: var(--gray-500);
+      --color-checked: var(--gray-700);
+    }
+  }
+
 }
 </style>

@@ -98,6 +98,8 @@ import { EntitiesEnum } from "@/const/entities";
 import { defineProps, ref } from "vue";
 import useUser from "@/hooks/useUser";
 import { clearAuthItems } from "@/router/middleware/auth";
+import useRoles from "@/hooks/useRole";
+import { RoleEnum } from "@/generated/graphql";
 
 const props = defineProps<{
   hideAuthBtn?: boolean;
@@ -105,7 +107,7 @@ const props = defineProps<{
 }>();
 
 const { isLoggedIn } = useUser();
-
+const { role } = useRoles()
 
 const router = useRouter();
 
@@ -121,6 +123,11 @@ const onLogout = () => {
   router.push({ name: EntitiesEnum.Login });
 };
 const goToDashboard = () => {
+	if(role === RoleEnum.User){
+		return router.push({
+			name: EntitiesEnum.DashboardUserOverview
+		})
+	}
 	router.push({ name: EntitiesEnum.DashboardOverview });
 };
 </script>
