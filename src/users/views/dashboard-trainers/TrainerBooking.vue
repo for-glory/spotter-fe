@@ -32,7 +32,7 @@
                     </div>
                     <ChoosePlace v-if="isExpanded" :is-web-view="true"></ChoosePlace>
                 </div>
-                <IonButton class="ion-margin" @click="onNext">Confirm</IonButton>
+                <IonButton :disabled="addToCartLoading" class="ion-margin" @click="onNext">Confirm</IonButton>
             </div>
             <div class="flex-2 h-100 hide-scrollbar">
                 <BaseCustomCalendar class="web-custom-calendar" week-days-format="W" />
@@ -104,11 +104,10 @@ const onCloseWaitingModal = () => {
 };
 
 const showChoosePlace = computed(() => {
-    const isMobile = paymentStore?.isMobile;
     const isBoth = user.value?.trainer_type === TrainerTypeEnum.Both;
     const isNotGym = user.value?.trainer_type !== TrainerTypeEnum.WorkingInGym;
 
-    return isMobile && (isBoth || isNotGym);
+    return (isBoth || isNotGym);
 });
 const { mutate: addToCartMutation, loading: addToCartLoading } = useMutation(
     AddTrainingToCartDocument
@@ -236,12 +235,15 @@ const getTrainingOptions = () => {
     if (paymentStore?.place?.value === PlaceType.UserGym) {
         return AvailableTrainingOptionsEnum.InUserGym;
     }
-    return "";
+
+    console.log('userType',user.value?.trainer_type);
+    
+    return AvailableTrainingOptionsEnum.InTrainerGym;
 };
 const getTrainerParams = () => {
     const params: {
         available_user_gym_id?: string;
-        training_option: AvailableTrainingOptionsEnum | "";
+        training_option: AvailableTrainingOptionsEnum | string;
         trainer_id: string;
         start_date: Date;
         end_date: Date;
@@ -260,7 +262,10 @@ const getTrainerParams = () => {
 
 const onNext = () => {
     const data = localStorage.getItem("terms_of_use");
-    const terms = JSON.parse(data || '');
+    let terms = null;
+    if(data){
+        terms = JSON.parse(data);
+    }
     if (!terms) {
         isConfirmed.value = false;
         return;

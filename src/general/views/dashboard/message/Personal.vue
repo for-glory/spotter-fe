@@ -1,30 +1,13 @@
 <template>
-	<div ref="messagesContainer" class="messages__container" 
-    :class="{
-      'messages_container__trainer': role === RoleEnum.Trainer,
-      'messages__container__user': role === RoleEnum.User,
-      }">
-		<div>
-      <template v-if="showMessages">
-        <template  v-for="(message, idx) in data.messages" :key="message.id">
-          <message
-            :content="message.content"
-            :timestamp="message.timestamp"
-            :date="message.date"
-            :content-type="message.contentType"
-            :current-user="message.isCurUserMessage"
-            :show-date="showDate(idx)"
-            :approvable="isApprovable(message.type, idx)"
-            :training-id="message?.trainingId"
-            @delete-message="onDeleteMessage"
-            :message-id="message.id"
-            :deleteable="message.isCurUserMessage"
-          />
-        </template>
-    </template>
-		</div>
-	</div>
-	<chat-footer @send="onSend" :disabled="data.chats?.locked || !roomId" />
+  <div ref="messagesContainer" :class="['messages__container', { 'user-msg-container': role === RoleEnum.User }]">
+      <template v-for="(message, idx) in data.messages" :key="message.id">
+        <message :content="message.content" :timestamp="message.timestamp" :date="message.date"
+          :content-type="message.type" :current-user="message.isCurUserMessage" :opponent-user="data.chats" :show-date="showDate(idx)"
+          :approvable="isApprovable(message.type, idx)" :training-id="message?.trainingId"
+          @delete-message="onDeleteMessage" :message-id="message.id" :deleteable="message.isCurUserMessage" />
+      </template>
+  </div>
+  <chat-footer @send="onSend" :disabled="data.chats?.locked || !roomId" />
 </template>
 
 <script setup lang="ts">
@@ -58,8 +41,9 @@ import { RoomType } from "@/ts/enums/chat";
 const props = withDefaults(
   defineProps<{
     roomId: string;
-    roomType?:RoomType;
-    showMessages?:boolean
+    roomType?: RoomType;
+    showMessages?: boolean,
+    id: string,
   }>(),
   {
     showMessages: true
@@ -76,140 +60,9 @@ const activeUsers = ref<number[]>([]);
 
 const messagesContainer = ref<HTMLDivElement | null>(null);
 const layout = ref<typeof BaseLayout | null>(null);
-const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
+const data = reactive<{ messages: MessageType[]; chats: chatRoom[]; }>({
   chats: [],
-  messages: [
-  {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:28 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    }
-  ],
+  messages: [],
 });
 
 onBeforeRouteLeave((to, from, next) => {
@@ -224,29 +77,26 @@ const fetchChats = async () => {
       ? requestsRef
       : chatsRef;
 
-  await onValue(ref, (snapshot) => {
-    snapshot.forEach((childSnapshot: any) => {
-      if (
-        route.query.type === RoomType.Request.toLocaleLowerCase() &&
+  onValue(ref, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      if (route.query.type === RoomType.Request.toLocaleLowerCase() &&
         childSnapshot.key === id &&
-        props.id
-      ) {
+        props.roomId) {
         const message = Object.values(childSnapshot.val()).filter(
-          (i) => Number(i.id) === Number(props.id)
+          (i) => Number(i.id) === Number(props.roomId)
         ).length
           ? Object.values(childSnapshot.val()).filter(
-              (i) => Number(i.id) === Number(props.id)
-            )[0]
+            (i) => Number(i.id) === Number(props.roomId)
+          )[0]
           : {};
 
         data.chats = {
           avatar: message?.participants?.filter(
-            (i: { user_id: any }) => Number(i.user_id) === Number(id)
+            (i: { user_id: any; }) => Number(i.user_id) === Number(id)
           )[0]?.avatar,
           roomName: message.sender_name,
           participantId: message.participants.find(
-            (participant: { user_id: number }) =>
-              Number(participant.user_id) !== Number(id)
+            (participant: { user_id: number; }) => Number(participant.user_id) !== Number(id)
           )?.user_id,
         };
 
@@ -254,7 +104,7 @@ const fetchChats = async () => {
         data.messages.push(...mappedValues);
       } else {
         const chat = childSnapshot.val();
-        if (chat.id == props.id) {
+        if (chat.id == props.roomId) {
           chat.participants.forEach(
             async (user: {
               user_id: number;
@@ -270,22 +120,22 @@ const fetchChats = async () => {
                   )[0],
                 };
                 data.chats = mapChats(curChat, id);
+                console.log(data);
+                
               }
             }
           );
 
           data.messages = Object.assign({}, mapMessages(chat, id));
 
-          if (
-            !data.messages[Object.keys(data.messages)?.pop()]?.read ||
+          if (!data.messages[Object.keys(data.messages)?.pop()]?.read ||
             (data.messages[Object.keys(data.messages)?.pop()] &&
               data.messages[Object.keys(data.messages)?.pop()]?.read?.length &&
-              data.messages[Object.keys(data.messages)?.pop()].read[0] &&
-              data.messages[Object.keys(data.messages)?.pop()].read[0] !==
-                Number(id))
-          ) {
+              data.messages[Object.keys(data.messages)?.pop()]?.read[0] &&
+              data.messages[Object.keys(data.messages)?.pop()]?.read[0] !==
+              Number(id))) {
             readMessage({
-              id: data.messages[Object.keys(data.messages)?.pop()].id,
+              id: data.messages[Object.keys(data.messages)?.pop()]?.id,
             });
           }
         }
@@ -340,15 +190,17 @@ const onSend = (
 ) => {
   const key = messageContentType.toLowerCase();
   sendMessage({
-    chat_id: props.id,
+    chat_id: props.roomId,
     input: {
       type: messageContentType,
       [key]: newMessage,
     },
+  }).then(res=>{
+    if (messagesContainer.value) {
+      layout?.value?.scrollToBottom();
+      messagesContainer.value?.scrollTo(0,messagesContainer.value.scrollHeight);
+    }
   });
-  if (messagesContainer.value) {
-    layout?.value?.scrollToBottom();
-  }
 };
 
 const onDeleteMessage = (id: number) => {
@@ -380,14 +232,16 @@ const onBack = () => {
     // background: url("../../../../../public/assets/icon/chat-circles.png") 50% 50% /
     //   cover repeat;
   }
+
   &__trainer {
     &:after {
       z-index: 1;
       // background: url("/public/assets/icon/chat-bg.svg") cover repeat;
     }
   }
+
   &__user {
-  background: url("../../../../../public/assets/icon/chat-bg.svg") center no-repeat;
+    background: url("../../../../../public/assets/icon/chat-bg.svg") center no-repeat;
   }
 }
 </style>

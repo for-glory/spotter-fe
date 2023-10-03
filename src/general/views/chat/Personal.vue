@@ -25,6 +25,7 @@
               @delete-message="onDeleteMessage"
               :message-id="message.id"
               :deleteable="message.isCurUserMessage"
+              :opponent-user="data.chats"
             />
           </template>
         </div>
@@ -77,138 +78,7 @@ const messagesContainer = ref<HTMLDivElement | null>(null);
 const layout = ref<typeof BaseLayout | null>(null);
 const data = reactive<{ messages: MessageType[]; chats: chatRoom[] }>({
   chats: [],
-  messages: [
-    {
-      content: "test",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "test",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "test",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "test",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:27 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: true,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    },
-    {
-      content: "Training session on Jul 17, 8:30 PM",
-      timestamp: "Jul 17, 2022",
-      date: "8:28 PM",
-      contentType: ChatMessageTypeEnum.Message,
-      type: ChatMessageTypeEnum.Message,
-      isCurUserMessage: false,
-      id: 1,
-      trainingId: 5328,
-      username: "john",
-      parentId: 5684,
-      key: "1",
-    }
-  ],
+  messages: [],
 });
 
 onBeforeRouteLeave((to, from, next) => {
@@ -253,7 +123,7 @@ const fetchChats = async () => {
         data.messages.push(...mappedValues);
       } else {
         const chat = childSnapshot.val();
-        if (chat.id == route.params.id) {
+        if (chat?.id == route.params.id) {
           chat.participants.forEach(
             async (user: {
               user_id: number;
@@ -279,12 +149,12 @@ const fetchChats = async () => {
             !data.messages[Object.keys(data.messages)?.pop()]?.read ||
             (data.messages[Object.keys(data.messages)?.pop()] &&
               data.messages[Object.keys(data.messages)?.pop()]?.read?.length &&
-              data.messages[Object.keys(data.messages)?.pop()].read[0] &&
-              data.messages[Object.keys(data.messages)?.pop()].read[0] !==
+              data.messages[Object.keys(data.messages)?.pop()]?.read[0] &&
+              data.messages[Object.keys(data.messages)?.pop()]?.read[0] !==
                 Number(id))
           ) {
             readMessage({
-              id: data.messages[Object.keys(data.messages)?.pop()].id,
+              id: data.messages[Object.keys(data.messages)?.pop()]?.id,
             });
           }
         }
@@ -344,10 +214,12 @@ const onSend = (
       type: messageContentType,
       [key]: newMessage,
     },
+  }).then(res=>{
+    if (messagesContainer.value) {
+      layout?.value?.scrollToBottom();
+      messagesContainer.value?.scrollTo(0,messagesContainer.value.scrollHeight);
+    }
   });
-  if (messagesContainer.value) {
-    layout?.value?.scrollToBottom();
-  }
 };
 
 const onDeleteMessage = (id: number) => {

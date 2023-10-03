@@ -149,6 +149,7 @@ const handleSend = () => {
 }
 
 .send-message__button {
+  cursor: pointer;
   position: absolute;
   top: 50%;
   right: 20px;

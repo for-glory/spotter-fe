@@ -31,12 +31,11 @@
       @touchstart="onContentTouchStart"
       @ionScrollEnd="onContentScrollEnd"
       @ionScrollStart="onContentScrollStart"
-      class="page-content has-footer has-header"
-      :class="{
+      :class="['page-content','has-footer', 'has-header', $attrs.class, {
         'page-content--full-height': contentFullHeight,
         'page-content--fullscreen': isFullscreenView,
         'top-24': isPlatform('ios'),
-      }"
+      }]"
     >
       <template v-if="draggable">
         <ion-backdrop
@@ -153,6 +152,7 @@ const props = withDefaults(
     draggable?: boolean;
     offsetTop?: number;
     draggableBackground?: string;
+    addContentClass?:string
   }>(),
   {
     hideNavigationMenu: false,
@@ -163,6 +163,7 @@ const props = withDefaults(
     draggable: false,
     offsetTop: 42,
     draggableBackground: "",
+    addContentClass: ""
   }
 );
 

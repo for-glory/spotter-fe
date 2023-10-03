@@ -46,10 +46,11 @@
           </template>
           <template v-if="role === RoleEnum.Trainer && activeTab === EntitiesEnum.Trainings">
             <event-item
-              v-for="training in testingTranings"
+              v-for="training in trainings"
               :key="training.id"
               :item="training"
               rounded
+              @click="openTraining(training.id)"
             />
           </template>
           <template v-if="role !== RoleEnum.Trainer && activeTab === EntitiesEnum.Events">
@@ -63,7 +64,7 @@
 
           <template v-if="role === RoleEnum.Trainer && activeTab === EntitiesEnum.Events">
             <upcoming-item
-              v-for="event in testingEvents"
+              v-for="event in events"
               :key="event.id"
               :img-src="event.media"
               :title="event.title"
@@ -125,6 +126,7 @@ import {
   QueryTrainerTrainingsOrderByColumn,
   TrainingStatesEnum,
 RoleEnum,
+EventPaginator,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import EventItem from "@/general/components/EventItem.vue";
@@ -214,114 +216,29 @@ const totalTrainings = computed<number>(
 const totalEvents = computed<number>(
   () => eventsResult?.value?.events?.paginatorInfo?.total ?? 0
 );
-
 const events = ref<Event[]>();
 const trainings = ref<Event[]>();
 
-const testingEvents = [
-  { 
-    id: "1",
-    title: "Food festival",
-    subTitle: "17 June",
-    address: {
-      street: "Light Street, 1"
-    },
-    start_date: new Date(),
-    end_date: new Date(),
-    media: "assets/gym.png",
-    type: "Upcoming"
-  },
-  { 
-    id: "1",
-    title: "Food festival",
-    subTitle: "17 June",
-    address: {
-      street: "Light Street, 1"
-    },
-    start_date: new Date(),
-    end_date: new Date(),
-    media: "assets/gym.png",
-    type: "Finished"
-  },
-  { 
-    id: "1",
-    title: "Food festival",
-    subTitle: "17 June",
-    address: {
-      street: "Light Street, 1"
-    },
-    start_date: new Date(),
-    end_date: new Date(),
-    media: "assets/gym.png",
-    type: "Finished"
-  },
-  { 
-    id: "1",
-    title: "Food festival",
-    subTitle: "17 June",
-    address: {
-      street: "Light Street, 1"
-    },
-    start_date: new Date(),
-    end_date: new Date(),
-    media: "assets/gym.png",
-    type: "Upcoming"
-  },
-  { 
-    id: "1",
-    title: "Food festival",
-    subTitle: "17 June",
-    address: {
-      street: "Light Street, 1"
-    },
-    start_date: new Date(),
-    end_date: new Date(),
-    media: "assets/gym.png",
-    type: "Upcoming"
-  }
-]
-const testingTranings = [
-  {
-    id: "1",
-    title: "Johne deo",
-    address: {street:"Summer Gym, Wall Street, 24"},
-    media: [
-      {
-      pathUrl: "assets/gym.png"
-      }
-    ]
-  },
-  {
-    id: "1",
-    title: "Johne deo",
-    address: {street:"Summer Gym, Wall Street, 24"},
-    media: [
-      {
-      pathUrl: "assets/gym.png"
-    }
-    ]
-  },
-  {
-    id: "1",
-    title: "Johne deo",
-    address: {street:"Summer Gym, Wall Street, 24"},
-    media: [
-      {
-      pathUrl: "assets/gym.png"
-    }
-    ]
-  },
-  {
-    id: "1",
-    title: "Johne deo",
-    address: {street:"Summer Gym, Wall Street, 24"},
-    media: [
-      {
-      pathUrl: "assets/gym.png"
-    }
-    ]
-  }
-]
+// const events = computed<EventPaginator["data"]>(() =>
+//   eventsResult?.value?.events?.data ? eventsResult.value.events.data : []
+// );
+
+// const trainings = computed(() =>
+//     trainingsResult?.value?.trainerTrainings?.data
+//         ?
+//         trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
+//             id: training.id,
+//             title: `${training.user.first_name} ${training.user.last_name}`,
+//             address: {
+//               street: training.user.address?.street,
+//             },
+//             media: training.user.media,
+//             start_date: training.start_date,
+//             state: training.state,
+//             userId: training.user.id,
+//           }))
+//         : []
+// );
 
 gotTrainings((response) => {
   const newTrainings =
@@ -370,8 +287,8 @@ console.log("activeTab.value", activeTab.value);
 const tabsChanged = (ev: EntitiesEnum) => {
   if (ev) activeTab.value = ev;
   activePage.value = 1;
-  trainings.value = [];
-  events.value = [];
+  // trainings.value = [];
+  // events.value = [];
   localStorage.setItem("trainer_schedule_active_tab", activeTab.value);
 
   updateActivities();

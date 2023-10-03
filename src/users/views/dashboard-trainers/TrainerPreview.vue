@@ -138,16 +138,16 @@
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Equipment</ion-text>
-                    <div class="doc-items">
-                        <advantage-item v-for="(item, index) in docList" :key="index" :icon="'assets/icon/certificate.svg'"
-                            :title="item" />
+                    <div class="doc-items" v-if="user?.certificates?.length">
+                        <advantage-item v-for="(item, index) in user.certificates" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                            :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                     </div>
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Amenities</ion-text>
                     <div class="doc-items">
-                        <advantage-item v-for="(item, index) in docList" :key="index" :icon="'assets/icon/certificate.svg'"
-                            :title="item" />
+                        <advantage-item v-for="(item, index) in user?.weiver_and_labilities" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                            :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                     </div>
                 </div>
             </div>
@@ -169,6 +169,7 @@ import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { Query, SettingsCodeEnum, TrainerTypeEnum, UserDocument } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import { Browser } from "@capacitor/browser";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const activeSegment = ref<EntitiesEnum>(
@@ -249,6 +250,9 @@ const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
         id: route.params.id,
     }
 );
+const onOpenDocument = async (url: string) => {
+  await Browser.open({ url: url });
+};
 onResult(() => {
     console.log('user response', result.value?.user);
 
@@ -325,7 +329,7 @@ const handleBuy = () => {
 const viewAllReview = () => {
     router.push({
         name: EntitiesEnum.GymReviews,
-        params: { id: 52 },
+        params: { id: route.params.id },
     });
 }
 

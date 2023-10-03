@@ -9,7 +9,19 @@
         </div>        
         <div class="d-flex gap-16 h-100 overflow-hidden">
            <div class="flex-1 h-100 d-flex-col justify-content-between hide-scrollbar">
-            <template v-if="trainings.length > 0">
+            <ion-spinner
+                name="lines"
+                class="spinner"
+                v-if="trainingsLoading"
+            />
+            <empty-block
+                hide-button
+                icon="assets/icon/empty.svg"
+                v-else-if="!trainings.length"
+                :title="`Sorry, no trainings found`"
+                :text="`You have no booked trainings on this day`"
+            />
+            <template v-else>
               <training-details
                   v-for="training in trainings"
                   :key="training.id"
@@ -18,14 +30,14 @@
             </template>
            </div>
            <div class="flex-2 h-100 hide-scrollbar">
-            <base-calendar class="web-custom-calendar" week-days-format="W" :attributes="calendarOption" />
+            <base-calendar class="web-custom-calendar" week-days-format="W" :attributes="calendarOption" @day-click="onDateChange" />
            </div>
         </div>
     </div>
 </template>
   
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton } from "@ionic/vue";
+import { IonIcon, IonTitle, IonButton, IonSpinner } from "@ionic/vue";
 import BaseCalendar from "@/general/components/base/BaseCustomCalendar.vue";
 import { computed, watch, ref } from "vue";
 import { useQuery } from "@vue/apollo-composable";
@@ -40,6 +52,8 @@ import { UserAvailabilityDocument,
   SortOrder
  } from "@/generated/graphql";
 import TrainingDetails from "@/general/views/dashboard/bookings/training-details.vue";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
+
 const date = ref('')
 const question = ref('')
 const answer = ref('Questions usually contain a question mark. ;-)')
@@ -137,13 +151,25 @@ const calendarOption = computed(() => {
   });
   return [
     {
-      key: "today",
       highlight: {
         style: {
           backgroundColor: "var(--gold)",
         },
       },
-      dates: [new Date()],
+      dates: new Date(),
+    },
+    {
+      // key: "today",
+      highlight: {
+        // color: 'dark',
+        fillMode: 'outline',
+        style: {
+          backgroundColor: "#262626",
+          borderWidth: "1px",
+          borderColor: "var(--gold)",
+        },
+      },
+      dates: new Date(),
     },
     {
       dot: {
@@ -155,6 +181,24 @@ const calendarOption = computed(() => {
     },
   ];
 });
+
+const onDateChange = (date: any)=> {
+  calendarOption.value[0].dates = new Date(date);
+  updateTrainings({
+    page: 0,
+    first: 4,
+    filters: {
+        start_date: date?.format("YYYY-MM-DD HH:mm:ss"),
+        states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
+    },
+    orderBy: [
+        {
+            column: QueryTrainerTrainingsOrderByColumn.CreatedAt,
+            order: SortOrder.Asc,
+        },
+    ],
+  });
+}
 
 </script>
   
@@ -198,6 +242,7 @@ const calendarOption = computed(() => {
 .flex-1, .flex-2 {
     width: 100%;
     overflow: auto;
+    position: relative;
 }
 .flex-1 {
     max-width: 360px;
@@ -206,6 +251,12 @@ const calendarOption = computed(() => {
 }
 .overflow-hidden {
     overflow: hidden;
+}
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
   

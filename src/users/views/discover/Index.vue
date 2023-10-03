@@ -1,8 +1,8 @@
 <template>
 
-  <base-layout :hide-navigation-menu="isSearchOnFocus">
-    <template #header>
-      <search-form :type="EntitiesEnum.FacilityDropins" @handle-focus="isSearchOnFocus = true"
+  <base-layout :class="{ 'web-discover': isWeb }" :hide-navigation-menu="isSearchOnFocus || isWeb">
+    <template v-if="!isWeb" #header>
+      <search-form :type="EntitiesEnum.FacilityDropins" :is-with-tabs="true" @handle-focus="isSearchOnFocus = true"
         @handle-blur="isSearchOnFocus = false" />
 
       <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
@@ -11,6 +11,12 @@
 
     <template #content>
       <div class="dashboard">
+        <div class="web-header d-flex-col justify-content-center align-items-center gap-16" v-if="isWeb">
+          <search-form :type="activeTab" is-web :is-with-tabs="true" @handle-focus="isSearchOnFocus = true"
+        @handle-blur="isSearchOnFocus = false" />
+
+          <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
+        </div>
         <!-- <div class="dashboards-items">
           <dashboard-item :items="activityItems">
             <template #title>
@@ -44,10 +50,10 @@
             isTrainingsLoading ||
             isEventsLoading || isDropinsLoading
             " /> -->
-            <div data-v-2b823bc0="" class="fixed-content"></div>
-            <div data-v-2b823bc0="" class="draggable-content">
+            <!-- <div data-v-2b823bc0="" class="fixed-content"></div> -->
+            <div data-v-2b823bc0="" class="draggable-content display-grid">
           <template v-if="activeTab == EntitiesEnum.Facilities">
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" class="event" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_1.png" class="event__img" />
 
@@ -77,7 +83,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_2.png" class="event__img" />
 
@@ -107,7 +113,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
@@ -137,7 +143,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
@@ -169,7 +175,7 @@
           </template>
           <template v-if="activeTab == EntitiesEnum.FacilityDropins">
 
-            <ion-item class="event" style="padding:0px; !important">
+            <ion-item :class="['event', { 'mt-2': !isWeb }]" style="padding:0px; !important" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_1.png" class="event__img" />
 
@@ -185,7 +191,7 @@
                   &nbsp;
                   <template> </template>
                 </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                <div class="d-flex align-items-center justify-content-between">
                   <address-item class="event__address">
                     <div class="mid_txt" style="display:flex;align-items:center;">
                     <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
@@ -199,7 +205,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_2.png" class="event__img" />
 
@@ -215,7 +221,7 @@
                   &nbsp;
                   <template> </template>
                 </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                <div class="d-flex align-items-center justify-content-between">
                   <address-item class="event__address">
                     <div class="mid_txt" style="display:flex;align-items:center;">
                     <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
@@ -229,7 +235,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
@@ -245,7 +251,7 @@
                   &nbsp;
                   <template> </template>
                 </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                <div class="d-flex align-items-center justify-content-between">
                   <address-item class="event__address">
                     <div class="mid_txt" style="display:flex;align-items:center;">
                     <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
@@ -259,7 +265,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
@@ -275,7 +281,7 @@
                   &nbsp;
                   <template> </template>
                 </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                <div class="d-flex align-items-center justify-content-between">
                   <address-item class="event__address">
                     <div class="mid_txt" style="display:flex;align-items:center;">
                     <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
@@ -289,7 +295,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/Gym_3.png" class="event__img" />
 
@@ -305,7 +311,7 @@
                   &nbsp;
                   <template> </template>
                 </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
+                <div class="d-flex align-items-center justify-content-between">
                   <address-item class="event__address">
                     <div class="mid_txt" style="display:flex;align-items:center;">
                     <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
@@ -326,7 +332,7 @@
               @click="openEvent(event.id)" /> -->
 
 
-            <ion-item lines="none" class="event trainers">
+            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
               <ion-thumbnail class="event__photo img-rounded">
                 <img src="assets/backgrounds/tamra.png" class="event__img img-rounded" />
               </ion-thumbnail>
@@ -334,8 +340,7 @@
 
                 <ion-text class="event__date" style="display:flex !important;">
                   <ion-label class="event__title">Tamra Dae</ion-label>
-                  <ion-button fill="outline" size="small" shape="round"
-                    style="border-radius:none !important">4.5</ion-button>
+                  <ion-button fill="outline" size="small" shape="round">4.5</ion-button>
                   &nbsp;
                 </ion-text>
                 <div class="d-flex align-items-center justify-content-between">
@@ -344,13 +349,13 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button class="btn_txt">Book</ion-button>
+                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event trainers">
+            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
               <ion-thumbnail class="event__photo img-rounded">
                 <img src="assets/backgrounds/women2.png" class="event__img img-rounded" />
                 <template>
@@ -371,12 +376,12 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button class="btn_txt">Book</ion-button>
+                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event trainers">
+            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
               <ion-thumbnail class="event__photo img-rounded">
                 <img src="assets/backgrounds/women3.png" class="event__img img-rounded" />
                 <template>
@@ -397,12 +402,12 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button class="btn_txt">Book</ion-button>
+                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event trainers">
+            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
               <ion-thumbnail class="event__photo img-rounded">
                 <img src="assets/backgrounds/women4.png" class="event__img img-rounded" />
                 <template>
@@ -423,7 +428,7 @@
                     09:00 AM - 06:00 PM
                   </div>
                   <ion-text class="status-text">
-                    <ion-button class="btn_txt">Book</ion-button>
+                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
@@ -436,7 +441,7 @@
               @click="openEvent(event.id)" /> -->
 
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/food1.png" class="event__img" />
                 <template>
@@ -444,8 +449,8 @@
                 </template>
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Food Festival</ion-label>
-                <div class="event__time">
+                <ion-label class="event__title">Food Festival1</ion-label>
+                <div class="event__time font-lato">
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
@@ -472,7 +477,7 @@
               </div>
             </ion-item>
 
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/train.png" class="event__img" />
                 <template>
@@ -481,7 +486,7 @@
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Train Meeting</ion-label>
-                <div class="event__time">
+                <div class="event__time font-lato">
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
@@ -507,7 +512,7 @@
               </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/run.png" class="event__img" />
                 <template>
@@ -516,7 +521,7 @@
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Run Competition</ion-label>
-                <div class="event__time">
+                <div class="event__time font-lato">
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
@@ -542,7 +547,7 @@
               </div>
               </div>
             </ion-item>
-            <ion-item lines="none" class="event">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
               <ion-thumbnail class="event__photo">
                 <img src="assets/backgrounds/run.png" class="event__img" />
                 <template>
@@ -551,7 +556,7 @@
               </ion-thumbnail>
               <div class="event__holder">
                 <ion-label class="event__title">Run Competition</ion-label>
-                <div class="event__time">
+                <div class="event__time font-lato">
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   08:30 AM
                 </div>
@@ -627,8 +632,6 @@ export default {
 <script setup lang="ts">
 
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import DashboardItem from "@/general/components/DashboardItem.vue";
 import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
 import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
@@ -667,11 +670,19 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
 import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
 import { ActivityItem } from "@/interfaces/ActivityItem";
+import useRoles from "@/hooks/useRole";
+import { Capacitor } from "@capacitor/core";
+
+withDefaults(defineProps<{
+  isWeb:boolean
+}>(), {
+  isWeb: false
+})
 
 const router = useRouter();
 const { id } = useId();
 const unreadMessages = ref<number[]>([]);
-
+const { role } = useRoles()
 
 const {
   result: eventsResult,
@@ -1040,6 +1051,44 @@ const onViewCalendar = () => {
   router.push({ name: EntitiesEnum.DashboardCalendar });
 };
 
+const goToDetail = () => {
+  router.push({
+    name: EntitiesEnum.Trainer,
+    params: { id }
+  })
+}
+
+const goToGymDetail = () => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails,
+    params: {
+      id: 53,
+    },
+  });
+}
+
+const goToTrainerDetail = (type:string) => {
+  if(Capacitor.isNativePlatform()){
+    return router.push({ 
+      name: type === 'preview' ? EntitiesEnum.Trainer : EntitiesEnum.BookTrainer, 
+      params: { id: 5345 } 
+   });
+  }
+  router.push({ 
+    name: type === 'preview' ? EntitiesEnum.TrainerPreview : EntitiesEnum.TrainerBooking, 
+    params: { id: 5345 } 
+  })
+}
+
+const goToEventDetail = () => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: 85,
+    },
+  });
+}
+
 const openEvent = (id: string | number) => {
   switch (activeTab.value) {
     case EntitiesEnum.Facilities:
@@ -1077,6 +1126,22 @@ const openEvent = (id: string | number) => {
 <style scoped lang="scss">
 .dashboard {
   padding: 24px 16px 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.web-header {
+  width: 100%;
+}
+
+.events__container {
+  width: 100%;
+  display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-column-gap: 16px;
+    grid-row-gap: 6px;
 }
 
 .header-btn {
@@ -1153,7 +1218,6 @@ const openEvent = (id: string | number) => {
 .event__time {
   font-size: 16px;
   padding: 0px 2px 0px 0px;
-
 }
 
 .my_txt_rate{
@@ -1246,10 +1310,6 @@ const openEvent = (id: string | number) => {
   --padding-end: 16px;
   --background: var(--gray-700);
 
-  &:not(:first-child) {
-    margin-top: 16px;
-  }
-
   &__photo {
     flex-shrink: 0;
     --size: 68px;
@@ -1272,7 +1332,7 @@ const openEvent = (id: string | number) => {
   &__holder {
     min-height: 73px;
     width: calc(100% - 68px);
-
+    font-family: 'Yantramanav';
     .event--time-hidden & {
       display: flex;
       padding-top: 4px;
@@ -1283,6 +1343,7 @@ const openEvent = (id: string | number) => {
   }
 
   &__title {
+    font-family: 'Yantramanav';
     font-size: 16px;
     font-weight: 500;
     line-height: 1.5;
@@ -1325,6 +1386,7 @@ const openEvent = (id: string | number) => {
   font: 16px Lato;
   padding: 2px 0px 2px 8px;
   border-radius: 16px;
+  font-family: 'Yantramanav';
 }
 
 .ongoing {
@@ -1340,6 +1402,10 @@ const openEvent = (id: string | number) => {
 .event__date ion-button {
   height: 30px;
   padding: 5px;
+  font-family: 'Yantramanav';
+  --border-radius: 20px;
+  font-size: 14px;
+  --padding-bottom: 12px;
 }
 
 .finished {
@@ -1376,16 +1442,40 @@ right:0px;
 }
 
 .btn_txt{
-
   position:absolute;
   right:0;
-  bottom:0;
-}
+  bottom:15px;
+  font-size: 14px;
+  --border-radius: 4px;
+  &::part(native){
+    padding: 6px 20px;
+  }
+  }
 
 .evnt_btn{
-
   height:16px !important;
   position: absolute;
   right:0;
+  font-size: 14px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.web-discover {
+  :deep {
+    ion-content, ion-header, .draggable-content {
+      --background: var(--main-color);
+      background: var(--main-color);
+    }
+  }
+
+  .page-tabs {
+    width: 530px;
+  }
+  .display-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 10px;
+  }
 }
 </style>

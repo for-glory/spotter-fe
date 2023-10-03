@@ -4,7 +4,7 @@
       <page-header back-btn title="Calendar" @back="onBack" />
     </template>
     <template #content>
-      <base-calendar class="calendar" :attributes="calendarOption" />
+      <base-calendar class="calendar" :attributes="calendarOption" @day-click="openTraining" />
     </template>
   </base-layout>
 </template>
@@ -19,6 +19,7 @@ import { useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import useId from "@/hooks/useId";
 import { computed } from "vue";
+import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
 const { id } = useId();
@@ -32,10 +33,10 @@ const { result: calendarWidgetResult } = useQuery(UserAvailabilityDocument, {
 
 const bookings = computed(() => {
   const availability = [];
-  if (calendarWidgetResult && calendarWidgetResult?.value) {
+  if (calendarWidgetResult?.value) {
     const userAvailability = calendarWidgetResult?.value?.userAvailability;
 
-    if (userAvailability && userAvailability?.events) {
+    if (userAvailability?.events) {
       const { events } = userAvailability;
       const bookedEvents = events.map((event: any) => {
         return {
@@ -45,7 +46,7 @@ const bookings = computed(() => {
 
       availability.push(...bookedEvents);
     }
-    if (userAvailability && userAvailability?.trainings) {
+    if (userAvailability?.trainings) {
       const { trainings } = userAvailability;
       const bookedTrainings = trainings.map((training: any) => {
         return {
@@ -102,6 +103,16 @@ const calendarOption = computed(() => {
 //     dates: [...aaa.value],
 //   },
 // ];
+
+
+const openTraining = (date: string) => {
+  router.push({
+    name: EntitiesEnum.TrainingList,
+    params: {
+      date,
+    },
+  });
+};
 
 const onBack = () => {
   router.go(-1);

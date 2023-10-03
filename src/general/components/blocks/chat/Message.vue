@@ -5,16 +5,15 @@
       'message__row--current-user': currentUser,
       'message__row__user': (role === RoleEnum.User && !Capacitor.isNativePlatform()),
       'row_align-center': contentType !== ChatMessageTypeEnum.Message,
-      'user-items-center': contentType !== ChatMessageTypeEnum.Message,
       'message__row__trainer': (!Capacitor.isNativePlatform() && (role === RoleEnum.Trainer || role === RoleEnum.User)),
     }"
   >
     <div v-if="showDate" class="message__date">{{ date }}</div>
     <div class="message__container">
       <div class="user-detail-wrapper" v-if="showSendBy" :class="currentUser ? 'user-detail-wrapper--current-user' : ''">
-        <img src="https://picsum.photos/200/300">
-        <ion-label class="label">{{ currentUser ? 'You' : 'Alice James' }}</ion-label>
-        <div class="user-detail-imestamp">11:20</div>
+        <img :src="currentUser ? profileStore?.avatarUrl : opponentUser?.avatar">
+        <ion-label class="label">{{ currentUser ? 'You' : opponentUser?.roomName }}</ion-label>
+        <div class="user-detail-imestamp">{{timestamp}}</div>
       </div>
       <img
         v-if="contentType === ChatMessageTypeEnum.Attachment"
@@ -132,6 +131,7 @@ import { EntitiesEnum } from "@/const/entities";
 import { RoomType } from "@/ts/enums/chat";
 import useRoles from "@/hooks/useRole";
 import { Capacitor } from "@capacitor/core";
+import { useProfileStore } from "@/general/stores/profile";
 
 const props = withDefaults(
   defineProps<{
@@ -145,6 +145,7 @@ const props = withDefaults(
     trainingId?: number | null;
     messageId: number;
     deleteable: boolean;
+    opponentUser: any;
   }>(),
   {
     contentType: ChatMessageTypeEnum.Message,
@@ -157,6 +158,7 @@ const uri = ref(process.env.VUE_APP_FB_STORAGE);
 const router = useRouter();
 
 const { role } = useRoles();
+const profileStore = useProfileStore();
 
 const emits = defineEmits<{
   (e: "delete-message", id: number): void;
@@ -424,6 +426,7 @@ const onHandleDeclineOrder = () => {
 
   &__container {
     width: 22px;
+    height: 22px;
     padding-right: 14px;
   }
 }
@@ -445,6 +448,9 @@ const onHandleDeclineOrder = () => {
 .message__row__trainer {
   &.row_align-center {
     align-items: center;
+    .message__content {
+      background: var(--gray-700) !important;
+    }
     .approve-form__buttons {
       width: auto;
     }

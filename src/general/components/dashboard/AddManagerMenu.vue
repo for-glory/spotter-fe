@@ -5,7 +5,7 @@
         <!-- <ion-menu-toggle class="back-btn" :auto-hide="false"> -->
           <ion-icon class="back-btn" src="assets/icon/arrow-back.svg" @click="onBack"></ion-icon>
         <!-- </ion-menu-toggle> -->
-        <ion-title>Add new manager</ion-title>
+        <ion-title>Invite Team Member</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
@@ -104,7 +104,7 @@
         />
       </div>
       <ion-menu-toggle>
-        <ion-button class="add-manager-btn" @click="addManager">Add Manager</ion-button>
+        <ion-button class="add-manager-btn" @click="addManager">Send Invitation</ion-button>
       </ion-menu-toggle>
     </ion-content>
   </ion-menu>

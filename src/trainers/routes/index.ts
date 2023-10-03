@@ -109,6 +109,22 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.TrainingList,
+    path: "/trainers/schedule/trainingList/:date",
+    component: () => import("@/trainers/views/schedule/Training.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.Training,
+    path: "/trainers/schedule/training/:id(\\d+)",
+    component: () => import("@/trainers/views/schedule/Training.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.TrainersEventTraining,
     path: "/trainers/schedule/event/:id(\\d+)",
     component: () => import("@/trainers/views/schedule/TrainingEvent.vue"),

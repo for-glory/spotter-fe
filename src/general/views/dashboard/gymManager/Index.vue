@@ -6,12 +6,12 @@
     id="main-content"
 	>
     <div class="banner">
-      <ion-title class="banner__title">Gym Managers</ion-title>
+      <ion-title class="banner__title">Teams</ion-title>
     </div>
     <div class="content-container">
       <div class="content-box d-flex justify-content-end tool-bar">
         <ion-menu-toggle :auto-hide="false">
-          <ion-button expand="block">Add new manager</ion-button>
+          <ion-button expand="block">Invite Team Member</ion-button>
         </ion-menu-toggle>
       </div>
       <ion-spinner
@@ -69,7 +69,7 @@
 	</div>
   <base-layout v-else>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym Managers">
+      <page-header back-btn @back="onBack" title="Teams">
         <template #custom-btn>
           <ion-button
             class="header-btn"

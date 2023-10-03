@@ -1,46 +1,30 @@
 <template>
   <base-layout :class="{ 'trainer-gym': (role === RoleEnum.Trainer || role === RoleEnum.User) }" hide-navigation-menu>
     <template #header>
-      <IonToolbar :class="['gym-toolbar',  { 'web-toolbar': fromModal }]">
-        <ion-back-button slot="start"
-          class="back-btn" 
-          icon="assets/icon/arrow-back.svg"
-          @click="handleBack"
-          v-if="!fromModal"
-        >
+      <IonToolbar :class="['gym-toolbar', { 'web-toolbar': fromModal }]">
+        <ion-back-button slot="start" class="back-btn" icon="assets/icon/arrow-back.svg" @click="handleBack"
+          v-if="!fromModal">
         </ion-back-button>
         <IonTitle v-if="fromModal">
           Address
         </IonTitle>
-        <search-form
-          ref="searchForm"
-          :type="EntitiesEnum.Facilities"
-          :placeholder="placeholder"
-          hide-results
-          extraPadding
-          @search="search"
-          hidden-cancel
-        />
+        <search-form ref="searchForm" :type="EntitiesEnum.Facilities" :placeholder="placeholder" hide-results extraPadding
+          @search="search" hidden-cancel />
       </IonToolbar>
 
     </template>
     <template #content>
-      <div :class="['holder-content', 'ion-padding-horizontal', { 'flex-class': (role === RoleEnum.Trainer || role === RoleEnum.User) }]">
+      <div
+        :class="['holder-content', 'ion-padding-horizontal', { 'flex-class': (role === RoleEnum.Trainer || role === RoleEnum.User) }]">
         <ion-spinner name="lines" class="spinner" v-if="facilityLoading" />
-        <search-result
-          :item="facility"
-          :key="facility.id"
-          :showRating="false"
-          :is-selected="facility.isSelected"
-          v-for="(facility, index) in facilities"
-          @click="onResultItemClick(facility, index)"
-          v-else-if="!facilityLoading && facilities?.length"
-        >
-        <template v-if="facility.isSelected" #check-box>
-          <IonCheckbox :checked="facility.isSelected" class="search-check-box" mode="ios" />
-        </template>
-        
-      </search-result>
+        <search-result :item="facility" :key="facility.id" :showRating="false" :is-selected="facility.isSelected"
+          v-for="(facility, index) in facilities" @click="onResultItemClick(facility, index)"
+          v-else-if="!facilityLoading && facilities?.length">
+          <template v-if="facility.isSelected" #check-box>
+            <IonCheckbox :checked="facility.isSelected" class="search-check-box" mode="ios" />
+          </template>
+
+        </search-result>
         <ion-item v-else>
           <ion-label>No results found...</ion-label>
         </ion-item>
@@ -70,7 +54,7 @@ import useRoles from "@/hooks/useRole";
 
 
 const props = defineProps<{
-  fromModal?:boolean
+  fromModal?: boolean;
 }>();
 
 const router = useRouter();
@@ -81,15 +65,15 @@ const placeholder = computed(() => {
     case RoleEnum.Trainer:
     case RoleEnum.User:
       return 'Enter name or adress of gym...';
-  
+
     default:
       return undefined;
-    }
   }
+}
 );
 
 const handleBack = () => {
-  if(role === RoleEnum.Trainer || role === RoleEnum.User) {
+  if (role === RoleEnum.Trainer || role === RoleEnum.User) {
     store.setAssignedFacility(selectFacilities);
   }
   router.go(-1);
@@ -97,7 +81,7 @@ const handleBack = () => {
 const searchForm = ref<typeof SearchForm | null>(null);
 
 const searchQuery = ref<string>("");
-let selectFacilities:any = null;
+let selectFacilities: any = null;
 const facilitiesParams: FacilitiesQueryVariables = {
   first: 10,
   page: 0,
@@ -106,23 +90,24 @@ const facilitiesParams: FacilitiesQueryVariables = {
 
 const store = useSelectedAddressStore();
 
-const onResultItemClick = (facility: FacilitySearchResult, index:number) => {
-  
-  if(role === RoleEnum.Trainer || role === RoleEnum.User)  {
-    facilities.value?.map((e, i)=>{
-      if(i !== index){
-        e.isSelected = false
+const onResultItemClick = (facility: FacilitySearchResult, index: number) => {
+
+  if (role === RoleEnum.Trainer || role === RoleEnum.User) {
+    facilities.value?.map((e, i) => {
+      if (i !== index) {
+        e.isSelected = false;
       }
-    })
+    });
     facility.isSelected = !facility.isSelected;
-    selectFacilities = facility.isSelected ? facility : null;  
-    if(props.fromModal){
-      modalController.dismiss();
-    }  
-  }else {
-    handleBack();
+    selectFacilities = facility.isSelected ? facility : null;
   }
   store.setAssignedFacility(facility);
+  if (props.fromModal) {
+    modalController.dismiss();
+  }
+  else {
+    handleBack();
+  }
 };
 
 const search = (query?: string) => {
@@ -145,14 +130,14 @@ const {
 const facilities = ref<FacilitySearchResult[]>();
 
 onFacilityResult(async ({ data }) => {
-  facilities.value = data.facilities?.data.map((e)=> {
-    if(e.id === store.assignedFacility?.id){ 
-      return {...e, isSelected: true}
+  facilities.value = data.facilities?.data.map((e) => {
+    if (e.id === store.assignedFacility?.id) {
+      return { ...e, isSelected: true };
     }
-    return {...e, isSelected: false}
+    return { ...e, isSelected: false };
   });
 });
-onMounted(() => {  
+onMounted(() => {
   setTimeout(() => {
     searchForm.value?.setFocus();
   }, 500);
@@ -212,33 +197,32 @@ onMounted(() => {
   }
 }
 
-  .search-check-box {
-    position: absolute;
-    right: 24px;
-    --size: 24px;
-  }
+.search-check-box {
+  position: absolute;
+  right: 24px;
+  --size: 24px;
+}
 
-  .gym-toolbar {
-    ion-title {
-      color:  #FFF;
-      font-family: Yantramanav;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 150%;
-      padding-top: 25px;
-    }
+.gym-toolbar {
+  ion-title {
+    color: #FFF;
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    padding-top: 25px;
   }
+}
 
-  .web-toolbar {
-    --padding-start: 18px;
-    --padding-end: 14px;
-  }
+.web-toolbar {
+  --padding-start: 18px;
+  --padding-end: 14px;
+}
 
-  .flex-class {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
+.flex-class {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 </style>
