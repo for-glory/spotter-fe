@@ -112,8 +112,10 @@ const chooseVideo = () => {
       const file = event.target?.files[0];
 
       const videoDuration = await getVideoDuration(file);
-      if (videoDuration > maxVideoDuration.value / 1000) {
+      if (videoDuration > maxVideoDuration.value) {
         alertModalError.value = EntitiesEnum.MaxVideoDuration;
+      } else if(videoDuration < minVideoDuration.value) {
+        alertModalError.value = EntitiesEnum.MinVideoDuration;
       } else if (file.size > maxVideoSize.value) {
         alertModalError.value = EntitiesEnum.MaxVideoSize;
       }
@@ -153,6 +155,7 @@ const bytesToSize = (bytes: number): string => {
 
 const maxVideoSize = ref(Number(process.env.VUE_APP_MAX_VIDEO_SIZE));
 const maxVideoDuration = ref(Number(process.env.VUE_APP_MAX_VIDEO_DURATION));
+const minVideoDuration = ref(Number(process.env.VUE_APP_MIN_VIDEO_DURATION));
 
 const getVideoDuration = async (file: File): Promise<number> => {
   const video = document.createElement("video");
@@ -173,6 +176,10 @@ const videoErrors = {
     text: `Impossible to upload this video because it's too big. Max duration ${
       maxVideoDuration.value / 1000
     } sec. Edit the video and try again.`,
+  },
+  [`${EntitiesEnum.MinVideoDuration}`]: {
+    title: "The video is too short.",
+    text: `Impossible to upload this video because it's too short. Min duration is 1 min. Upload another video.`,
   },
   [`${EntitiesEnum.MaxVideoSize}`]: {
     title: "Video size is too big.",

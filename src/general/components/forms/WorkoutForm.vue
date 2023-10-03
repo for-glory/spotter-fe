@@ -3,7 +3,8 @@
     <div class="content">
       <div class="form-row">
         <ion-label class="label">
-          Choose video
+          Choose video for daily
+          <ion-text color="danger">{{ `(We recommend a 10 sec intro and a minimum of 1 minute video)` }}</ion-text>
         </ion-label>
         <upload-video
           :video="videoPath"
