@@ -8370,6 +8370,7 @@ export const TrainerTrainingsDocument = gql`
         start_date
         state
         user {
+          id
           avatar
           avatarUrl
           media {
@@ -8386,6 +8387,7 @@ export const TrainerTrainingsDocument = gql`
           total
         }
         trainer {
+          id
           facilities {
             address {
               street

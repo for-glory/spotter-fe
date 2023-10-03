@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="flex-2 h-100 hide-scrollbar">
-        <BaseCustomCalendar class="web-custom-calendar" @date-changed="dateChange" week-days-format="W" />
+        <BaseCustomCalendar class="web-custom-calendar" @day-click="dateChange" week-days-format="W" />
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@ const goToDetail = (type: string) => {
 };
 
 const dateChange = (ev:any) => {
-  selectedDate.value = ev.date;
+  selectedDate.value = ev;
   if(!routingStates.value.includes('date_selected')){
     routingStates.value.pop();
     routingStates.value.push('date_selected');

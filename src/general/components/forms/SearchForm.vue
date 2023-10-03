@@ -296,7 +296,7 @@ const handleClick = (result: FacilitySearchResult) => {
     emits("handle-item-click", result);
   } else {
     router.push({
-      name: isFacilityTab.value ? (Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails) : EntitiesEnum.Trainer,
+      name: isFacilityTab.value ? (Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails) : Capacitor.isNativePlatform() ? EntitiesEnum.Trainer : EntitiesEnum.TrainerPreview,
       params: { id: result.id },
     });
   }

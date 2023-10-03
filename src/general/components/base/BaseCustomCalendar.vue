@@ -4,11 +4,11 @@
     v-model="date"
     is-expanded
     @update:from-page="dateChanged"
-    @dayclick="$emit('date-changed', $event)"
     :rows="12"
     transparent
     borderless
-    :masks="{weekdays:weekDaysFormat}"
+    :masks="{ weekdays: weekDaysFormat }"
+    @dayclick="dayClick"
   ></v-calendar>
 </template>
 
@@ -20,12 +20,13 @@ export default {
 
 <script setup lang="ts">
 import { ref, defineProps, withDefaults, defineEmits, computed, watch } from "vue";
+import dayjs from "dayjs";
 
-const date = ref('')
+const date = ref('');
 //const date = computed(() => new Date(new Date().getFullYear(), 0, 1));
 
 watch(date, async (newDate, oldDate) => {
-  alert(newDate)
+  // alert(newDate)
 })
 
 withDefaults(
@@ -51,12 +52,15 @@ withDefaults(
 
 const emits = defineEmits<{
   (e: "month-changed", selected: any): void;
-  (e: "date-changed", date: any): void;
+  (e: "day-click", selected: any): void;
 }>();
 
 const dateChanged = (event: any) => {
-  console.log('date change');
   emits("month-changed", event);
+};
+const dayClick = (event: any) => {
+  date.value = event.date.toString();
+  emits("day-click", dayjs(event.date));
 };
 </script>
 
@@ -90,7 +94,7 @@ const dateChanged = (event: any) => {
   .vc-arrow {
     display: none;
   }
-  .vc-week{
+  .vc-week {
     margin: 6px 0;
   }
 }
@@ -104,34 +108,34 @@ const dateChanged = (event: any) => {
 .web-custom-calendar {
   border: 0.872px solid var(--gray-600);
   & .vc-pane-layout {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 2px !important;
-        background-color: var(--gray-600);
-        .vc-pane {
-          background-color: var(--gray-700);
-        }
-        .vc-header {
-          // display: block;
-          // padding-left: 4px;
-          button {
-            font-family: "Nunito";
-            font-size: 12.208px;
-            font-weight: 600;
-            color: var(--ion-color-white);
-          }
-        }
-        .vc-weekday, .vc-day-content {
-          font-family: "Nunito";
-          font-size: 10.464px;
-          color: var(--ion-color-white);
-        }
-        .vc-highlight-content-solid {
-          font-family: "Lato";
-          color: var(--main-color);
-        }
-        .vc-week {
-          margin: 0;
-        }
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 2px !important;
+    background-color: var(--gray-600);
+    .vc-pane {
+      background-color: var(--gray-700);
     }
+    .vc-header {
+      // display: block;
+      // padding-left: 4px;
+      button {
+        font-family: "Nunito";
+        font-size: 12.208px;
+        font-weight: 600;
+        color: var(--ion-color-white);
+      }
+    }
+    .vc-weekday, .vc-day-content {
+      font-family: "Nunito";
+      font-size: 10.464px;
+      color: var(--ion-color-white);
+    }
+    .vc-highlight-content-solid {
+      font-family: "Lato";
+      color: var(--main-color);
+    }
+    .vc-week {
+      margin: 0;
+    }
+  }
 }
 </style>

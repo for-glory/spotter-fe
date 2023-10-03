@@ -694,7 +694,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.Gyms,
-        path: "gyms",
+        path: "gyms/:type",
         component: () => import("@/users/views/gyms/Index.vue"),
         meta: {
           middleware: [auth],
@@ -848,7 +848,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardMessage,
-        path: "message",
+        path: "message/:id?",
         component: () => import("@/general/views/dashboard/message/Index.vue"),
         meta: {
           middleware: [gymOwnerSubscription],

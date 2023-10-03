@@ -176,7 +176,7 @@ const getTrainingOptions = () => {
   if (store?.place?.value === PlaceType.UserGym) {
     return AvailableTrainingOptionsEnum.InUserGym;
   }
-  return "";
+  return AvailableTrainingOptionsEnum.InTrainerGym;
 };
 
 const getParams = () => {

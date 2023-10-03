@@ -8,11 +8,17 @@ export type chatRoom = {
   avatar: ComputedRef<Maybe<string> | undefined>;
   status: any;
   lastMessage: string;
-  lastTime: string;
+  lastTime?: string;
   type: RoomType;
   userId: number;
   symbols: string;
   participantId: number;
   unread: number;
-  key: string;
+  key?: string;
+  users: Array<{
+    avatar?: string
+    chat_name: string
+    user_id: number
+  }>
+  locked: boolean
 };

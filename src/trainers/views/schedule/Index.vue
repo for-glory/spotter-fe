@@ -38,7 +38,9 @@
         <week-calendar
           v-model="selectedDate"
           :bookings="bookings"
+          :featureSelectionOnly="true"
           @handle-view="onViewCalendar"
+          @handle-date-change="onDateChange"
         />
         <div class="events__container">
           <items-header
@@ -139,6 +141,7 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const router = useRouter();
 const { id } = useId();
+const selectedDate = ref<Dayjs | null>(null);
 
 const {
   result: eventsResult,
@@ -252,41 +255,17 @@ const events = computed<EventPaginator["data"]>(() =>
 const trainings = computed(() =>
   trainingsResult?.value?.trainerTrainings?.data
     ? 
-    // trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
-    //     id: training.id,
-    //     title: `${training.user.first_name} ${training.user.last_name}`,
-    //     address: {
-    //       street: training.user.address?.street,
-    //     },
-    //     media: training.user.media,
-    //     start_date: training.start_date,
-    //     state: training.state,
-    //     userId: training.user.id,
-    //   }))
-    [
-      {
-        id: 1,
-        title: "John John Dee",
+    trainingsResult.value.trainerTrainings.data.map((training: Training) => ({
+        id: training.id,
+        title: `${training.user.first_name} ${training.user.last_name}`,
         address: {
-          street: "Summer Gym, Wall Street, 24",
+          street: training.user.address?.street,
         },
-        media: "",
-        start_date: new Date(),
-        state: new Date(),
-        userId: 1,
-      },
-      {
-        id: 2,
-        title: "Nick Fox",
-        address: {
-          street: "Summer Gym, Wall Street, 24",
-        },
-        media: "",
-        start_date: new Date(),
-        state: new Date(),
-        userId: 2,
-      }
-    ]
+        media: training.user.media,
+        start_date: training.start_date,
+        state: training.state,
+        userId: training.user.id,
+      }))
     : []
 );
 
@@ -319,8 +298,6 @@ const bookings = computed(() => {
 });
 
 const tabs: TabItem[] = scheduleTabs;
-
-const selectedDate = ref<Dayjs | null>(null);
 const activeTab = ref<EntitiesEnum>(
   (localStorage.getItem("trainer_schedule_active_tab") as EntitiesEnum) ??
     EntitiesEnum.Trainings
@@ -394,6 +371,25 @@ const openEvent = (id: string) => {
     },
   });
 };
+
+const onDateChange = () =>{
+    if (activeTab.value === EntitiesEnum.Trainings) {
+        updateTrainings({
+            page: 0,
+            first: 4,
+            filters: {
+                start_date: selectedDate.value? selectedDate.value.format("YYYY-MM-DD HH:mm:ss") : dayjs().format("YYYY-MM-DD HH:mm:ss"),
+                states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
+            },
+            orderBy: [
+                {
+                    column: QueryTrainerTrainingsOrderByColumn.StartDate,
+                    order: SortOrder.Asc,
+                },
+            ],
+        });
+    }
+}
 </script>
 
 <style scoped lang="scss">

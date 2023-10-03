@@ -15,7 +15,7 @@
     <template #content>
       <base-calendar
         class="calendar"
-        @date-changed="goToDetail"
+        @day-click="goToDetail"
         :attributes="calendarOption"
         @month-changed="monthChanged"
       />

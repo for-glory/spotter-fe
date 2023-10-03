@@ -94,7 +94,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { IonModal, IonContent, IonButton } from "@ionic/vue";
+import { IonModal, IonContent, IonButton,IonRadioGroup,IonText,IonRadio,IonIcon,IonChip,IonTitle,IonItem } from "@ionic/vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";

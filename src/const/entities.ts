@@ -146,6 +146,7 @@ export enum EntitiesEnum {
   UserEventDetail = "USER_EVENT_DETAILS",
   FacilitiesOld = "FACILITIES_OLD",
   Training = "TRAINING",
+  TrainingList = "TRAINING_LIST",
   TrainerScheduleCalendar = "TRAINER_SCHEDULE_CALENDAR",
   TrainerWorkoutList = "TRAINER_WORKOUT_LIST",
   UserWorkoutList = "USER_WORKOUT_LIST",
