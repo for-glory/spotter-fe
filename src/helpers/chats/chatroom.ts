@@ -26,7 +26,7 @@ const mapChats = (chat: any, userId: any) => {
   const lastMsg: any = getVisibleMessage(chat.message, userId);
 
   return {
-    roomId: chat?.id.toString(),
+    roomId: chat?.id?.toString(),
     roomName: chat.participant.chat_name,
     avatar: chat.participant.avatar ? chat.participant.avatar : "",
     users: chat.participants,

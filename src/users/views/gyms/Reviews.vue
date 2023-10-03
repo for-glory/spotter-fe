@@ -30,7 +30,7 @@
                 <div class="content ion-padding-horizontal">
                     <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
                     <div v-else class="d-flex flex-wrap gap-16">
-                        <review-item v-for="review in tempReviews" :key="review.id" class="review-item"
+                        <review-item v-for="review in reviews" :key="review.id" class="review-item"
                             :avatar-url="review.avatarUrl" :full-name="review.fullName" :date="review.date"
                             :rating="review.rating" :text="review.text" />
                     </div>

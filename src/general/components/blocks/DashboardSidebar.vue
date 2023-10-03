@@ -146,7 +146,7 @@
         </div>
         <div
           :class="getMenuItemClass(EntitiesEnum.Gyms)"
-          @click="onHandleClickMenu(EntitiesEnum.Gyms)"
+          @click="onHandleClickMenu(EntitiesEnum.Gyms,EntitiesEnum.Facilities)"
         >
           <ion-icon src="assets/icon/booking.svg" />
           <ion-text>Gym</ion-text>

@@ -354,6 +354,7 @@ const onHandleDeclineOrder = () => {
 
   &__container {
     width: 22px;
+    height: 22px;
     padding-right: 14px;
   }
 }

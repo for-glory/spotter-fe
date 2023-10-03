@@ -89,32 +89,7 @@ const tabs = [
 
 const loading = ref(false);
 const data = reactive({
-  chats: [
-    {
-      id: 1,
-      lastMessage: "hi",
-      roomName: "John Deo",
-      lastTime: "now",
-      roomId: "1",
-      isOnline: true,
-      time: "now",
-      type: RoomType.Chat,
-      symbols: 'test',
-      unread: 2,
-    },
-    {
-      id: 2,
-      lastMessage: "What about other exercises?",
-      roomName: "Daniel Will",
-      lastTime: "20 min",
-      roomId: "1",
-      isOnline: false,
-      time: "now",
-      type: RoomType.Request,
-      symbols: 'test',
-      unread: 0,
-    }
-  ],
+  chats: [],
   activeUsers: [],
 });
 
@@ -140,7 +115,7 @@ const requests = computed(
 watch(
   () => requests.value,
   () => {
-    // fetchChats();
+    fetchChats();
   }
 );
 
@@ -252,7 +227,7 @@ onBeforeMount(() => {
 
 onMounted(() => {
   fetchActiveUsers();
-  // fetchChats();
+  fetchChats();
 });
 </script>
 
