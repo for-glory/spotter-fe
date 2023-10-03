@@ -68,7 +68,7 @@
         <div class="reviews">
           <div class="start-content">
             <ion-text class="reviews__title">Reviews</ion-text>
-            <ion-badge class="reviews__badge" v-if="route?.params?.type == TrainerProfileViewEnum.CurrentUser">4.8</ion-badge>
+            <ion-badge class="reviews__badge" v-if="route?.params?.type == TrainerProfileViewEnum.CurrentUser">{{ user?.score }}</ion-badge>
             <ion-text class="rating rating__likes">
               <ion-icon src="assets/icon/like.svg" class="rating__icon" />
               {{ user?.positive_reviews_count }}
@@ -107,11 +107,11 @@
           </ion-segment>
           <div class="ion-margin-top info" v-if="segmentValue == 'trainer'">
             <div class="info-item">
-              <strong class="info-item__title">$50.00</strong>
+              <strong class="info-item__title">$ {{user.trainerRates[0].front_price}}</strong>
               <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
             </div>
             <div class="info-item">
-              <strong class="info-item__title">$30.00</strong>
+              <strong class="info-item__title">$ {{user.trainerRates[1].front_price}}</strong>
               <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
             </div>
           </div>
@@ -199,22 +199,39 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
-import { UserDocument } from "@/generated/graphql";
+import { QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 import { ellipse } from "ionicons/icons";
 import { Share } from "@capacitor/share";
+import { useTrainerStore } from "@/general/stores/useTrainerStore"
 
 dayjs.extend(relativeTime);
 
 const router = useRouter();
 const segmentValue = ref('trainer');
 
+const trainer = useTrainerStore();
+
+console.log(trainer.trainer);
 const handleBack = () => {
   router.go(-1);
 };
+
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
+  WorkoutsDocument,{
+    page: 1,
+    first: 1000,
+    order: SortOrder.Asc,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    trainer_id: trainer.trainer?.id 
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
 
 const handleMore = async () => {
   console.log("call more");
@@ -255,30 +272,16 @@ const { result } = useQuery(UserDocument, {
   id: route.params.id
 });
 
-const offerList = [{
-  id: 1,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  type: "Expert",
-  totalUser: 30,
-}, {
-  id: 2,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  type: "Expert",
-  totalUser: 30,
-
-}, {
-  id: 3,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  type: "Expert",
-  totalUser: 30,
-
-}]
+const offerList = computed(() => dailysResult.value.workouts.data.map((daily: any) => {
+  return {
+    id: daily?.id,
+    name: daily?.title,
+    trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
+    time: daily?.duration,
+    totalUser: daily?.views_count,
+    type: daily?.type.name
+  }
+}));
 const offerEvents = [{
   id: 1,
   name: "Run competition",
@@ -311,19 +314,21 @@ const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
   // return result.value?.user;
   return {
-    id: "1",
-    title: "Nick Fox",
+    id: trainer.trainer.id,
+    title: `${trainer.trainer.first_name} ${trainer.trainer.last_name}`,
     address: {
       street: "Arizona, Phoenix, USA",
     },
     start_date: "10 month",
     userId: "5328",
-    first_name: "Nick",
-    last_name: "Fox",
-    avatarUrl: "https://picsum.photos/200/300",
+    first_name: trainer.trainer.first_name,
+    last_name: trainer.trainer.last_name,
+    avatarUrl: trainer.trainer.avatarUrl,
     created_at: new Date().setFullYear(2022,10),
-    positive_reviews_count: 160,
-    negative_reviews_count: 48,
+    positive_reviews_count: trainer.trainer.positive_reviews_count ?? 0,
+    negative_reviews_count: trainer.trainer.negative_reviews_count ?? 0,
+    score: trainer.trainer.score ?? 0,
+    trainerRates: trainer.trainer.trainerRates,
     quizzes: [
       {
         code: "DISCOVER_YOUR_NEEDS",

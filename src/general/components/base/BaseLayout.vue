@@ -128,7 +128,8 @@ import {
   DeleteProfileDocument,
   SubscriptionsTypeEnum,
   FacilityDashboardWidgetDocument,
-  Facility
+  Facility,
+  Trainer
 } from "@/generated/graphql";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import NavigationMenu from "@/general/components/NavigationMenu.vue";
@@ -229,7 +230,7 @@ gotUser(() => {
         trainerRates: result?.value?.user?.trainerRates,
         created_at: result?.value?.user?.created_at,
       };
-      trainerStore.setTrainer(trainer);
+      trainerStore.setTrainer(trainer as Trainer);
       break;
 
     default :
