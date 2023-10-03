@@ -51,7 +51,7 @@
         </div>
         <div class="info" v-if="route?.params?.type == TrainerProfileViewEnum.CurrentUser">
           <div class="info-item">
-            <strong class="info-item__title">$50.00</strong>
+            <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
             <ion-text color="secondary" class="font-light">Hourly rate</ion-text>
           </div>
           <div class="info-item">
@@ -115,7 +115,7 @@
               <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
             </div>
           </div>
-          <div class="offer-card" v-else-if="segmentValue == 'daily'">
+          <div class="offer-card" v-else-if="segmentValue == 'daily'" style="max-height: 300px; overflow-y: scroll;">
             <div class="offer-item" :key="item.id" v-for="item in offerList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
