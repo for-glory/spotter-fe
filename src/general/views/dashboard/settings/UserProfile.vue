@@ -56,7 +56,7 @@
                             <div class="d-flex align-items-center flex-2">
                                 <div class="d-flex">
                                     <ion-text class="reviews__title">Reviews</ion-text>
-                                    <div class="review-badge">4.8</div>
+                                    <div class="review-badge">{{ user?.score }}</div>
                                 </div>
                                 <ion-text class="rating rating__likes">
                                     <ion-icon src="assets/icon/like.svg" class="rating__icon" />
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="review-cards">
-                            <base-carousel class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
+                            <base-carousel v-if="reviews.length" class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
                                     <div class="review-card" v-for="review in reviews">
                                         <div class="review-header">
@@ -95,6 +95,9 @@
                                     </div>
                                 </template>
                             </base-carousel>
+                            <div v-else class="font-bold color-gold " style="font-size: 24px; text-align: center; padding: 24px;">
+                                <ion-text>No reviews yet</ion-text>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,7 +205,7 @@ import { Share } from "@capacitor/share";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { QueryWorkoutsOrderByColumn, SortOrder, WorkoutsDocument } from "@/generated/graphql";
+import { FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 dayjs.extend(relativeTime);
 const router = useRouter();
@@ -221,6 +224,15 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
   {
     fetchPolicy: "no-cache",
   }
+);
+
+const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, onResult: getReviews } = useQuery(
+  ReviewsDocument,
+  () => ({
+    id: trainer?.trainer?.id,
+    type: FeedbackEntityEnum.User,
+    review_type: "Recent",
+  })
 );
 
 const handleMore = async () => {
@@ -267,32 +279,14 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
   }
 }));
 
-const reviews = [
-    {
-        id: "1",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "2",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "3",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "4",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
+const reviews = computed(() => {
+    return {
+        id: reviewsResult?.value?.data?.id,
+        name: `${reviewsResult?.value?.data?.author.first_name} ${reviewsResult?.value?.data?.author.last_name}`,
+        desc: reviewsResult?.value?.data?.review,
+        rating: reviewsResult?.value?.data?.score
     }
-];
+});
 
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
