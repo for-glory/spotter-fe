@@ -32,8 +32,8 @@ router.beforeEach((to, from, next) => {
   }
 
   // Set Title and Description for Static pages
-  const siteName = "SpotterFitness";
-  let pageDescription: any = siteName + " website";
+  const siteName = "Spotter Fitness || Connect with hundreds of top Trainers and world-class Gyms near you.";
+  let pageDescription: any = "Your journey to a healthier, happier you starts now. Take the first step and let Spotter be your partner in reaching new heights of wellness. Together we'll build a stronger fitter, and more confident YOU!";
   document.title = siteName;
 
   if (to.matched[0].meta.title) {
