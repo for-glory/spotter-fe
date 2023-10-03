@@ -130,7 +130,9 @@ import {
   toastController,
   IonContent,
   IonToolbar,
-  isPlatform
+  isPlatform,
+  IonButtons,
+  IonText
 } from "@ionic/vue";
 import {
   RoleEnum,

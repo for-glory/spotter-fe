@@ -40,6 +40,6 @@ const props = withDefaults(
 }
 .bg-main {
   background-color: var(--main-color);
-  overflow: hidden;
+  overflow: auto;
 }
 </style>

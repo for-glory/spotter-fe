@@ -6,10 +6,12 @@
         @click="closeModal"
         class="close-btn"
       ></ion-icon>
-      <ion-img class="modal__img" src="assets/unsplash.png" />
-      <div class="waiting-info" v-if="role === RoleEnum.User">
-        <ion-icon src="assets/icon/info.svg" />
-        <div>Waiting time up to 6 hours...</div>
+      <div class="header-section">
+        <ion-img class="modal__img" src="assets/unsplash.png" />
+        <div class="waiting-info" v-if="role === RoleEnum.User">
+          <ion-icon src="assets/icon/info.svg" />
+          <div>Waiting time up to 6 hours...</div>
+        </div>
       </div>
       <div class="ion-padding-horizontal">
         <ion-title class="modal__title">{{ role === RoleEnum.User ? "Pending approval" : "Waiting for approving..."}} </ion-title>
@@ -160,7 +162,7 @@ ion-modal::part(backdrop) {
   gap: 8px;
   align-items: center;
   position: absolute;
-  top: 116px;
+  bottom: 16px;
   left: 16px;
   width: 90%;
   border-bottom: 2px solid rgba(255, 255, 255, 0.44);
@@ -187,5 +189,8 @@ ion-modal::part(backdrop) {
     font-size: 14px;
     font-weight: 400;
   }
+}
+.header-section {
+  position: relative;
 }
 </style>

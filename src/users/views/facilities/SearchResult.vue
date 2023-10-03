@@ -130,7 +130,6 @@ const photo = computed(() => {
 
 .tr-search-result {
   padding: 12px 16px;
-  margin-bottom: 0;
   .search-result__title {
     font-family: "Yantramanav";
     font-size: 16px;

@@ -14,7 +14,7 @@
       <ion-title class="modal__title">Terms of use</ion-title>
       <div class="modal__content">
         <p :class="['modal__text', 'warning', { 'native-app': role === RoleEnum.User}]">
-          <ion-text class="modal__text warning" color="success">
+          <ion-text class="modal__text warning color-gold" color="success">
             Please review our terms. In case you decline them - the training
             will be skipped
           </ion-text>
