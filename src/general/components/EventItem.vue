@@ -19,7 +19,7 @@
     </ion-thumbnail>
     <div class="event__holder">
       <ion-label class="event__title">{{ item.title }}</ion-label>
-      <div class="event__time">
+      <div class="event__time" v-if="!hideEventTime">
         <ion-icon src="assets/icon/time.svg" class="time-icon" />
         {{ time }}
       </div>
@@ -57,9 +57,11 @@ const props = withDefaults(
     rounded?: boolean;
     dateRange?: boolean;
     hideTime?: boolean;
+    hideEventTime?:boolean;
   }>(),
   {
     rounded: false,
+    hideEventTime: false
   }
 );
 const date = computed(() =>

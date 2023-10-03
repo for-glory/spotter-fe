@@ -1,7 +1,7 @@
 <template>
-  <IonItem class="upcoming-item" :class="{ 'mb-30': isLast, 'native-upcoming': isNative }" lines="none">
+  <IonItem class="upcoming-item" :class="{ 'mb-30': isLast, 'native-upcoming': (isNative || nativeItem) }" lines="none">
     <img
-      src="/assets/gym.png"
+      :src="imgSrc || '/assets/gym.png'"
       alt="image"
       slot="start"
       :class="['round-img', { 'square-img': squareImg }]"
@@ -9,51 +9,70 @@
 
     <div class="content d-flex">
       <div class="title-wrapper">
-        <IonLabel class="title">Jacob Jones</IonLabel>
-        <div class="time">
+        <IonLabel :class="['title', { 'native-app': role === RoleEnum.User }]">{{ title || "Jacob Jones"}}</IonLabel>
+        <div class="time" v-if="!days">
           <IonIcon :icon="time" />
-         {{ isShortTime ? "08:00 AM" : " 7 June, Monday 08:00 AM"}}
+            {{ isShortTime ? "08:00 AM" : " 7 June, Monday 08:00 AM"}}
         </div>
+        <div class="day ytmn" v-else>{{ days }}</div>
       </div>
 
-      <div class="date native-app">17 June</div>
+      <div class="date native-app" v-if="subtitle">17 June</div>
         <div class="location" :class="{'clac-location': isUpcomming}">
           <IonIcon src="/assets/icon/location.svg"></IonIcon>
-          <IonLabel class="native-app"> Summer Gym, Wall Street, 24 </IonLabel>
+          <IonLabel class="native-app"> {{ location || "Summer Gym, Wall Street, 24"}} </IonLabel>
         </div>
 
-        <div class="upcoming" :class="{'finished': upcomingType === 'Finished'}" v-if="isUpcomming">{{ upcomingType }}</div>
+        <div :class="['end', endItemClass]" v-if="isUpcomming">{{ upcomingType }}</div>
     </div>
   </IonItem>
 </template>
 <script lang="ts" setup>
+import { RoleEnum } from "@/generated/graphql";
 import { Capacitor } from "@capacitor/core";
 import { IonItem, IonIcon, IonLabel } from "@ionic/vue";
 import { time } from "ionicons/icons";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 interface UpcommingItemProps {
-  imgSrc: string;
+  imgSrc?: string;
   title: string;
-  subtitle: string;
-  location: string;
-  time: string;
-  isUpcomming: boolean;
+  subtitle?: string;
+  location?: string;
+  isUpcomming?: boolean;
   squareImg?: boolean;
   isLast?: boolean;
   upcomingType?:string;
-  isShortTime?:boolean
+  isShortTime?:boolean;
+  days?:string;
+  role?:RoleEnum;
+  nativeItem?: boolean
 }
 
-withDefaults(defineProps<UpcommingItemProps>(), {
+const props = withDefaults(defineProps<UpcommingItemProps>(), {
   squareImg: false,
   isLast: false,
   isUpcomming:false,
   isShortTime: false,
-  upcomingType: "Upcoming"
+  upcomingType: "Upcoming",
+  nativeItem: false
 });
 
 const isNative = ref(Capacitor.isNativePlatform())
+
+const endItemClass = computed(()=> {
+  if (props.upcomingType === 'Finished') {
+    return "finished";
+  } else if (props.upcomingType === 'Upcoming'){
+    return "upcoming";
+  } else if (props.upcomingType === 'Premium') {
+    return "premium ytmn"
+  } else if (props.upcomingType === "Expired") {
+    return "expired ytmn"
+  } else {
+    return "upcoming-days ytmn"
+  }
+})
 </script>
 <style lang="scss" scoped>
 .upcoming-item {
@@ -98,7 +117,7 @@ const isNative = ref(Capacitor.isNativePlatform())
       }
 
       .time {
-        font-family: Yantramanav;
+        font-family: Lato;
         font-size: 14px;
         font-style: normal;
         font-weight: 400;
@@ -106,6 +125,10 @@ const isNative = ref(Capacitor.isNativePlatform())
         justify-content: center;
         align-items: center;
         gap: 9px;
+      }
+
+      .day {
+        color: var(--fitnesswhite);
       }
     }
 
@@ -129,22 +152,35 @@ const isNative = ref(Capacitor.isNativePlatform())
       .clac-location {
         width: calc(100% - 35%);
       }
-      .upcoming {
+
+      .end {
         position: absolute;
         right: 0;
-        bottom: 2px;
+        bottom: 12px;
         width: fit-content;
-        background-color: #ede8d7;
+        padding: 2px 8px;
         border-radius: 30px;
-        padding: 5px 7px;
+      }
+      .upcoming {
+        background-color: #ede8d7;
         color: #f7685b;
         font-family: Manrope;
         font-size: 12px;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
+      }
+      .premium {
+        color: var(--gold);
+      }
 
-    }
+      .expired {
+        color: #DC5858;
+      }
+
+      .upcoming-days {
+        color: #E1DBC5;
+      }
   }
 
   @media (max-width: 900px) {
@@ -163,21 +199,29 @@ const isNative = ref(Capacitor.isNativePlatform())
       font-family: Lato !important;
       color: var(--main-color) !important ;
       padding: 2px 8px !important;
-      bottom: 5px !important;
+      bottom: 16px !important;
     }
 
     .time {
       font-family: Lato;
     }
 
-    .finished{
+}
+.finished {
+      font-size: 12px;
       color: #AFAFAF !important;
       border: 1px solid #AFAFAF !important;
       background-color: transparent !important;
-    }
 }
 
 .mb-30 {
   margin-bottom: 30px;
+}
+
+.ytmn {
+  font-family: Yantramanav;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
 }
 </style>

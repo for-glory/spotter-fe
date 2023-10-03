@@ -1,12 +1,16 @@
 <template>
-  <base-layout>
-    <template #header>
+  <base-layout :class="{ 'web-training': isWeb }" :hide-navigation-menu="isWeb">
+    <template v-if="!isWeb" #header>
       <page-header back-btn :title="`My ${sessionTypeName}`" @back="back" />
     </template>
     <template #content>
-      <div class="content">
+      <div :class="['content', { 'user-content': role === RoleEnum.User }]">
+        <div class="web-header" v-if="isWeb">
+          My  {{ sessionTypeName }}
+        </div>
         <div class="qr">
-          <div class="qr__img" ref="qrCodeEl"></div>
+          <IonIcon class="qr__code" v-if="role == RoleEnum.User" src="assets/qrcode.svg" />
+          <div class="qr__img" v-else ref="qrCodeEl"></div>
           <ion-text color="medium" class="qr__info">
             Please show this unique one-time QR code at check in to begin your
             session
@@ -16,49 +20,73 @@
         <div class="training-preview">
           <div class="training-preview__head">
             <trainer-item
-              v-if="sessionType === EntitiesEnum.Training"
+              v-if="webSessionType === EntitiesEnum.Training"
               class="trainer"
-              :trainer="trainer"
+              :trainer="role === RoleEnum.User ? dummyTraings : trainer"
             />
             <search-result
-              v-else-if="sessionType === EntitiesEnum.Facility"
+              v-else-if="showSearchResult"
               show-rating
-              :item="facility"
+              :item="role === RoleEnum.User ? dummyFacility : facility"
             />
-            <event-item v-else-if="event" :item="event" hide-time />
+            <event-item v-else-if="event || webSessionType === EntitiesEnum.Event" :item="dummyEvent" hide-time hideEventTime />
           </div>
           <div class="training-preview__row">
-            <strong class="training-preview__row__title">Date</strong>
+            <strong class="training-preview__row__title">{{dateLabel}}</strong>
             <span class="training-preview__row__data">
               {{ trainingStartDate }}
             </span>
           </div>
-          <div class="training-preview__row">
+          <div class="training-preview__row" v-if="showTime">
             <strong class="training-preview__row__title">Time</strong>
             <span class="training-preview__row__data">
               {{ trainingStartTime }}
             </span>
           </div>
+          <div class="training-preview__row" v-else-if="planType">
+            <strong class="training-preview__row__title">Plan</strong>
+            <span class="training-preview__row__data">
+              {{ planType }}
+            </span>
+          </div>
+          <div class="training-preview__row" v-else-if="sessionType === EntitiesEnum.Event">
+            <strong class="training-preview__row__title">Session quantity</strong>
+            <span class="training-preview__row__data">
+              1 Session
+            </span>
+          </div>
           <div class="training-preview__row">
             <strong class="training-preview__row__title">Total</strong>
             <span class="training-preview__row__data">
-              ${{ trainingTotal }}
+              ${{ trainingTotal || 20 }}
             </span>
           </div>
         </div>
+
+        <ion-button v-if="isWeb"
+          color="medium"
+          expand="block"
+          fill="outline"
+          @click="cancel"
+          :class="{ 'native-app': role === RoleEnum.User }"
+          :disabled="trainingOnCanceling"
+        >
+          Cancel {{ cancelBtnTxt }}
+        </ion-button>
       </div>
     </template>
 
-    <template #footer v-if="sessionType === EntitiesEnum.Training">
-      <div class="footer ion-padding-horizontal">
+    <template #footer v-if="showfooterBtn && !isWeb">
+      <div :class="['footer', 'ion-padding-horizontal', { 'web-footer': isWeb }]">
         <ion-button
           color="medium"
           expand="block"
           fill="outline"
           @click="cancel"
+          :class="{ 'native-app': role === RoleEnum.User }"
           :disabled="trainingOnCanceling"
         >
-          Cancel {{ sessionTypeName }}
+          Cancel {{ cancelBtnTxt }}
         </ion-button>
       </div>
     </template>
@@ -66,6 +94,7 @@
 
   <confirmation
     :is-visible="showConfirmationModal"
+    :is-web="isWeb"
     title="Do you want to cancel training?"
     description="Training will be deleted from your upcoming events"
     button-text="Cancel session"
@@ -73,11 +102,18 @@
     @discard="onCancelTraining"
     @decline="hideModal"
   />
+  <terms-of-use
+    :is-confirmed="isConfirmed"
+    :is-web="isWeb"
+    @agree="onAgree"
+    @decline="onDecline"
+  />
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import { IonButton, IonText, toastController } from "@ionic/vue";
+import { IonButton, IonIcon, IonText, toastController } from "@ionic/vue";
+import TermsOfUse from "@/general/components/modals/terms/TermsOfUse.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import QRCodeStyling, { DrawType } from "qr-code-styling";
@@ -92,6 +128,7 @@ import {
   TrainingStatesEnum,
   EventDocument,
   FacilityItemPassDocument,
+  RoleEnum,
 } from "@/generated/graphql";
 import { EntitiesEnum } from "@/const/entities";
 import TrainerItem from "@/general/components/TrainerItem.vue";
@@ -101,12 +138,38 @@ import Confirmation from "@/general/components/modals/confirmations/Confirmation
 import dayjs from "dayjs";
 import useId from "@/hooks/useId";
 import EventItem from "@/general/components/EventItem.vue";
+import useRoles from "@/hooks/useRole";
+
+const props = withDefaults(defineProps<{
+  isWeb?:boolean,
+  webSessionType?:string
+}>(), {
+  isWeb: false
+})
 
 const router = useRouter();
 const route = useRoute();
 const qrCodeEl = ref<HTMLElement>();
-
+const { role } = useRoles();
+const closeModal = ref(true);
 const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
+const sessionType = route.query.type;
+const compSessionType = sessionType || props?.webSessionType;
+
+const dateLabel = computed(() => {
+  if (role === RoleEnum.User) {
+    if (compSessionType === EntitiesEnum.FacilityDropins || compSessionType === EntitiesEnum.Facilities) {
+      return "Expiry date";
+    }
+  } 
+  return "Date";
+});
+
+const showSearchResult = computed(() => {
+  if (compSessionType === EntitiesEnum.Facility || (role === RoleEnum.User && compSessionType === EntitiesEnum.FacilityDropins)) {
+    return true;
+  } 
+})
 
 const {
   mutate: cancelTraining,
@@ -130,9 +193,8 @@ trainingCanceled(() => {
   back();
 });
 
-const sessionType = route.query.type;
 const sessionTypeName = computed<string>(() => {
-  switch (sessionType) {
+  switch (compSessionType) {
     case EntitiesEnum.Facility:
       return "Passes";
 
@@ -143,9 +205,62 @@ const sessionTypeName = computed<string>(() => {
       return "event";
 
     default:
-      return "";
+      return "Drop-ins";
   }
 });
+const planType = computed(() => {
+  if (compSessionType === EntitiesEnum.Facility) {
+    return "Premium";
+  } else if (compSessionType === EntitiesEnum.FacilityDropins) {
+    return "One Day Access";
+  }
+});
+const showTime = computed(() => {
+  if (role !== RoleEnum.User) {
+    return true
+  } else if (role === RoleEnum.User){
+    if (compSessionType === EntitiesEnum.Training) {
+      return true;
+    }
+  }
+});
+
+const showfooterBtn = computed(() => {
+  if (role !== RoleEnum.User) {
+    if (compSessionType === EntitiesEnum.Training) {
+      return true;
+    }
+  } else if (role === RoleEnum.User) {
+      return true;
+  } 
+});
+
+const cancelBtnTxt = computed(() => {
+  if (role !== RoleEnum.User) {
+    return sessionTypeName;
+  } else if (role === RoleEnum.User){
+    if (compSessionType === EntitiesEnum.Event || compSessionType === EntitiesEnum.FacilityDropins) {
+      return "session";
+    } else if(compSessionType === EntitiesEnum.Training){
+      return "training";
+    } else if (compSessionType === EntitiesEnum.Facility){
+      return "membership";
+    }
+  }
+});
+
+const isConfirmed = computed(() => {
+  if (role !== RoleEnum.User) {
+    return true;
+  }else if (role === RoleEnum.User) {
+    if (compSessionType === EntitiesEnum.Training) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+});
+
 
 const {
   result: facilityResult,
@@ -172,7 +287,7 @@ const {
 });
 
 onMounted(() => {
-  switch (sessionType) {
+  switch (compSessionType) {
     case EntitiesEnum.Facility:
       getFacility();
       break;
@@ -205,6 +320,49 @@ const qrOptions = ref({
 
 const trainer = ref();
 const facility = ref();
+
+const dummyFacility = {
+  media: [
+    {
+      pathUrl: "assets/backgrounds/Gym_1.png"
+    }
+  ],
+  name: "Diamond Gym",
+  score: "4.6",
+  address: {
+    street: "Light Street, 24"
+  }
+};
+
+const dummyTraings = {
+  avatarUrl: "assets/backgrounds/Gym_1.png",
+  first_name: "Tamra",
+  last_name: "Dae",
+  score: 4.6,
+  address: "“Summer Gym”, Wall Street, 24"
+}
+
+const dummyEvent = {
+  media:[
+    {
+      pathUrl: "assets/backgrounds/food1.png",
+    }
+  ],
+  title: "Food Festival",
+  address: {
+    street: "Light Street, 24"
+  }
+}
+
+const onAgree = () => {
+  console.log('on agree');
+  closeModal.value = true
+}
+
+const onDecline = () => {
+  console.log('call ondecline');
+  
+}
 
 gotFacility((response) => {
   const facilityPass = response.data.facilityItemPass;
@@ -278,7 +436,7 @@ gotEvent((response) => {
 });
 
 const trainingStartDate = computed(() => {
-  switch (sessionType) {
+  switch (compSessionType) {
     case EntitiesEnum.Facility:
       return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
         "DD/MM/YYYY"
@@ -293,12 +451,12 @@ const trainingStartDate = computed(() => {
       return dayjs(eventResult.value?.event.start_date).format("DD/MM/YYYY");
 
     default:
-      return "";
+      return dayjs(new Date()).format("DD/MM/YYYY");
   }
 });
 
 const trainingStartTime = computed(() => {
-  switch (sessionType) {
+  switch (compSessionType) {
     case EntitiesEnum.Facility:
       return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
         "hh:mm A"
@@ -318,7 +476,7 @@ const trainingStartTime = computed(() => {
 });
 
 const trainingTotal = computed(() => {
-  switch (sessionType) {
+  switch (compSessionType) {
     case EntitiesEnum.Facility:
       return facilityResult.value?.facilityItemPass.order.front_total;
 
@@ -366,6 +524,9 @@ const showToast = async (
 }
 
 .qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 32px;
 
   &__img {
@@ -386,6 +547,10 @@ const showToast = async (
       height: 100%;
       position: absolute;
     }
+  }
+
+  &__code {
+    font-size: 200px;
   }
 
   &__info {
@@ -451,8 +616,57 @@ const showToast = async (
   }
 }
 
+.user-content {
+  .qr__info {
+    color: var(--fitnesswhite);
+    text-align: center;
+    font-family: Yantramanav;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .training-preview__row {
+    &__title , &__data{
+      font-family: Yantramanav;
+    }
+  }
+}
+
+.user-footer {
+  ion-button {
+
+  }
+}
+
 .event {
   --padding-start: 0;
   --padding-end: 0;
+}
+
+.web-header {
+  color: var(--gold);
+  text-align: center;
+  font-family: Yantramanav;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.web-training {
+  :deep {
+    ion-content{
+      --background: var(--gray-700);
+    }
+  }
+
+  .content {
+    padding: 0 10px 25px 10px;
+  }
+}
+
+.web-footer {
+  background: var(--gray-700) !important;
 }
 </style>

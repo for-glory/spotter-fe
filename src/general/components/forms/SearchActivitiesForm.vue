@@ -1,15 +1,16 @@
 <template>
   <div
     class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult }"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'web-search-form': isWeb }"
   >
-    <ion-back-button
-      v-if="backBtn"
-      class="search-form__back-btn"
-      @click="$emit('back')"
-      icon="assets/icon/arrow-back.svg"
+    <ion-back-button 
+    v-if="backBtn"
+    class="search-form__back-btn"
+    @click="$emit('back')"
+    icon="assets/icon/arrow-back.svg"
     >
-    </ion-back-button>
+  </ion-back-button>
+<div :class="['search-container']">
     <ion-searchbar
       ref="searchBar"
       @ion-change="search"
@@ -39,11 +40,13 @@
     >
       Cancel
     </ion-button>
+  </div>  
 
     <ion-content
       v-if="!hideResults"
       :class="{
         'search-form__results--with-back-btn': backBtn,
+        'pt-100': isWithTabs
       }"
       class="search-form__results ion-padding-horizontal"
     >
@@ -62,10 +65,10 @@
           :showRating="!isActivitiesNearbyTab"
         />
       </router-link>
-      <ion-item v-else-if="!searchQuery.length">
+      <ion-item lines="none" v-else-if="!searchQuery?.length">
         <ion-label class="ion-text-center">Type something to search</ion-label>
       </ion-item>
-      <ion-item v-else>
+      <ion-item lines="none" v-else>
         <ion-label class="ion-text-center">No results found...</ion-label>
       </ion-item>
     </ion-content>
@@ -111,6 +114,8 @@ const props = withDefaults(
     visibleResult?: boolean;
     placeholder?: string;
     hideResults?: boolean;
+    isWithTabs?: boolean;
+    isWeb?: boolean;
   }>(),
   {
     backBtn: false,
@@ -118,6 +123,8 @@ const props = withDefaults(
     visibleResult: false,
     placeholder: "Enter name or address...",
     hideResults: false,
+    isWithTabs: false,
+    isWeb: false
   }
 );
 
@@ -130,7 +137,7 @@ const emits = defineEmits<{
 const isFocused = ref<boolean>(false);
 const searchBar = ref<typeof IonSearchbar | null>(null);
 const isActivitiesNearbyTab = computed(
-  () => props.type === EntitiesEnum.ActivitiesNearby
+  () => props?.type === EntitiesEnum.ActivitiesNearby
 );
 
 const searchQuery = ref<string>("");
@@ -153,13 +160,17 @@ const searchResults = computed(() =>
 );
 
 const search = debounce((event?: SearchbarCustomEvent) => {
+  console.log('call serach===', event);
+  
   if (props.hideResults) {
     emits("search", event?.detail?.value);
     return;
   }
-  searchQuery.value = event?.detail?.value || "";
-  props.type === EntitiesEnum.ActivitiesNearby;
-  activityRefetch({ first: 100, search: searchQuery.value });
+  searchQuery.value = event?.detail?.value || null;
+  props?.type === EntitiesEnum.ActivitiesNearby;
+  if (searchQuery.value) { 
+    activityRefetch({ first: 100, search: searchQuery.value });
+  }
 }, 1000);
 
 const focusHandle = () => {
@@ -285,6 +296,7 @@ const handleRedirect: any = (itemType: string) => {
     width: 100%;
     --padding-top: 24px;
     position: absolute;
+    z-index: 99;
     transform-origin: 50% 0;
     transition: opacity 0.35s ease, transform 0.35s ease;
     height: calc(100vh - 72px - var(--ion-safe-area-top));
@@ -298,5 +310,26 @@ const handleRedirect: any = (itemType: string) => {
       transition: all 0s ease 0.35s, opacity 0.35s ease, transform 0.35s ease;
     }
   }
+}
+.search-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.web-search-form {
+  width: 100%;
+  justify-content: center;
+  .search-container {
+    width: 530px;
+  }
+
+  ion-content {
+    --background: var(--gray-800) !important;
+  }
+}
+.pt-100 {
+  --padding-top: 100px;
 }
 </style>

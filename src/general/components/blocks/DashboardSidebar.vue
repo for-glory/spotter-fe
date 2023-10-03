@@ -21,15 +21,15 @@
           <div class="facility__item-content">
             <div
               class="d-flex ion-align-items-center ion-justify-content-center"
-              style="gap: 8px"
+              style="gap: 8px" v-if="name"
             >
-              <ion-title class="name selected"
+              <ion-title class="name selected" 
                 >{{ name }}
               </ion-title>
               <ion-icon
                 size="12px"
                 src="assets/icon/arrow-down-light.svg"
-                v-if="role !== RoleEnum.Trainer"
+                v-if="role !== RoleEnum.Trainer && role !== RoleEnum.User"
               ></ion-icon>
             </div>
             <ion-text class="address">{{
@@ -119,8 +119,8 @@
       </div>
       <div class="main-menu" v-if="role === RoleEnum.User">
         <div
-          :class="getMenuItemClass(EntitiesEnum.DashboardOverview)"
-          @click="onHandleClickMenu(EntitiesEnum.DashboardOverview)"
+          :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.DashboardUserOverview : EntitiesEnum.DashboardOverview)"
+          @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.DashboardUserOverview : EntitiesEnum.DashboardOverview)"
         >
           <ion-icon src="assets/icon/dashboard.svg" />
           <ion-text>Dashboard</ion-text>
@@ -138,8 +138,8 @@
           <ion-text>Trainers</ion-text>
         </div>
         <div
-          :class="getMenuItemClass(EntitiesEnum.Discover)"
-          @click="onHandleClickMenu(EntitiesEnum.Discover)"
+          :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.DashboardDiscover : EntitiesEnum.Discover)"
+          @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.DashboardDiscover : EntitiesEnum.Discover)"
         >
           <ion-icon src="assets/icon/discover.svg" />
           <ion-text>Discover</ion-text>
@@ -316,6 +316,9 @@ import { setSelectedGym } from "@/router/middleware/gymOwnerSubscription";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
 import useId from "@/hooks/useId";
+import { Query, UserDocument } from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
+
 
 const props = withDefaults(
   defineProps<{
@@ -339,6 +342,12 @@ if (!facilityStore.facility?.id && props.facilities.length) {
   facilityStore.setFacility(props.facilities[0]);
   setSelectedGym(props.facilities[0]?.id);
 }
+
+const {
+  result,
+  refetch,
+  onResult: gotUser,
+} = useQuery<Pick<Query, "user">>(UserDocument, { id });
 
 const facilities = computed(() => {
   return props.facilities;
@@ -399,6 +408,8 @@ const name = computed(() => {
     
     case RoleEnum.Trainer :
       return trainerStore.trainer.first_name + ' ' + trainerStore.trainer.last_name;
+    case RoleEnum.User: 
+      return result.value?.user?.first_name + ' ' + result.value?.user?.last_name
   }
 });
 
@@ -410,6 +421,8 @@ const address = computed(() => {
     
     case RoleEnum.Trainer :
       return trainerStore.trainer.address?.street + ' ' + trainerStore.trainer.last_name;
+    case RoleEnum.User: 
+    return result.value?.user?.address?.street + ' ' + result.value?.user?.address?.city?.name
   }
 });
 

@@ -6,14 +6,14 @@
     <ion-item @click="handleRouting" lines="none" :class="['trainer-item', 'wrap-item', { 'user-item': role === RoleEnum.User}]">
       <avatar
         class="trainer-item__avatar"
-        :src="trainer.avatarUrl"
+        :src="trainer?.avatarUrl"
         :symbols="symbols"
       />
       <div class="d-flex trainer-detail-wrapper">
         <div :class="['trainer-item__inner', { 'user-inner': endButton && Capacitor.isNativePlatform() }]">
           <div class="trainer-item__head">
             <ion-label class="trainer-item__title">
-              {{ trainer.first_name }} {{ trainer.last_name }}
+              {{ trainer?.first_name }} {{ trainer?.last_name }}
             </ion-label>
             <rating-number class="trainer-item__rating">
               {{ trainer?.score?.toFixed(1) }}
@@ -68,16 +68,16 @@ const handleBookBtn = () => {
 
 const address = computed(() => {
   return (
-    props.trainer.facilities?.[0]?.address?.street ?? "Dallas, Wall Street, 24"
+    props.trainer?.facilities?.[0]?.address?.street ?? "Dallas, Wall Street, 24"
   );
 });
 
 const symbols = computed(() => {
   return (
-    (props.trainer.first_name?.length
-      ? props.trainer.first_name?.charAt(0)
+    (props.trainer?.first_name?.length
+      ? props.trainer?.first_name?.charAt(0)
       : "") +
-    (props.trainer.last_name?.length ? props.trainer.last_name?.charAt(0) : "")
+    (props.trainer?.last_name?.length ? props.trainer?.last_name?.charAt(0) : "")
   );
 });
 </script>
@@ -185,6 +185,10 @@ const symbols = computed(() => {
       font-size: 16px;
       font-style: normal;
       font-weight: 500;
+    }
+
+    &__head {
+      max-width: calc(100% - 30px);
     }
     
     &__address {

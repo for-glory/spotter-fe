@@ -4,6 +4,7 @@
     v-model="date"
     is-expanded
     @update:from-page="dateChanged"
+    @dayclick="$emit('date-changed', $event)"
     :rows="12"
     transparent
     borderless
@@ -50,6 +51,7 @@ withDefaults(
 
 const emits = defineEmits<{
   (e: "month-changed", selected: any): void;
+  (e: "date-changed", date: any): void;
 }>();
 
 const dateChanged = (event: any) => {

@@ -1,12 +1,12 @@
 <template>
   <ion-modal ref="modal" :is-open="isVisible" :backdrop-dismiss="false">
-    <div :class="['wrapper', { 'user-confirm-modal': role === RoleEnum.User }]">
+    <div :class="['wrapper', { 'user-confirm-modal': role === RoleEnum.User, 'web-modal': isWeb }]">
       <ion-icon
         src="assets/icon/close.svg"
         @click="handleCancel"
         class="close-btn"
       ></ion-icon>
-      <ion-img class="modal__img" src="assets/dumbbells.png" />
+      <ion-img :class="['modal__img', { 'img-opacity': !isWeb }]" src="assets/dumbbells.png" />
       <div class="ion-padding-horizontal">
         <strong class="modal__title">
           {{ title }}
@@ -43,10 +43,12 @@ withDefaults(
     isVisible: boolean;
     cancelButtonText?: string;
     confirmBtnWhite?: boolean; 
+    isWeb?:boolean
   }>(),
   {
     cancelButtonText: "Cancel",
-    confirmBtnWhite: false
+    confirmBtnWhite: false,
+    isWeb: false
   }
 );
 
@@ -88,15 +90,6 @@ ion-modal::part(backdrop) {
   &__img {
     margin-bottom: 24px;
     position: relative;
-    &::after {
-      content: "";
-      background: rgba(25, 25, 27, 0.80);
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-    }
   }
 
   &__title {
@@ -130,6 +123,18 @@ ion-modal::part(backdrop) {
   &__button {
     width: calc(50% - 8px);
   }
+}
+
+.img-opacity {
+  &::after {
+      content: "";
+      background: rgba(25, 25, 27, 0.80);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
 }
 
 .close-btn {
@@ -193,5 +198,11 @@ ion-modal::part(backdrop) {
     color: var(--fitnesswhite);
    }
 
+}
+
+.web-modal {
+  .modal__title, .modal__text, .modal__button {
+    font-family: Lato;
+  }
 }
 </style>

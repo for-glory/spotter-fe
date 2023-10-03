@@ -1,21 +1,27 @@
 <template>
-  <div class="dashboard-item__container">
+  <div
+    :class="[
+      'dashboard-item__container',
+      { 'user-dashboard-item-web': role === RoleEnum.User && !Capacitor.isNativePlatform() },
+      { 'user-item': role === RoleEnum.User && Capacitor.isNativePlatform() }
+    ]"
+  >
     <div class="dashboard-item">
       <ion-text class="dashboard-item__title">
         <slot name="title"></slot>
       </ion-text>
-      <div class="align-items-center gap-16" :class="isWeb ? 'd-flex' : ''">
+      <div class="dashboard-item__sub-title align-items-center gap-16" :class="isWeb ? 'd-flex' : ''">
         <div
-        v-for="item in itemsWithIds"
-        :key="item._id"
-        class="dashboard-item__content d-flex align-items-center"
+          v-for="item in itemsWithIds"
+          :key="item._id"
+          class="dashboard-item__content d-flex align-items-center"
         >
-        <ion-text class="dashboard-item__content-value">
-          {{ item.value }}
-        </ion-text>
-        <ion-text class="dashboard-item__content-descr">
-          {{ item.description }}
-        </ion-text>
+          <ion-text class="dashboard-item__content-value">
+            {{ item.value  }}
+          </ion-text>
+          <ion-text class="dashboard-item__content-descr">
+            {{ item.description }}
+          </ion-text>
         </div>
         <div class="dashboard-item__content">
           <slot name="bottom"></slot>
@@ -29,11 +35,16 @@
 import { computed, defineProps } from "vue";
 import { IonText } from "@ionic/vue";
 import { v4 as uuidv4 } from "uuid";
+import { RoleEnum } from "@/generated/graphql";
+import { Capacitor } from "@capacitor/core";
+import useRoles from "@/hooks/useRole";
 
 const props = defineProps<{
   items: { value: number | string; description: string }[];
-  isWeb?: boolean
+  isWeb?: boolean;
 }>();
+
+const { role } = useRoles()
 
 const itemsWithIds = computed(() =>
   props.items.map((item) => ({ ...item, _id: uuidv4() }))
@@ -83,9 +94,29 @@ const itemsWithIds = computed(() =>
     }
   }
 }
-.trainer-item {
+.user-item {
   .dashboard-item__title {
     font-family: "Yantramanav";
+  }
+}
+.user-dashboard-item-web {
+  padding: 8px 39px 16px 16px;
+  .dashboard-item {
+    width: 100%;
+    &__title {
+      color: var(--FITNESS-BEIGE, var(--Beige, #e1dbc5));
+      font-family: Lato;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 500;
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+
+    &__sub-title {
+      justify-content: space-between;
+    }
   }
 }
 </style>

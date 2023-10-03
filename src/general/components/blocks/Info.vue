@@ -1,5 +1,5 @@
 <template>
-  <div class="info">
+  <div :class="['info',  { 'native-info': isNative }]">
     <div class="info__block" v-if="startDate && startDateLabel">
       <ion-text class="info__main">{{ startDate }}</ion-text>
       <ion-text class="info__secondary"> {{ startDateLabel }}</ion-text>
@@ -26,6 +26,7 @@ defineProps<{
   priceLabel: string;
   members: string;
   membersLabel: string;
+  isNative?: boolean
 }>();
 </script>
 
@@ -42,7 +43,7 @@ defineProps<{
     flex: 1 1 100%;
     white-space: nowrap;
     display: flex;
-    padding: 0 8px;
+    padding: 0 20px;
     position: relative;
     flex-direction: column;
     align-items: center;
@@ -72,5 +73,8 @@ defineProps<{
     font-weight: 300;
     font-size: 14px;
   }
+}
+.native-info {
+  margin: 24px 16px;
 }
 </style>
