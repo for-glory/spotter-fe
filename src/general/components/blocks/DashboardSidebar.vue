@@ -266,7 +266,7 @@
           @click="onHandleClickMenu(EntitiesEnum.DashboardGymManager)"
         >
           <ion-icon src="assets/icon/profile.svg" />
-          <ion-text>HR</ion-text>
+          <ion-text>Teams</ion-text>
         </div>
         <div
           :class="getMenuItemClass(EntitiesEnum.DashboardGettingPaid)"

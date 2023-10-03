@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Add New Manager">
+      <page-header back-btn @back="onBack" title="Invite Team Member">
       </page-header>
     </template>
     <template #content>
@@ -105,7 +105,7 @@
               fill="solid"
               @click="addManager"
             >
-              Add Manager
+              Send Invitation
             </ion-button>
           </div>
         </div>
