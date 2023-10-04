@@ -337,11 +337,11 @@ const specialNeeds = computed<string | null>(() => {
     return answers ? answers : null;
 });
 const handleBuy = () => {
-    router.push({
-        name: EntitiesEnum.GymOrderCalendar, params: {
-            id: 52,
-        },
-    });
+    // router.push({
+    //     name: EntitiesEnum.GymOrderCalendar, params: {
+    //         id: 52,
+    //     },
+    // });
 };
 
 const viewAllReview = () => {
