@@ -11,7 +11,7 @@
       />
       <div class="d-flex trainer-detail-wrapper">
         <div :class="['trainer-item__inner', { 'user-inner': endButton && Capacitor.isNativePlatform() }]">
-          <div class="trainer-item__head">
+          <div :class="['trainer-item__head',  { 'head-max-width': endButton }]">
             <ion-label class="trainer-item__title">
               {{ trainer?.first_name }} {{ trainer?.last_name }}
             </ion-label>
@@ -186,11 +186,7 @@ const symbols = computed(() => {
       font-style: normal;
       font-weight: 500;
     }
-
-    &__head {
-      max-width: calc(100% - 30px);
-    }
-    
+        
     &__address {
       color: var(--gray-400);
     }
@@ -203,5 +199,9 @@ const symbols = computed(() => {
     width: 100%;
     justify-content: space-between;
   }
+}
+
+.head-max-width {
+  max-width: calc(100% - 30px);
 }
 </style>

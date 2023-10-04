@@ -486,7 +486,7 @@ const bookingName = computed(() => {
   flex-direction: column;
   justify-content: center;
   bottom: calc(84px + var(--ion-safe-area-bottom));
-  --btn-min-width: 100px;
+  --btn-min-width: 88px;
 }
 
 .empty-block {

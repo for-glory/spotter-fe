@@ -20,7 +20,7 @@
         <div class="training-preview">
           <div class="training-preview__head">
             <trainer-item
-              v-if="webSessionType === EntitiesEnum.Training"
+              v-if="compSessionType === EntitiesEnum.Training"
               class="trainer"
               :trainer="role === RoleEnum.User ? dummyTraings : trainer"
             />
@@ -29,7 +29,7 @@
               show-rating
               :item="role === RoleEnum.User ? dummyFacility : facility"
             />
-            <event-item v-else-if="event || webSessionType === EntitiesEnum.Event" :item="dummyEvent" hide-time hideEventTime />
+            <event-item v-else-if="event || compSessionType === EntitiesEnum.Event" :item="dummyEvent" hide-time hideEventTime />
           </div>
           <div class="training-preview__row">
             <strong class="training-preview__row__title">{{dateLabel}}</strong>

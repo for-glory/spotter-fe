@@ -103,7 +103,7 @@ ion-modal::part(backdrop) {
   }
 
   &__content {
-    overflow-y: scroll;
+    overflow: auto;
     padding: 12px 12px 0;
     margin-bottom: 18px;
   }

@@ -24,6 +24,7 @@ onMounted(async () => {
 
   if (!isPlatform("desktop") && !isPlatform("mobileweb")) {
     StatusBar.setStyle({ style: Style.Dark });
+    StatusBar.setBackgroundColor({ color: '#202020' });
   }
 
   const { registerPushNotifications } = usePushNotifications();

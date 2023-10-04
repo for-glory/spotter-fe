@@ -501,7 +501,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.DashboardUserCalendar,
-        path: "web-user-calendar",
+        path: "web-user-calendar/:type?",
         component: () => import("@/general/views/dashboard/WebUserCalendar.vue"),
         meta: {
           middleware: [gymOwnerSubscription],

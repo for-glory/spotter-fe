@@ -15,7 +15,7 @@
     <ion-header
       v-if="!loadingUser"
       class="header ion-no-border"
-      :class="{ 'header--fixed': headerFixed }"
+      :class="{ 'header--fixed': headerFixed, 'header-background': !Capacitor.isNativePlatform() && draggable && isFullscreenView}"
     >
       <slot name="header"></slot>
     </ion-header>
@@ -70,7 +70,7 @@
             class="draggable-content__drag-handle"
             :style="{ '--offset': offsetTop + 'px' }"
             :class="{
-              'draggable-content__drag-handle--fixed': isFullscreenView,
+              'draggable-content__drag-handle--fixed': isFullscreenView && Capacitor.isNativePlatform(),
             }"
           >
           </span>
@@ -123,15 +123,11 @@ import {
 import {
   Query,
   RoleEnum,
-  SettingsCodeEnum,
   UserDocument,
-  DeleteProfileDocument,
-  SubscriptionsTypeEnum,
-  FacilityDashboardWidgetDocument,
   Facility,
   Trainer
 } from "@/generated/graphql";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import NavigationMenu from "@/general/components/NavigationMenu.vue";
 import useRoles from "@/hooks/useRole";
 import { navigationMenu as navigation } from "@/const/navigation";
@@ -141,6 +137,7 @@ import useId from "@/hooks/useId";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useUserStore } from "@/general/stores/user";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
+import { Capacitor } from "@capacitor/core";
 
 const props = withDefaults(
   defineProps<{
@@ -518,6 +515,10 @@ onUnmounted(() => {
 }
 .top-24 {
   padding-top: 24px;
+}
+
+.header-background {
+  background: var(--ion-background-color);
 }
 .spinner {
   display: block;
