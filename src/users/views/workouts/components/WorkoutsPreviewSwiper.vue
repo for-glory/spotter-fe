@@ -20,7 +20,7 @@
           :backBtn="false"
           class="trial-video-player"
           @trialEnd="emits('trialEnd', workout.id)"
-          showControl
+          :autoplay="workouts[activeIndex].id === workout.id"
         >
         </my-video-player>
       </swiper-slide>

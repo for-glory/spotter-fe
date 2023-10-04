@@ -172,6 +172,7 @@ export enum EntitiesEnum {
   UserWorkoutPaymentSuccess = "USER_WORKOUT_PAYMENT_SUCCESS",
   AddReview = "ADD_REVIEW",
   MaxVideoDuration = "MAX_VIDEO_DURATION",
+  MinVideoDuration = "MIN_VIDEO_DURATION",
   MaxVideoSize = "MAX_VIDEO_SIZE",
   WorkoutPreview = "WORKOUT_PREVIEW",
   UserPreviewExercise = "USER_PREVIEW_EXERCISE",

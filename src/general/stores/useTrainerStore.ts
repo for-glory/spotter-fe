@@ -30,7 +30,7 @@ export const useTrainerStore = defineStore("currentTrainer", {
   },
   actions: {
     setTrainer(trainer: Trainer) {
-      this.trainer = trainer;
+      this.trainer = { ...trainer };
     },
     clearState() {
       this.trainer = {

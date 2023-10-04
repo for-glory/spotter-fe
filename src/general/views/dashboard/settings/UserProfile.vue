@@ -56,7 +56,7 @@
                             <div class="d-flex align-items-center flex-2">
                                 <div class="d-flex">
                                     <ion-text class="reviews__title">Reviews</ion-text>
-                                    <div class="review-badge">4.8</div>
+                                    <div class="review-badge">{{ user?.score }}</div>
                                 </div>
                                 <ion-text class="rating rating__likes">
                                     <ion-icon src="assets/icon/like.svg" class="rating__icon" />
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="review-cards">
-                            <base-carousel class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
+                            <base-carousel v-if="reviews.length" class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
                                     <div class="review-card" v-for="review in reviews">
                                         <div class="review-header">
@@ -95,6 +95,9 @@
                                     </div>
                                 </template>
                             </base-carousel>
+                            <div v-else class="font-bold color-gold " style="font-size: 24px; text-align: center; padding: 24px;">
+                                <ion-text>No reviews yet</ion-text>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -115,15 +118,15 @@
                     </ion-segment>
                     <div class="ion-margin-top info mx-100" v-if="segmentValue == 'trainer'">
                         <div class="info-item">
-                            <strong class="info-item__title">$50.00</strong>
+                            <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
                         </div>
                         <div class="info-item">
-                            <strong class="info-item__title">$30.00</strong>
+                            <strong class="info-item__title">${{ user?.trainerRates[1]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
                         </div>
                     </div>
-                    <div class="offer-card" v-else-if="segmentValue == 'daily'">
+                    <div class="offer-card" v-else-if="segmentValue == 'daily'"  style="max-height: 300px; overflow-y: scroll;">
                         <div class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
@@ -201,9 +204,36 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Share } from "@capacitor/share";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
+import { useTrainerStore } from "@/general/stores/useTrainerStore";
+import { FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
+
+const trainer = useTrainerStore();
+
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
+  WorkoutsDocument,{
+    page: 1,
+    first: 1000,
+    order: SortOrder.Asc,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    trainer_id: trainer.trainer?.id 
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, onResult: getReviews } = useQuery(
+  ReviewsDocument,
+  () => ({
+    id: trainer?.trainer?.id,
+    type: FeedbackEntityEnum.User,
+    review_type: "Recent",
+  })
+);
 
 const handleMore = async () => {
     console.log("call more");
@@ -238,109 +268,53 @@ const handleMore = async () => {
         });
     }
 };
-const offerList = [{
-    id: 1,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    type: "Expert",
-    totalUser: 30,
-}, {
-    id: 2,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    type: "Expert",
-    totalUser: 30,
+const offerList = computed(() => dailysResult.value.workouts.data.map((daily: any) => {
+  return {
+    id: daily?.id,
+    name: daily?.title,
+    trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
+    time: daily?.duration,
+    totalUser: daily?.views_count,
+    type: daily?.type.name
+  }
+}));
 
-}, {
-    id: 3,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    type: "Expert",
-    totalUser: 30,
-
-}];
-const offerEvents = [{
-    id: 1,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-}, {
-    id: 2,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-
-}, {
-    id: 3,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-}];
-
-const reviews = [
-    {
-        id: "1",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "2",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "3",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
-    },
-    {
-        id: "4",
-        name: "Sharon Jem",
-        desc: "Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.",
-        rating: "4.9"
+const reviews = computed(() => {
+    return {
+        id: reviewsResult?.value?.data?.id,
+        name: `${reviewsResult?.value?.data?.author.first_name} ${reviewsResult?.value?.data?.author.last_name}`,
+        desc: reviewsResult?.value?.data?.review,
+        rating: reviewsResult?.value?.data?.score
     }
-];
+});
 
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
-    // return result.value?.user;
-    return {
-        id: "1",
-        title: "Nick Fox",
-        address: {
-            street: "Arizona, Phoenix, USA",
-        },
-        start_date: "10 month",
-        userId: "5328",
-        first_name: "Nick",
-        last_name: "Fox",
-        avatarUrl: "https://picsum.photos/200/300",
-        created_at: new Date().setFullYear(2022, 10),
-        positive_reviews_count: 160,
-        negative_reviews_count: 48,
-        quizzes: [
-            {
-                code: "DISCOVER_YOUR_NEEDS",
-                answers:
-                    "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
-            }
-        ]
-    };
+  // return result.value?.user;
+  return {
+    id: trainer.trainer.id,
+    title: `${trainer.trainer.first_name} ${trainer.trainer.last_name}`,
+    address: {
+      street: "Arizona, Phoenix, USA",
+    },
+    start_date: "10 month",
+    userId: "5328",
+    first_name: trainer.trainer.first_name,
+    last_name: trainer.trainer.last_name,
+    avatarUrl: trainer.trainer.avatarUrl,
+    created_at: new Date().setFullYear(2022,10),
+    positive_reviews_count: trainer.trainer.positive_reviews_count ?? 0,
+    negative_reviews_count: trainer.trainer.negative_reviews_count ?? 0,
+    score: trainer.trainer.score ?? 0,
+    trainerRates: trainer.trainer.trainerRates,
+    quizzes: [
+      {
+        code: "DISCOVER_YOUR_NEEDS",
+        answers:
+          "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
+      }
+    ]
+  }
 });
 
 const symbols = computed(() => {

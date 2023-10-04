@@ -14,7 +14,10 @@
         <ion-row>
           <ion-col size="12">
             <div class="form-row">
-              <ion-label class="label"> Choose video for daily </ion-label>
+              <ion-label class="label"> 
+                Choose video for daily
+                <ion-text color="danger">{{ `(We recommend a 10 sec intro and a minimum of 1 minute video)` }}</ion-text>
+              </ion-label>
               <video-uploader
                 :video="videoPath"
                 @delete="removeVideo"
