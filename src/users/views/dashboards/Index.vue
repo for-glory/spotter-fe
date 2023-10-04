@@ -459,7 +459,7 @@ const selectedEvents = computed(() => {
   }
 
   if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    if(!events.value.length){
+    if(!dropins.value.length){
       return dummyDropins;
     }
     return dropins.value;

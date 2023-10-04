@@ -1,12 +1,14 @@
 <template>
   <div class="user-overview">
-    <WebHeader class="padding-10" :backBtn="false" :gold-title="true" title="Dashboard" />
+    <WebHeader
+      class="padding-10"
+      :backBtn="false"
+      :gold-title="true"
+      title="Dashboard"
+    />
 
     <div class="activity-container">
-      <DashboardItem
-        :is-web="true"
-        :items="activityItems"
-      >
+      <DashboardItem :is-web="true" :items="activityItems">
         <template #title>
           <ion-icon src="assets/icon/activity.svg" class="title-icon" />
           Activity
@@ -28,50 +30,64 @@
             </ion-text>
             <ion-text class="rating-dislikes">
               {{ widgetInfo?.negative_reviews_count || 0 }}
-              <ion-icon class="dislike-icon" src="assets/icon/dislike-outline.svg" />
+              <ion-icon
+                class="dislike-icon"
+                src="assets/icon/dislike-outline.svg"
+              />
             </ion-text>
           </div>
         </template>
       </DashboardItem>
     </div>
     <week-calendar
-          v-model="selectedDate"
+      v-model="selectedDate"
+      :role="RoleEnum.User"
+      :bookings="bookings"
+      @handle-view="onViewCalendar"
+    />
+    <PageTabsNew
+      :tabs="tabs"
+      :is-web="true"
+      :is-icon="true"
+      @change="tabsChanged"
+    />
+
+    <div class="events-container">
+      <ItemsHeader
+        :title="dynamicTitle"
+        :role="RoleEnum.User"
+        :hide-view-more="
+          !selectedEvents?.length ||
+          isFacilitiesLoading ||
+          isTrainingsLoading ||
+          isEventsLoading ||
+          isDropinsLoading
+        "
+        @handle-view="viewAllItems"
+      />
+      <div class="item-container">
+        <UpcomingItem
+          v-for="event in selectedEvents"
+          :key="event.id"
+          :title="event.title"
+          :subtitle="event.subtitle"
+          :img-src="event.imgSrc"
+          :location="event.location"
+          :days="event.days"
+          :is-upcomming="activeTab === EntitiesEnum.Trainings ? false : true"
+          :upcoming-type="event.upcomingType"
+          :square-img="activeTab === EntitiesEnum.Trainings ? false : true"
           :role="RoleEnum.User"
-          :bookings="bookings"
-          @handle-view="onViewCalendar"
+          @click="onViewCalendar(activeTab)"
         />
-      <PageTabsNew :tabs="tabs" :is-web="true" :is-icon="true"  @change="tabsChanged"  />
-
-      <div class="events-container">
-        <ItemsHeader :title="dynamicTitle" :role="RoleEnum.User" :hide-view-more="
-              !selectedEvents?.length ||
-              isFacilitiesLoading ||
-              isTrainingsLoading ||
-              isEventsLoading ||
-              isDropinsLoading
-            " @handle-view="viewAllItems" />
-          <div class="item-container">
-
-            <UpcomingItem
-            v-for="event in selectedEvents"
-            :key="event.id"
-            :title="event.title"
-            :subtitle="event.subtitle"
-            :img-src="event.imgSrc"
-            :location="event.location"
-            :days="event.days"
-            :is-upcomming="activeTab === EntitiesEnum.Trainings ? false : true"
-            :upcoming-type="event.upcomingType"
-            :square-img="activeTab === EntitiesEnum.Trainings ? false : true"
-            :role="RoleEnum.User"
-            />
-          </div>
       </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
+import { IonText, IonIcon } from "@ionic/vue";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import {
@@ -92,7 +108,6 @@ import {
   RoleEnum,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import EventItem from "@/general/components/EventItem.vue";
 import ItemsHeader from "@/general/components/blocks/headers/ItemsHeader.vue";
 import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
 import dayjs, { Dayjs } from "dayjs";
@@ -100,11 +115,14 @@ import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useUserStore } from "@/general/stores/user";
 import UpcomingItem from "@/general/components/dashboard/UpcomingItem.vue";
-import { dummyDropins, dummyPasses, dummyTraings, upcomingEvent } from "@/const/users";
+import {
+  dummyDropins,
+  dummyPasses,
+  dummyTraings,
+  upcomingEvent,
+} from "@/const/users";
 import WebHeader from "@/general/components/blocks/headers/WebHeader.vue";
 import { TabItemNew } from "@/interfaces/TabItemnew";
 
@@ -118,7 +136,7 @@ const {
   result: eventsResult,
   loading: isEventsLoading,
   refetch: refetchEvents,
-  onResult: neweventsResult
+  onResult: neweventsResult,
 } = useQuery(
   MyEventsDocument,
   {
@@ -339,28 +357,28 @@ const facilities = computed<UserPaginator["data"]>(() =>
 
 const selectedEvents = computed(() => {
   if (activeTab.value === EntitiesEnum.Events) {
-    if(!events.value.length){
+    if (!events.value.length) {
       return upcomingEvent;
     }
     return events.value;
   }
 
   if (activeTab.value === EntitiesEnum.Facilities) {
-    if(!facilities.value.length){
+    if (!facilities.value.length) {
       return dummyPasses;
     }
     return facilities.value;
   }
 
   if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    if(!events.value.length){
+    if (!dropins.value.length) {
       return dummyDropins;
     }
     return dropins.value;
   }
-  if(!trainings.value.length){
+  if (!trainings.value.length) {
     return dummyTraings;
-  }
+  }  
   return trainings.value;
 });
 
@@ -394,7 +412,7 @@ const bookingName = computed(() => {
 
 const tabs: TabItemNew[] = [
   {
-    name:  EntitiesEnum.Facilities,
+    name: EntitiesEnum.Facilities,
     labelActive: "assets/icon/dropinsActive.png",
     labelInactive: "assets/icon/gym-user-icon.svg",
   },
@@ -421,8 +439,6 @@ const selectedDate = ref<Dayjs | null>(dayjs());
 const activeTab = ref<EntitiesEnum>(EntitiesEnum.Facilities);
 
 const tabsChanged = (ev: EntitiesEnum) => {
-  console.log("ev=====", ev);
-  
   if (!ev) return;
   activeTab.value = ev;
   refetchBooking();
@@ -485,20 +501,24 @@ const openEvent = (id: string | number) => {
   }
 };
 
-const viewAllItems = (e:any) => {
-  console.log("e", e);
-  console.log(dynamicTitle.value);
-  console.log(activeTab.value);
-  
+const viewAllItems = (e: any) => {
   router.push({
     name: EntitiesEnum.Upcoming,
     params: {
       type: activeTab.value,
     },
   });
-}
-const onViewCalendar = () => {
-  router.push({ name: EntitiesEnum.DashboardUserCalendar });
+};
+const onViewCalendar = (type?: string) => {
+  router.push({
+    name: EntitiesEnum.DashboardUserCalendar,
+    params: {
+      type,
+    },
+    state: {
+      date: selectedDate.value?.toString(),
+    },
+  });
 };
 </script>
 <style scoped lang="scss">
@@ -528,7 +548,8 @@ const onViewCalendar = () => {
         font-size: 24px;
         color: var(--gold);
       }
-      .rating-likes, .rating-dislikes {
+      .rating-likes,
+      .rating-dislikes {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -537,10 +558,6 @@ const onViewCalendar = () => {
         font-weight: 500;
       }
     }
-  }
-
-  .tabs-container {
-
   }
 
   .item-container {

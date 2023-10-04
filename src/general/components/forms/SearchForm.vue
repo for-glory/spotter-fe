@@ -696,7 +696,7 @@ defineExpose({
 }
 
 .search-form-user {
-  padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
+  padding: calc(16px + var(--ion-safe-area-top)) 24px 10px;
 
   ion-searchbar {
     font-family: "Yantramanav";

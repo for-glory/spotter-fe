@@ -1,20 +1,31 @@
 <template>
   <div class="calendar-container">
     <div class="header">
-      <WebHeader :title="routingStates.includes('no_orders') ? 'Calendar' : 'Back' " :back-btn="true" gold-title @back="handleBack" />
+      <WebHeader
+        :title="routingStates.includes('no_orders') ? 'Calendar' : 'Back'"
+        :back-btn="true"
+        gold-title
+        @back="handleBack"
+      />
     </div>
     <div class="d-flex gap-16 h-100 mt-2 overflow-hidden">
       <div
         class="flex-1 h-100 d-flex-col justify-content-between hide-scrollbar"
       >
-        <div class="orders-container" v-if="!routingStates.includes('event_detail')">
+        <div class="orders-container" v-if="showOrder">
           <div class="order-header">My Orders</div>
           <div class="info" v-if="routingStates.includes('no_orders')">
-                Select a date to display your order
+            Select a date to display your order
           </div>
           <div class="order-content">
-            <div class="block-container" v-if="routingStates.includes('date_selected')">
-              <div class="title">Showing results for {{ dayjs(selectedDate).format('D MMMM YYYY') }}</div>
+            <div
+              class="block-container"
+              v-if="routingStates.includes('date_selected')"
+            >
+              <div class="title">
+                Showing results for
+                {{ dayjs(selectedDate).format("D MMMM YYYY") }}
+              </div>
               <ChooseBlock
                 title="Active"
                 value="3 Events"
@@ -30,8 +41,8 @@
                 @handle-click="goToDetail('Planned')"
               />
             </div>
-            <div class="event-container" v-if="routingStates.includes('event')" >
-              <hr class="separator">
+            <div class="event-container" v-if="routingStates.includes('event')">
+              <hr class="separator" />
               <div class="events-header">
                 {{ activeBlock }}
               </div>
@@ -56,13 +67,19 @@
         </div>
       </div>
       <div class="flex-2 h-100 hide-scrollbar">
-        <BaseCustomCalendar class="web-custom-calendar" @day-click="dateChange" week-days-format="W" />
+        <BaseCustomCalendar
+          class="web-custom-calendar"
+          @day-click="dateChange"
+          :attributes="calendarOption" 
+          week-days-format="W"
+        />
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import dayjs from "dayjs";
 import WebHeader from "@/general/components/blocks/headers/WebHeader.vue";
 import BaseCustomCalendar from "@/general/components/base/BaseCustomCalendar.vue";
@@ -76,11 +93,58 @@ enum ActiveBlock {
   Planned = "Planned",
 }
 
-const selectedDate = ref(null);
-const eventTitle = ref("Active");
+const route = useRoute();
+const type = computed(() => {
+  if (route.params?.type === EntitiesEnum.Facilities) {
+    return EntitiesEnum.Facility;
+  } else if (route.params?.type === EntitiesEnum.Trainings) {
+    return EntitiesEnum.Training;
+  } else if (route.params?.type === EntitiesEnum.Events) {
+    return EntitiesEnum.Event;
+  } else {
+    return route.params?.type;
+  }
+});
+
+const showOrder = computed(() => {
+  if (
+    routingStates.value.at(-1) !== "event_detail" &&
+    routingStates.value.at(-1) !== "param_detail"
+  ) {
+    return true;
+  }
+  return false;
+});
+
+const calendarOption = computed(() => {
+  return [
+  {
+      highlight: {
+        style: {
+          backgroundColor: "var(--gold)",
+        },
+      },
+      dates: new Date(),
+    },
+    {
+      highlight: {
+        fillMode: 'outline',
+        style: {
+          backgroundColor: "#262626",
+          borderWidth: "1px",
+          borderColor: "var(--gold)",
+        },
+      },
+      dates: new Date(),
+    },
+  ];
+});
+
+const selectedDate = ref(new Date());
 const activeBlock = ref(null);
-const selectedEvent = ref(null);
-const routingStates = ref(['no_orders'])
+const selectedEvent = ref(type.value ? type.value : null);
+const routingStates = ref(type.value ? ["param_detail"] : ["no_orders"]);
+
 const details = [
   {
     id: "1",
@@ -90,7 +154,7 @@ const details = [
     location: "Summer Gym, Wall Street, 24",
     upcomingType: "Upcoming",
     squarImg: true,
-    type: EntitiesEnum.Event
+    type: EntitiesEnum.Event,
   },
   {
     id: "2",
@@ -99,7 +163,7 @@ const details = [
     subtitle: "17 june",
     location: "Summer Gym, Wall Street, 24",
     squarImg: false,
-    type: EntitiesEnum.FacilityDropins
+    type: EntitiesEnum.FacilityDropins,
   },
   {
     id: "3",
@@ -109,53 +173,55 @@ const details = [
     days: "7 days left",
     upcomingType: "7 Days",
     squarImg: true,
-    type: EntitiesEnum.FacilityDropins
-
+    type: EntitiesEnum.FacilityDropins,
   },
-  { 
+  {
     id: "4",
     title: "Jennifer James",
     imgSrc: "assets/backgrounds/Gym_1.png",
     subtitle: "17 june",
     location: "Summer Gym, Wall Street, 24",
-    type: EntitiesEnum.Training
+    type: EntitiesEnum.Training,
   },
 ];
 
 const goToDetail = (type: string) => {
   activeBlock.value = ActiveBlock[type];
-  if (!routingStates.value.includes('event')) { 
-    routingStates.value.push('event');
+  if (!routingStates.value.includes("event")) {
+    routingStates.value.push("event");
   }
 };
 
-const dateChange = (ev:any) => {
+const dateChange = (ev: any) => {
+  calendarOption.value[0].dates = new Date(ev);
   selectedDate.value = ev;
-  if(!routingStates.value.includes('date_selected')){
-    routingStates.value.pop();
-    routingStates.value.push('date_selected');
+  if (!routingStates.value.includes("date_selected")) {
+    if (routingStates.value[0] === "no_orders") routingStates.value.pop();
+    routingStates.value.push("date_selected");
   }
-}
+};
 
-const onEventClick = (event:any) => {
-  selectedEvent.value = event.type
-  if(!routingStates.value.includes('event_detail')){
-    routingStates.value.push('event_detail');
+const onEventClick = (event: any) => {
+  selectedEvent.value = event.type;
+  if (!routingStates.value.includes("event_detail")) {
+    routingStates.value.push("event_detail");
   }
-}
+};
 
 const handleBack = () => {
-  console.log(routingStates.value);
   if (routingStates.value.length === 1) {
     router.go(-1);
   } else {
-    if(routingStates.value[routingStates.value.length - 1] === 'event'){
-      activeBlock.value = null
+    const lastState = routingStates.value.at(-1);
+    if (lastState === "event") {
+      activeBlock.value = null;
+    }
+    if (lastState === "date_selected" && type.value) {
+      selectedEvent.value = type.value;
     }
     routingStates.value.pop();
   }
-
-}
+};
 </script>
 <style scoped lang="scss">
 .calendar-container {
@@ -206,10 +272,10 @@ const handleBack = () => {
 
       .event-container {
         .separator {
-          background: rgba(255, 255, 255, 0.60);  
+          background: rgba(255, 255, 255, 0.6);
           margin-left: 15px;
           margin-right: 15px;
-          margin: 20px 15px 0 15px ;
+          margin: 20px 15px 0 15px;
         }
         .events-header {
           margin-top: 20px;
