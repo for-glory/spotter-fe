@@ -652,6 +652,11 @@ import {
   QueryMyFacilityItemPassesOrderByColumn,
   QueryMyEventsOrderByColumn,
   TrainingStatesEnum,
+  FacilityItemsByFacilityIdAndTypeDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  EventsQuery,
+  EventsDocument,
   RoleEnum,
   UsersDocument,
   UsersQuery,
@@ -908,61 +913,6 @@ const facilities = computed<UserPaginator["data"]>(() =>
     : []
 );
 
-
-
-
-
-
-
-
-const selectedEvents = computed(() => {
-
-
-  if (activeTab.value === EntitiesEnum.Events) {
-
-    return events.value;
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return facilities.value;
-  }
-
-  if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return dropins.value;
-  }
-  return trainings.value;
-});
-
-
-const dynamicTitle = computed(() => {
-  if (activeTab.value === EntitiesEnum.Events) {
-
-    return 'Upcoming Events';
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return 'My Passes';
-  }
-
-  if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return 'My Drop-ins';
-  }
-
-  return 'Upcoming Trainings';
-});
-
-const bookingName = computed(() => {
-  if (activeTab.value === EntitiesEnum.Events) {
-    return "events";
-  }
-
-  if (activeTab.value === EntitiesEnum.Facilities) {
-    return "gyms";
-  }
-
-  return "trainings";
-});
-
 const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.FacilityDropins,
@@ -1036,28 +986,6 @@ const refetchBooking = () => {
   }
 };
 
-const onViewAllEvents = () => {
-  router.push({ name: EntitiesEnum.DashboardEvents });
-};
-
-const onViewChat = () => {
-  router.push({ name: EntitiesEnum.ChatList });
-};
-const onViewFavourites = () => {
-  router.push({ name: EntitiesEnum.Favourites });
-};
-
-const onViewCalendar = () => {
-  router.push({ name: EntitiesEnum.DashboardCalendar });
-};
-
-const goToDetail = () => {
-  router.push({
-    name: EntitiesEnum.Trainer,
-    params: { id }
-  })
-}
-
 const goToGymDetail = () => {
   router.push({
     name: Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails,
@@ -1120,6 +1048,73 @@ const openEvent = (id: string | number) => {
 
     default:
       break;
+  }
+};
+
+// Passes start
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  item_type: "PASS"
+});
+
+const passes = computed(() => {
+  return facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Passes End
+
+
+// Dropins start
+const {
+  result: dropinResult,
+  loading: loadingFacilityDropin
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  item_type: "DROPIN"
+});
+
+const dropinss = computed(() => {
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Dropins End
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ]
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const allEvents = computed(() => {
+  return eventResult.value?.events?.data;
+});
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
   }
 };
 </script>
