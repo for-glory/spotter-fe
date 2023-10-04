@@ -5,13 +5,13 @@
             <ion-button class="common-back-btn" fill="clear" @click="router.back()">
                 <ion-icon src="assets/icon/arrow-back.svg" />
             </ion-button>
-            <ion-title class="banner__title">Gabby’s gym</ion-title>
+            <ion-title class="banner__title">{{ result?.facility?.name }}</ion-title>
         </div>
         <div class="d-flex gap-24 flex-2 overflow-hidden">
             <div class="overflow-auto hide-scrollbar">
                 <div class="user-container">
                     <div class="photo">
-                        <ion-img v-if="user?.avatarUrl" :src="user?.avatarUrl" />
+                        <ion-img v-if="result?.facility?.media?.length" :src="result?.facility?.media[0]?.pathUrl" />
                         <span v-else>{{ symbols }}</span>
                         <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
                             <ion-icon :icon="ellipsisVertical" />
@@ -21,34 +21,32 @@
                         <div class="header d-flex align-items-center mb-24 justify-content-between">
                             <div>
                                 <strong class="username">
-                                    Gabby Gym
+                                    {{ result?.facility?.name }}
                                 </strong>
-                                <ion-text class="address" color="secondary" v-if="user?.address?.street">
+                                <ion-text class="address" color="secondary" v-if="result?.facility?.address?.street">
                                     <ion-icon src="assets/icon/address.svg" class="address__icon" />
-                                    Dallas, Wall Street, 24
+                                    {{ result?.facility?.address?.street }}
                                 </ion-text>
                             </div>
                             <follow class="follow" :is-followed="false" @handle-click="$emit('handle-follow')" />
                         </div>
                         <div class="info-section" v-if="specialNeeds?.length">
                             <ion-text class="info-section__title mb-10">Description:</ion-text>
-                            <ion-text class="info-section__desc">Want your body to be healthy? Join our program with
-                                directions according to body’s goals. Increasing physical strength is the goal of strenght
-                                training.</ion-text>
+                            <ion-text class="info-section__desc">{{ result?.facility?.description }}</ion-text>
                         </div>
                         <div class="reviews d-flex justify-content-between">
                             <div class="d-flex align-items-center flex-2">
                                 <div class="d-flex">
                                     <ion-text class="reviews__title">Reviews</ion-text>
-                                    <div class="review-badge">4.8</div>
+                                    <div class="review-badge">{{ result?.facility?.score }}</div>
                                 </div>
                                 <ion-text class="rating rating__likes">
                                     <ion-icon src="assets/icon/like.svg" class="rating__icon" />
-                                    {{ user?.positive_reviews_count }}
+                                    {{ result?.facility?.positive_reviews_count??0 }}
                                 </ion-text>
                                 <ion-text class="rating rating__dislikes">
                                     <ion-icon src="assets/icon/dislike-outline.svg" class="rating__icon" />
-                                    {{ user?.negative_reviews_count }}
+                                    {{ result?.facility?.negative_reviews_count??0 }}
                                 </ion-text>
                             </div>
                             <div class="end-content">
@@ -59,15 +57,15 @@
                             <div class="document-cards">
                                 <ion-text class="section-title">Equipment</ion-text>
                                 <div class="doc-items">
-                                    <advantage-item v-for="(item, index) in docList" :key="index"
-                                        :icon="'assets/icon/certificate.svg'" :title="item" />
+                                    <advantage-item v-for="(item, index) in result?.facility?.equipments" :key="index"
+                                        :icon="item?.iconUrl" :title="item?.name" />
                                 </div>
                             </div>
                             <div class="document-cards">
                                 <ion-text class="section-title">Amenities</ion-text>
                                 <div class="doc-items">
-                                    <advantage-item v-for="(item, index) in docList" :key="index"
-                                        :icon="'assets/icon/certificate.svg'" :title="item" />
+                                    <advantage-item v-for="(item, index) in result?.facility?.amenities" :key="index"
+                                        :icon="item?.iconUrl" :title="item?.name" />
                                 </div>
                             </div>
                         </div>
@@ -83,70 +81,101 @@
                         </ion-segment-button>
                     </ion-segment>
                     <div class="ion-margin-top offer-card" v-if="activeSegment === EntitiesEnum.FacilityPassList">
-                        <div class="offer-item" :key="item.id" v-for="item in passList">
+						<div class="card-background"  v-if="!dropins || !dropins.length">
+							<empty-block
+							title="Drop-ins Empty"
+							hideButton
+							text="No Dropins available for this location"
+							icon= "assets/icon/dropin.svg"
+							/>
+						</div>
+                        <div class="offer-item" :key="item.id" v-for="item in dropins">
                             <div class="header-section events">
-                                <div class="name">{{ item.name }}</div>
+                                <div class="name">{{ item.title }}</div>
                                 <div class="price">
-                                    {{ item.price }}
+                                    ${{ formatNumber(item.price/100, "fixed") }}
                                 </div>
                             </div>
-                            <ion-label class="date-label">{{ item.time }}</ion-label>
                             <div class="detail-section">
-                                <div class="only-address">
+								<ion-label class="date-label">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</ion-label>
+                                <!-- <div class="only-address">
                                     {{ item.address }}
-                                </div>
+                                </div> -->
                                 <ion-button @click="handleBuy">Buy</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Facilities">
-                        <div class="offer-item" :key="item.id" v-for="item in passList">
+						<div class="card-background"  v-if="!passes || !passes.length">
+							<empty-block
+							title="Passes Empty"
+							hideButton
+							text="No Passes available for this location"
+							icon= "assets/icon/gym-user-icon.svg"
+							/>
+						</div>
+                        <div class="offer-item" :key="item.id" v-for="item in passes">
                             <div class="header-section events">
-                                <div class="name">{{ item.name }}</div>
+                                <div class="name">{{ item.title }}</div>
                                 <div class="price">
-                                    {{ item.price }}
+                                    ${{ formatNumber(item.price/100, "fixed") }}
                                 </div>
                             </div>
-                            <ion-label class="date-label">{{ item.type }}</ion-label>
                             <div class="detail-section">
-                                <div class="only-address">
+								<ion-label class="date-label">{{ item.duration }} {{ item.duration>1?"Months":"Month" }}</ion-label>
+                                <!-- <div class="only-address">
                                     {{ item.address }}
-                                </div>
+                                </div> -->
                                 <ion-button @click="handleBuy">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
-                        <div class="offer-item" :key="item.id" v-for="item in offerList">
+						<div class="card-background"  v-if="!dailysData || !dailysData.length">
+							<empty-block
+							title="Dailys Empty"
+							hideButton
+							text="No dailys available for this location"
+							icon="assets/icon/daily.svg"
+							/>
+						</div>
+                        <div class="offer-item" :key="item.id" v-for="item in dailysData">
                             <div class="header-section">
-                                <div class="name">{{ item.name }}</div>
-                                <div class="trainer">{{ item.trainer }}</div>
+                                <div class="name">{{ item.title }}</div>
+                                <div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
                             </div>
                             <div class="detail-section">
                                 <div class="time">
                                     <ion-icon src="assets/icon/time.svg"></ion-icon>
-                                    <ion-text>{{ item.time }}</ion-text>
+                                    <ion-text>{{ getDurationText(item.duration) }}</ion-text>
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
-                                    <ion-text>{{ item.type }}</ion-text>
+                                    <ion-text>{{ item.type.name }}</ion-text>
                                 </div>
-                                <ion-button @click="handleBuy">Subscribe</ion-button>
+                                <ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-                        <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+						<div class="card-background"  v-if="!allEvents || !allEvents.length">
+							<empty-block
+								title="Events Empty"
+								hideButton
+								text="No Events available for this location"
+								icon= "assets/icon/events.svg"
+							/>
+						</div>
+                        <div class="offer-item" v-else :key="event.id" v-for="event in allEvents">
                             <div class="header-section events">
-                                <div class="name">{{ item.name }}</div>
+                                <div class="name">{{ event.title }}</div>
                                 <div class="event-time">
-                                    <ion-icon src="assets/icon/time.svg"></ion-icon>
-                                    <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                          			<ion-text>${{ formatNumber(event?.price/100, "fixed") }}</ion-text>
                                 </div>
                             </div>
-                            <ion-label class="date-label">{{ item.date }}</ion-label>
+                            <ion-label class="date-label">{{ dayjs(event?.start_date).format('D MMMM') }}</ion-label>
                             <div class="detail-section">
                                 <div class="time">
                                     <ion-icon src="assets/icon/location.svg"></ion-icon>
-                                    <ion-text>{{ item.address }}</ion-text>
+                                    <ion-text>{{ event?.address?.street }}</ion-text>
                                 </div>
                                 <ion-button>Register</ion-button>
                             </div>
@@ -159,8 +188,8 @@
 </template>
     
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
-import { useRouter } from "vue-router";
+import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, toastController, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
+import { useRouter, useRoute } from "vue-router";
 import { ellipse } from "ionicons/icons";
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
@@ -171,11 +200,35 @@ import { ellipsisVertical } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import Follow from "@/general/components/blocks/Follow.vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
-import { ReviewsDocument } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
-import { useRoute } from "vue-router";
+import {
+  Facility,
+  RoleEnum,
+  GetManagersByFacilityDocument,
+  FeedbackEntityEnum,
+  Query,
+  Review,
+  ReviewsDocument,
+  ReviewTypeEnum,
+  SettingsCodeEnum,
+  UnfollowDocument,
+  AddToCartDocument,
+  AddToCartPurchasableEnum,
+  EventsQuery,
+  EventsDocument,
+  QueryEventsOrderByColumn,
+  EventsQueryVariables,
+  SortOrder,
+  WorkoutsByFacilityDocument,
+  QueryFacilityWorkoutsOrderByColumn,
+  FacilityItemsByFacilityIdAndTypeDocument
+} from "@/generated/graphql";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+
 dayjs.extend(relativeTime);
 const router = useRouter();
+const route = useRoute();
 const segmentValue = ref('trainer');
 const activeSegment = ref<EntitiesEnum>(
     EntitiesEnum.Facilities
@@ -200,84 +253,13 @@ const segmentTabs = [
         icon: "assets/icon/events.svg",
     },
 ];
-const passList = [
-    {
-        id: 1,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Basic",
-    },
-    {
-        id: 2,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Standard",
-    },
-    {
-        id: 3,
-        name: "Summer gym",
-        price: "$20.98",
-        address: "Wall Street, 24",
-        time: "1 Day",
-        type: "Standard",
-    }
-];
-const offerList = [{
-    id: 1,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    type: "Basic",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "8 min",
-}, {
-    id: 2,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    type: "Standard",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "8 min",
 
-}, {
-    id: 3,
-    name: "Full Body Stretching",
-    trainer: "Tamra Dae",
-    type: "Basic",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "8 min",
-}];
-const offerEvents = [{
-    id: 1,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-}, {
-    id: 2,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-
-}, {
-    id: 3,
-    name: "Run competition",
-    trainer: "Tamra Dae",
-    time: "8 min",
-    totalUser: 30,
-    date: "17 June",
-    address: "Light Street, 1",
-}];
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: route.params.id,
+  }
+);
 
 const handleMore = async () => {
     console.log("call more");
@@ -312,8 +294,6 @@ const handleMore = async () => {
         });
     }
 };
-const route = useRoute();
-const docList = ["Gym Items", "Cardio Items", "Cycling Items"];
 const { result: reviewsResult } = useQuery(ReviewsDocument, {
   id: route.params.id,
 });
@@ -371,6 +351,136 @@ const viewAllReview = () => {
     });
 }
 
+// Dailys data
+const {
+  result: dailysResult,
+  loading: dailysLoading,
+} = useQuery(WorkoutsByFacilityDocument, 
+	{
+		page: 1,
+		first: 1000,
+		facility_id: route.params.id,
+		orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+		order: SortOrder.Asc,
+	},
+	{
+		fetchPolicy: "no-cache",
+  }
+);
+
+const dailysData = computed(() => {
+  return dailysResult.value?.facilityWorkouts?.data;
+});
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+  useMutation(AddToCartDocument);
+const purchaseWorkout = (id) => {
+  addToCartMutation({
+    input: {
+      purchasable_id: id,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+      router.push({
+        name: EntitiesEnum.WorkoutOrder,
+        params: {
+          id: id,
+        },
+        query: {
+          cart_id: res?.data?.addToCart?.id,
+        },
+      });
+    })
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
+};
+// Dailys End
+
+// Passes start
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: route.params.id,
+  item_type: "PASS"
+});
+
+const passes = computed(() => {
+  return facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Passes End
+
+
+// Dropins start
+const {
+  result: dropinResult,
+  loading: loadingFacilityDropin
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: route.params.id,
+  item_type: "DROPIN"
+});
+
+const dropins = computed(() => {
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Dropins End
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_facility: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const allEvents = computed(() => {
+  return eventResult.value?.events?.data;
+});
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 </script>
   
 <style scoped lang="scss">
@@ -556,7 +666,7 @@ const viewAllReview = () => {
 }
 
 .offerings {
-
+	min-width: 343px;
     ion-segment {
         margin-top: 16px;
         --background: var(--gray-700);
@@ -688,6 +798,12 @@ const viewAllReview = () => {
             font-weight: 500;
         }
     }
+	.card-background {
+		background-color: #202020;
+		padding: 5px;
+		border-radius: 8px;
+		margin-bottom: 5px;
+	}
 }
 
 .document-cards {
