@@ -63,7 +63,7 @@ const facility = computed(() => result.value?.facility);
 const onNext = () => {
     addToCartMutation({
         input: {
-            facility_item_id: 52,
+            facility_item_id: route.params.id,
             start_date: dayjs(new Date(selectedDay.value as any)).utc(),
         },
     })
@@ -71,7 +71,7 @@ const onNext = () => {
             router.push({
                 name: EntitiesEnum.FacilityOrder,
                 params: {
-                    id: 52,
+                    id: route.params.id,
                 },
                 query: {
                     cart_id: res?.data?.addFacilityItemToCart?.id,

@@ -49,7 +49,7 @@ const mapChats = (chat: any, userId: any) => {
 export const mapRequests = (chats: any, id: string) => {
   return Object.values(chats).reduce((acc: any[], cur: any) => {
     acc.push({
-      avatar: cur.participants.filter(
+      avatar: cur.participants?.filter(
         (i: { user_id: number }) => Number(i.user_id) === Number(id)
       )[0]?.avatar,
       status: cur.type,

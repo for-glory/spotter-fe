@@ -13,41 +13,47 @@
             {{ role === RoleEnum.User ? "Pending" : "Requests" }}
           </div>
         </div>
-        <template v-if="activeTab === RoomType.Chat">
+        <template v-if="role === RoleEnum.Trainer">
           <div class="listRoom">
             <ion-spinner v-if="loading" name="lines" class="spinner" />
             <div class="rooms__container" v-else>
-              <list-empty v-if="!data.chats.length" :title="currenTab" :chats="true" />
-              <template v-else>
-                <transition-group name="list" tag="ion-item-sliding">
-                  <template v-for="room in data.chats" :key="room.key">
-                    <room v-if="room.type == RoomType.Chat" :last-message="room.lastMessage" :room-id="room.roomId"
-                      :room-name="room.roomName" :avatar-url="room.avatar" :time="room.lastTime"
-                      :is-online="isOnline(room.participantId)" :type="room.type" @open="onOpen($event, room)"
-                      @delete="onDelete($event, room.roomId)" :symbols="room.symbols" :unread="room.unread"
-                      class="room-item__container mb-8" />
-                  </template>
-                </transition-group>
+              <list-empty v-if="!data.requestChats.length && activeTab === RoomType.Request" :title="currenTab"
+                :chats="true" />
+              <list-empty v-else-if="!data.chats.length && activeTab === RoomType.Chat" :title="currenTab"
+                :chats="true" />
+              <!-- <template v-else> -->
+              <!-- <transition-group name="list" tag="ion-item-sliding"> -->
+              <template v-else v-for="room in activeTab === RoomType.Chat ? data.chats : data.requestChats"
+                :key="room.key">
+                <room :last-message="room.lastMessage" :room-id="room.roomId" :room-name="room.roomName"
+                  :avatar-url="room.avatar" :time="room.lastTime" :is-online="isOnline(room.participantId)"
+                  :type="room.type" @open="onOpen($event, room)" @delete="onDelete($event, room.roomId)"
+                  :symbols="room.symbols" :unread="room.unread" class="room-item__container mb-8" />
               </template>
+              <!-- </transition-group> -->
+              <!-- </template> -->
             </div>
           </div>
         </template>
-        <template v-if="activeTab === RoomType.Request">
+        <template v-else>
           <div class="listRoom">
             <ion-spinner v-if="loading" name="lines" class="spinner" />
             <div class="rooms__container" v-else>
-              <list-empty v-if="!data.requestChats.length" :title="currenTab" :chats="true" />
-              <template v-else>
-                <transition-group name="list" tag="ion-item-sliding">
-                  <template v-for="room in data.requestChats" :key="room.key">
-                    <room v-if="room.type == RoomType.Request" :last-message="room.lastMessage" :room-id="room.roomId"
-                      :room-name="room.roomName" :avatar-url="room.avatar" :time="room.lastTime"
-                      :is-online="isOnline(room.participantId)" :type="room.type" @open="onOpen($event, room)"
-                      @delete="onDelete($event, room.roomId)" :symbols="room.symbols" :unread="room.unread"
-                      class="room-item__container" />
-                  </template>
-                </transition-group>
+              <list-empty v-if="!data.pendingChats.length && activeTab === RoomType.Request" :title="currenTab"
+                :chats="true" />
+              <list-empty v-else-if="!data.chats.length && activeTab === RoomType.Chat" :title="currenTab"
+                :chats="true" />
+              <!-- <template v-else> -->
+              <!-- <transition-group name="list" tag="ion-item-sliding"> -->
+              <template v-else v-for="room in activeTab === RoomType.Chat ? data.chats : data.pendingChats"
+                :key="room.key">
+                <room :last-message="room.lastMessage" :room-id="room.roomId" :room-name="room.roomName"
+                  :avatar-url="room.avatar" :time="room.lastTime" :is-online="isOnline(room.participantId)"
+                  :type="room.type" @open="onOpen($event, room)" @delete="onDelete($event, room.roomId)"
+                  :symbols="room.symbols" :unread="room.unread" class="room-item__container mb-8" />
               </template>
+              <!-- </transition-group> -->
+              <!-- </template> -->
             </div>
           </div>
         </template>
@@ -58,7 +64,8 @@
         <ChatHeader :avatar="selectedRoom.avatar" :room-name="selectedRoom.roomName"
           :is-online="selectedRoom.participantId ? isOnline(selectedRoom.participantId) : false" />
         <!-- <div class="chat"> -->
-        <personal class="chat" :room-id="selectedRoom.roomId" :room-type="(selectedRoom?.type as any)" :id="selectedRoom.userId" />
+        <personal class="chat" :room-id="selectedRoom.roomId"
+          :room-type="role === RoleEnum.User ? RoomType.Chat : activeTab" :id="selectedRoom.userId" />
       </div>
       <div v-else class="d-flex align-items-center justify-content-center h-100">
         <div class="d-flex-col align-items-center m-auto">
@@ -72,18 +79,14 @@
 </template>
 
 <script setup lang="ts">
-import { IonGrid, IonCol, IonRow, IonSearchbar, IonSpinner, IonIcon, IonLabel, IonText } from "@ionic/vue";
-import ChatList from "@/general/components/dashboard/chat/list.vue";
-import ChatFooter from "@/general/components/dashboard/chat/list.vue";
+import { IonSearchbar, IonSpinner, IonIcon, IonLabel, IonText } from "@ionic/vue";
 import Personal from "@/general/views/dashboard/message/Personal.vue";
 import Room from "@/general/components/blocks/chat/Room.vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { RoleEnum, DeleteChatDocument } from "@/generated/graphql";
-import { EntitiesEnum } from "@/const/entities";
-import { computed, onMounted, reactive, ref, onBeforeMount, watch } from "vue";
+import { computed, onMounted, reactive, ref, onBeforeMount } from "vue";
 import ListEmpty from "@/general/components/blocks/chat/ListEmpty.vue";
 import useRoles from "@/hooks/useRole";
-import PageTabs from "@/general/components/PageTabs.vue";
 import { RoomType } from "@/ts/enums/chat";
 import { chatsRef, activeUsersRef, requestsRef } from "@/firebase/db";
 import { onValue } from "firebase/database";
@@ -96,7 +99,6 @@ import { Message } from "@/ts/types/chat";
 
 const { id } = useId();
 
-const router = useRouter();
 const route = useRoute();
 const { role } = useRoles();
 
@@ -112,24 +114,26 @@ const tabs = [
 ];
 
 const loading = ref(false);
-const roomId = ref('');
 const selectedRoom = ref({
   avatar: "",
   roomName: "",
   roomId: "",
   participantId: 0.,
   type: "",
-  userId:""
+  userId: ""
 });
 
-const data = reactive<{ messages: Message[]; chats: chatRoom[];requestChats: chatRoom[];activeUsers:any[] }>({
+const data = reactive<{ messages: Message[]; chats: chatRoom[]; pendingChats: chatRoom[]; requestChats: chatRoom[]; activeUsers: any[]; }>({
   chats: [],
   messages: [],
+  pendingChats: [],
+  activeUsers: [],
   requestChats: [],
-  activeUsers: []
 });
 
 const activeTab = ref<RoomType | string>("CHAT");
+const chatListener = ref(false);
+const requestListener = ref(false);
 
 const { mutate } = useMutation(DeleteChatDocument);
 
@@ -141,16 +145,18 @@ const handleTab = (tab: RoomType) => {
   activeTab.value = tab;
 };
 
-const requests = computed(
-  () => currenTab.value === RoomType.Request.toLocaleLowerCase()
-);
+// const requests = computed(
+//   () => activeTab.value === RoomType.Request
+// );
 
-watch(
-  () => requests.value,
-  () => {
-    fetchChats();
-  }
-);
+// watch(
+//   () => requests.value,
+//   () => {
+//     if(role !== RoleEnum.User){
+//       fetchChats();
+//     }
+//   }
+// );
 
 
 const isOnline = (id: number) => {
@@ -158,11 +164,7 @@ const isOnline = (id: number) => {
 };
 
 const onOpen = (event: any, room: any) => {
-  console.log('call open=====');
-
   selectedRoom.value = room;
-  console.log(selectedRoom.value);
-
 };
 
 const onDelete = (e: any, roomId: string) => {
@@ -177,7 +179,7 @@ const onDelete = (e: any, roomId: string) => {
     });
 };
 
-const getChats = (snapshot: any) => {
+const getChats = (snapshot) => {
   return Object.values(snapshot).reduce((acc, chat) => {
     if (chat?.participants?.length) {
       chat.participants.forEach(async (user: { user_id: any; }) => {
@@ -199,30 +201,39 @@ const getChats = (snapshot: any) => {
 
 const fetchChats = () => {
   loading.value = true;
-  console.log("---", requests.value);
+  if (!chatListener.value) {
+    chatListener.value = true;
+    onValue(chatsRef, (snapshot) => {
+      if (data.chats.length) data.chats = [];
+      if (snapshot.val()) {
+        const chats = getChats(snapshot.val());
+        chats.forEach(async (chat: any) => {
+          const mappedValues = await mapChats(chat, id);
+          if (!mappedValues.locked) {
+            data.chats.push(mappedValues);
+          }
+          else {
+            data.pendingChats.push(mappedValues);
+          }
+        });
+      }
+      loading.value = false;
+    });
+  }
+};
 
-  onValue(requests.value ? requestsRef : chatsRef, (snapshot) => {
-    console.log("---", snapshot);
-    if (data.chats.length) data.chats = [];
-    if (requests.value) {
-      snapshot.forEach((childSnapshot) => {
-        if (childSnapshot.key === id) {
-          const mappedValues = mapRequests(childSnapshot.val(), id);
-          data.requestChats.push(...mappedValues);
-          console.log('request data',data);
-          
-        }
-      });
-    } else {
-      const chats = getChats(snapshot.val());
-
-      chats.forEach(async (chat: any) => {
-        const mappedValues = await mapChats(chat, id);
-        if (!mappedValues.locked) {
-          data.chats.push(mappedValues);
-        }
-      });
-    }
+const fetchRequest = () => {
+  loading.value = true;
+  if (!requestListener.value) {
+    requestListener.value = true;
+  }
+  onValue(requestsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      if (childSnapshot.key === id) {
+        const mappedValues = mapRequests(childSnapshot.val(), id);
+        data.requestChats.push(...mappedValues);
+      }
+    });
     loading.value = false;
   });
 };
@@ -246,6 +257,7 @@ onBeforeMount(() => {
 onMounted(() => {
   fetchActiveUsers();
   fetchChats();
+  fetchRequest();
 });
 </script>
 
@@ -423,5 +435,4 @@ onMounted(() => {
 
 .fs-48 {
   font-size: 48px;
-}
-</style>
+}</style>

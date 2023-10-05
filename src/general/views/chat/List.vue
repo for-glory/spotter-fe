@@ -1,52 +1,26 @@
 <template>
   <base-layout :hide-navigation-menu="!isTrainer">
     <template #header>
-      <page-header
-        :back-btn="!isTrainer"
-        :title="title"
-        class="page-header"
-        @back="onBack"
-      />
+      <page-header :back-btn="!isTrainer" :title="title" class="page-header" @back="onBack" />
     </template>
     <template #content>
       <ion-spinner v-if="loading" class="spinner" />
       <div class="rooms__container" v-else>
-        <list-empty
-          v-if="!data.chats.length"
-          :title="currenTab"
-          :chats="role === RoleEnum.User ? true : false"
-        />
+        <list-empty v-if="!data.chats.length" :title="currenTab" :chats="role === RoleEnum.User ? true : false" />
         <template v-else>
           <transition-group name="list" tag="ion-item-sliding">
             <template v-for="room in data.chats" :key="room.key">
-              <room v-if="room.type == activeTab"
-                :last-message="room.lastMessage"
-                :room-id="room.roomId"
-                :room-name="room.roomName"
-                :avatar-url="room.avatar"
-                :time="room.lastTime"
-                :is-online="room.isOnline"
-                :type="room.type"
-                @open="onOpen($event, room.roomId)"
-                @delete="onDelete($event, room.roomId)"
-                :symbols="room.symbols"
-                :unread="room.unread"
-                :currentTab="currenTab"
-                class="room-item__container"
-              />
+              <room :last-message="room.lastMessage" :room-id="room.roomId" :room-name="room.roomName"
+                :avatar-url="room.avatar" :time="room.lastTime" :is-online="room.isOnline" :type="room.type"
+                @open="onOpen($event, room.roomId)" @delete="onDelete($event, room.roomId)" :symbols="room.symbols"
+                :unread="room.unread" :currentTab="currenTab" class="room-item__container" />
             </template>
           </transition-group>
         </template>
       </div>
     </template>
   </base-layout>
-  <page-tabs
-    v-if="isTrainer"
-    :tabs="tabs"
-    class="page-tabs"
-    @change="tabsChanged"
-    :value="activeTab"
-  />
+  <page-tabs v-if="isTrainer" :tabs="tabs" class="page-tabs" @change="tabsChanged" :value="activeTab" />
 </template>
 
 <script setup lang="ts">
@@ -166,7 +140,7 @@ const onDelete = (e: CustomEvent, roomId: string) => {
 const getChats = (snapshot) => {
   return Object.values(snapshot).reduce((acc, chat) => {
     if (chat?.participants?.length) {
-      chat.participants.forEach(async (user: { user_id: any }) => {
+      chat.participants.forEach(async (user: { user_id: any; }) => {
         if (Number(user.user_id) === Number(id)) {
           acc.push({
             ...chat,
@@ -196,14 +170,16 @@ const fetchChats = () => {
         }
       });
     } else {
-      const chats = getChats(snapshot.val());
+      if (snapshot.val()) {
+        const chats = getChats(snapshot.val());
 
-      chats.forEach(async (chat: any) => {
-        const mappedValues = await mapChats(chat, id);
-        if (!mappedValues.locked) {
-          data.chats.push(mappedValues);
-        }
-      });
+        chats.forEach(async (chat: any) => {
+          const mappedValues = await mapChats(chat, id);
+          if (!mappedValues.locked) {
+            data.chats.push(mappedValues);
+          }
+        });
+      }
     }
     loading.value = false;
   });

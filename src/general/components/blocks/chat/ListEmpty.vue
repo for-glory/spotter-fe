@@ -5,7 +5,7 @@
     <ion-text class="list-empty__description" v-if="chats">
       You haven't chatted with anyone yet
     </ion-text>
-    <ion-button v-if="chats" class="list-empty__button" @click="onClick">
+    <ion-button v-if="chats && role === RoleEnum.User" class="list-empty__button" @click="onClick">
       Find trainer
     </ion-button>
   </div>

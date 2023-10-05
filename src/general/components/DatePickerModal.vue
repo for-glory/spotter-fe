@@ -6,7 +6,7 @@
         {{ props?.options?.title || "Start date" }}
       </ion-label>
       <IonButtons v-else>
-        <ion-button fill="clear" class="back-btn">
+        <ion-button fill="clear" class="back-btn" @click="modal?.$el.dismiss()">
           <IonIcon src="assets/icon/arrow-back.svg"></IonIcon>
         </ion-button>
       </IonButtons>

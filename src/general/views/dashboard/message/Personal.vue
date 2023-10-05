@@ -14,7 +14,7 @@
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import Message from "@/general/components/blocks/chat/Message.vue";
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
-import { onBeforeMount, reactive, ref, withDefaults, defineProps } from "vue";
+import { onBeforeMount, reactive, ref, withDefaults, defineProps, watch } from "vue";
 import ChatFooter from "@/general/components/dashboard/chat/ChatFooter.vue";
 import { Message as MessageType } from "@/ts/types/chat";
 import useRoles from "@/hooks/useRole";
@@ -71,15 +71,21 @@ onBeforeRouteLeave((to, from, next) => {
     : next();
 });
 
+watch(
+  () => props.roomId,
+  () => {
+    fetchChats();
+  }
+);
 const fetchChats = async () => {
   const ref =
-    route.query.type === RoomType.Request.toLocaleLowerCase()
+    props.roomType === RoomType.Request
       ? requestsRef
       : chatsRef;
 
   onValue(ref, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
-      if (route.query.type === RoomType.Request.toLocaleLowerCase() &&
+      if (props.roomType === RoomType.Request &&
         childSnapshot.key === id &&
         props.roomId) {
         const message = Object.values(childSnapshot.val()).filter(
@@ -101,6 +107,9 @@ const fetchChats = async () => {
         };
 
         const mappedValues = mapRequestMessages([message][0]);
+        if(typeof(data?.messages) === 'object'){
+          data.messages = [];
+        }
         data.messages.push(...mappedValues);
       } else {
         const chat = childSnapshot.val();
@@ -120,8 +129,6 @@ const fetchChats = async () => {
                   )[0],
                 };
                 data.chats = mapChats(curChat, id);
-                console.log(data);
-                
               }
             }
           );

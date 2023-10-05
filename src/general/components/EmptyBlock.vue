@@ -10,7 +10,7 @@
       >
         {{ buttonText }}
       </ion-button>
-      <div class="empty-block__img">
+      <div class="empty-block__img" v-if="!hideIcon">
         <ion-icon :src="icon" />
       </div>
       <ion-title class="empty-block__title">{{ title }}</ion-title>
@@ -31,15 +31,17 @@ const emits = defineEmits<{
 
 withDefaults(
   defineProps<{
-    title: string;
+    title?: string;
     text: string;
     buttonText?: string;
     hideButton?: boolean;
+    hideIcon?: boolean;
     icon?: string;
   }>(),
   {
     icon: "assets/icon/shore-run.svg",
     buttonText: "Create",
+    hideIcon: false
   }
 );
 </script>
