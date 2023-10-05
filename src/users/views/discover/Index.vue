@@ -53,278 +53,52 @@
             <!-- <div data-v-2b823bc0="" class="fixed-content"></div> -->
             <div data-v-2b823bc0="" class="draggable-content display-grid">
           <template v-if="activeTab == EntitiesEnum.Facilities">
-            <ion-item lines="none" class="event" @click="goToGymDetail">
+            <ion-item lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymDetail(item.facility?.id)" v-for="item in passes" :key="item.id">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_1.png" class="event__img" />
-
+                <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time my_txt_rate">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 89.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Light Street, 24</span>
+              <div class="facility-item__holder">
+                <div style="width: calc(100% - 80px);">
+                  <ion-label class="facility-item__title">{{ item.title }}</ion-label>
+                  <div class="facility-item__address">
+                    <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.street }}</ion-title>
                   </div>
-                  </address-item>
-                  <ion-text class="status-text my_txt">
-                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="#E1DBC5;">Subscription</span> 
-                  </ion-text>
                 </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_2.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Fantastic Gym</ion-label>
-                <div class="event__time my_txt_rate">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 42.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Wall Street, 24</span>
+                <div>
+                  <div class="facility-item__price">
+                    {{ formatCurrency(item.price/100, "fixed") }}
                   </div>
-                  </address-item>
-                  <ion-text class="status-text  my_txt">
-                   <span style="color:#E1DBC5;">3 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Summer</ion-label>
-                <div class="event__time my_txt_rate">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 30.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Yellow Street, 24</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text  my_txt">
-                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Summer</ion-label>
-                <div class="event__time my_txt_rate">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $55.85
-                </div>
-
-               <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top:14px;">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Yellow Street, 24</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text  my_txt">
-                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="color:#E1DBC5;">Subscription</span> 
+                  <ion-text class="facility-item__status-text ">
+                    <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</span> <br><span style="font-size:16px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
             </ion-item>
           </template>
           <template v-if="activeTab == EntitiesEnum.FacilityDropins">
-
-            <ion-item :class="['event', { 'mt-2': !isWeb }]" style="padding:0px; !important" @click="goToGymDetail">
+            <ion-item lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymDetail(item.facility?.id)" v-for="item in dropins" :key="item.id">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_1.png" class="event__img" />
-
+                <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Diamond Gym</ion-label>
-                <div class="event__time my_txt2">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 89.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Light Street, 24</span>
+              <div class="facility-item__holder">
+                <div style="width: calc(100% - 80px);">
+                  <ion-label class="facility-item__title">{{ item.title }}</ion-label>
+                  <div class="facility-item__address">
+                    <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.street }}</ion-title>
                   </div>
-                  </address-item>
-                  <ion-text class="status-text ">
-                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="font-size:12px;">Access</span> 
+                </div>
+                <div>
+                  <div class="facility-item__price">
+                    {{ formatCurrency(item.price/100, "fixed") }}
+                  </div>
+                  <ion-text class="facility-item__status-text ">
+                    <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</span> <br><span style="font-size:16px;">Access</span> 
                   </ion-text>
                 </div>
               </div>
             </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_2.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Fantastic Gym</ion-label>
-                <div class="event__time my_txt2">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 42.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Wall Street, 24</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text ">
-                   <span style="color:#E1DBC5;">3 Days</span> <br><span style="font-size:12px;">Access</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Summer</ion-label>
-                <div class="event__time my_txt2">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $ 30.90
-                </div>
-
-                <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Yellow Street, 24</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text ">
-                   <span style="color:#E1DBC5;">7 Days</span> <br><span style="font-size:12px;">Access</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Summer</ion-label>
-                <div class="event__time my_txt2">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $55.85
-                </div>
-
-               <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Yellow Street, 24</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text ">
-                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="font-size:12px;">Access</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToGymDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/Gym_3.png" class="event__img" />
-
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Antimatter Gym</ion-label>
-                <div class="event__time my_txt2">
-                  <!-- <ion-icon src="assets/icon/dollar-circle.svg" class="doller-icon" /> -->
-                  $55.85
-                </div>
-
-               <!-- <ion-text class="event__date">
-                  &nbsp;
-                  <template> </template>
-                </ion-text> -->
-                <div class="d-flex align-items-center justify-content-between">
-                  <address-item class="event__address">
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                    <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <span style="padding-left:10px;">Jason Street, 78</span>
-                  </div>
-                  </address-item>
-                  <ion-text class="status-text ">
-                   <span style="color:#E1DBC5;">5 Days</span> <br><span style="font-size:12px;">Access</span> 
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
           </template>
           <template v-if="activeTab == EntitiesEnum.Trainings">
             <!-- <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
@@ -332,94 +106,15 @@
               @click="openEvent(event.id)" /> -->
 
 
-            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
+            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')" v-for="item in trainers" :key="item.id">
               <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/tamra.png" class="event__img img-rounded" />
+                <img :src="item.avatarUrl?item.avatarUrl:''" class="event__img img-rounded" />
               </ion-thumbnail>
               <div class="event__holder">
 
                 <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Tamra Dae</ion-label>
-                  <ion-button fill="outline" size="small" shape="round">4.5</ion-button>
-                  &nbsp;
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex" style="font-size:13px;">
-                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                    09:00 AM - 06:00 PM
-                  </div>
-                  <ion-text class="status-text">
-                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
-              <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/women2.png" class="event__img img-rounded" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-
-                <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Jennifer Oven</ion-label>
-                  <ion-button fill="outline" size="small" shape="round"
-                    style="border-radius:none !important">4.5</ion-button>
-                  &nbsp;
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex" style="font-size:13px;">
-                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                    09:00 AM - 06:00 PM
-                  </div>
-                  <ion-text class="status-text">
-                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
-              <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/women3.png" class="event__img img-rounded" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-
-                <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">Alice James</ion-label>
-                  <ion-button fill="outline" size="small" shape="round"
-                    style="border-radius:none !important">4.5</ion-button>
-                  &nbsp;
-                </ion-text>
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex" style="font-size:13px;">
-                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                    09:00 AM - 06:00 PM
-                  </div>
-                  <ion-text class="status-text">
-                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
-                  </ion-text>
-                </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')">
-              <ion-thumbnail class="event__photo img-rounded">
-                <img src="assets/backgrounds/women4.png" class="event__img img-rounded" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-
-                <ion-text class="event__date" style="display:flex !important;">
-                  <ion-label class="event__title">China Xang</ion-label>
-                  <ion-button fill="outline" size="small" shape="round"
-                    style="border-radius:none !important">4.5</ion-button>
+                  <ion-label class="event__title">{{ `${item.first_name} ${item.last_name}` }}</ion-label>
+                  <ion-button fill="outline" size="small" shape="round">{{ item.score }}</ion-button>
                   &nbsp;
                 </ion-text>
                 <div class="d-flex align-items-center justify-content-between">
@@ -440,194 +135,44 @@
               :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
               @click="openEvent(event.id)" /> -->
 
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
+            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" :key="event.id" v-for="event in events">
               <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/food1.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
+                <img :src="event.media?.length?event.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
               <div class="event__holder">
-                <ion-label class="event__title">Food Festival1</ion-label>
+                <ion-label class="event__title">{{ event.title }}</ion-label>
                 <div class="event__time font-lato">
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                  08:30 AM
+                  {{ dayjs(event.start_date).format("h:mm A") }}
                 </div>
                 <div>
-                 
                 <div class="d-flex align-items-center justify-content-between">
-
-                  <address-item class="event__address">
+                  <div>
                     <ion-text class="event__date">
-                      17 June
+                      {{ formatEventDate(event) }}
                       <template>- endDate </template>
                     </ion-text>
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                      <span style="padding-left:10px;">Light Street, 24</span>
+                    <div class="event__address">
+                        <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                        <ion-title style="padding-left:10px;">{{ event.address?.street }}</ion-title>
                     </div>
-                  </address-item>
+                  </div>
                   <ion-text class="status-text">
 
                   </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
-                </div>
-              </div>
-              </div>
-            </ion-item>
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/train.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Train Meeting</ion-label>
-                <div class="event__time font-lato">
-                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                  08:30 AM
-                </div>
-                <div>
-                 
-                <div class="d-flex align-items-center justify-content-between">
-
-                  <address-item class="event__address">
-                    <ion-text class="event__date">
-                      17 June
-                      <template>- endDate </template>
-                    </ion-text>
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                      <span style="padding-left:10px;">Light Street, 24</span>
-                    </div>
-                  </address-item>
-                  <ion-text class="status-text">
-
-                  </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
-                </div>
-              </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/run.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Run Competition</ion-label>
-                <div class="event__time font-lato">
-                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                  08:30 AM
-                </div>
-                <div>
-                 
-                <div class="d-flex align-items-center justify-content-between">
-
-                  <address-item class="event__address">
-                    <ion-text class="event__date">
-                      17 June
-                      <template>- endDate </template>
-                    </ion-text>
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                      <span style="padding-left:10px;">Light Street, 24</span>
-                    </div>
-                  </address-item>
-                  <ion-text class="status-text">
-
-                  </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
-                </div>
-              </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" @click="goToEventDetail">
-              <ion-thumbnail class="event__photo">
-                <img src="assets/backgrounds/run.png" class="event__img" />
-                <template>
-                  fdfvdffv
-                </template>
-              </ion-thumbnail>
-              <div class="event__holder">
-                <ion-label class="event__title">Run Competition</ion-label>
-                <div class="event__time font-lato">
-                  <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                  08:30 AM
-                </div>
-                <div>
-                 
-                <div class="d-flex align-items-center justify-content-between">
-
-                  <address-item class="event__address">
-                    <ion-text class="event__date">
-                      17 June
-                      <template>- endDate </template>
-                    </ion-text>
-                    <div class="mid_txt" style="display:flex;align-items:center;">
-                      <img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                      <span style="padding-left:10px;">Light Street, 24</span>
-                    </div>
-                  </address-item>
-                  <ion-text class="status-text">
-
-                  </ion-text>
-                  <ion-button class="evnt_btn">Register</ion-button>
+                  <ion-button class="evnt_btn" @click="goToEventDetail(event.id)">Register</ion-button>
                 </div>
               </div>
               </div>
             </ion-item>
           </template>
         </div>
-</div>
+      </div>
       </div>
     </template>
     
   </base-layout>
 </template>
-
-<script lang="ts">
-export default {
-  name: "Dashboard",
-  // data() {
-  //   return {
-  //     tabs: [
-  //       {
-  //         name: "Facilities",
-  //         labelActive: "assets/icon/dumbbellActive.png",
-  //         labelInactive: "assets/icon/dumbbellActive.png",
-  //       },
-  //       {
-  //         name: "FacilityDropins",
-  //         labelActive: "assets/icon/dropinsActive.png",
-  //         labelInactive: "assets/icon/dropinsInactive.png",
-  //       },
-  //       {
-  //         name: "Trainings",
-  //         labelActive: "assets/icon/trainerActive.png",
-  //         labelInactive: "assets/icon/trainerInactive.png",
-  //       },
-  //       {
-  //         name: "Events",
-  //         labelActive: "assets/icon/facilitiesActive.png",
-  //         labelInactive: "assets/icon/facilitiesInactive.png",
-  //       },
-  //     ],
-  //     activeTab: "Facilities", // Initialize the active tab
-  //   };
-  // },
-  // methods: {
-  //   tabsChanged(tabName: string) {
-  //     this.activeTab = tabName;
-  //   },
-  // },
-};
-</script>
 
 <script setup lang="ts">
 
@@ -643,7 +188,6 @@ import {
   MyFacilityItemPassesDocument,
   FacilityItemPass,
   UserPaginator,
-  MyTrainingsDocument,
   DashboardWidgetDocument,
   UserAvailabilityDocument,
   Training,
@@ -690,146 +234,25 @@ const unreadMessages = ref<number[]>([]);
 const { role } = useRoles()
 
 const {
-  result: eventsResult,
-  loading: isEventsLoading,
-  refetch: refetchEvents,
-} = useQuery(
-  MyEventsDocument,
-  {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyEventsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const {
-  result: trainingsResult,
+  result: trainersResult,
   loading: isTrainingsLoading,
   refetch: refetchTrainings,
 } = useQuery(
-  MyTrainingsDocument,
+  UsersDocument,
   {
     page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyTrainingsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
+    first: 100,
+    role: RoleEnum.Trainer
   },
   {
     fetchPolicy: "no-cache",
   }
 );
-
-
-
-const {
-  result: dropinsResult,
-  loading: isDropinsLoading,
-  refetch: refetchDropins,
-} = useQuery(
-  MyTrainingsDocument,
-  {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyTrainingsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const {
-  result: facilitiesResult,
-  loading: isFacilitiesLoading,
-  refetch: refetchFacilities,
-} = useQuery(
-  MyFacilityItemPassesDocument,
-  {
-    page: 1,
-    first: 4,
-    orderBy: [
-      {
-        column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
+const trainers = computed(() => {
+  return trainersResult.value?.users?.data;
+});
 // Dashboard widgets - Activity + My Ratings widgets info
 const { result: dashboardWidgetResult } = useQuery(DashboardWidgetDocument);
-
-// Calendar info
-const { result: calendarWidgetResult } = useQuery(
-  UserAvailabilityDocument,
-  {
-    id,
-    from: dayjs().startOf("d").format("YYYY-MM-DD HH:mm:ss"),
-    to: dayjs().day(6).endOf("d").format("YYYY-MM-DD HH:mm:ss"),
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
-const bookings = computed(() => {
-  const availability = [];
-  if (calendarWidgetResult && calendarWidgetResult?.value) {
-    const userAvailability = calendarWidgetResult?.value?.userAvailability;
-
-    if (userAvailability && userAvailability?.events) {
-      const { events } = userAvailability;
-      const bookedEvents = events.map((event: any) => ({
-        start_date: event?.start_date || null,
-      }));
-
-      availability.push(...bookedEvents);
-    }
-    if (userAvailability && userAvailability?.trainings) {
-      const { trainings } = userAvailability;
-      const bookedTrainings = trainings
-        .filter(
-          (training: Training) => training.state === TrainingStatesEnum.Accepted
-        )
-        .map((training: Training) => ({
-          start_date: training?.start_date || null,
-        }));
-      availability.push(...bookedTrainings);
-    }
-  }
-  return availability;
-});
 
 const fetchChats = () => {
   if (unreadMessages.value.length) unreadMessages.value = [];
@@ -846,72 +269,6 @@ const fetchChats = () => {
 onMounted(() => {
   fetchChats();
 });
-
-const widgetInfo = computed(() => dashboardWidgetResult?.value?.me || []);
-
-const ratingItems = computed(() => [
-  {
-    value: widgetInfo?.value?.reviews_count || 0,
-    description: "total feedbacks",
-  },
-]);
-
-const activityItems = computed(() => [
-  {
-    value: widgetInfo?.value?.checkins_count || 0,
-    description: "gym check-ins",
-  },
-  {
-    value: widgetInfo?.value?.completed_trainings_count || 0,
-    description: "trainings done",
-  },
-]);
-
-const events = computed<EventPaginator["data"]>(() =>
-  eventsResult?.value?.myEvents?.data ? eventsResult.value.myEvents.data : []
-);
-
-const trainings = computed(() =>
-  trainingsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
-    : []
-);
-
-const dropins = computed(() =>
-  dropinsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-      ...training,
-      title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-      address: training.trainer.address,
-      media: [{ pathUrl: training.trainer.avatarUrl }],
-    }))
-    : []
-);
-
-const facilities = computed<UserPaginator["data"]>(() =>
-  facilitiesResult?.value?.myFacilityItemPasses?.data
-    ? facilitiesResult.value.myFacilityItemPasses.data.map(
-      (facilityPass: FacilityItemPass) => ({
-        id: facilityPass.id,
-        title: facilityPass.facilityItem.facility.name,
-        end_date: facilityPass.end_date,
-        start_date: dayjs(facilityPass.end_date)
-          .subtract(
-            facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
-            "d"
-          )
-          .format("YYYY-MM-DD HH:mm:ss"),
-        media: facilityPass.facilityItem.facility.media,
-        address: facilityPass.facilityItem.facility.address,
-      })
-    )
-    : []
-);
 
 const tabs: TabItemNew[] = [
   {
@@ -962,7 +319,6 @@ const openFacility = (facilityId: string | number) => {
   });
 };
 
-
 const refetchBooking = () => {
   switch (activeTab.value) {
     case EntitiesEnum.Events:
@@ -978,7 +334,7 @@ const refetchBooking = () => {
       break;
 
     case EntitiesEnum.Facilities:
-      refetchFacilities();
+      refetchPasses();
       break;
 
     default:
@@ -986,11 +342,11 @@ const refetchBooking = () => {
   }
 };
 
-const goToGymDetail = () => {
+const goToGymDetail = (id) => {
   router.push({
     name: Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails,
     params: {
-      id: 53,
+      id: id,
     },
   });
 }
@@ -1008,11 +364,11 @@ const goToTrainerDetail = (type:string) => {
   })
 }
 
-const goToEventDetail = () => {
+const goToEventDetail = (id) => {
   router.push({
     name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
     params: {
-      id: 85,
+      id: id,
     },
   });
 }
@@ -1055,6 +411,7 @@ const openEvent = (id: string | number) => {
 const {
   result: facilityItemPassResult,
   loading: loadingFacilityPass,
+  refetch: refetchPasses
 } = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   item_type: "PASS"
 });
@@ -1069,12 +426,13 @@ const passes = computed(() => {
 // Dropins start
 const {
   result: dropinResult,
-  loading: loadingFacilityDropin
+  loading: loadingFacilityDropin,
+  refetch: refetchDropins
 } = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   item_type: "DROPIN"
 });
 
-const dropinss = computed(() => {
+const dropins = computed(() => {
   return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
 });
 
@@ -1082,7 +440,7 @@ const dropinss = computed(() => {
 
 // Events List
 const eventsParams: EventsQueryVariables = {
-  first: 5,
+  first: 100,
   page: 1,
   orderBy: [
     {
@@ -1095,26 +453,33 @@ const eventsParams: EventsQueryVariables = {
 const {
   result: eventResult,
   loading: eventsLoading,
+  refetch: refetchEvents
 } = useQuery<EventsQuery>(EventsDocument, eventsParams, {
   notifyOnNetworkStatusChange: true,
   fetchPolicy: "no-cache",
 });
 
-const allEvents = computed(() => {
+const events = computed(() => {
   return eventResult.value?.events?.data;
 });
+const formatEventDate = (event) => {
+  return dayjs(event.start_date).format(
+    dayjs(event.start_date).year() !== dayjs(event.end_date).year()
+      ? "D MMM YYYY"
+      : "D MMMM")
+}
 // End Events
-const formatNumber = (num: number, type: string) => {
+const formatCurrency = (num: number, type: string) => {
   if (num < 1e3) {
     if(type === 'normal') {
-      return num.toString();
+      return "$"+num.toString();
     } else {
-      return num.toFixed(2).toString();
+      return "$"+num.toFixed(2).toString();
     }
   } else if (num < 1e6) {
-    return (num / 1e3).toFixed(1) + 'k';
+    return "$" + (num / 1e3).toFixed(1) + 'k';
   } else {
-    return (num / 1e6).toFixed(1) + 'M';
+    return "$" + (num / 1e6).toFixed(1) + 'M';
   }
 };
 </script>
@@ -1284,8 +649,6 @@ const formatNumber = (num: number, type: string) => {
 .item-inner {
   padding-left: unset;
   padding-right: unset;
-  padding-inline-start: var(--inner-padding-start);
-  padding-inline-end: unset; /* Remove padding-inline-end */
 }
 
 .item-native{
@@ -1369,6 +732,66 @@ const formatNumber = (num: number, type: string) => {
       font-size: 24px;
       color: var(--ion-color-primary);
     }
+  }
+  &__address {
+    width: calc(100% - 54px);
+    display: flex;
+    ion-title {
+      width: calc(100% - 30px);
+      padding: 0;
+      color: var(--Grey-text, #AFAFAF);
+      font-family: Yantramanav;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 150%; /* 21px */
+    }
+  }
+}
+
+.facility-item {
+  &__holder {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  &__title {
+    color: var(--fitnesswhite);
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+  }
+  &__address {
+    display: flex;
+    margin-top: 16px;
+    ion-title {
+      padding: 0;
+      width: calc(100% - 30px);
+      color: var(--gray-400);
+      font-family: Yantramanav;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 150%; /* 21px */
+    }
+  }
+  &__price {
+    color: var(--fitnesswhite);
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 24px */
+  }
+  &__status-text {
+    color: var(--gold);
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 24px */
   }
 }
 
