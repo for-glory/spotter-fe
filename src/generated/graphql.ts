@@ -8551,7 +8551,7 @@ export const FacilityItemDocument = gql`
 
 export const FacilityItemsByFacilityIdAndTypeDocument = gql`
   query facilityItemsByFacilityIdAndType(
-    $facility_id: ID!
+    $facility_id: ID
     $item_type: FacilityItemTypeEnum
   ) {
     facilityItemsByFacilityIdAndType(
@@ -8566,6 +8566,9 @@ export const FacilityItemsByFacilityIdAndTypeDocument = gql`
           id
           media {
             pathUrl
+          }
+          address {
+            street
           }
         }
         product_id
