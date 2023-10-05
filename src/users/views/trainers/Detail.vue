@@ -244,7 +244,7 @@ const offerEvents = [{
   address: "Light Street, 1",
 }];
 const handleBuy = () => {
-  router.push({ name: EntitiesEnum.FacilitySubscription });
+  // router.push({ name: EntitiesEnum.FacilitySubscription });
 };
 
 const reviews = computed(() =>

@@ -333,7 +333,7 @@ const handleFollow = () => {
 };
 
 const handleBuy = () => {
-  router.push({ name: EntitiesEnum.FacilitySubscription });
+  // router.push({ name: EntitiesEnum.FacilitySubscription });
 };
 
 const { role } = useRoles();

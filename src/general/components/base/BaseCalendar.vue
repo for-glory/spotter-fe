@@ -1,36 +1,38 @@
 <template>
   <div :class="{ 'calendar--dark': darkBackground, 'user-calendar': role === RoleEnum.User }" class="calendar">
-    <ion-datetime
-      ref="calendar"
-      :value="selectedDate"
-      :class="{ 'calendar--dark': darkBackground }"
-      @ion-change="onChange"
-      presentation="date"
-      mode="ios"
-      :min="minData || min ? dayjs(min).toISOString() : undefined"
-      :max="max ? dayjs(max).toISOString() : undefined"
-    />
-    <div v-if="showAdditionalContent" class="calendar__footer">
-      <ion-text class="time__label"> Time</ion-text>
-    </div>
-    <ion-spinner v-if="loading" name="lines" class="spinner" />
-    <base-carousel
-      v-if="!loading && showAdditionalContent"
-      :items="times"
-      width-auto
-    >
-      <template v-slot:default="times">
-        <div
-          :class="{
-            'carousel__item--on-selected': selectedTime === times.item.value,
-          }"
-          class="carousel__item"
-          @click="onSelectTime($event, times.item.paymentTime)"
-        >
-          {{ times.item.value }}
+    <ion-datetime ref="calendar" :value="selectedDate" :class="{ 'calendar--dark': darkBackground }"
+      @ion-change="onChange" presentation="date" mode="ios" :min="minData || min ? dayjs(min).toISOString() : undefined"
+      :max="max ? dayjs(max).toISOString() : undefined" />
+    <template v-if="showAdditionalContent">
+      <ion-spinner v-if="loading" name="lines" class="spinner" />
+      <template v-if="!loading && showAdditionalContent && times?.length">
+        <div class="calendar__footer">
+          <ion-text class="time__label">Start Time</ion-text>
         </div>
+        <base-carousel :items="times.slice(0, (times.length - 1))" width-auto>
+          <template v-slot:default="times">
+            <div :class="{
+              'carousel__item--on-selected': selectedTime === times.item.value,
+            }" class="carousel__item" @click="onSelectTime($event, times.item.paymentTime)">
+              {{ times.item.value }}
+            </div>
+          </template>
+        </base-carousel>
+        <div class="calendar__footer" v-if="endTimes?.length">
+          <ion-text class="time__label">End Time</ion-text>
+        </div>
+        <base-carousel :items="endTimes" width-auto>
+          <template v-slot:default="endTimes">
+            <div :class="{
+              'carousel__item--on-selected': selectedEndTime === endTimes.item.value,
+            }" class="carousel__item" @click="onSelectEndTime($event, endTimes.item.paymentTime)">
+              {{ endTimes.item.value }}
+            </div>
+          </template>
+        </base-carousel>
       </template>
-    </base-carousel>
+      <empty-block v-else hide-button hide-icon text="Trainer is not available for booking..."></empty-block>
+    </template>
   </div>
 </template>
 
@@ -54,14 +56,17 @@ import dayjs from "dayjs";
 import { computed } from "@vue/reactivity";
 import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
+import EmptyBlock from "../EmptyBlock.vue";
+import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 
 const { role } = useRoles();
+const paymentStore = paymentGatewaysStore();
 
 const props = withDefaults(
   defineProps<{
     showAdditionalContent?: boolean;
     darkBackground?: boolean;
-    times?: { value: string }[];
+    times?: { value: string; paymentTime: any; }[];
     loading?: boolean;
     selected?: number | null | object;
     min?: number;
@@ -75,11 +80,24 @@ const props = withDefaults(
   }
 );
 
+const endTimes = computed(() => {
+  var t: any = [];
+  if (props.times?.length) {
+    props.times.forEach((time) => {
+      if (!dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${selectedTime.value}`)).add(1, 'h').isAfter(dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${time.value}`)), 'hours')) {
+        t.push(time);
+      }
+    });
+  }
+  return t;
+});
+
 watch(
   () => props.times,
   (newVal) => {
     if (newVal?.length) {
       selectedTime.value = newVal[0].value;
+      selectedEndTime.value = newVal[2]?.value ? newVal[2]?.value : newVal[1]?.value;
     }
   }
 );
@@ -89,6 +107,7 @@ const selectedDate = ref<string | string[]>(
   props.selected ? dayjs(props.selected).toISOString() : dayjs().toISOString()
 );
 const selectedTime = ref<string | string[]>("");
+const selectedEndTime = ref<string | string[]>("");
 const minData = computed(() => dayjs().format("YYYY-MM-DD"));
 
 const emits = defineEmits<{
@@ -106,6 +125,11 @@ const onChange = (event: DatetimeCustomEvent) => {
 const onSelectTime = (event: CustomEvent, updatedTime: string) => {
   selectedTime.value = event?.target?.textContent;
   emits("change-time", updatedTime, event?.target?.textContent);
+};
+
+const onSelectEndTime = (event: CustomEvent, updatedTime: string) => {
+  selectedEndTime.value = event?.target?.textContent;
+  paymentStore.setValue('time', selectedTime.value + ' - ' + selectedEndTime.value);
 };
 
 onMounted(() => {
@@ -238,22 +262,25 @@ ion-datetime {
     margin: 12px 0;
   }
 }
+
 .spinner {
   display: block;
   margin: 6px auto 22px;
   --color: var(--ion-color-white);
 }
+
 .user-calendar {
   ion-datetime {
     font-family: "Yantramanav";
     --title-color: var(--fitnesswhite);
-    &::part(native){
+
+    &::part(native) {
       font-family: "Yantramanav" !important;
       color: var(--fitnesswhite) !important;
     }
   }
 
-  .time__label{
+  .time__label {
     font-family: "Yantramanav";
     color: #FFF;
     font-size: 16px;

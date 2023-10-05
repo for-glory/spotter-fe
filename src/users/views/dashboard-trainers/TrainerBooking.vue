@@ -32,7 +32,7 @@
                     </div>
                     <ChoosePlace v-if="isExpanded" :is-web-view="true"></ChoosePlace>
                 </div>
-                <IonButton :disabled="addToCartLoading" class="ion-margin" @click="onNext">Confirm</IonButton>
+                <IonButton :disabled="disabledBtn" class="ion-margin" @click="onNext">Confirm</IonButton>
             </div>
             <div class="flex-2 h-100 hide-scrollbar">
                 <BaseCustomCalendar class="web-custom-calendar" week-days-format="W" />
@@ -40,11 +40,7 @@
         </div>
     </div>
     <terms-of-use v-if="!isConfirmed" :is-confirmed="isConfirmed" @agree="onAgree" @decline="onDecline" />
-    <waiting
-    :is-open="paymentStore.isOpenWaitingModal"
-    @close="onCloseWaitingModal"
-    @open-chat="openChat"
-  />
+    <waiting :is-open="paymentStore.isOpenWaitingModal" @close="onCloseWaitingModal" @open-chat="openChat" />
 </template>
   
 <script setup lang="ts">
@@ -67,40 +63,42 @@ import Choose from "@/general/components/blocks/Choose.vue";
 import ChoosePlace from "../trainers/ChoosePlace.vue";
 import { PlaceType } from "@/ts/enums/user";
 import Waiting from "@/general/components/modals/approval/Waiting.vue";
+import { GetTrainerDocument } from "@/graphql/documents/userDocuments";
+import { date } from "yup";
 
 dayjs.extend(utc);
 const router = useRouter();
 
 const route = useRoute();
-const selectedDay = ref(dayjs());
+const selectedDay = ref(dayjs.utc());
 const paymentStore = paymentGatewaysStore();
 const orderDetail = ref<boolean>(false);
 const selectedTime = ref<Dayjs | null>(null);
 const isConfirmed = ref<boolean>(true);
 const isExpanded = ref<boolean>(false);
-const cart = ref<Cart>();
+const cart = ref<Cart | null>(null);
 
 const { mutate: createChatMutation } = useMutation(CreateChatDocument);
 
-const { result, loading } = useQuery<Pick<Query, "user">>(UserDocument, {
+const { result, loading } = useQuery<Pick<Query, "user">>(GetTrainerDocument, {
     id: route.params.id,
 });
 
 const openChat = () => {
-  createChatMutation({ participant_id: route.params.id }).then((res) => {
-    paymentStore.setValue("isOpenWaitingModal", false);
-    router.push({
-      name: EntitiesEnum.DashboardMessage,
-      params: { id: res?.data?.createChat?.id },
+    createChatMutation({ participant_id: route.params.id }).then((res) => {
+        paymentStore.setValue("isOpenWaitingModal", false);
+        router.push({
+            name: EntitiesEnum.DashboardMessage,
+            params: { id: res?.data?.createChat?.id },
+        });
     });
-  });
 };
 
 const onCloseWaitingModal = () => {
     paymentStore.setValue("isOpenWaitingModal", false);
-  router.push({
-    name: EntitiesEnum.Dashboard,
-  });
+    router.push({
+        name: EntitiesEnum.Dashboard,
+    });
 };
 
 const showChoosePlace = computed(() => {
@@ -112,7 +110,7 @@ const showChoosePlace = computed(() => {
 const { mutate: addToCartMutation, loading: addToCartLoading } = useMutation(
     AddTrainingToCartDocument
 );
-const isCurrDaySelected = (value: any) => {
+const isCurrDaySelected = (value) => {
     return dayjs.utc(value).diff(dayjs.utc(new Date()), "minute") <= 0;
 };
 const getParams = () => {
@@ -131,6 +129,15 @@ const {
     loading: availabilityLoading,
 } = useQuery<UserAvailabilityQuery>(UserAvailabilityDocument, getParams());
 
+const hasFreeHours = computed(
+    () => availabilityResult.value?.userAvailability?.hours?.length
+);
+//
+
+const disabledBtn = computed(
+    () => !selectedDay.value || !selectedTime.value || !hasFreeHours.value
+);
+
 const user = computed(() => result.value?.user);
 
 const hourlyRate = computed(() => {
@@ -143,7 +150,14 @@ const hourlyRate = computed(() => {
         rate = result.value?.user?.settings?.find(
             (setting: any) => setting.setting?.code === SettingsCodeEnum.HourlyRate
         );
+        if(paymentStore?.place?.value === PlaceType.UserHome){
+            rate = result.value?.user?.settings?.find(
+            (setting: any) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
+        );
+        }
     }
+    console.log('user result',user.value);
+    
     return rate?.value ? getSumForPayment(rate.value, true) : "0.00";
 });
 const uptime = computed(() =>
@@ -179,22 +193,27 @@ const uptime = computed(() =>
                     !trainingTimes?.includes(halfAnHourBefore)
                 ) {
                     // set each hour
-                    acc.push({
-                        value: currHour,
-                        paymentTime: dayjs(cur.from).add(i, "hour"),
-                    });
-                    if (!trainingTimes?.includes(hourAfter)) {
+                    if (!(dayjs().isSame(cur.from, 'date') && dayjs().add(1, 'h').isAfter(dayjs(new Date(`${dayjs(cur.from).format('YYYY-MMM-DD')} ${currHour}`)), 'hours'))) {
                         acc.push({
-                            value: halfAnHourAfter,
-                            paymentTime: dayjs(cur.from).add(i * 60 + 30, "minute"),
+                            value: currHour,
+                            paymentTime: dayjs(cur.from).add(i, "hour"),
                         });
+
+                        if (!trainingTimes?.includes(hourAfter)) {
+                            acc.push({
+                                value: halfAnHourAfter,
+                                paymentTime: dayjs(cur.from).add(i * 60 + 30, "minute"),
+                            });
+                        }
                     }
+
+
                 }
             }
             if (acc.length) {
-                paymentStore.setValue("date", selectedDay.value as any);
+                paymentStore.setValue("date", selectedDay.value);
                 paymentStore.setValue("time", acc[0].value);
-                paymentStore.setValue("paymentTime", acc[0]?.paymentTime as any);
+                paymentStore.setValue("paymentTime", acc[0].paymentTime);
                 selectedTime.value = acc[0].paymentTime;
             }
             return acc;
@@ -202,6 +221,17 @@ const uptime = computed(() =>
         []
     )
 );
+const onChangeDay = (day: Dayjs) => {
+    selectedDay.value = day;
+    paymentStore.setValue("date", day);
+    availabilityRefetch(getParams());
+};
+
+const onChangeTime = (time: string, timeLabel: string) => {
+    selectedTime.value = time;
+    paymentStore.setValue("paymentTime", time);
+    paymentStore.setValue("time", timeLabel);
+};
 const onAgree = () => {
     localStorage.setItem("terms_of_use", JSON.stringify(true));
     isConfirmed.value = true;
@@ -213,14 +243,10 @@ const onDecline = () => {
     isConfirmed.value = true;
 };
 
-const onChangeTime = (time: string, timeLabel: string) => {
-    selectedTime.value = time as any;
-    paymentStore.setValue("paymentTime", time);
-    paymentStore.setValue("time", timeLabel);
-};
 const handleBack = () => {
     if (orderDetail?.value) {
         orderDetail.value = false;
+        cart.value = null;
         return;
     }
     router.back();
@@ -236,8 +262,8 @@ const getTrainingOptions = () => {
         return AvailableTrainingOptionsEnum.InUserGym;
     }
 
-    console.log('userType',user.value?.trainer_type);
-    
+    console.log('userType', user.value?.trainer_type);
+
     return AvailableTrainingOptionsEnum.InTrainerGym;
 };
 const getTrainerParams = () => {
@@ -263,7 +289,7 @@ const getTrainerParams = () => {
 const onNext = () => {
     const data = localStorage.getItem("terms_of_use");
     let terms = null;
-    if(data){
+    if (data) {
         terms = JSON.parse(data);
     }
     if (!terms) {
@@ -275,7 +301,7 @@ const onNext = () => {
         return;
     }
     console.log(cart.value);
-    
+
     if (!cart.value) {
         addToCartMutation({
             input: getTrainerParams(),
@@ -293,7 +319,7 @@ const onNext = () => {
                 });
                 toast.present();
             });
-            return;
+        return;
     }
     router.push({
         name: EntitiesEnum.GymPaymentMethod,
@@ -304,10 +330,6 @@ const onNext = () => {
             cart_id: cart?.value?.id,
         },
     });
-};
-
-const onChangeDay = (day: any) => {
-    selectedDay.value = day;
 };
 
 

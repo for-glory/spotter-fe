@@ -3,18 +3,18 @@
     <div class="facility-item__photo">
       <ion-img v-if="photo?.length" :src="photo"></ion-img>
       <template v-else>
-        {{ facility.name?.charAt(0) }}
+        {{ facility?.name?.charAt(0) }}
       </template>
     </div>
     <div class="facility-item__inner">
       <div class="facility-item__head">
-        <ion-label class="facility-item__title">{{ facility.name }}</ion-label>
+        <ion-label class="facility-item__title">{{ facility?.name }}</ion-label>
         <rating-number class="facility-item__rating">{{
-          facility.score
+          facility?.score
         }}</rating-number>
       </div>
       <address-item class="facility-item__address">
-        {{ facility.address?.street }}
+        {{ facility?.address?.street }}
       </address-item>
     </div>
   </ion-item>
@@ -35,7 +35,7 @@ const props = defineProps<{
 const { role } = useRoles();
 
 const photo = computed(() => {
-  return props.facility.media?.length
+  return props.facility?.media?.length
     ? `${process.env.VUE_APP_MEDIA_URL}${props.facility.media[0]?.path}`
     : "";
 });

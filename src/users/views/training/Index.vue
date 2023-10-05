@@ -103,7 +103,7 @@
     @decline="hideModal"
   />
   <terms-of-use
-    :is-confirmed="isConfirmed"
+    :is-confirmed="isConfirmed || !closeModal"
     :is-web="isWeb"
     @agree="onAgree"
     @decline="onDecline"
@@ -259,6 +259,7 @@ const isConfirmed = computed(() => {
       return true;
     }
   }
+  return false
 });
 
 
@@ -356,7 +357,7 @@ const dummyEvent = {
 
 const onAgree = () => {
   console.log('on agree');
-  closeModal.value = true
+  closeModal.value = false
 }
 
 const onDecline = () => {

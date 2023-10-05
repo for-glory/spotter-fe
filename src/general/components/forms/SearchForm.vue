@@ -49,7 +49,7 @@
   </div>
 
   <ion-modal
-    v-if="isFacilityTab"
+    v-if="isFacilityTab || type === EntitiesEnum.Trainers"
     ref="filtersModal"
     class="filters-modal"
     :is-open="isFiltersOpen"
@@ -583,7 +583,7 @@ defineExpose({
     top: 100%;
     width: 100%;
     --padding-top: 32px;
-    --padding-bottom: calc(44px + var(--ion-safe-area-bottom));
+    --padding-bottom: calc(200px + var(--ion-safe-area-bottom));
     position: absolute;
     transform-origin: 50% 0;
     transition: opacity 0.35s ease, transform 0.35s ease;

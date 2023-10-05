@@ -237,10 +237,18 @@ const onHandleApproveOrder = () => {
         cssClass: "success-toast",
       });
       toast.present();
-      router.push({
+      if(Capacitor.isNativePlatform()){
+        router.push({
         name: EntitiesEnum.ChatList,
         query: { type: RoomType.Request.toLocaleLowerCase() },
       });
+      }
+      else {
+        router.push({
+        name: EntitiesEnum.DashboardMessage,
+        query: { type: RoomType.Request.toLocaleLowerCase() },
+      });
+      }
     })
     .catch(async (err) => {
       const error = getErrorMessage(err);
@@ -267,10 +275,18 @@ const onHandleDeclineOrder = () => {
         cssClass: "success-toast",
       });
       toast.present();
-      router.push({
+      if(Capacitor.isNativePlatform()){
+        router.push({
         name: EntitiesEnum.ChatList,
         query: { type: RoomType.Request.toLocaleLowerCase() },
       });
+      }
+      else {
+        router.push({
+        name: EntitiesEnum.DashboardMessage,
+        query: { type: RoomType.Request.toLocaleLowerCase() },
+      });
+      }
     })
     .catch(async (err) => {
       const error = getErrorMessage(err);
@@ -378,6 +394,7 @@ const onHandleDeclineOrder = () => {
 
     &--approved {
       color: var(--ion-color-success-tint);
+      background: var(--gray-700) !important;
     }
 
     &--rejected {
@@ -386,6 +403,7 @@ const onHandleDeclineOrder = () => {
 
     &--pending {
       color: var(--gold);
+      background: var(--gray-700) !important;
     }
 
     &--approvable {
@@ -449,7 +467,7 @@ const onHandleDeclineOrder = () => {
   &.row_align-center {
     align-items: center;
     .message__content {
-      background: var(--gray-700) !important;
+      // background: var(--gray-700) !important;
     }
     .approve-form__buttons {
       width: auto;

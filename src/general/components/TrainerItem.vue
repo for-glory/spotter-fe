@@ -116,6 +116,7 @@ const symbols = computed(() => {
 
   &__inner {
     max-width: calc(100vw - 250px);
+    width: 100%;
   }
 
   &__head {
