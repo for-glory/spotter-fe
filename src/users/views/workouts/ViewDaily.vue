@@ -5,7 +5,7 @@
       <my-video-player
         ref="trialVideoPlayer"
         v-else
-        :back-name="Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys"
+        :back-name="backName"
         :daily="dailyData"
         class="trial-video-player"
         @back="closeVideo"
@@ -73,6 +73,14 @@ const isOpenBlurredScreenModal = ref(false);
 const trialVideoPlayer = ref(null);
 
 const route = useRoute();
+
+const backName = computed(() => {
+  if (history.state.back === "/dashboard/discover") {
+    return EntitiesEnum.DashboardDiscover
+  } else {
+    return Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys;
+  }
+})
 
 const { result, onResult: gotWorkout, loading: loadingDaily } = useQuery(WorkoutDocument, {
   id: route.params.id,

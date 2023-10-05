@@ -15,7 +15,7 @@
     <ion-header
       v-if="!loadingUser"
       class="header ion-no-border"
-      :class="{ 'header--fixed': headerFixed, 'header-background': !Capacitor.isNativePlatform() && draggable && isFullscreenView}"
+      :class="{ 'header--fixed': headerFixed, 'header-fullscreen': !Capacitor.isNativePlatform() && draggable && isFullscreenView}"
     >
       <slot name="header"></slot>
     </ion-header>
@@ -517,7 +517,7 @@ onUnmounted(() => {
   padding-top: 24px;
 }
 
-.header-background {
+.header-fullscreen {
   background: var(--ion-background-color);
 }
 .spinner {
