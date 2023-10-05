@@ -105,6 +105,8 @@ import debounce from "lodash/debounce";
 import SearchResult from "@/users/views/facilities/SearchResult.vue";
 import { EntitiesEnum } from "@/const/entities";
 import reducer from "@/helpers/reducers/activities-search";
+import useRoles from "@/hooks/useRole";
+import { Capacitor } from "@capacitor/core";
 
 const props = withDefaults(
   defineProps<{
@@ -140,6 +142,9 @@ const isActivitiesNearbyTab = computed(
   () => props?.type === EntitiesEnum.ActivitiesNearby
 );
 
+const { role } = useRoles();
+const isNative = Capacitor.isNativePlatform();
+
 const searchQuery = ref<string>("");
 const params: FacilitiesQueryVariables = {
   first: 100,
@@ -160,7 +165,6 @@ const searchResults = computed(() =>
 );
 
 const search = debounce((event?: SearchbarCustomEvent) => {
-  console.log('call serach===', event);
   
   if (props.hideResults) {
     emits("search", event?.detail?.value);
@@ -198,10 +202,19 @@ defineExpose({
 const handleRedirect: any = (itemType: string) => {
   switch (itemType.toUpperCase()) {
     case EntitiesEnum.Workout:
+      if (role === RoleEnum.User && !isNative) {
+        return EntitiesEnum.UserPurchasedWorkout
+      }
       return EntitiesEnum.UserWorkout;
     case EntitiesEnum.User:
+      if (role === RoleEnum.User && !isNative) {
+        return EntitiesEnum.TrainerPreview;
+      }
       return EntitiesEnum.Trainer;
     case EntitiesEnum.Facility:
+      if (role === RoleEnum.User && !isNative) {
+        return EntitiesEnum.GymDetails;
+      }
       return EntitiesEnum.Facility;
 
     default:

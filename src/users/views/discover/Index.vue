@@ -177,25 +177,14 @@
 <script setup lang="ts">
 
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
-import { IonButton, IonIcon, IonText, IonSpinner } from "@ionic/vue";
+import { IonButton, IonIcon, IonText, IonThumbnail, IonLabel, IonImg, IonTitle, IonItem } from "@ionic/vue";
 import { TabItemNew } from "@/interfaces/TabItemNew";
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import {
-  EventPaginator,
-  MyEventsDocument,
-  MyFacilityItemPassesDocument,
-  FacilityItemPass,
-  UserPaginator,
   DashboardWidgetDocument,
-  UserAvailabilityDocument,
-  Training,
-  QueryMyTrainingsOrderByColumn,
   SortOrder,
-  QueryMyFacilityItemPassesOrderByColumn,
-  QueryMyEventsOrderByColumn,
-  TrainingStatesEnum,
   FacilityItemsByFacilityIdAndTypeDocument,
   EventsQueryVariables,
   QueryEventsOrderByColumn,
@@ -203,22 +192,14 @@ import {
   EventsDocument,
   RoleEnum,
   UsersDocument,
-  UsersQuery,
-
 } from "@/generated/graphql";
-import { useLazyQuery, useQuery } from "@vue/apollo-composable";
-import EventItem from "@/general/components/EventItem.vue";
-import ItemsHeader from "@/general/components/blocks/headers/ItemsHeader.vue";
-import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
+import { useQuery } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
-import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
-import { ActivityItem } from "@/interfaces/ActivityItem";
 import useRoles from "@/hooks/useRole";
 import { Capacitor } from "@capacitor/core";
 
@@ -498,10 +479,6 @@ const formatCurrency = (num: number, type: string) => {
 
 .events__container {
   width: 100%;
-  display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-column-gap: 16px;
-    grid-row-gap: 6px;
 }
 
 .header-btn {
@@ -689,7 +666,7 @@ const formatCurrency = (num: number, type: string) => {
 
   &__holder {
     min-height: 73px;
-    width: calc(100% - 68px);
+    width: calc(100% - 105px);
     font-family: 'Yantramanav';
     .event--time-hidden & {
       display: flex;
