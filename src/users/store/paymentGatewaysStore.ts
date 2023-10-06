@@ -51,11 +51,6 @@ export const paymentGatewaysStore = defineStore("paymentgateways", {
         return `${dayjs.utc(state.date).local().format("YYYY-MM-DD 00:00:00")}`;
       }
     },
-    getEndDate: (state) =>
-      `${dayjs.utc(state.date).format("YYYY-MM-DD")} ${dayjs
-        .utc(state.paymentTime)
-        .local()
-        .add(1, "hour")
-        .format("hh:mm:ss")}`,
+    getEndDate: (state) => state.endDate
   },
 });

@@ -4,9 +4,9 @@
       <page-header title="Dashboard">
         <template #avatar-field>
           <ion-avatar class="header__photo" @click="$router.push({ name: EntitiesEnum.Profile })">
-            <ion-img v-if="userStore.avatarUrl" :src="userStore.avatarUrl"></ion-img>
+            <ion-img v-if="userStore.avatarUrl" :src="userStore.avatarUrl"></ion-img> 
             <template v-else>
-              {{ userStore.avatarUrl.first_name?.charAt(0) }}
+                {{ userStore?.first_name?.charAt(0) }}
             </template>
           </ion-avatar>
         </template>
@@ -736,5 +736,13 @@ const openEvent = (id: string | number) => {
   min-height: 26px;
   max-width: 26px;
   max-height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: capitalize;
+  font-family: 'Yantramanav';
+  font-weight: 600;
+  background: var(--gray-700);
+  font-size: 15px;
 }
 </style>

@@ -13,7 +13,7 @@
           <template v-slot:default="times">
             <div :class="{
               'carousel__item--on-selected': selectedTime === times.item.value,
-            }" class="carousel__item" @click="onSelectTime($event, times.item.paymentTime)">
+            }" class="carousel__item" @click="onSelectTime($event, times.item?.paymentTime)">
               {{ times.item.value }}
             </div>
           </template>
@@ -68,7 +68,7 @@ const props = withDefaults(
     darkBackground?: boolean;
     times?: { value: string; paymentTime: any; }[];
     loading?: boolean;
-    selected?: number | null | object;
+    selected?: any;
     min?: number;
     max?: number;
   }>(),
@@ -84,7 +84,11 @@ const endTimes = computed(() => {
   var t: any = [];
   if (props.times?.length) {
     props.times.forEach((time) => {
-      if (!dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${selectedTime.value}`)).add(1, 'h').isAfter(dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${time.value}`)), 'hours')) {
+      const startTime = dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${selectedTime.value}`));
+      const endTime = dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${time.value}`));
+      console.log(endTime.diff(startTime,'hour',true));
+      
+      if (endTime.diff(startTime,'hour',true) >= 1) {
         t.push(time);
       }
     });
@@ -92,12 +96,15 @@ const endTimes = computed(() => {
   return t;
 });
 
+
+
 watch(
   () => props.times,
   (newVal) => {
     if (newVal?.length) {
       selectedTime.value = newVal[0].value;
-      selectedEndTime.value = newVal[2]?.value ? newVal[2]?.value : newVal[1]?.value;
+      // selectedEndTime.value = newVal[2]?.value ? newVal[2]?.value : newVal[1]?.value;
+      // paymentStore.setValue('endDate', dayjs(new Date(`${dayjs(props.selected).format('YYYY-MMM-DD')} ${selectedEndTime.value}`)).toISOString());
     }
   }
 );
@@ -130,6 +137,7 @@ const onSelectTime = (event: CustomEvent, updatedTime: string) => {
 const onSelectEndTime = (event: CustomEvent, updatedTime: string) => {
   selectedEndTime.value = event?.target?.textContent;
   paymentStore.setValue('time', selectedTime.value + ' - ' + selectedEndTime.value);
+  paymentStore.setValue('endDate', dayjs(new Date(`${dayjs(props.selected).format('YYYY-MMM-DD')} ${selectedEndTime.value}`)).toISOString());
 };
 
 onMounted(() => {

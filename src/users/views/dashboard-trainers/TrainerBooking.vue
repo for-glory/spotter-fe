@@ -19,8 +19,7 @@
                 <div v-else>
                     <div class="order">
                         <order-item :type="EntitiesEnum.Trainer" :item="user" :hourly-rate="hourlyRate"
-                            :orderDate="selectedDay" :orderTime="dayjs(selectedTime).format('hh:mm  A')"
-                            :trainer-cart="cart" />
+                            :orderDate="selectedDay" :orderTime="paymentStore.time" :trainer-cart="cart" />
                     </div>
                     <div class="training-place__container" v-if="showChoosePlace">
                         <ion-text class="training-place__title">
@@ -135,7 +134,12 @@ const hasFreeHours = computed(
 //
 
 const disabledBtn = computed(
-    () => !selectedDay.value || !selectedTime.value || !hasFreeHours.value
+    () => {
+        if (orderDetail?.value) {
+            return !paymentStore.place?.text;
+        }
+        return !selectedDay.value || !selectedTime.value || !hasFreeHours.value || !paymentStore.endDate;
+    }
 );
 
 const user = computed(() => result.value?.user);
@@ -150,14 +154,12 @@ const hourlyRate = computed(() => {
         rate = result.value?.user?.settings?.find(
             (setting: any) => setting.setting?.code === SettingsCodeEnum.HourlyRate
         );
-        if(paymentStore?.place?.value === PlaceType.UserHome){
+        if (paymentStore?.place?.value === PlaceType.UserHome) {
             rate = result.value?.user?.settings?.find(
-            (setting: any) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
-        );
+                (setting: any) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
+            );
         }
     }
-    console.log('user result',user.value);
-    
     return rate?.value ? getSumForPayment(rate.value, true) : "0.00";
 });
 const uptime = computed(() =>
