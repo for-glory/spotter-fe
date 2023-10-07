@@ -52,7 +52,7 @@ import {
   defineEmits,
   watch,
 } from "vue";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { computed } from "@vue/reactivity";
 import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
@@ -80,21 +80,19 @@ const props = withDefaults(
   }
 );
 
-const endTimes = computed(() => {
-  var t: any = [];
+const endTimes = ref<{ value: string; paymentTime: any; }[]>([]);
+
+const getEndTimes = ()=>{
+  endTimes.value = [];
   if (props.times?.length) {
     props.times.forEach((time) => {
-      const startTime = dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${selectedTime.value}`));
-      const endTime = dayjs(new Date(`${dayjs(time.paymentTime).format('YYYY-MMM-DD')} ${time.value}`));
-      console.log(endTime.diff(startTime,'hour',true));
-      
-      if (endTime.diff(startTime,'hour',true) >= 1) {
-        t.push(time);
+      const diff = time.paymentTime.diff(selectedPaymentTime.value,'hour',true);
+      if (diff >= 1 && (diff % 1 === 0)) {
+        endTimes.value.push(time);
       }
     });
   }
-  return t;
-});
+}
 
 
 
@@ -103,8 +101,9 @@ watch(
   (newVal) => {
     if (newVal?.length) {
       selectedTime.value = newVal[0].value;
-      // selectedEndTime.value = newVal[2]?.value ? newVal[2]?.value : newVal[1]?.value;
-      // paymentStore.setValue('endDate', dayjs(new Date(`${dayjs(props.selected).format('YYYY-MMM-DD')} ${selectedEndTime.value}`)).toISOString());
+      selectedEndTime.value = newVal[0].paymentTime;
+      selectedPaymentTime.value = newVal[0].paymentTime;
+      getEndTimes();
     }
   }
 );
@@ -114,6 +113,7 @@ const selectedDate = ref<string | string[]>(
   props.selected ? dayjs(props.selected).toISOString() : dayjs().toISOString()
 );
 const selectedTime = ref<string | string[]>("");
+const selectedPaymentTime = ref<Dayjs>();
 const selectedEndTime = ref<string | string[]>("");
 const minData = computed(() => dayjs().format("YYYY-MM-DD"));
 
@@ -129,15 +129,18 @@ const onChange = (event: DatetimeCustomEvent) => {
   }
 };
 
-const onSelectTime = (event: CustomEvent, updatedTime: string) => {
+const onSelectTime = (event: CustomEvent, updatedTime: any) => {
   selectedTime.value = event?.target?.textContent;
   emits("change-time", updatedTime, event?.target?.textContent);
+  selectedPaymentTime.value = updatedTime;
+  selectedEndTime.value = '';
+  getEndTimes();
 };
 
 const onSelectEndTime = (event: CustomEvent, updatedTime: string) => {
   selectedEndTime.value = event?.target?.textContent;
   paymentStore.setValue('time', selectedTime.value + ' - ' + selectedEndTime.value);
-  paymentStore.setValue('endDate', dayjs(new Date(`${dayjs(props.selected).format('YYYY-MMM-DD')} ${selectedEndTime.value}`)).toISOString());
+  paymentStore.setValue('endDate', dayjs(updatedTime).toISOString());
 };
 
 onMounted(() => {

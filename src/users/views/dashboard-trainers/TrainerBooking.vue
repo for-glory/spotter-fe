@@ -195,7 +195,7 @@ const uptime = computed(() =>
                     !trainingTimes?.includes(halfAnHourBefore)
                 ) {
                     // set each hour
-                    if (!(dayjs().isSame(cur.from, 'date') && dayjs().add(1, 'h').isAfter(dayjs(new Date(`${dayjs(cur.from).format('YYYY-MMM-DD')} ${currHour}`)), 'hours'))) {
+                    if (!(dayjs().isSame(cur.from, 'date') && dayjs().isAfter(dayjs(new Date(`${dayjs(cur.from).format('YYYY-MMM-DD')} ${currHour}`)), 'minutes'))) {
                         acc.push({
                             value: currHour,
                             paymentTime: dayjs(cur.from).add(i, "hour"),
