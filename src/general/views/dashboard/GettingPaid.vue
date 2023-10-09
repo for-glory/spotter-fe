@@ -3,7 +3,7 @@
     <ion-spinner v-if="loading" name="lines" class="spinner" />
     <div v-else>
       <div class="flex-row">
-        <ion-text class="page">Getting Paid</ion-text>
+        <ion-text class="page">{{ role === RoleEnum.Trainer ? "Getting Paid" : "Accounting"}}</ion-text>
         <ion-icon src="assets/icon/arrow-next.svg" />
       </div>
       <ion-grid class="gap">
@@ -41,11 +41,12 @@
                   <ion-col size="12" size-xl="12">
                     <div class="revenue">
                       <div class="type">Total revenue</div>
-                      <div class="period">Today</div>
-                      <!-- <div class="percent">
+                      <!-- <div class="period">Today</div> -->
+                      <BaseSelect id="total-revenue" gray-select :options="TrainerSelectOptions" defualtCheck="This Month" />
+                      <div class="percent">
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
-                      </div> -->
+                      </div>
                       <div class="chain">${{ revenue?.today_earn }}</div>
                     </div>
                   </ion-col>
@@ -54,7 +55,10 @@
                       <div>
                         <div class="type">Quarterly revenue</div>
                         <div class="period">Earned</div>
-                        <!-- <div class="percent">70%</div> -->
+                        <div class="percent">
+                        0.8%
+                        <ion-icon class="arrow" src="assets/icon/call_made.svg" />
+                      </div>
                         <div class="chain">
                           ${{ revenue?.earn_last_thirty_days }}
                         </div>
@@ -64,11 +68,11 @@
                   <ion-col size="12" size-xl="12">
                     <div class="revenue">
                       <div class="type">Earned revenue</div>
-                      <div class="period">This year</div>
-                      <!-- <div class="percent">
+                      <BaseSelect id="Earned-revenue" gray-select :options="TrainerSelectOptions" defualtCheck="This Year" />
+                      <div class="percent">
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
-                      </div> -->
+                      </div>
                       <div class="chain">${{ revenue?.year_earn }}</div>
                     </div>
                   </ion-col>
@@ -185,14 +189,17 @@ import {
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { Capacitor } from "@capacitor/core";
-
-const router = useRouter();
-import { PayoutDocument, getRevenuesDocument } from "@/generated/graphql";
+import BaseSelect from "@/general/components/base/BaseSelect.vue";
+import { PayoutDocument, RoleEnum, getRevenuesDocument } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { TrainerSelectOptions } from "@/const/TrainerSelectOption";
+import useRoles from "@/hooks/useRole";
 
 const currentFacility = useFacilityStore();
+const router = useRouter();
+const { role } = useRoles()
 
 const { mutate: payout, onDone: afterPayout } = useMutation(PayoutDocument);
 
@@ -332,6 +339,25 @@ const revenue = computed(() => {
     background-color: #54534e;
     padding: 20px 20px 8px 20px;
   }
+
+  .title {
+    color: var(--color-white);
+    font-weight: 600;
+  }
+
+  .get {
+    color: var(--dark-gray);
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.box1, .box2 {
+  .content {
+    color: #A5A5A5;
+    font-size: 16px;
+    font-weight: 400;
+  }
 }
 .box2 {
   background-color: #534e4e;
@@ -345,10 +371,21 @@ const revenue = computed(() => {
     background-color: #54534e;
     padding: 20px 20px 8px 20px;
   }
+  .title {
+    color: var(--color-white);
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .add {
+    margin: 0;
+    color: #BEB9A7;
+    font-size: 14px;
+  }
 }
 .box3 {
   padding: 20px 0 100px 0;
-  background: #312f2f;
+  background: var(--gray-700);
   border-radius: 15px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -358,7 +395,42 @@ const revenue = computed(() => {
     border-radius: 15px;
     padding: 20px 0 100px 0;
   }
+
+  ion-title {
+    color: var(--fitnesswhite);
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .type {
+    color: var(--fitnesswhite);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+  }
+  .period {
+    color: #5D6679;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .percent {
+    color: var(--color-green);
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 600;
+
+    .arrow {
+      font-size: 18px;
+      padding-left: 5px;
+    }
+  }
 }
+
+
 .title {
   font-size: 20px;
   display: block;

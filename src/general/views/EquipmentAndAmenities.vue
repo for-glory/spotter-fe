@@ -1,6 +1,18 @@
 <template>
   <ion-modal ref="modal" class="equipment-amenities-modal">
-    <ion-content class="ion-padding-horizontal content">
+    <IonHeader  class="ion-no-border">
+      <IonToolbar class="header ion-no-border">
+        <IonButtons slot="start">
+          <IonButton @click="select">
+            <IonIcon src="assets/icon/arrow-back.svg" />
+          </IonButton>
+        </IonButtons>
+        <ion-title class="ion-text-center">
+          Amenities
+        </ion-title>
+      </IonToolbar>
+    </IonHeader>
+    <ion-content :class="['ion-padding-horizontal', 'content', { 'web-modal': !isNative }]">
       <ion-spinner
         name="lines"
         class="spinner"
@@ -15,6 +27,7 @@
                 @change="onEquipmentsChange"
                 :options="equipments || []"
                 :selected="equipmentsValue"
+                font-ytmn
               />
             </div>
           </div>
@@ -25,11 +38,12 @@
                 @change="onAmenitiesChange"
                 :options="amenities || []"
                 :selected="amenitiesValue"
+                font-ytmn
               />
             </div>
           </div>
         </div>
-        <div class="btn-container">
+        <div v-if="!isNative" class="btn-container">
           <ion-button expand="block" class="secondary cursor-pointer" @click="select" fill="outline">Save</ion-button>
         </div>
       </template>
@@ -39,7 +53,7 @@
 
 <script setup lang="ts">
 import { computed, ref, defineExpose, defineEmits } from "vue";
-import { IonText, IonSpinner, IonModal, IonContent } from "@ionic/vue";
+import { IonText, IonSpinner, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon } from "@ionic/vue";
 import {
   AmenitiesDocument,
   AmenitiesQuery,
@@ -53,6 +67,7 @@ import {
   EquipmentAndAmenitiesModalOptions,
   EquipmentAndAmenitiesModalResult,
 } from "@/interfaces/EquipmentAndAmenitiesModal";
+import { Capacitor } from "@capacitor/core";
 
 const modal = ref<typeof IonModal | null>(null);
 
@@ -64,6 +79,7 @@ const title = ref<string>("Amenities");
 
 const amenitiesValue = ref<string[]>([]);
 const equipmentsValue = ref<string[]>([]);
+const isNative = Capacitor.isNativePlatform();
 
 const params = {
   first: 1000,
@@ -145,11 +161,19 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+.header {
+  ion-title {
+    text-align: center;
+    width: 90%;
+    color: var(--color-white);
+  }
+}
 .content {
 }
 
 .title {
-  color: #E1DBC5;
+  color: var(--color-white);
+  font-family: Yantramanav;
   font-weight: 700;
   display: block;
   font-size: 16px;
@@ -222,5 +246,10 @@ defineExpose({
     height: 50%;
     width: 100% !important;
   }
+}
+
+.web-modal {
+  --padding-bottom: 30px;
+  --padding-start: 30px;
 }
 </style>

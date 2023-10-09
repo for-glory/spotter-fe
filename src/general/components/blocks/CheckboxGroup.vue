@@ -1,5 +1,5 @@
 <template>
-  <div class="multiselect" v-if="loaded">
+  <div :class="['multiselect', { 'font-ytmn': fontYtmn }]" v-if="loaded">
     <ion-item
       lines="none"
       class="checkbox"
@@ -30,6 +30,7 @@ import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
 const props = defineProps<{
   options: CheckboxValueType[];
   selected?: string[];
+  fontYtmn?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -121,6 +122,16 @@ const checkboxChangeHandle = (
     &__icon {
       margin-left: 16px;
     }
+  }
+}
+
+.font-ytmn {
+  ion-label {
+    font-family: Yantramanav;
+  }
+
+  .checkbox--checked {
+    --border-color: var(--gold);
   }
 }
 </style>

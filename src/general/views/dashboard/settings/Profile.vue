@@ -18,13 +18,15 @@
         </div>
       </div>
       <div class="d-flex align-items-center justify-content-center">
-        <ion-button fill="outline" class="content-box__button">Edit</ion-button>
+        <ion-menu-toggle :auto-hide="false">
+          <ion-button fill="outline" class="content-box__button">Edit</ion-button>
+        </ion-menu-toggle>
       </div>
     </div>
     <div class="content-box">
       <div class="content-box__top justify-content-between">
         <ion-title class="content-box__title">Personal Information</ion-title>
-        <ion-button fill="outline"  class="content-box__button">Edit</ion-button>
+        <!-- <ion-button fill="outline"  class="content-box__button">Edit</ion-button> -->
       </div>
       <ion-grid>
         <ion-row>
@@ -42,10 +44,24 @@
             <ion-label class="text-label" color="medium">Email Address</ion-label>
             <ion-text class="text-value">{{ store.email }}</ion-text>
           </ion-col>
+          <ion-col>
+            <ion-label class="text-label" color="medium">Phone</ion-label>
+            <ion-text class="text-value">N/A</ion-text>
+          </ion-col>
           <!-- <ion-col>
             <ion-label class="text-label" color="medium">Phone</ion-label>
             <ion-text class="text-value">08345678753</ion-text>
           </ion-col> -->
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-label class="text-label" color="medium">Tax ID</ion-label>
+            <ion-text class="text-value">N/A</ion-text>
+          </ion-col>
+          <ion-col>
+            <ion-label class="text-label" color="medium">Address</ion-label>
+            <ion-text class="text-value">N/A</ion-text>
+          </ion-col>
         </ion-row>
         <!-- <ion-row>
           <ion-col>
@@ -95,11 +111,10 @@ import {
   IonLabel,
   IonAvatar,
   IonImg,
-  PickerColumnOption,
-  PickerOptions,
 	IonGrid,
 	IonRow,
 	IonCol,
+  IonMenuToggle
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
@@ -116,6 +131,8 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { Emitter, EventType } from "mitt";
 
 const store = useProfileStore();
+console.log("store", store);
+
 
 const { role } = useRoles();
 

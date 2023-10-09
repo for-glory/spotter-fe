@@ -1,9 +1,9 @@
 <template>
-  <div class="base-select" :id="id">
+  <div :class="['base-select', { 'gray-select': graySelect }]" :id="id">
     <IonText >{{ title }}</IonText>
     <IonIcon src="assets/icon/arrow-down-light.svg"></IonIcon>
   </div>
-  <IonPopover v-if="role === RoleEnum.Trainer" :trigger="id" reference="event"  side="bottom" alignment="start" dismiss-on-select>
+  <IonPopover v-if="role === RoleEnum.Trainer || role === RoleEnum.FacilityOwner" :trigger="id" reference="event"  side="bottom" alignment="start" dismiss-on-select>
       <IonContent>
         <IonList>
           <IonItem v-for="option in options" :key="option.value" @click="title = option.name"  button>
@@ -22,13 +22,16 @@ interface SelectProps {
     name:string,
     value: any
   }[],
+  graySelect?:boolean;
  }
 import { RoleEnum } from '@/generated/graphql';
 import useRoles from '@/hooks/useRole';
  import { IonIcon, IonPopover, IonText, IonContent, IonList, IonItem } from '@ionic/vue';
 import { ref } from 'vue';
 
-const props = defineProps<SelectProps>()
+const props = defineProps<SelectProps>();
+console.log(props);
+
 const { role } = useRoles()
 const title = ref(props.defualtCheck)
 
@@ -62,6 +65,16 @@ const title = ref(props.defualtCheck)
   //   line-height: 150%;
   //   margin-right: 3px;
   // }
+}
+
+.gray-select {
+  margin-bottom: 8px;
+  ion-text {
+    color: #5D6679;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+  }
 }
 
 </style>

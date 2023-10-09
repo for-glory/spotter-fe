@@ -1,126 +1,216 @@
 <template>
-    <div :class="['select-container', 'flex-2', { 'client-select': role === RoleEnum.User }]">
-        <div class="select-content" :class="{ 'active': isSelect }">
-            <div class="select-wrapper" @click="isSelect = !isSelect">
-                <IonLabel class="item-label">Language</IonLabel>
-                <div class="custom-select d-flex align-items-center justify-content-between">
-                    <IonLabel>{{ selectedValue }}</IonLabel>
-                    <IonIcon src="assets/icon/chevron-down.svg"></IonIcon>
-                </div>
-            </div>
-            <hr class="divider">
-            <Transition v-if="isSelect">
-                <div class="select-option-wrapper hide-scrollbar">
-                    <div class="select-option" v-for="option in props.options" :key="option.value"
-                        :class="{ 'active': selectedValue === option.value }"
-                        @click="$emit('selectChange', option.value); isSelect = false">
-                        <IonLabel>{{ option.title }}</IonLabel>
-                    </div>
-                </div>
-            </Transition>
+  <div class="position-relative">
+    <div
+      :class="[
+        'select-container',
+        {
+          'client-select': role === RoleEnum.User,
+          'choose-block': chooseBlock,
+        },
+      ]"
+    >
+      <div class="select-content" :class="{ active: isSelect }">
+        <div class="select-wrapper" @click="isSelect = !isSelect">
+          <IonLabel class="item-label">{{ label }}</IonLabel>
+          <div
+            class="custom-select d-flex align-items-center justify-content-between"
+          >
+            <IonLabel
+              class="placeholder"
+              v-if="placeholder && !selectedValue"
+              >{{ placeholder }}</IonLabel
+            >
+            <IonLabel v-else>{{ selectedValue.title }}</IonLabel>
+            <ion-icon :class="{ 'rotate': chooseBlock && isSelect }"
+              src="assets/icon/arrow-next.svg"
+            />
+          </div>
         </div>
+      </div>
     </div>
+    <Transition v-if="isSelect">
+      <div class="select-option-wrapper hide-scrollbar">
+        <div class="sticky-header">
+          <hr class="divider" />
+        </div>
+        <div
+          class="select-option"
+          v-for="option in props.options"
+          :key="option?.value"
+          :class="{ active: selectedValue?.value === option?.value }"
+          @click="
+            $emit('selectChange', option);
+            isSelect = false;
+          "
+        >
+          <IonLabel>{{ option.title }}</IonLabel>
+        </div>
+      </div>
+    </Transition>
+  </div>
 </template>
-  
+
 <script setup lang="ts">
 import { ref } from "vue";
 import { IonIcon, IonLabel } from "@ionic/vue";
 import useRoles from "@/hooks/useRole";
 import { RoleEnum } from "@/generated/graphql";
 
-const props = defineProps<{
-    label: string;
-    options: Array<{
-        title: string,
-        value: string;
-    }>;
-    selectedValue: string;
-}>();
-const emit = defineEmits<{
-    (e: 'selectChange', value: string): void;
-}>();
-const isSelect = ref<boolean>(false);
-const { role } = useRoles()
+interface SelectValue {
+  title: string;
+  value: string;
+}
 
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    options: SelectValue[];
+    selectedValue: SelectValue;
+    chooseBlock?: boolean;
+    placeholder?: string;
+  }>(),
+  {
+    label: "Language",
+  }
+);
+const emit = defineEmits<{
+  (e: "selectChange", value: SelectValue): void;
+}>();
+
+console.log(props);
+
+const isSelect = ref<boolean>(false);
+const { role } = useRoles();
 </script>
 <style scoped lang="scss">
 .select-container {
-    margin-top: 25px;
-    overflow: hidden;
+  margin-top: 25px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 493px;
+
+  .select-content {
     display: flex;
     flex-direction: column;
-    max-width: 493px;
+    overflow: hidden;
+    position: relative;
+    &.active {
+      background: var(--gray-800);
 
-    .select-content {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-
-        &.active {
-            background: var(--gray-800);
-
-            .divider {
-                display: block;
-            }
-        }
+      // .divider {
+      //     display: block;
+      // }
     }
+  }
 }
 
 .select-wrapper {
-    margin: 10px;
-    cursor: pointer;
+  margin: 10px;
+  cursor: pointer;
 
-    .item-label {
-        margin-bottom: 8px;
-        color: var(--60, rgba(255, 255, 255, 0.60));
-        font-size: 14px;
-        font-weight: 500;
-        display: block;
+  .item-label {
+    margin-bottom: 8px;
+    color: var(--60, rgba(255, 255, 255, 0.6));
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+  }
+
+  .placeholder {
+    color: var(--gray-500) !important;
+  }
+
+  .custom-select {
+    padding: 13px 16px;
+    border: 0.5px solid var(--60, rgba(255, 255, 255, 0.60));
+    border-radius: 8px;
+
+    ion-label {
+      font-size: 14px;
+      color: var(--fitnesswhite);
     }
-
-    .custom-select {
-        padding: 13px 16px;
-        border: 1px solid var(--60, rgba(255, 255, 255, 0.60));
-        border-radius: 8px;
-
-        ion-label {
-            font-size: 14px;
-            color: var(--fitnesswhite);
-        }
-    }
+  }
 }
 
+.rotate {
+        rotate: 90deg;
+    }
+
 .divider {
-    background: var(--grey-text);
-    margin: 16px 0;
-    display: none;
+  background: var(--grey-text);
+  margin: 16px 0;
+  display: block;
+  width: 100%;
 }
 
 .select-option-wrapper {
-    padding: 10px;
-    overflow: auto;
+  padding: 10px;
+  padding-top: 0;
+  overflow: auto;
+  max-height: 210px;
+  position: absolute;
+  z-index: 99;
+  background: var(--gray-800);
+  width: 100%;
 
-    .select-option {
-
-        &.active,
-        &:hover {
-            background: rgba(225, 219, 197, 0.10);
-            cursor: pointer;
-        }
-
-        padding: 16px;
-
-        ion-label {
-            color: var(--fitnesswhite);
-            font-size: 14px;
-        }
+  .sticky-header {
+    height: 22px;
+    position: sticky;
+    top: 0;
+    background: var(--gray-800);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .select-option {
+    &.active,
+    &:hover {
+      background: rgba(225, 219, 197, 0.1);
+      cursor: pointer;
     }
+
+    padding: 16px;
+
+    ion-label {
+      color: var(--fitnesswhite);
+      font-size: 14px;
+    }
+  }
 }
 
 .client-select {
-    .custom-select {
-        background: var(--gray-700);
+  .custom-select {
+    background: var(--gray-700);
+  }
+}
+
+.choose-block {
+  margin: 0;
+
+  .select-content {
+    padding: 5px;
+  }
+
+  .select-wrapper {
+    margin: 0;
+
+    .item-label {
+        color: var(--fitnesswhite);
     }
+  }
+  .custom-select {
+    height: 50px;
+    background: var(--gray-700);
+
+    ion-icon {
+        color: var(--gray-500);
+    }
+  }
+}
+
+.position-relative {
+  position: relative;
+  max-width: 493px;
 }
 </style>
-  

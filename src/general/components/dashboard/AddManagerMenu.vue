@@ -1,9 +1,11 @@
 <template>
 	<ion-menu menu-id="add-manager-menu" side="end" content-id="main-content" class="add-manager-panel">
-    <ion-header>
+    <ion-header class="ion-no-border">
       <ion-toolbar class="title">
-        <!-- <ion-menu-toggle class="back-btn" :auto-hide="false"> -->
-          <ion-icon class="back-btn" src="assets/icon/arrow-back.svg" @click="onBack"></ion-icon>
+        <!-- <ion-menu-toggle slot="start" class="back-btn" :auto-hide="false" > -->
+          <IonButton fill="clear" size="small" slot="start" @click="onBack">
+            <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
+          </IonButton>
         <!-- </ion-menu-toggle> -->
         <ion-title>Invite Team Member</ion-title>
       </ion-toolbar>
@@ -214,7 +216,7 @@ const { value: lastName, errorMessage: lastNameError } = useField<string>(
   requiredFieldSchema
 );
 
-const { value: emailInput, errorMessage: emailInputError } = useField<string>(
+const { value: emailInput, errorMessage: emailInputError, setValue: setEmailValue } = useField<string>(
   "email",
   emailSchema
 );
@@ -472,7 +474,7 @@ const dateSelected = (result: DatePickerModalResult) => {
 };
 
 const onBack = () => {
-  menuController.enable(false);
+  // menuController.enable(false);
   menuController.close();
   isConfirmedModalOpen.value = true;
 };
@@ -498,6 +500,22 @@ const discardModalClosed = (approved: boolean) => {
   position: relative;
   text-align: center;
   padding: 9px;
+
+  ion-title {
+    color: var(--color-white);
+    text-align: center;
+    font-family: Yantramanav;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  ion-button {
+    width: fit-content;
+    max-height: 48px;
+    --padding-bottom: 10px;
+    --padding-top: 10px;
+  }
 }
 .back-btn {
   position: absolute;

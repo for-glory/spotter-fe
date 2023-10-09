@@ -1,6 +1,6 @@
 <template>
   <div v-if="!createWorkoutLoading">
-    <div class="top-buttons">
+    <!-- <div class="top-buttons">
       <ion-button class="dashboard-btn" @click="onBack" fill="clear">
         <ion-icon src="assets/icon/arrow-back.svg" />
         Back
@@ -8,123 +8,143 @@
     </div>
 		<ion-title class="title" color="primary">
 			Post dailys
-		</ion-title>
-    <div>
-      <ion-grid class="post-container">
-        <ion-row>
-          <ion-col size="12">
-            <div class="form-row">
-              <ion-label class="label"> 
-                Choose video for daily
-                <ion-text color="danger">{{ `(We recommend a 10 sec intro and a minimum of 1 minute video)` }}</ion-text>
-              </ion-label>
-              <video-uploader
-                :video="videoPath"
-                @delete="removeVideo"
-                @change="videoSelected"
-                :thumbnail="thumbnail"
-                :loading="videoOnLoading"
-                :video-size="videoInfo.size"
-                :video-name="videoInfo.name"
-                button-text="Upload"
-                :loadingPercent="percentLoaded"
-              />
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12" size-md="6">
-            <div class="form-row">
+		</ion-title> -->
+    <WebHeader class="header" back-btn title="Post dailys" gold-title @back="onBack"  />
+    <div class="content">
+      <div class="post-container">
+        <ion-grid class="post">
+          <ion-row>
+            <ion-col size="12">
+              <div class="form-row">
+                <ion-label class="label"> 
+                  Choose video for daily
+                  <ion-text color="danger">{{ `(We recommend a 10 sec intro and a minimum of 1 minute video)` }}</ion-text>
+                </ion-label>
+                <video-uploader
+                  new-dedc
+                  :video="videoPath"
+                  @delete="removeVideo"
+                  @change="videoSelected"
+                  :thumbnail="thumbnail"
+                  :loading="videoOnLoading"
+                  :video-size="videoInfo.size"
+                  :video-name="videoInfo.name"
+                  button-text="Upload"
+                  :loadingPercent="percentLoaded"
+                />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="form-row">
+                <base-input
+                  v-model:value="titleValue"
+                  :error-message="titleError"
+                  font-lato-bold
+                  :white-input="true"
+                  placeholder="Enter title"
+                  name="workoutTitle"
+                  label="Choose a name for daily"
+                  required
+                />
+              </div>
+            </ion-col>
+            <ion-col size="12" size-md="6">
               <base-input
-                v-model:value="titleValue"
-                :error-message="titleError"
-                placeholder="Enter title"
-                name="workoutTitle"
-                label="Choose a name for daily"
+                font-lato-bold
+                :white-input="true"
+                v-model:value="priceValue"
+                :error-message="priceError"
+                placeholder="Enter price"
+                type="number"
+                name="price"
+                label="Set price (USD $)"
                 required
               />
-            </div>
-          </ion-col>
-          <ion-col size="12" size-md="6">
-            <base-input
-              v-model:value="priceValue"
-              :error-message="priceError"
-              placeholder="Enter price"
-              type="number"
-              name="price"
-              label="Set price (USD $)"
-              required
-            />
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12" size-md="6">
-            <div class="form-row d-flex-col gap-8">
-              <ion-text class="select-label color-gray">Choose intensity level</ion-text>
-              <ion-item class="choose-place">
-                <div class="d-flex align-items-center justify-content-between w-100">
-                  <ion-text class="select-label color-white">Choose intensity level</ion-text>
-                  <ion-select
-                    class="always-flip"
-                    toggleIcon="caret-down-sharp"
-                    interface="popover"
-                    label="Choose intensity level"
-                    placeholder="Select"
-                    @ionChange="onChange"
-                    :value="selectedType"
-                  >
-                    <ion-select-option 
-                      v-for="(workoutType, id) in workoutTypes"
-                      :key="id"
-                      :value="workoutType.id"
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="form-row d-flex-col gap-8">
+
+                <!-- <ion-text class="select-label color-gray">Choose intensity level</ion-text> -->
+                <!-- <ion-item class="choose-place choose-block">
+                  <div class="d-flex align-items-center justify-content-between w-100"> -->
+                    <CustomSelection choose-block 
+                                      label="Choose intensity level" 
+                                      placeholder="Workout type" 
+                                      :selected-value="selectedType"
+                                      @select-change="(e) => selectedType = e"
+                                      :options="workoutTypes" />
+                    <!-- <ion-text class="select-label color-white">Choose intensity level</ion-text> -->
+                    <!-- <ion-select
+                      class="always-flip"
+                      toggleIcon="caret-down-sharp"
+                      interface="popover"
+                      label="Choose intensity level"
+                      placeholder="Select"
+                      @ionChange="onChange"
+                      :value="selectedType"
                     >
-                      {{ workoutType.name }}
-                    </ion-select-option>
-                  </ion-select>
-                </div>
-              </ion-item>
+                      <ion-select-option 
+                        v-for="(workoutType, id) in workoutTypes"
+                        :key="id"
+                        :value="workoutType.id"
+                      >
+                        {{ workoutType.name }}
+                      </ion-select-option>
+                    </ion-select> -->
+                  <!-- </div>
+                </ion-item> -->
+              </div>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <div class="form-row">
+                <ion-label class="label label-color"> Select fitness tags </ion-label>
+                <choose-block
+                  title="Select Tags"
+                  font-lato-bold
+                  :web-event-item="true"
+                  :value="muscleTypesValue"
+                  style="cursor: pointer"
+                  @handle-click="openFitnessTag"
+                />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <div class="form-row">
+                <base-input
+                  font-lato-bold
+                  :white-input="true"
+                  :rows="3"
+                  :maxlength="150"
+                  label="Create instruction tip for video"
+                  @change="dailyDescriptionChange"
+                  v-model:value="dailyDescription"
+                  placeholder="Enter instruction tips"
+                />
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <div class="action-wrap">
+              <ion-button
+                @click="handleSubmit"
+                type="submit"
+                expand="block"
+                :disabled="!isValidForm"
+              >
+                Post Daily
+              </ion-button>
             </div>
-          </ion-col>
-          <ion-col size="12" size-md="6">
-            <div class="form-row">
-              <ion-label class="label"> Select fitness tags </ion-label>
-              <choose-block
-                title="Select Tags"
-                :value="muscleTypesValue"
-                style="cursor: pointer"
-                @handle-click="onHandleSelect(EntitiesEnum.DashboardMuscleTypes)"
-              />
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12">
-            <div class="form-row">
-              <base-input
-                :rows="3"
-                :maxlength="150"
-                label="Create instruction tip for video"
-                @change="dailyDescriptionChange"
-                v-model:value="dailyDescription"
-                placeholder="Enter instruction tips"
-              />
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <div class="action-wrap">
-            <ion-button
-              @click="handleSubmit"
-              type="submit"
-              expand="block"
-              :disabled="!isValidForm"
-            >
-              Post Daily
-            </ion-button>
-          </div>
-        </ion-row>
-      </ion-grid>
-    </div>
+          </ion-row>
+        </ion-grid>
+      </div>
+  </div>
+
   </div>
   <ion-spinner
     v-else
@@ -160,7 +180,8 @@ import {
   IonSelect,
   IonSelectOption,
   toastController,
-  IonSpinner
+  IonSpinner,
+modalController
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { minutesDuration } from "@/const/minutes-durations";
@@ -193,6 +214,9 @@ import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import useRoles from "@/hooks/useRole";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import CustomSelection from "../settings/CustomSelection.vue";
+import WebHeader from "@/general/components/blocks/headers/WebHeader.vue";
+import MuscleTypes from "./MuscleTypes.vue";
 
 const percentLoaded = ref<number | undefined>();
 
@@ -215,6 +239,8 @@ const thumbnail = computed(
   () =>store.workoutPreview
 );
 
+console.log("store.workoutType", store.workoutType);
+
 const { value: titleValue, errorMessage: titleError } = useField<string>(
   "workoutTitle",
   requiredFieldSchema
@@ -223,11 +249,19 @@ const { result: workoutTypesResult, loading } = useQuery<WorkoutTypesQuery>(Work
   first: 100,
   page: 1,
 });
-const workoutTypes = computed(() => workoutTypesResult.value?.workoutTypes?.data);
+const workoutTypes = computed(() => 
+  workoutTypesResult.value?.workoutTypes?.data.map(e => {
+    return {
+      title: e.name,
+      value: e.id
+    }
+  })
+);
 const onChange = (value: any) => {
   let type = workoutTypes.value?.find((workout: any) => workout?.id === value.detail.value);
   store.setValue("workoutType", type as WorkoutType);
 };
+console.log("workoutTypes.value", workoutTypes.value);
 
 
 let abort: any;
@@ -259,9 +293,10 @@ const dailyDescriptionChange = (value: string) => {
   store.setValue("description", value);
 };
 
+
 const workoutType = computed(() => store.workoutType?.name || "");
 
-const selectedType = computed(() => store.workoutType?.id);
+const selectedType = ref<any>(store.workoutType);
 
 const muscleTypesValue = computed(() =>
   store.workoutMuscleTypes?.length > 1
@@ -419,12 +454,24 @@ const removeVideo = () => {
   store.setValue("path", "");
 };
 
+const openFitnessTag = async () => {
+  const modal = await modalController.create({
+    component: MuscleTypes,
+    cssClass: "muscle-types-modal",
+    componentProps: {
+      isModal: true
+    }
+  });
+  await modal.present()
+}
+
 const options = minutesDuration(10, 240, 10);
 </script>
 
 <style lang="scss" scoped>
-.post-container {
+.post {
   max-width: 640px;
+  padding: 20px 10px;
 }
 .action-wrap {
   display: flex;
@@ -512,5 +559,23 @@ const options = minutesDuration(10, 240, 10);
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
+}
+
+.content {
+  padding: 20px;
+    .post-container {
+      background: #262626;
+      max-width: 900px;
+      margin: auto;
+    }
+}
+
+.label-color {
+  color: var(--fitnesswhite);
+}
+
+.header {
+  margin-top: 20px;
+  margin-left: 50px;
 }
 </style>

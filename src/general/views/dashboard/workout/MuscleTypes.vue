@@ -1,15 +1,16 @@
 <template>
-  <div class="top-buttons">
+  <div class="top-buttons" v-if="!isModal">
     <ion-button class="dashboard-btn" @click="onBack" fill="clear">
       <ion-icon src="assets/icon/arrow-back.svg" />
       Back
     </ion-button>
   </div>
   <ion-spinner v-if="loading" name="lines" class="spinner" />
-  <div v-else>
+  <div :class="{'content': isModal}" v-else>
     <ion-text class="title">Fitness Tags</ion-text>
     <checkbox-group
       class="list-content"
+      font-ytmn
       @change="onChange"
       :options="bodyParts"
     />
@@ -44,6 +45,15 @@ import { useRouter } from "vue-router";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
+
+const props = withDefaults(defineProps<{
+  isModal?:boolean
+}>(), {
+
+  isModal: false
+});
+console.log(props);
+
 
 const router = useRouter();
 
@@ -144,5 +154,17 @@ const submit = () => {
   font-family: var(Lato);
   color: #E1DBC5;
   margin-left: 24px;
+}
+
+.content {
+  padding: 25px 0 16px 0;
+
+  .title {
+    color: var(--FITNESS-BEIGE, var(--Beige, #E1DBC5));
+    font-family: Yantramanav;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+  }
 }
 </style>

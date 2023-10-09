@@ -1,15 +1,16 @@
 <template>
-  <div class="create-event">
+  <div :class="[{'create-event': !isNative, 'native-create-event': isNative}]">
     <ion-grid>
       <ion-row>
         <ion-col>
           <div class="form-row">
-            <ion-label class="label"> Choose cover for event </ion-label>
+            <ion-label class="label file-label"> Choose cover for event </ion-label>
             <photos-loader
               @upload="uploadPhoto"
               @delete="deletePhoto"
               @change="uploadPhoto"
               :circle-shape="false"
+              :is-web="isNative ? false : true"
               :photos="eventPhotos"
               :loading="photoOnLoad"
               :progress="percentPhotoLoaded"
@@ -23,6 +24,8 @@
           <div class="form-row">
             <base-input
               required
+              font-lato-bold
+              :white-input="isNative ? false : true"
               :disabled="loading"
               @change="eventTitleChange"
               v-model:value="eventTitle"
@@ -37,6 +40,8 @@
             <base-input
               type="text"
               :disabled="loading"
+              font-lato-bold
+              :white-input="isNative ? false : true"
               @change="eventPriceChange"
               v-model:value="eventPrice"
               label="Entry fee(USD $)"
@@ -49,6 +54,9 @@
             <ion-label class="label"> Choose equioment and amenitites </ion-label>
             <choose-block
               :disabled="loading"
+              font-lato-bold
+              is-inactive
+              :web-event-item="isNative ? false : true"
               title="Equipment and amenities"
               @handle-click="onChooseAmenities"
               :value="
@@ -64,6 +72,8 @@
           <div class="form-row">
             <choose-block
               title="Location"
+              font-lato-bold
+              :web-event-item="isNative ? false : true"
               class="form-row__control"
               @handle-click="onChooseLocation"
               :value="
@@ -78,6 +88,8 @@
           <div class="form-row">
             <base-input
               type="text"
+              font-lato-bold
+              :white-input="isNative ? false : true"
               :disabled="loading"
               @change="eventMaxParticipantsChange"
               v-model:value="eventMaxParticipants"
@@ -90,6 +102,8 @@
           <div class="form-row">
             <base-input
               type="text"
+              font-lato-bold
+              :white-input="isNative ? false : true"
               :disabled="loading"
               label="Discount (optional)"
               placeholder="Enter discount value"
@@ -101,6 +115,8 @@
             <ion-label class="label"> Choose date of event </ion-label>
             <choose-block
               title="Start date"
+              font-lato-bold
+              :web-event-item="isNative ? false : true"
               :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
               @handle-click="
                 showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
@@ -116,6 +132,8 @@
             <ion-label class="label"> End date </ion-label>
             <choose-block
               title="End date"
+              font-lato-bold
+              :web-event-item="isNative ? false : true"
               :disabled="!eventStartDate || !eventStartTime || loading"
               :value="eventEndDate ? dayjs(eventEndDate).format('D MMMM') : ''"
               @handle-click="
@@ -134,6 +152,8 @@
               <template #button>
                 <choose-block
                   title="Start time"
+                  font-lato-bold
+                  :web-event-item="isNative ? false : true"
                   :value="eventStartTime"
                   :disabled="!eventStartDate || loading"
                   @handle-click="openPicker('startTime')"
@@ -149,6 +169,8 @@
               <template #button>
                 <choose-block
                   title="End time"
+                  font-lato-bold
+                  :web-event-item="isNative ? false : true"
                   :value="eventEndTime"
                   :disabled="!eventEndDate || loading"
                   @handle-click="openPicker('endTime')"
@@ -163,6 +185,8 @@
               :rows="3"
               :maxlength="150"
               :disabled="loading"
+              font-lato-bold
+              :white-input="isNative ? false : true"
               label="Event description"
               @change="eventDescriptionChange"
               v-model:value="eventDescription"
@@ -177,36 +201,53 @@
           class="actions-wrapper"
           :class="{ 'actions-wrapper--fixed': footerFixed }"
         > -->
-        <ion-button style="margin-right: 14px;"
-          expand="block"
-          class="secondary"
-          @click="submitEvent('exit')"
-          :disabled="
-            !props.edit ? !eventTitle?.length || !eventPhotos?.length || !selectedAddress : false
-          "
-        >
-          {{ saveButtonText || 'Save' }}
-        </ion-button>
-        <ion-button
-          style="margin-right: 14px;"
-          expand="block"
-          class="secondary"
-          @click="submitEvent('next')"
-          v-if="nextButton"
-          :disabled="
-            !eventTitle?.length || !eventPhotos?.length || !selectedAddress
-          "
-        >
-          {{ nextButtonText || 'Next' }}
-        </ion-button>
-        <ion-button
-          @click="onSkip"
-          class="secondary"
-          fill="outline"
-          v-if="skipButton"
-        >
-        {{ skipButtonText || 'Discard' }}
-        </ion-button>
+          <template v-if="!isNative">
+            <ion-button style="margin-right: 14px;" v-if="saveBtn"
+              expand="block"
+              class="secondary"
+              @click="submitEvent('exit')"
+              :disabled="
+                !props.edit ? !eventTitle?.length || !eventPhotos?.length || !selectedAddress : false
+              "
+            >
+              {{ saveButtonText || 'Save' }}
+            </ion-button>
+            <ion-button
+              style="margin-right: 14px;"
+              expand="block"
+              class="secondary"
+              @click="submitEvent('next')"
+              v-if="nextButton"
+              :disabled="
+                !eventTitle?.length || !eventPhotos?.length || !selectedAddress
+              "
+            >
+              {{ nextButtonText || 'Next' }}
+            </ion-button>
+            <ion-button
+              @click="onSkip"
+              fill="outline"
+              :color="skipButtonColor"
+              v-if="skipButton"
+            >
+            {{ skipButtonText || 'Discard' }}
+            </ion-button>
+            <ion-button v-if="primaryBtnText" @click="submitEvent('exit')">
+              {{ primaryBtnText }}
+            </ion-button>
+        </template>
+
+        <div  class="native-btn-wrapper">
+          <ion-button expand="block">
+            Add next event
+          </ion-button>
+          <ion-button expand="block" fill="outline">
+            Create Event
+          </ion-button>
+          <ion-button expand="block" fill="outline">
+            Create Event
+          </ion-button>
+        </div>
         <!-- </div> -->
       </ion-row>
     </ion-grid>
@@ -237,6 +278,7 @@ import {
   IonRow,
   IonCol,
   toastController,
+  IonGrid
 } from "@ionic/vue";
 import {
   inject,
@@ -283,6 +325,7 @@ enum DateFieldsEnum {
   EndDate = "END_DATE",
 }
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
+const isNative = Capacitor.isNativePlatform();
 const chooseGymLocation = () => {
     router.push({
     name: EntitiesEnum.ChooseLocation, 
@@ -327,13 +370,19 @@ const props = withDefaults(
     edit?: boolean;
     loading?: boolean;
     data?: CreateEventInput | any;
+    saveBtn?: boolean;
     saveButtonText?: string;
     nextButtonText?: string;
+    primaryBtnText?: string;
+    skipButtonColor?: string;
     nextButton?: boolean;
     skipButtonText?: string;
     skipButton?: boolean;
     footerFixed?: boolean;
-  }>(), {}
+  }>(), {
+    skipButtonColor: "secondary",
+    saveBtn: true
+  }
 );
 
 watch(
@@ -628,7 +677,7 @@ const startTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "Start time",
       role: "cancel",
     },
     {
@@ -650,7 +699,7 @@ const endTimeOptions = {
   columns: timePickerColums,
   buttons: [
     {
-      text: "Cancel",
+      text: "End time",
       role: "cancel",
     },
     {
@@ -809,7 +858,7 @@ defineExpose({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .form-row {
   &__control {
     &:not(:first-child) {
@@ -853,7 +902,7 @@ input.search-form__control.form-row__control.pac-target-input {
   }
 }
 .create-event {
-    background: #333;;
+    background: var(--gray-700);
     border-radius: 10px;
     padding: 20px;
     padding-inline: 12%;
@@ -868,11 +917,6 @@ ion-item.input-container {
 
   --border-color: var(--white-1000) !important;
 
-}
-
-.choose-place {
-  border: 1px solid #fff !important;;
-  border-radius: 8px  !important;
 }
 .choose-place1 {
     font-size: 14px;
@@ -901,6 +945,19 @@ input:focus {
     border: none !important;
 }
 
+.native-create-event {
+  .label {
+    color: var(--gray-500) !important;
+    font-weight: 500;
+  }
+}
 
+.file-label {
+  color: var(--gray-500) !important;
+}
+
+.native-btn-wrapper {
+  width: 100%;
+}
 
 </style>

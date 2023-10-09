@@ -29,3 +29,10 @@
     }
   }
 }
+
+.muscle-types-modal {
+  &::part(content) {
+    height: 382px;
+    width: 784px;
+  }
+} 

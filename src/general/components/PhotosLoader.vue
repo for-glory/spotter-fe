@@ -1,24 +1,32 @@
 <template>
-  <div class="add-photo">
+  <div :class="['add-photo', {'web-add-photo': isWeb}]">
     <ion-button
       @click="openImagePicker()"
       class="add-photo__file"
       expand="block"
       :disabled="loading"
     >
-      <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" />
-      <div class="add-photo__file__loader" v-if="loading">
-        <circle-progress :percent="progress" class="add-photo__img__progress" />
+      <template v-if="!isWeb">
+        <ion-icon src="assets/icon/payment/plus.svg" class="add-icon" />
+        <div class="add-photo__file__loader" v-if="loading">
+          <circle-progress :percent="progress" class="add-photo__img__progress" />
+        </div>
+      </template>
+      <div class="description" v-else>
+        Drag and Drop file &nbsp; or &nbsp;
+        <span>Choose file</span>
       </div>
     </ion-button>
-    <ion-button
+    <div class="img-container">
+      <ion-button
       v-for="(img, i) in photos"
       :key="i"
       class="add-photo__img"
       :disabled="loading"
-    >
+      >
       <ion-img @click="onPhotoClick(i, img.id)" :src="img.url" />
     </ion-button>
+  </div>
   </div>
   <photo-cropper
     :is-open="isCropperOpen"
@@ -65,10 +73,12 @@ withDefaults(
     loading?: boolean;
     progress?: number;
     disabled?: boolean;
+    isWeb?: boolean;
   }>(),
   {
     circleShape: true,
     disabled: false,
+    isWeb: false
   }
 );
 
@@ -293,6 +303,36 @@ const getUploadedImg = (image: string) => {
       height: 100%;
       object-fit: cover;
     }
+  }
+}
+
+.img-container {
+  display: flex;
+}
+
+.web-add-photo {
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  .add-photo__file {
+    margin: 0;
+    height: 112px;
+    flex: unset;
+  }
+  .description {
+    color: var(--gray-60);
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+
+    span {
+      border-bottom: 1px solid;
+    }
+  }
+
+  .img-container {
+    flex-wrap: wrap;
   }
 }
 </style>

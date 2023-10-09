@@ -5,7 +5,7 @@
       slot="end"
       fill="clear"
       color="primary"
-      
+      v-if="hideViewMore"
       class="items-header__btn"
       @click="$emit('handle-view')"
     >
@@ -29,6 +29,7 @@ withDefaults(
     role?:RoleEnum
   }>(),
   {
+    hideViewMore: true,
     linkTo: "all",
   }
 );

@@ -1,5 +1,5 @@
 <template>
-  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem, 'in-active': isInactive, 'active': isActive }" :fill="itemOutline ? 'outline' : undefined" :lines="isWebItem ? 'none' : undefined">
+  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem, 'in-active': isInactive, 'active': isActive, 'font-lato-bold': fontLatoBold, 'dark-value': webEventItem }" :fill="itemOutline ? 'outline' : undefined" :lines="isWebItem ? 'none' : undefined">
     <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer, 'danger-title': dangerTitle}" slot="start">
       <ion-icon
         v-if="icon"
@@ -45,7 +45,9 @@ withDefaults(
     detailIcon?: boolean;
     dangerTitle?:boolean;
     isInactive?: boolean;
-    isActive?:boolean
+    isActive?:boolean;
+    fontLatoBold?: boolean;
+    webEventItem?: boolean;
   }>(),
   {
     disabled: false,
@@ -54,7 +56,9 @@ withDefaults(
     isLightItem: false,
     detailIcon: true,
     isInactive: false,
-    isActive: false
+    isActive: false,
+    fontLatoBold: false,
+    webEventItem: false
   }
 );
 
@@ -160,6 +164,26 @@ const onClick = () => {
     &__label {
       color: var(--fitnesswhite) !important;
     }
+  }
+}
+
+.font-lato-bold {
+    border: 1px solid rgba(255, 255, 255, 0.60);
+    border-radius: 8px;
+    .choose-place__value, .choose-place__label {
+      font-family: Lato !important;
+      color: var(--fitnesswhite) !important;
+      font-weight: 400 !important;
+
+    }
+}
+
+.dark-value {
+  .choose-place__label {
+    color: var(--gray-500) !important;
+  }
+  .choose-place__value {
+    color: var(--gray-500);
   }
 }
 </style>

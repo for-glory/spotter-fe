@@ -1,14 +1,14 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Events">
+      <!-- <page-header back-btn @back="onBack" title="Events">
         <template #custom-btn>
           <ion-button @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
         </template>
-      </page-header>
+      </page-header> -->
       <div class="banner">
         <ion-text class="banner__title">Create events for clients and trainers</ion-text>
         <ion-text class="banner__text">
@@ -353,6 +353,7 @@ const onBack = () => {
   width: 100%;
   position: relative;
   overflow: hidden;
+  border-radius: 0 0 0 15px;
 
   &__background-image {
     position: absolute;
