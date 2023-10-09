@@ -58,8 +58,11 @@ import { MapStyles } from "@/constants/map-styles";
 import { Address } from "@/generated/graphql";
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import { MapFilters, PositionLatLng } from "@/ts/types/map";
+import { userCurrentPosition } from "../stores/userCurrentPosition";
 
 export type MapMarkerItem = Pick<Address, "id" | "lat" | "lng">;
+
+const positionStore = userCurrentPosition();
 
 const emits = defineEmits<{
   (e: "change-position", result: MapFilters): void;
@@ -181,6 +184,7 @@ const setCurrentPosition = async () => {
     map.value.panTo(userPosition.value);
   }
   const myPosition: Position = await Geolocation.getCurrentPosition();
+  positionStore.setValue(myPosition.coords.latitude,myPosition.coords.longitude);
   userPosition.value = {
     lat: myPosition.coords.latitude,
     lng: myPosition.coords.longitude,

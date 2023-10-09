@@ -39,7 +39,7 @@
           @fullscreen="changeMapView"
           :selected-item="selectedItem"
           @change-position="mapPositionChanged"
-          :use-current-location="useCurrentLocation"
+          :use-current-location="useCurrentLocation || isWebView"
         >
         </items-map>
       </div>

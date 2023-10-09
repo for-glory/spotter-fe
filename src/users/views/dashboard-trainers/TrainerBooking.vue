@@ -23,7 +23,7 @@
                     </div>
                     <div class="training-place__container" v-if="showChoosePlace">
                         <ion-text class="training-place__title">
-                            Choose place of training session
+                            Choose training location
                         </ion-text>
                         <choose :value="paymentStore?.place?.text" title="Place" class="training-place__info"
                             :class="{ 'active': isExpanded }" :is-web-item="true" :item-outline="!isExpanded"
@@ -46,7 +46,7 @@
 import { IonIcon, IonTitle, IonButton, toastController, IonText } from "@ionic/vue";
 import BaseCustomCalendar from "@/general/components/base/BaseCustomCalendar.vue";
 import BaseCalendar from "@/general/components/base/BaseCalendar.vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useRoute, useRouter } from "vue-router";
 import { AddTrainingToCartDocument, AvailableTrainingOptionsEnum, Cart, CreateChatDocument, Query, SettingsCodeEnum, TrainerRate, TrainerTypeEnum, User, UserAvailabilityDocument, UserAvailabilityQuery, UserDocument } from "@/generated/graphql";
@@ -82,6 +82,13 @@ const { mutate: createChatMutation } = useMutation(CreateChatDocument);
 const { result, loading } = useQuery<Pick<Query, "user">>(GetTrainerDocument, {
     id: route.params.id,
 });
+
+watch(
+  () => paymentStore?.place?.text,
+  () => {
+    cart.value = null;
+  }
+);
 
 const openChat = () => {
     createChatMutation({ participant_id: route.params.id }).then((res) => {

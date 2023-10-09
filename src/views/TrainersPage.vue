@@ -39,12 +39,13 @@
     <ion-spinner name="lines" v-if="loading" class="spinner" />
     <template v-else>
       <p v-if="error" class="ion-text-center">Something went wrong...</p>
-      <template v-else-if="!selected && trainers.length">
+      <template v-else-if="!selected && trainerList.length">
         <trainer-item
           :key="trainer.id"
           :trainer="trainer"
-          v-for="trainer in trainers"
+          v-for="trainer in trainerList"
           end-button="Book"
+          :distance="true"
         />
       </template>
       <template v-else-if="selected">
@@ -91,6 +92,10 @@ import { useLazyQuery } from "@vue/apollo-composable";
 import useRoles from "@/hooks/useRole";
 import router from "@/router";
 import { EntitiesEnum } from "@/const/entities";
+import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
+import { userCurrentPosition } from "@/general/stores/userCurrentPosition";
+
+const userPositionStore = userCurrentPosition();
 
 const props = defineProps<{
   filters?: MapFilters;
@@ -153,6 +158,17 @@ const {
     availability: availability.value,
   }
 );
+
+const trainerList = computed(()=>{
+  const t: any = [];
+  if(trainers.value.length){
+    trainers.value.forEach((e: any)=>{
+      t.push({...e,distance: distanceBetweenCoords({ lat: e.address?.lat || 0, lng: e.address?.lng || 0 }, { lat: userPositionStore.lat, lng: userPositionStore.lng })})
+    })
+  }
+  return t;
+})
+
 
 const selectedTrainer = computed(() =>
   trainers.value.find((trainers) => trainers.id === props.selected)

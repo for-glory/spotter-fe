@@ -118,11 +118,11 @@
                     </ion-segment>
                     <div class="ion-margin-top info mx-100" v-if="segmentValue == 'trainer'">
                         <div class="info-item">
-                            <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
+                            <strong class="info-item__title">${{ user?.trainerRates[1]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
                         </div>
                         <div class="info-item">
-                            <strong class="info-item__title">${{ user?.trainerRates[1]?.front_price }}</strong>
+                            <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
                         </div>
                     </div>

@@ -1,64 +1,66 @@
 <template>
-  <ion-modal ref="chooseModal" class="modal hide-scrollbar" :class="{ 'web-location-modal': isWebView  }" swipeToClose cssClass="auto-height">
-    <div class="modal__content" :class="{ 'address-content-tr': forAddress}">
+  <ion-modal ref="chooseModal" class="modal hide-scrollbar" :class="{ 'web-location-modal': isWebView }" swipeToClose
+    cssClass="auto-height">
+    <div class="modal__content" :class="{ 'address-content-tr': forAddress }">
       <span v-if="!isWebView" class="modal__closed"></span>
       <ion-label class="modal__title">
         {{ title || "Location" }}
       </ion-label>
       <template v-if="type !== EntitiesEnum.Address">
         <template v-if="forAddress">
-          <search-form placeholder="Enter address name" :no-padding="role === RoleEnum.User ? true : false" :extra-padding="true" hide-results hidden-cancel></search-form>
+          <search-form placeholder="Enter address name" :no-padding="role === RoleEnum.User ? true : false"
+            :extra-padding="true" hide-results hidden-cancel></search-form>
           <div class="address-list hide-scrollbar">
             <ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+              <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+              <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
             </ion-item>
             <ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+              <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+              <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
             </ion-item>
             <ion-item lines="full">
-                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
+              <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+              <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
             </ion-item>
 
             <template v-if="isWebView">
               <ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item><ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon  slot="start" src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
-            <ion-item lines="full">
-                <ion-icon slot="start"  src="/assets/icon/location.svg"></ion-icon>
-                <div class="address">315  south 7th  street, newark, New Jersey <span class="blold"> USA</span> </div>
-            </ion-item>
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item><ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
+              <ion-item lines="full">
+                <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
+                <div class="address">315 south 7th street, newark, New Jersey <span class="blold"> USA</span> </div>
+              </ion-item>
             </template>
           </div>
         </template>
         <template v-else>
-          <div class="address-container">
+          <div class="address-container" v-if="role !== RoleEnum.Trainer">
             <ion-text class="address-content">
               Enter address name
             </ion-text>
@@ -69,27 +71,16 @@
               {{ `${selectedAddress?.countryName}` }}
             </ion-text>
           </div>
-          <GMapAutocomplete
-            placeholder="Enter your address"
-            class="search-form__control"
-            :class="{
-              'search-form__control--on-focus': isFocused,
-            }"
-            @place_changed="setPlace"
-          >
+          <GMapAutocomplete placeholder="Enter your address" class="search-form__control" :class="{
+            'search-form__control--on-focus': isFocused,
+          }" @place_changed="setPlace">
           </GMapAutocomplete>
         </template>
       </template>
     </div>
   </ion-modal>
-  <confirmation
-    :is-visible="showConfirmationModal"
-    title="Are you sure you select the right address?"
-    description=""
-    button-text="Yes, I'm sure"
-    @discard="onAddressConfirmed"
-    @decline="hideModal"
-  />
+  <confirmation :is-visible="showConfirmationModal" title="Are you sure you select the right address?" description=""
+    button-text="Yes, I'm sure" @discard="onAddressConfirmed" @decline="hideModal" />
 </template>
 
 <script setup lang="ts">
@@ -106,7 +97,7 @@ import {
   City,
   State,
   CitiesDocument,
-RoleEnum,
+  RoleEnum,
 } from "@/generated/graphql";
 import {
   NativeGeocoderResult,
@@ -128,12 +119,12 @@ const selectedAddress = ref<NativeGeocoderResult | null>(null);
 const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 
 withDefaults(defineProps<{
-    forAddress?:boolean,
-    isWebView?:boolean
-  }>(),  {
-    forAddress: false,
-    isWebView: false
-  });
+  forAddress?: boolean,
+  isWebView?: boolean;
+}>(), {
+  forAddress: false,
+  isWebView: false
+});
 
 const emits = defineEmits<{
   (e: "cancel"): void;
@@ -149,41 +140,42 @@ const { load: getCities, refetch: getCityByName } = useLazyQuery(
   }
 );
 getCities();
-const { role } = useRoles()
+const { role } = useRoles();
 const present = () => {
   chooseModal?.value?.$el.present();
 };
 
 const setPlace = (place: any) => {
   if (place) {
-    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
+    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value);
     const address = gmapObjToNativeGeocoderResultObject(place);
 
     if (address.locality) {
       getCityByName({
-        first: 15,
+        first: 2,
         name: address.locality,
         state_code: address.administrativeArea,
       })?.then(async (res) => {
         const res_city = res.data.cities.data[0];
-        console.log("selected city", res_city)
-        store.setAddress(res_city.state, res_city, address);
+        console.log("selected city", res_city);
+        store.setAddress(res_city?.state, res_city, address);
         const venueAddress = {
-          state:res_city.state,
-           city: res_city,
-           address: address
-        }
-        localStorage.setItem("venueAddress", JSON.stringify(venueAddress))
+          state: res_city?.state,
+          city: res_city,
+          address: address
+        };
+        localStorage.setItem("venueAddress", JSON.stringify(venueAddress));
         console.log({ res_city });
+        emits('select', store.address);
       });
       chooseModal?.value?.$el.dismiss();
     }
   }
-}
+};
 const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
-  let street_number =''
-  let route =''
-  const address:NativeGeocoderResult = {
+  let street_number = '';
+  let route = '';
+  const address: NativeGeocoderResult = {
     latitude: gmObj.geometry.location.lat().toString(),
     longitude: gmObj.geometry.location.lng().toString(),
     countryCode: '',
@@ -196,46 +188,37 @@ const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
     thoroughfare: '',
     subThoroughfare: '',
     areasOfInterest: []
-  }
-  for (let i=0; i < gmObj.address_components.length; i++)
-  {
-    if(gmObj.address_components[i].types.includes("postal_code"))
-    {
+  };
+  for (let i = 0; i < gmObj.address_components.length; i++) {
+    if (gmObj.address_components[i].types.includes("postal_code")) {
       address.postalCode = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("locality"))
-    {
+    if (gmObj.address_components[i].types.includes("locality")) {
       address.locality = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("subLocality"))
-    {
+    if (gmObj.address_components[i].types.includes("subLocality")) {
       address.subLocality = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("country"))
-    {
+    if (gmObj.address_components[i].types.includes("country")) {
       address.countryName = gmObj.address_components[i].long_name;
       address.countryCode = gmObj.address_components[i].short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
-    {
+    if (gmObj.address_components[i].types.includes("administrative_area_level_1")) {
       address.administrativeArea = gmObj.address_components[i].short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
-    {
+    if (gmObj.address_components[i].types.includes("administrative_area_level_2")) {
       address.subAdministrativeArea = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("street_number"))
-    {
+    if (gmObj.address_components[i].types.includes("street_number")) {
       street_number = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("route"))
-    {
+    if (gmObj.address_components[i].types.includes("route")) {
       route = gmObj.address_components[i].long_name;
     }
   }
-  address.thoroughfare = street_number + " " + route
+  address.thoroughfare = street_number + " " + route;
   return address;
-}
+};
 
 defineExpose({
   present,
@@ -314,6 +297,7 @@ defineExpose({
     margin: 0;
   }
 }
+
 .search-form {
   position: relative;
   padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
@@ -343,6 +327,7 @@ defineExpose({
     --box-shadow: inset 0 0 0 0.8px var(--gray-600);
   }
 }
+
 .address-container {
   display: flex;
   min-height: 48px;
@@ -353,13 +338,16 @@ defineExpose({
   background: var(--gray-700);
   justify-content: space-between;
 }
+
 .address-content {
   font-weight: 300;
   font-size: 14px;
   color: var(--ion-color-white);
 }
+
 .address-content-tr {
   padding: 24px 24px calc(16px + var(--ion-safe-area-bottom)) !important;
+
   .modal__title {
     color: #FFF;
     font-family: Yantramanav;
@@ -374,11 +362,13 @@ defineExpose({
     flex-direction: column;
     gap: 8px;
     padding-top: 15px;
+
     ion-item {
 
-      &::part(native){
+      &::part(native) {
         border-bottom: 0.8px solid var(--gray-600);
       }
+
       ion-icon {
         color: var(--gray-500);
         margin-inline-end: 12px;
@@ -405,7 +395,7 @@ defineExpose({
   --width: 375px;
   --height: 100%;
 
-  &::part(content){
+  &::part(content) {
     max-height: 531px;
   }
 
