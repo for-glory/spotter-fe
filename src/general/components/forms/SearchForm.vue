@@ -1,14 +1,8 @@
 <template>
-  <div
-    class="search-form"
-    :class="{ 'search-form--on-focus': isFocused || visibleResult,'p-0': noPadding, 'search-form-padding': extraPadding,'search-form-user': role === RoleEnum.User,'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }"
-  >
-    <ion-back-button
-      v-if="backBtn"
-      class="search-form__back-btn"
-      @click="$emit('back')"
-      icon="assets/icon/arrow-back.svg"
-    >
+  <div class="search-form"
+    :class="{ 'search-form--on-focus': isFocused || visibleResult, 'p-0': noPadding, 'search-form-padding': extraPadding, 'search-form-user': role === RoleEnum.User, 'small-search': role === RoleEnum.User && !Capacitor.isNativePlatform() }">
+    <ion-back-button v-if="backBtn" class="search-form__back-btn" @click="$emit('back')"
+      icon="assets/icon/arrow-back.svg">
     </ion-back-button>
     <div class="position-relative">
       <ion-searchbar ref="searchBar" @ion-change="search" @ion-focus="focusHandle" show-clear-button="never"
@@ -41,21 +35,15 @@
           v-if="!Capacitor?.isNativePlatform() && role === RoleEnum.User && type !== EntitiesEnum.Trainers"
           :facility="(searchResult as any)" />
         <search-result v-else-if="type == EntitiesEnum.Facilities" :item="searchResult" :showRating="!isFacilityTab" />
-        <trainer-item class="ion-margin-bottom" v-else :key="searchResult.id" :trainer="(searchResult as User)"
+        <trainer-item :distance="true" class="ion-margin-bottom" v-else :key="searchResult.id" :trainer="(searchResult as User)"
           end-button="Book" />
       </div>
       <ion-label class="no-found-msg label" v-else>{{ noFoundMsg }}</ion-label>
     </ion-content>
   </div>
 
-  <ion-modal
-    v-if="isFacilityTab || type === EntitiesEnum.Trainers"
-    ref="filtersModal"
-    class="filters-modal"
-    :is-open="isFiltersOpen"
-    :backdrop-dismiss="true"
-    @willDismiss="isFiltersOpen = false"
-  >
+  <ion-modal v-if="isFacilityTab || type === EntitiesEnum.Trainers" ref="filtersModal" class="filters-modal"
+    :is-open="isFiltersOpen" :backdrop-dismiss="true" @willDismiss="isFiltersOpen = false">
     <span class="filters-modal__handle"></span>
     <div :class="['filters-modal__content', { 'user-filter-modal': role === RoleEnum.User }]">
       <div class="form-row">
@@ -100,13 +88,8 @@
     </div>
   </ion-modal>
 
-  <daily-filter-modal
-    v-else
-    ref="filtersModal"
-    :isOpen="isFiltersOpen"
-    @close="isFiltersOpen = false"
-    @applyFilter="applyFilters"
-  />
+  <daily-filter-modal v-else ref="filtersModal" :isOpen="isFiltersOpen" @close="isFiltersOpen = false"
+    @applyFilter="applyFilters" />
 
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
 </template>
@@ -166,8 +149,12 @@ import DailyFilterModal from "@/general/components/modals/workout/DailyFilterMod
 import { useUserStore } from "@/general/stores/user";
 import FacilityItem from "../FacilityItem.vue";
 import { Capacitor } from "@capacitor/core";
+import { Position } from "@capacitor/geolocation";
+import { userCurrentPosition } from "@/general/stores/userCurrentPosition";
+import { distanceBetweenCoords } from "@/helpers/distance-between-coords";
 
 const { role } = useRoles();
+const userPositionStore = userCurrentPosition();
 
 const props = withDefaults(
   defineProps<{
@@ -183,6 +170,7 @@ const props = withDefaults(
     filtersBtn?: boolean;
     extraPadding?: boolean;
     noPadding?: boolean;
+    currentPosition: Position;
   }>(),
   {
     backBtn: false,
@@ -249,8 +237,12 @@ const searchResults = computed(() =>
           address: {
             street: cur.facilities?.length
               ? cur.facilities[0]?.address?.street
-              : "",
+              : null,
+            lat: cur.address?.lat || null,
+            lng: cur.address?.lng || null,
+            id: cur.id
           },
+          distance: distanceBetweenCoords({ lat: cur.address?.lat || 0, lng: cur.address?.lng || 0 }, { lat: userPositionStore.lat, lng: userPositionStore.lng }),
           media: [{ pathUrl: cur.avatarUrl || "" }],
           avatarUrl: cur.avatarUrl,
           score: (cur?.score && cur?.score > 0) ? cur?.score : 0.0,
@@ -326,10 +318,10 @@ const showFilters = () => {
 const filtersModal = ref<typeof IonModal | null>(null);
 
 const applyFilters = async () => {
-  if(isFacilityTab.value){
+  if (isFacilityTab.value) {
     const date_from = filterStartDate.value
-        ? formatTime(filterStartDate.value, filterStartTime.value)
-        : undefined,
+      ? formatTime(filterStartDate.value, filterStartTime.value)
+      : undefined,
       date_to = filterEndDate.value
         ? formatTime(filterEndDate.value, filterEndTime.value)
         : undefined;
@@ -732,10 +724,12 @@ defineExpose({
 
 .small-search {
   justify-content: center;
+
   .position-relative {
     max-width: 500px;
   }
 }
+
 .position-relative {
   position: relative;
   width: 100%;

@@ -22,8 +22,11 @@
               <slot name="end"></slot>
             </div>
           </div>
-          <address-item class="trainer-item__address" v-if="address">
+          <address-item class="trainer-item__address" v-if="address && !distance">
             {{ address }}
+          </address-item>
+          <address-item class="trainer-item__address" v-if="distance && trainer?.distance">
+            {{ trainer?.distance.toFixed(1) }} mile away from you
           </address-item>
         </div>
         <div class="end-button" v-if="endButton">
@@ -53,6 +56,7 @@ import { Capacitor } from "@capacitor/core";
 const props = defineProps<{
   trainer: User;
   endButton?: string;
+  distance: boolean;
 }>();
 
 const { role } = useRoles();
@@ -68,7 +72,7 @@ const handleBookBtn = () => {
 
 const address = computed(() => {
   return (
-    props.trainer?.facilities?.[0]?.address?.street ?? "Dallas, Wall Street, 24"
+    props.trainer?.facilities?.[0]?.address?.street ?? props.trainer.address?.street
   );
 });
 
