@@ -5,61 +5,26 @@
         <page-header back-btn @back="onBack" title="Create trainer profile" />
       </template>
       <template #content>
-        <ion-spinner
-          v-if="loading || updateUserLoading"
-          name="lines"
-          class="spinner"
-        />
+        <ion-spinner v-if="loading || updateUserLoading" name="lines" class="spinner" />
         <div class="edit" v-else>
           <div class="cards__container">
-            <photos-loader
-              @upload="uploadPhoto"
-              @delete="deletePhoto"
-              @change="uploadPhoto"
-              :circle-shape="false"
-              :photos="media"
-              :loading="photoOnLoad"
-              :progress="percentPhotoLoaded"
-              :disabled="loading || updateUserLoading"
-            />
+            <photos-loader @upload="uploadPhoto" @delete="deletePhoto" @change="uploadPhoto" :circle-shape="false"
+              :photos="media" :loading="photoOnLoad" :progress="percentPhotoLoaded"
+              :disabled="loading || updateUserLoading" />
           </div>
 
           <div class="form-row">
-            <base-input
-              label="What’s your full name"
-              v-model:value="firstName"
-              :error-message="firstNameError"
-              placeholder="First Name"
-              name="firstName"
-              class="form-row__control form-row__input"
-              required
-            />
-            <base-input
-              v-model:value="lastName"
-              :error-message="lastNameError"
-              placeholder="Last Name"
-              name="lastName"
-              class="form-row__control form-row__input"
-              required
-            />
+            <base-input label="What’s your full name" v-model:value="firstName" :error-message="firstNameError"
+              placeholder="First Name" name="firstName" class="form-row__control form-row__input" required />
+            <base-input v-model:value="lastName" :error-message="lastNameError" placeholder="Last Name" name="lastName"
+              class="form-row__control form-row__input" required />
           </div>
 
-          <div
-            class="form-row"
-            v-if="
-              trainerType === TrainerTypeEnum.WorkingInGym ||
-              trainerType === TrainerTypeEnum.Both
-            "
-          >
-            <base-input
-              label="Set the hourly rate (USD $)"
-              v-model:value="hourlyRate"
-              :error-message="hourlyRateError"
-              placeholder="Hourly Rate"
-              name="hourlyRate"
-              class="form-row__input"
-              required
-            />
+          <div class="form-row" v-if="trainerType === TrainerTypeEnum.WorkingInGym ||
+            trainerType === TrainerTypeEnum.Both
+            ">
+            <base-input label="Set the hourly rate (USD $)" v-model:value="hourlyRate" :error-message="hourlyRateError"
+              placeholder="Hourly Rate" name="hourlyRate" class="form-row__input" required />
           </div>
 
           <!-- <div
@@ -85,18 +50,11 @@
               Choose the gym if you work in it
             </ion-label>
             <div class="form-row toggle-row">
-              <base-toggle
-                :value="trainerType === TrainerTypeEnum.WorkingInGym"
-                content="I’m working in the gym"
-                class="toggle-wrapper"
-              />
+              <base-toggle :value="trainerType === TrainerTypeEnum.WorkingInGym" content="I’m working in the gym"
+                class="toggle-wrapper" />
             </div>
-            <choose-block
-              title="Choose gym"
-              :value="chosenGym?.name"
-              @handle-click="openChooseGym"
-              :disabled="!workingInGym"
-            />
+            <choose-block title="Choose gym" :value="chosenGym?.name" @handle-click="openChooseGym"
+              :disabled="!workingInGym" />
           </div>
 
           <div class="form-row" @click="goToSchedule">
@@ -107,13 +65,8 @@
           </div>
 
           <div class="form-row">
-            <base-input
-              class="form-row__control form-row__input"
-              value="EES Sport Certificate 2022"
-              placeholder="Enter your certification name"
-              label="Add certification"
-              required
-            />
+            <base-input class="form-row__control form-row__input" value="EES Sport Certificate 2022"
+              placeholder="Enter your certification name" label="Add certification" required />
             <ion-item class="form-row__control certificate-item">
               <ion-label>
                 certificate.pdf (64,5 MB)
@@ -154,72 +107,41 @@
           </template> -->
 
           <template v-if="weiverAndLabilities.length">
-            <div
-              class="form-row"
-              v-for="weiverAndLability in weiverAndLabilities"
-              :key="weiverAndLability.id"
-            >
-              <base-input
-                class="form-row__control"
-                v-model:value="weiverAndLability.title"
-                placeholder="Enter your certification name"
-                label="Add weiver and labilities"
-                required
-                :disabled="subscriptionType === SubscriptionsTierEnum.Basic"
-              />
-              <ion-item
-                @click="
-                  onEdit(
-                    DocumentsTypeEnum.WaiverAndLabilities,
-                    weiverAndLability.id
-                  )
-                "
-                class="form-row__control certificate-item"
-              >
+            <div class="form-row" v-for="weiverAndLability in weiverAndLabilities" :key="weiverAndLability.id">
+              <base-input class="form-row__control" v-model:value="weiverAndLability.title"
+                placeholder="Enter your certification name" label="Add weiver and labilities" required
+                :disabled="subscriptionType === SubscriptionsTierEnum.Basic" />
+              <ion-item @click="
+                onEdit(
+                  DocumentsTypeEnum.WaiverAndLabilities,
+                  weiverAndLability.id
+                )
+                " class="form-row__control certificate-item">
                 <ion-label>
                   {{ weiverAndLability.path.split("/")[1] }}
                   <ion-text color="medium"></ion-text>
                 </ion-label>
-                <ion-icon
-                  src="assets/icon/pencil.svg"
-                  class="edit__edit-icon"
-                  v-if="subscriptionType !== SubscriptionsTierEnum.Basic"
-                />
-                <ion-icon
-                  src="assets/icon/eye.svg"
-                  color="light"
-                  class="edit__edit-icon"
-                />
+                <ion-icon src="assets/icon/pencil.svg" class="edit__edit-icon"
+                  v-if="subscriptionType !== SubscriptionsTierEnum.Basic" />
+                <ion-icon src="assets/icon/eye.svg" color="light" class="edit__edit-icon" />
                 <ion-icon src="assets/icon/trash.svg" class="edit__edit-icon" />
               </ion-item>
             </div>
           </template>
 
           <div class="certificate-controls">
-            <ion-button
-              class="primary-outline font-yantramanav"
-              fill="outline"
-              expand="block"
-              @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)"
-            >
+            <ion-button class="primary-outline font-yantramanav" fill="outline" expand="block"
+              @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)">
               Upload certificate
             </ion-button>
-            <ion-button
-              class="primary-outline font-yantramanav"
-              fill="outline"
-              expand="block"
-              @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)"
-            >
+            <ion-button class="primary-outline font-yantramanav" fill="outline" expand="block"
+              @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)">
               Add waiver or liability
             </ion-button>
           </div>
           <div class="holder-button">
-            <ion-button
-              class="button--submit font-yantramanav font-bold"
-              expand="block"
-              @click="handleSubmit"
-              :disabled="!isValidForm"
-            >
+            <ion-button class="button--submit font-yantramanav font-bold" expand="block" @click="handleSubmit"
+              :disabled="!isValidForm">
               Save
             </ion-button>
           </div>
@@ -228,63 +150,44 @@
     </base-layout>
   </ion-page>
   <div class="web-trainer-edit hide-scrollbar" v-else>
-    <ion-spinner
-      v-if="loading || updateUserLoading"
-      name="lines"
-      class="spinner"
-    />
+    <ion-spinner v-if="loading || updateUserLoading" name="lines" class="spinner" />
     <div class="edit" v-else>
       <div class="cards__container">
-        <photos-loader
-          @upload="uploadPhoto"
-          @delete="deletePhoto"
-          @change="uploadPhoto"
-          :circle-shape="false"
-          :photos="media"
-          :loading="photoOnLoad"
-          :progress="percentPhotoLoaded"
-          :disabled="loading || updateUserLoading"
-        />
+        <photos-loader @upload="uploadPhoto" @delete="deletePhoto" @change="uploadPhoto" :circle-shape="false"
+          :photos="media" :loading="photoOnLoad" :progress="percentPhotoLoaded"
+          :disabled="loading || updateUserLoading" />
       </div>
       <div class="grid">
         <div class="form-row">
-          <base-input
-            label="What’s your full name"
-            v-model:value="firstName"
-            :error-message="firstNameError"
-            placeholder="First Name"
-            name="firstName"
-            class="form-row__input-web"
-            required
-          />
+          <base-input label="What’s your full name" v-model:value="firstName" :error-message="firstNameError"
+            placeholder="First Name" name="firstName" class="form-row__input-web" required />
         </div>
 
-        <div
-          class="form-row"
-          v-if="
-            trainerType === TrainerTypeEnum.WorkingInGym ||
-            trainerType === TrainerTypeEnum.Both
-          "
-        >
-          <base-input
-            label="Set the hourly rate (USD $)"
-            v-model:value="hourlyRate"
-            :error-message="hourlyRateError"
-            placeholder="Hourly Rate"
-            name="hourlyRate"
-            class="form-row__input-web"
-            required
-          />
+        <div class="form-row" v-if="trainerType === TrainerTypeEnum.WorkingInGym ||
+          trainerType === TrainerTypeEnum.Both
+          ">
+          <base-input label="Set the hourly rate (USD $)" v-model:value="hourlyRate" :error-message="hourlyRateError"
+            placeholder="Hourly Rate" name="hourlyRate" class="form-row__input-web" required />
         </div>
+
+        <div class="form-row" v-if="trainerType === TrainerTypeEnum.Freelancer ||
+          trainerType === TrainerTypeEnum.Both
+          ">
+          <base-input label="Set the remote hourly rate (USD $)" v-model:value="remoteHourlyRate"
+            :error-message="remoteHourlyRateError" placeholder="Remote Hourly Rate" name="remoteHourlyRate"
+            class="form-row__input-web" required />
+        </div>
+
+        <div class="form-row" v-if="role === RoleEnum.Trainer">
+          <ion-label class="label font-yantramanav label-web"> Set the location </ion-label>
+          <choose-block title="Choose address" :value="trainerAddress?.address?.locality" @handle-click="openLocationModal" />
+          <ChooseLocationModal ref="chooseLocationModal" title="Address" :is-web-view="true" @select="addressSelected" />
+        </div>
+
 
         <div class="form-row">
-          <base-input
-            class="form-row__control form-row__input-web"
-            value="EES Sport Certificate 2022"
-            placeholder="Enter your certification name"
-            label="Add certification"
-            required
-          />
+          <base-input class="form-row__control form-row__input-web" value="EES Sport Certificate 2022"
+            placeholder="Enter your certification name" label="Add certification" required />
           <ion-item class="form-row__control certificate-item">
             <ion-label class="font-lato">
               certificate.pdf (64,5 MB)
@@ -297,13 +200,8 @@
         </div>
 
         <div class="form-row">
-          <base-input
-            class="form-row__control form-row__input-web"
-            value="Advance Trainer ISSA2022"
-            placeholder="Enter your certification name"
-            label="Attach waiver or liability form (Compulsory)"
-            required
-          />
+          <base-input class="form-row__control form-row__input-web" value="Advance Trainer ISSA2022"
+            placeholder="Enter your certification name" label="Attach waiver or liability form (Compulsory)" required />
           <ion-item class="form-row__control certificate-item">
             <ion-label>
               certificate.pdf (64,5 MB)
@@ -320,18 +218,11 @@
             Choose the gym if you work in it
           </ion-label>
           <div class="form-row toggle-row">
-            <base-toggle
-              :value="trainerType === TrainerTypeEnum.WorkingInGym"
-              content="I’m working in the gym"
-              class="toggle-wrapper"
-            />
+            <base-toggle :value="trainerType === TrainerTypeEnum.WorkingInGym" content="I’m working in the gym"
+              class="toggle-wrapper" />
           </div>
-          <choose-block
-            title="Choose gym"
-            :value="chosenGym?.name"
-            @handle-click="openChooseGym"
-            :disabled="!workingInGym"
-          />
+          <choose-block title="Choose gym" :value="chosenGym?.name" @handle-click="openChooseGym"
+            :disabled="!workingInGym" />
         </div>
 
         <div class="form-row" @click="goToSchedule">
@@ -341,36 +232,21 @@
       </div>
 
       <div class="certificate-controls">
-        <ion-button
-          class="primary-outline font-yantramanav"
-          fill="outline"
-          expand="block"
-          @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)"
-        >
+        <ion-button class="primary-outline font-yantramanav" fill="outline" expand="block"
+          @click="role === RoleEnum.Trainer ? onEdit(DocumentsTypeEnum.Certificate, undefined, true) : uploadFile(DocumentsTypeEnum.Certificate)">
           Upload certificate
         </ion-button>
-        <ion-button
-          class="primary-outline font-yantramanav"
-          fill="outline"
-          expand="block"
-          @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)"
-        >
+        <ion-button class="primary-outline font-yantramanav" fill="outline" expand="block"
+          @click="uploadFile(DocumentsTypeEnum.WaiverAndLabilities)">
           Add waiver or liability
         </ion-button>
       </div>
       <div class="holder-button-web d-flex align-items-center justify-content-end gap-16">
-        <ion-button
-          class="secondary font-yantramanav font-bold"
-          expand="block"
-        >
+        <ion-button class="secondary font-yantramanav font-bold" expand="block">
           Cancel
         </ion-button>
-        <ion-button
-          class="button--submit font-yantramanav font-bold"
-          expand="block"
-          @click="handleSubmit"
-          :disabled="!isValidForm"
-        >
+        <ion-button class="button--submit font-yantramanav font-bold" expand="block" @click="handleSubmit"
+          :disabled="!isValidForm">
           Save
         </ion-button>
       </div>
@@ -390,7 +266,6 @@ import {
   actionSheetController,
   toastController,
   modalController,
-  ActionSheetController
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -408,7 +283,7 @@ import {
   DeleteDocumentDocument,
   DeleteMediaDocument,
   SubscriptionsTierEnum,
-RoleEnum,
+  RoleEnum,
 } from "@/generated/graphql";
 import { Browser } from "@capacitor/browser";
 import useId from "@/hooks/useId";
@@ -429,6 +304,8 @@ import { Capacitor } from "@capacitor/core";
 import WorkingSchedule from "./WorkingSchedule.vue";
 import useRoles from "@/hooks/useRole";
 import ChooseGymAccount from "@/trainers/views/registration/ChooseGymAccount.vue";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 
 const store = useSelectedAddressStore();
 
@@ -451,6 +328,8 @@ const media = ref<
 const certificates = ref<Array<Document | UploadPdfFile>>([]);
 const weiverAndLabilities = ref<Array<Document | UploadPdfFile>>([]);
 const workingInGym = computed(() => store.$state.workingInGym);
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
+const trainerAddress = ref<ChooseAddresModalResult>();
 
 const { value: firstName, errorMessage: firstNameError } = useField<string>(
   "firstName",
@@ -507,17 +386,22 @@ const openChooseGym = async () => {
     router.push({
       name: EntitiesEnum.ChooseGymAccount,
     });
-  }else{
-      const modal = await modalController.create({
-        component: ChooseGymAccount,
-        cssClass: 'tr-choose-gym-modal',
-        componentProps: {
-          fromModal: true
-        }
-      })
-      modal.present()
+  } else {
+    const modal = await modalController.create({
+      component: ChooseGymAccount,
+      cssClass: 'tr-choose-gym-modal',
+      componentProps: {
+        fromModal: true
+      }
+    });
+    modal.present();
   }
 };
+
+const addressSelected = (e: any) => {
+  console.log('its working',e);
+  trainerAddress.value = e;
+}
 
 const uploadPhoto = async (photo: string) => {
   const file = dataURItoFile(photo, uuidv4());
@@ -554,7 +438,7 @@ const deletePhoto = (_index: number, id: string) => {
   }, []);
 
   const isSavedMedia = savedMedia.value?.find(
-    (doc: { id: string }) => doc.id.toString() === id.toString()
+    (doc: { id: string; }) => doc.id.toString() === id.toString()
   );
 
   if (isSavedMedia) {
@@ -577,6 +461,12 @@ const goToSchedule = async () => {
     });
     await modal.present();
   }
+};
+const openLocationModal = () => {
+  console.log('openLocationModal');
+  chooseLocationModal.value?.present({
+    title: "Address",
+  });
 };
 
 onResult(async ({ data }) => {
@@ -606,14 +496,14 @@ onResult(async ({ data }) => {
   // }
   store.setWorkinginGym(
     data?.me?.trainer_type === TrainerTypeEnum.WorkingInGym ||
-      data?.me?.trainer_type === TrainerTypeEnum.Both
+    data?.me?.trainer_type === TrainerTypeEnum.Both
   );
 
   media.value = data?.me?.media
     ? data?.me?.media.reduce((acc, cur) => {
-        acc.push({ ...cur, url: cur.pathUrl });
-        return acc;
-      }, [])
+      acc.push({ ...cur, url: cur.pathUrl });
+      return acc;
+    }, [])
     : [];
   certificates.value = data?.me?.certificates?.length
     ? [...data.me.certificates]
@@ -634,9 +524,9 @@ const savedWeiverAndLabilities = computed(() =>
 const savedMedia = computed(() =>
   result.value?.me?.media
     ? result.value?.me?.media.reduce((acc, cur) => {
-        acc.push({ ...cur, url: cur.pathUrl });
-        return acc;
-      }, [])
+      acc.push({ ...cur, url: cur.pathUrl });
+      return acc;
+    }, [])
     : []
 );
 
@@ -657,7 +547,7 @@ const isValidForm = computed(
 const getMedia = (media, savedMedia) => {
   return media.reduce((acc, cur) => {
     const isMediaSaved = savedMedia?.filter(
-      (i: { id: string }) => i.id === cur.id
+      (i: { id: string; }) => i.id === cur.id
     );
     if (!isMediaSaved?.length) {
       acc.push({
@@ -690,23 +580,22 @@ const getDocs = (docs) => {
 
 const getSettings = () => {
   const settings = [];
-  if (workingInGym.value) {
     settings.push({
       code: SettingsCodeEnum.HourlyRate,
       value: Number(hourlyRate.value) * 100,
     });
-  } else {
     settings.push({
       code: SettingsCodeEnum.RemoteHourlyRate,
       value: Number(remoteHourlyRate.value) * 100,
     });
-  }
   return settings;
 };
 
 const handleSubmit = () => {
   if (isValidForm.value) {
     const newMedia = getMedia(media.value, savedMedia.value);
+    console.log('address',trainerAddress);
+    
     mutate({
       id,
       input: {
@@ -719,6 +608,12 @@ const handleSubmit = () => {
         media: newMedia && getMedia(media.value, savedMedia.value),
         settings: getSettings(),
         facility_id: chosenGym.value?.id,
+        address: {
+          lat:trainerAddress.value?.address?.latitude,
+          lng:trainerAddress.value?.address?.longitude,
+          street: trainerAddress.value?.address?.locality,
+          city: trainerAddress.value?.city
+        }
       },
     })
       .then(async () => {
@@ -907,7 +802,7 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
           type: actionTypesEnum.ViewFile,
         },
         cssClass: "success-tr-sheet-btn"
-      }]: []),      
+      }] : []),
       {
         text: "Delete file",
         role: "destructive",
@@ -928,7 +823,7 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
 
   const { data } = await actionSheet.onWillDismiss();
   console.log("data====", data);
-  
+
   const type: actionTypesEnum = data?.type;
 
   const actions = {
@@ -956,6 +851,7 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
 
 .certificate-controls {
   margin-top: 35px;
+
   .button {
     margin: 0;
     font-size: 14px;
@@ -985,6 +881,7 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
   &.toggle-row {
     margin-bottom: 16px;
   }
+
   &__control {
     &:not(:first-child) {
       margin-top: 16px;
@@ -1000,21 +897,26 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
   font-size: 14px;
   line-height: 1.5;
 }
+
 .web-trainer-edit {
   .edit {
     padding-top: 0;
     padding-right: 0;
   }
+
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0 16px;
+
     .base-input-container {
       margin-bottom: 0;
     }
   }
+
   .certificate-controls {
     margin-top: 24px;
+
     ion-button {
       width: 327px;
       margin-left: auto;
@@ -1022,12 +924,15 @@ const onEdit = async (key: DocumentsTypeEnum, id?: string, fromUpload = false) =
     }
   }
 }
+
 .holder-button-web {
   margin-top: 16px;
+
   ion-button {
     min-width: 90px;
   }
 }
+
 .label-web {
   font-family: "Lato";
   color: var(--fitnesswhite);

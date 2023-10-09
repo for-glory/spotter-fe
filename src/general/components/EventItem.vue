@@ -14,11 +14,11 @@
         class="event__img"
       />
       <template v-else>
-        {{ item.title?.charAt(0) }}
+        {{ item?.title?.charAt(0) }}
       </template>
     </ion-thumbnail>
     <div class="event__holder">
-      <ion-label class="event__title">{{ item.title }}</ion-label>
+      <ion-label class="event__title">{{ item?.title }}</ion-label>
       <div class="event__time" v-if="!hideEventTime">
         <ion-icon src="assets/icon/time.svg" class="time-icon" />
         {{ time }}
@@ -28,10 +28,10 @@
         <template v-if="dateRange">- {{ endDate }}</template>
       </ion-text>
       <div class="d-flex align-items-center justify-content-between">
-        <address-item class="event__address" v-if="item.address?.street">
+        <address-item class="event__address" v-if="item?.address?.street">
           {{ item.address?.street }}
         </address-item>
-        <ion-text v-if="props.item.end_date && props.item.start_date"
+        <ion-text v-if="props.item?.end_date && props?.item.start_date"
           class="status-text"
           :class="formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? 'ongoing' : 'finished'">
           {{ formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? "Ongoing" : "Finished" }}

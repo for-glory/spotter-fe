@@ -49,11 +49,8 @@
 
               <template v-for="detail in details">
                 <UpcomingItem
-                  :title="detail.title"
-                  :days="detail?.days"
-                  :img-src="detail.imgSrc"
-                  :is-upcomming="detail?.days ? true : false"
-                  :is-short-time="detail?.days ? false : true"
+                  :item="detail"
+                  :type-name="detail.type"
                   :square-img="detail.squarImg"
                   native-item
                   @click="onEventClick(detail)"
@@ -146,44 +143,65 @@ const selectedEvent = ref(type.value ? type.value : null);
 const routingStates = ref(type.value ? ["param_detail"] : ["no_orders"]);
 
 const details = [
+{
+    id: "1",
+    start_date: new Date(),
+    end_date: new Date(),
+    is_active_pass: false,
+    type: EntitiesEnum.Facilities,
+    facilityItem: {
+      title: "Fantastic Gym",
+      qr_code_lifetime_value: 12,
+      facility: {
+        id: 22,
+        name: "test",
+        media: [
+          {
+            pathUrl:
+              "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
+            __typename: "Media",
+          },
+        ],
+        address: {
+          street: "2340 North Interstate 35 Frontage Road,",
+          __typename: "Address",
+        },
+      },
+    },
+  },
   {
     id: "1",
-    title: "Food festival",
-    imgSrc: "assets/backgrounds/food1.png",
-    subtitle: "17 june",
-    location: "Summer Gym, Wall Street, 24",
-    upcomingType: "Upcoming",
-    squarImg: true,
-    type: EntitiesEnum.Event,
+    state: "state",
+    start_date: new Date(),
+    type: EntitiesEnum.Trainings,
+    trainer: {
+      avatarUrl:
+        "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
+      first_name: "Tamra",
+      last_name: "dae",
+      address: {
+        street: "2340 North Interstate 35 Frontage Road,",
+        __typename: "Address",
+      },
+    },
   },
   {
-    id: "2",
-    title: "Tamra Dae",
-    imgSrc: "assets/backgrounds/Gym_1.png",
-    subtitle: "17 june",
-    location: "Summer Gym, Wall Street, 24",
-    squarImg: false,
-    type: EntitiesEnum.FacilityDropins,
-  },
-  {
-    id: "3",
-    title: "Fantastic Gym",
-    imgSrc: "assets/backgrounds/Gym_3.png",
-    location: "Wall Street, 24",
-    days: "7 days left",
-    upcomingType: "7 Days",
-    squarImg: true,
-    type: EntitiesEnum.FacilityDropins,
-  },
-  {
-    id: "4",
-    title: "Jennifer James",
-    imgSrc: "assets/backgrounds/Gym_1.png",
-    subtitle: "17 june",
-    location: "Summer Gym, Wall Street, 24",
-    type: EntitiesEnum.Training,
-  },
-];
+    "id": "85",
+    "title": "Trainers event",
+    "address": {
+        "street": "2340 North Interstate 35 Frontage Road,",
+        "__typename": "Address"
+    },
+    "start_date": "2023-10-09 00:00:00",
+    "media": [
+        {
+            "pathUrl": "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
+            "__typename": "Media"
+        }
+    ],
+    "type": EntitiesEnum.Events
+  }
+]
 
 const goToDetail = (type: string) => {
   activeBlock.value = ActiveBlock[type];
@@ -202,6 +220,7 @@ const dateChange = (ev: any) => {
 };
 
 const onEventClick = (event: any) => {
+
   selectedEvent.value = event.type;
   if (!routingStates.value.includes("event_detail")) {
     routingStates.value.push("event_detail");

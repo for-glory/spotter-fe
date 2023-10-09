@@ -10,6 +10,7 @@
           @submit="createEvent"
           @onSkip="goToWorkout"
 			    skipText="Skip"
+          saveButtonText="Create Event"
           submitButtonText="Create Event"
           :loading="eventOnCreation"
         />
@@ -100,6 +101,7 @@ const onLogout = () => {
   router.push({ name: EntitiesEnum.Login });
 };
 const onBack = () => {
+  isConfirmedModalOpen.value = true
   router.go(-1);
 };
 </script>
@@ -119,7 +121,7 @@ const onBack = () => {
   text-align: center;
 }
 .content {
-  padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  padding: 24px 16px calc(20px + var(--ion-safe-area-bottom));
 }
 
 .top-buttons {

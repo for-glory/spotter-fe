@@ -5,20 +5,15 @@
     </template>
     <template #content>
       <div class="events__container">
-        <template v-if="role === RoleEnum.User">
+        <template v-if="role === RoleEnum.User && selectedEvents?.length">
             <UpcomingItem
             v-for="event in selectedEvents"
             :key="event.id"
-            :title="event.title"
-            :subtitle="event.subtitle"
-            :is-short-time="true"
-            :img-src="event.imgSrc"
-            :location="event.location"
-            :days="event.days"
-            :is-upcomming="activeTab === EntitiesEnum.Trainings ? false : true"
-            :upcoming-type="event.upcomingType"
+            :item="event"
+            :type-name="activeTab"
             :square-img="activeTab === EntitiesEnum.Trainings ? false : true"
             :role="RoleEnum.User"
+            @click="openEvent(event?.id)"
             />
           </template>
         <template v-else-if="selectedEvents &&
@@ -33,7 +28,7 @@
         <ion-spinner name="lines" class="spinner" v-else-if="isTrainingsLoading || isEventsLoading || isFacilitiesLoading
           ">
         </ion-spinner>
-        <empty-block v-else hide-button icon="assets/icon/empty.svg" :title="`Sorry, no ${bookingName} found`"
+        <empty-block v-else hide-button :icon="emptyIcon" :title="`Sorry, no ${bookingName} found`"
           :text="`Currently you have no booked ${bookingName}`" />
         <ion-infinite-scroll threshold="100px" class="infinite-scroll" @ionInfinite="loadData" v-if="(activeTab === EntitiesEnum.Facilities &&
             facilities &&
@@ -91,7 +86,8 @@ import useRoles from "@/hooks/useRole";
 import { dummyDropins, dummyPasses, dummyTraings, upcomingEvent } from "@/const/users";
 
 const router = useRouter();
-const { role } = useRoles()
+const { role } = useRoles();
+const emptyIcon = ref('assets/icon/gym-user-icon.svg');
 
 const tabs: TabItemNew[] = [
   {
@@ -272,24 +268,15 @@ const activeTab = ref<EntitiesEnum>(
 const selectedEvents = computed(() => {
   switch (activeTab.value) {
     case EntitiesEnum.Trainings:
-      if(!trainings.value?.length){
-        return dummyTraings;
-      }
       return trainings.value;
 
     case EntitiesEnum.Events:
-      if(!events.value?.length){
-        return upcomingEvent;
-      }
       return events.value;
 
      case EntitiesEnum.FacilityDropins:
-         return dummyDropins;
+         return [];
 
     default:
-      if(!facilities.value?.length){
-        return dummyPasses;
-      }
       return facilities.value;
   }
 });
@@ -381,6 +368,7 @@ const updateBookings = async () => {
   return new Promise((resolve, reject) => {
     switch (activeTab.value) {
       case EntitiesEnum.Facilities:
+        emptyIcon.value = 'assets/icon/gym-user-icon.svg';
         refetchFacilities({
           page: activePage.value,
           first: 6,
@@ -401,6 +389,7 @@ const updateBookings = async () => {
         break;
 
       case EntitiesEnum.Trainings:
+        emptyIcon.value = 'assets/trainers.svg';
         refetchTrainings({
           page: activePage.value,
           first: 6,
@@ -425,6 +414,7 @@ const updateBookings = async () => {
         break;
 
       case EntitiesEnum.Events:
+        emptyIcon.value = 'assets/icon/events.svg';
         refetchEvents({
           page: activePage.value,
           first: 6,
@@ -449,6 +439,7 @@ const updateBookings = async () => {
         break;
 
       default:
+        emptyIcon.value = 'assets/icon/facilities.svg';
         break;
     }
   });
@@ -462,8 +453,11 @@ const bookingName = computed(() => {
     case EntitiesEnum.Events:
       return "events";
 
+    case EntitiesEnum.Facilities:
+      return "gyms"
+
     default:
-      return "gyms";
+      return "drop-ins";
   }
 });
 </script>

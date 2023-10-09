@@ -44,11 +44,13 @@
       :role="RoleEnum.User"
       :bookings="bookings"
       @handle-view="onViewCalendar"
+      @handle-date-change="onDateChange"
     />
     <PageTabsNew
       :tabs="tabs"
       :is-web="true"
       :is-icon="true"
+      :value="activeTab"
       @change="tabsChanged"
     />
 
@@ -57,37 +59,49 @@
         :title="dynamicTitle"
         :role="RoleEnum.User"
         :hide-view-more="
-          !selectedEvents?.length ||
-          isFacilitiesLoading ||
-          isTrainingsLoading ||
-          isEventsLoading ||
-          isDropinsLoading
+          selectedEvents?.length &&
+          !isFacilitiesLoading &&
+          !isTrainingsLoading &&
+          !isEventsLoading &&
+          !isDropinsLoading
         "
         @handle-view="viewAllItems"
       />
-      <div class="item-container">
+      <IonSpinner
+        class="spinner"
+        name="lines"
+        v-if="
+          isEventsLoading ||
+          isTrainingsLoading ||
+          isDropinsLoading ||
+          isFacilitiesLoading
+        "
+      />
+      <div class="item-container" v-else-if="selectedEvents?.length">
         <UpcomingItem
           v-for="event in selectedEvents"
           :key="event.id"
-          :title="event.title"
-          :subtitle="event.subtitle"
-          :img-src="event.imgSrc"
-          :location="event.location"
-          :days="event.days"
-          :is-upcomming="activeTab === EntitiesEnum.Trainings ? false : true"
-          :upcoming-type="event.upcomingType"
+          :item="event"
+          :type-name="activeTab"
           :square-img="activeTab === EntitiesEnum.Trainings ? false : true"
           :role="RoleEnum.User"
-          @click="onViewCalendar(activeTab)"
+          @click="onViewCalendar(event, activeTab)"
         />
       </div>
+      <EmptyBlock
+        v-else
+        hide-button
+        :icon="emptyIcon"
+        :title="`Sorry, no ${bookingName} found`"
+        :text="`Currently you have no booked ${bookingName}`"
+      />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { EntitiesEnum } from "@/const/entities";
 import { computed, onMounted, ref } from "vue";
-import { IonText, IonIcon } from "@ionic/vue";
+import { IonText, IonIcon, IonSpinner } from "@ionic/vue";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import DashboardItem from "@/general/components/DashboardItem.vue";
 import {
@@ -115,22 +129,67 @@ import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
-import { useUserStore } from "@/general/stores/user";
 import UpcomingItem from "@/general/components/dashboard/UpcomingItem.vue";
-import {
-  dummyDropins,
-  dummyPasses,
-  dummyTraings,
-  upcomingEvent,
-} from "@/const/users";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import WebHeader from "@/general/components/blocks/headers/WebHeader.vue";
 import { TabItemNew } from "@/interfaces/TabItemnew";
 
 const router = useRouter();
 const { id } = useId();
 const unreadMessages = ref<number[]>([]);
-const userStore = useUserStore();
-console.log(userStore);
+const selectedDate = ref<Dayjs | null>(dayjs());
+const emptyIcon = ref("assets/icon/gym-user-icon.svg");
+
+var date = new Date();
+date;
+date.setDate(date.getDate() + 5);
+date;
+
+const passes = [
+  {
+    id: "1",
+    start_date: date,
+    end_date: new Date(),
+    is_active_pass: false,
+    facilityItem: {
+      title: "Fantastic Gym",
+      qr_code_lifetime_value: 12,
+      facility: {
+        id: 22,
+        name: "test",
+        media: [
+          {
+            pathUrl:
+              "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
+            __typename: "Media",
+          },
+        ],
+        address: {
+          street: "2340 North Interstate 35 Frontage Road,",
+          __typename: "Address",
+        },
+      },
+    },
+  },
+];
+
+const training = [
+  {
+    id: "1",
+    state: "state",
+    start_date: new Date(),
+    trainer: {
+      avatarUrl:
+        "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
+      first_name: "Tamra",
+      last_name: "dae",
+      address: {
+        street: "2340 North Interstate 35 Frontage Road,",
+        __typename: "Address",
+      },
+    },
+  },
+];
 
 const {
   result: eventsResult,
@@ -217,6 +276,10 @@ const {
   {
     page: 1,
     first: 4,
+    start_date: {
+      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+    },
     orderBy: [
       {
         column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
@@ -286,6 +349,8 @@ const fetchChats = () => {
 };
 
 onMounted(() => {
+  console.log(localStorage.getItem("dashboard_active_tab"));
+
   fetchChats();
 });
 
@@ -313,16 +378,7 @@ const events = computed<EventPaginator["data"]>(() =>
   eventsResult?.value?.myEvents?.data ? eventsResult.value.myEvents.data : []
 );
 
-const trainings = computed(() =>
-  trainingsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-        ...training,
-        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-        address: training.trainer.address,
-        media: [{ pathUrl: training.trainer.avatarUrl }],
-      }))
-    : []
-);
+const trainings = computed(() => trainingsResult?.value?.myTrainings?.data);
 
 const dropins = computed(() =>
   dropinsResult?.value?.myTrainings?.data
@@ -357,28 +413,16 @@ const facilities = computed<UserPaginator["data"]>(() =>
 
 const selectedEvents = computed(() => {
   if (activeTab.value === EntitiesEnum.Events) {
-    if (!events.value.length) {
-      return upcomingEvent;
-    }
     return events.value;
   }
 
   if (activeTab.value === EntitiesEnum.Facilities) {
-    if (!facilities.value.length) {
-      return dummyPasses;
-    }
     return facilities.value;
   }
 
   if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    if (!dropins.value.length) {
-      return dummyDropins;
-    }
-    return dropins.value;
+    return [];
   }
-  if (!trainings.value.length) {
-    return dummyTraings;
-  }  
   return trainings.value;
 });
 
@@ -404,61 +448,153 @@ const bookingName = computed(() => {
   }
 
   if (activeTab.value === EntitiesEnum.Facilities) {
-    return "gyms";
+    return "passes";
   }
 
+  if (activeTab.value === EntitiesEnum.FacilityDropins) {
+    return "drop-ins";
+  }
   return "trainings";
 });
 
 const tabs: TabItemNew[] = [
   {
     name: EntitiesEnum.Facilities,
-    labelActive: "assets/icon/dropinsActive.png",
+    labelActive: "assets/icon/gym-user-icon.svg",
     labelInactive: "assets/icon/gym-user-icon.svg",
   },
   {
     name: EntitiesEnum.FacilityDropins,
-    labelActive: "assets/icon/dumbbell.png",
+    labelActive: "assets/icon/facilities.svg",
     labelInactive: "assets/icon/facilities.svg",
   },
 
   {
     name: EntitiesEnum.Trainings,
-    labelActive: "assets/icon/TrainerActive.png",
+    labelActive: "assets/trainers.svg",
     labelInactive: "assets/trainers.svg",
   },
   {
     name: EntitiesEnum.Events,
-    labelActive: "assets/icon/facilitiesActive.png",
+    labelActive: "assets/icon/events.svg",
     labelInactive: "assets/icon/events.svg",
   },
 ];
 
-const selectedDate = ref<Dayjs | null>(dayjs());
-
-const activeTab = ref<EntitiesEnum>(EntitiesEnum.Facilities);
+const activeTab = ref<EntitiesEnum>(
+  (localStorage.getItem("dashboard_active_tab") as EntitiesEnum) ||
+    EntitiesEnum.Facilities
+);
 
 const tabsChanged = (ev: EntitiesEnum) => {
   if (!ev) return;
   activeTab.value = ev;
-  refetchBooking();
+  localStorage.setItem("dashboard_active_tab", activeTab.value);
+  onDateChange();
+};
+
+const onDateChange = () => {
+  switch (activeTab.value) {
+    case EntitiesEnum.Events:
+      refetchEvents({
+        page: 1,
+        first: 4,
+        start_date: {
+          from: dayjs(selectedDate.value).format("YYYY-MM-DD HH:mm:ss"),
+          to: dayjs(selectedDate.value)
+            .add(1, "M")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+        orderBy: [
+          {
+            column: QueryMyEventsOrderByColumn.StartDate,
+            order: SortOrder.Asc,
+          },
+        ],
+      });
+      break;
+
+    case EntitiesEnum.FacilityDropins:
+      refetchDropins({
+        page: 1,
+        first: 4,
+        start_date: {
+          from: dayjs(selectedDate.value).format("YYYY-MM-DD HH:mm:ss"),
+          to: dayjs(selectedDate.value)
+            .add(1, "M")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+        orderBy: [
+          {
+            column: QueryMyTrainingsOrderByColumn.StartDate,
+            order: SortOrder.Asc,
+          },
+        ],
+      });
+      break;
+
+    case EntitiesEnum.Trainings:
+      refetchTrainings({
+        page: 1,
+        first: 4,
+        start_date: {
+          from: dayjs(selectedDate.value).format("YYYY-MM-DD HH:mm:ss"),
+          to: dayjs(selectedDate.value)
+            .add(1, "M")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+        orderBy: [
+          {
+            column: QueryMyTrainingsOrderByColumn.StartDate,
+            order: SortOrder.Asc,
+          },
+        ],
+      });
+      break;
+
+    case EntitiesEnum.Facilities:
+      refetchFacilities({
+        page: 1,
+        first: 4,
+        start_date: {
+          from: dayjs(selectedDate.value).format("YYYY-MM-DD HH:mm:ss"),
+          to: dayjs(selectedDate.value)
+            .add(1, "M")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+        orderBy: [
+          {
+            column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
+            order: SortOrder.Asc,
+          },
+        ],
+      });
+      break;
+
+    default:
+      break;
+  }
 };
 
 const refetchBooking = () => {
   switch (activeTab.value) {
     case EntitiesEnum.Events:
+      emptyIcon.value = "assets/icon/events.svg";
       refetchEvents();
       break;
 
     case EntitiesEnum.FacilityDropins:
+      emptyIcon.value = "assets/icon/facilities.svg";
       refetchDropins();
       break;
 
     case EntitiesEnum.Trainings:
+      emptyIcon.value = "assets/trainers.svg";
       refetchTrainings();
       break;
 
     case EntitiesEnum.Facilities:
+      emptyIcon.value = "assets/icon/gym-user-icon.svg";
       refetchFacilities();
       break;
 
@@ -509,14 +645,12 @@ const viewAllItems = (e: any) => {
     },
   });
 };
-const onViewCalendar = (type?: string) => {
+const onViewCalendar = (data: any, type?: string) => {
   router.push({
     name: EntitiesEnum.DashboardUserCalendar,
     params: {
       type,
-    },
-    state: {
-      date: selectedDate.value?.toString(),
+      id: data?.id,
     },
   });
 };
@@ -570,5 +704,10 @@ const onViewCalendar = (type?: string) => {
   .padding-10 {
     padding-bottom: 20px;
   }
+}
+
+.spinner {
+  display: block;
+  margin: 80px auto;
 }
 </style>

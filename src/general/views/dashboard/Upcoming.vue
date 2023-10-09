@@ -4,18 +4,13 @@
 
     <div class="content">
       <UpcomingItem
-        v-for="event in items"
+        v-for="event in result"
         :key="event.id"
-        :title="event.title"
-        :subtitle="event.subtitle"
-        :img-src="event.imgSrc"
-        :location="event.location"
-        :days="event?.days"
-        :is-upcomming="event?.upcomingType ? true : false"
-        :upcoming-type="event?.upcomingType"
+        :item="event"
+        :type-name="(route.params.type as string)"
         :square-img="isSquareImg"
         :role="role"
-        @click="goToCalendar"
+        @click="goToCalendar(event)"
       />
     </div>
   </div>
@@ -25,6 +20,7 @@ import WebHeader from "@/general/components/blocks/headers/WebHeader.vue";
 import UpcomingItem from "@/general/components/dashboard/UpcomingItem.vue";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useLazyQuery } from "@vue/apollo-composable";
 import { EntitiesEnum } from "@/const/entities";
 import {
   dummyDropins,
@@ -33,6 +29,16 @@ import {
   upcomingEvent,
 } from "@/const/users";
 import useRoles from "@/hooks/useRole";
+import {
+  MyEventsDocument,
+  MyFacilityItemPassesDocument,
+  MyTrainingsDocument,
+  QueryMyTrainingsOrderByColumn,
+  SortOrder,
+  QueryMyFacilityItemPassesOrderByColumn,
+  QueryMyEventsOrderByColumn,
+} from "@/generated/graphql";
+import dayjs from "dayjs";
 
 const route = useRoute();
 const router = useRouter();
@@ -46,6 +52,72 @@ if (route.params.type === "tranings") {
   isSquareImg = true;
 }
 const items = ref<any>(dummyTraings);
+const result = ref(null);
+const { load: loadEvents, onResult: onEventsResult } = useLazyQuery(
+  MyEventsDocument,
+  {
+    page: 1,
+    first: 4,
+    start_date: {
+      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+    },
+    orderBy: [
+      {
+        column: QueryMyEventsOrderByColumn.StartDate,
+        order: SortOrder.Asc,
+      },
+    ],
+  }
+);
+
+onEventsResult(({ data }) => {
+  result.value = data?.myEvents?.data;
+});
+
+const { load: loadTraining, onResult: onTrainingResult } = useLazyQuery(
+  MyTrainingsDocument,
+  {
+    page: 1,
+    first: 4,
+    start_date: {
+      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+    },
+    orderBy: [
+      {
+        column: QueryMyTrainingsOrderByColumn.StartDate,
+        order: SortOrder.Asc,
+      },
+    ],
+  }
+);
+
+onTrainingResult(({ data }) => {
+  result.value = data?.myTrainings?.data;
+});
+
+const { load: loadPasses, onResult: onPassesResult } = useLazyQuery(
+  MyFacilityItemPassesDocument,
+  {
+    page: 1,
+    first: 4,
+    start_date: {
+      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+    },
+    orderBy: [
+      {
+        column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
+        order: SortOrder.Asc,
+      },
+    ],
+  }
+);
+
+onPassesResult(({ data }) => {
+});
+
 const title = computed(() => {
   if (route.params.type === "tranings") {
     items.value = dummyTraings;
@@ -55,17 +127,18 @@ const title = computed(() => {
     items.value = upcomingEvent;
     return "Upcoming Events";
   } else if (route.params.type === EntitiesEnum.Facilities) {
+    loadPasses();
     items.value = dummyPasses;
     return "My Passes";
   } else if (route.params.type === EntitiesEnum.FacilityDropins) {
     items.value = dummyDropins;
     return "My Drop-ins";
   } else if (route.params.type === EntitiesEnum.Trainings) {
-    items.value = dummyTraings;
+    loadTraining();
     isSquareImg = false;
     return "My Tranings";
   } else if (route.params.type === EntitiesEnum.Events) {
-    items.value = upcomingEvent;
+    loadEvents();
     return "My Events";
   }
 });
@@ -74,11 +147,12 @@ const goBack = () => {
   router.go(-1);
 };
 
-const goToCalendar = () => {
+const goToCalendar = (data:any) => {
   router.push({
     name: EntitiesEnum.DashboardUserCalendar,
     params: {
       type: route.params?.type,
+      id: data?.id
     },
   });
 };

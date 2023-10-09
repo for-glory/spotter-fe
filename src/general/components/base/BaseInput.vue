@@ -3,7 +3,9 @@
   :class="{ 
     'form-row__input' : (role === RoleEnum.Trainer || role === RoleEnum.User),
     'form-row__input__web': fromSettings, 
-    'font-lato': (role === RoleEnum.User && fromSettings)
+    'font-lato': (role === RoleEnum.User && fromSettings),
+    'font-lato-bold': fontLatoBold,
+    'white-input': whiteInput
   }">
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
     <transition name="border">
@@ -85,6 +87,8 @@ const props = withDefaults(
     maxLength?: number;
     autoGrow?: boolean;
     fromSettings?: boolean;
+    fontLatoBold?: boolean;
+    whiteInput?: boolean;
   }>(),
   {
     placeholder: "",
@@ -93,10 +97,11 @@ const props = withDefaults(
     value: "",
     rows: 1,
     autoGrow: false,
-    fromSettings: false
+    fromSettings: false,
+    fontLatoBold: false,
+    whiteInput: false
   }
 );
-console.log("props", props);
 
 const { role } = useRoles();
 const emits = defineEmits<{
@@ -149,6 +154,22 @@ ion-item.input-container {
   }
 }
 
+.white-input {
+  .label {
+    color: var(--fitnesswhite);
+  }
+
+  ion-textarea {
+    --placeholder-opacity: 1;
+  }
+  .input-container {
+    --border-color: rgba(255, 255, 255, 0.60);
+    --highlight-color-focused: none;
+    &.item-has-focus {
+    --border-color: none;
+    }
+  }
+}
 ion-input,
 ion-textarea {
   --placeholder-color: var(--gray-500);
@@ -221,6 +242,27 @@ ion-note {
 .font-lato {
   ion-label, ion-input {
     font-family: "Lato" !important;
+  }
+}
+
+.font-lato-bold {
+
+  .label {
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+  }
+  ion-label {
+    color: rgba(255, 255, 255, 0.60);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  ion-input {
+    --placeholder-color: var(--gray-500) !important;
+    font-family: Lato !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
   }
 }
 </style>

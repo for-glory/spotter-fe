@@ -67,7 +67,6 @@ const getAvatarUrl = () => {
 };
 
 gotUser(({ data }) => {
-  console.log("User Store: ", data?.user);
 
   if (data.user?.role === RoleEnum.Manager) {
     facilities.value = result.value?.user?.facilities;

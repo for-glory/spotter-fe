@@ -6,8 +6,11 @@
 			@submit="createEvent"
 			@onSkip="handleCancel"
 			:loading="eventOnCreation"
+      :save-btn="false"
+      primaryBtnText="Save"
       skip-button
-      skip-button-text="Discard"
+      skip-button-color="medium"
+      skip-button-text="Cancel"
 		/>
 	</div>
   <discard-changes

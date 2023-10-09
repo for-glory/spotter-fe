@@ -5,6 +5,10 @@
 				<img v-if="thumbnail" :src="thumbnail" class="photo-area__img" />
       </div>
     </div>
+    <div class="upload-video__upload-btn description" v-else-if="newDedc">
+        Drag and Drop file &nbsp; or &nbsp;
+        <span>Choose file</span>
+    </div>
     <div
       v-else
       class="upload-video__upload-btn"
@@ -58,6 +62,7 @@ defineProps<{
   videoName?: string;
   videoPath?: string;
 	thumbnail?: string;
+  newDedc?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -263,4 +268,16 @@ const videoErrors = {
     }
   }
 }
+
+.description {
+    color: var(--gray-60);
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+
+    span {
+      border-bottom: 1px solid;
+    }
+  }
 </style>

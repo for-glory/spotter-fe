@@ -1,7 +1,9 @@
 <template>
     <component-base-layout title="App mode" sub-title="Select which preference you might prefer">
         <template #content>
-           <CustomSelection label="Mode" :options="appModes" :selected-value="selectedValue" @select-change="(e)=> selectedValue = e"></CustomSelection>
+            <div class="flex-2">
+                <CustomSelection label="Mode" :options="appModes" :selected-value="selectedValue" @select-change="(e)=> selectedValue = e"></CustomSelection>
+            </div>
         </template>
     </component-base-layout>
 </template>
@@ -11,7 +13,6 @@ import { ref } from "vue";
 import ComponentBaseLayout from "./ComponentBaseLayout.vue";
 import CustomSelection from "./CustomSelection.vue";
 
-const selectedValue = ref("System mode");
 const isSelect = ref<boolean>(false);
 const appModes = [
     {
@@ -26,7 +27,10 @@ const appModes = [
         title: "Light mode",
         value: "Light mode"
     }
-]
+];
+
+const selectedValue = ref(appModes[0]);
+
 
 </script>
 <style scoped lang="scss">

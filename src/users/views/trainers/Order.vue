@@ -27,7 +27,7 @@
         </div>
         <div :class="['training-place__container', { 'user-place__container': role === RoleEnum.User  }]" v-if="showChoosePlace">
           <ion-text class="training-place__title">
-            Choose place of training session
+            Choose training location
           </ion-text>
           <choose
             :value="store?.place?.text"

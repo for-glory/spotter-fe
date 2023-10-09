@@ -5,11 +5,9 @@
     </template>
     <template #content>
       <div :class="['content', { 'user-content': role === RoleEnum.User }]">
-        <div class="web-header" v-if="isWeb">
-          My  {{ sessionTypeName }}
-        </div>
+        <div class="web-header" v-if="isWeb">My {{ sessionTypeName }}</div>
         <div class="qr">
-          <IonIcon class="qr__code" v-if="role == RoleEnum.User" src="assets/qrcode.svg" />
+          <IonIcon class="qr__code" v-if="role == RoleEnum.User && !route.params?.id" src="assets/qrcode.svg" />
           <div class="qr__img" v-else ref="qrCodeEl"></div>
           <ion-text color="medium" class="qr__info">
             Please show this unique one-time QR code at check in to begin your
@@ -22,17 +20,32 @@
             <trainer-item
               v-if="compSessionType === EntitiesEnum.Training"
               class="trainer"
-              :trainer="role === RoleEnum.User ? dummyTraings : trainer"
+              :trainer="
+                role === RoleEnum.User && !route.params?.id
+                  ? dummyTraings
+                  : trainer
+              "
             />
             <search-result
               v-else-if="showSearchResult"
               show-rating
-              :item="role === RoleEnum.User ? dummyFacility : facility"
+              :item="
+                role === RoleEnum.User && !route.params?.id
+                  ? dummyFacility
+                  : facility
+              "
             />
-            <event-item v-else-if="event || compSessionType === EntitiesEnum.Event" :item="dummyEvent" hide-time hideEventTime />
+            <event-item
+              v-else-if="event || compSessionType === EntitiesEnum.Event"
+              :item="event"
+              hide-time
+              hideEventTime
+            />
           </div>
           <div class="training-preview__row">
-            <strong class="training-preview__row__title">{{dateLabel}}</strong>
+            <strong class="training-preview__row__title">{{
+              dateLabel
+            }}</strong>
             <span class="training-preview__row__data">
               {{ trainingStartDate }}
             </span>
@@ -43,16 +56,21 @@
               {{ trainingStartTime }}
             </span>
           </div>
-          <div class="training-preview__row" v-else-if="planType">
+          <div class="training-preview__row" v-if="planType">
             <strong class="training-preview__row__title">Plan</strong>
             <span class="training-preview__row__data">
               {{ planType }}
             </span>
           </div>
-          <div class="training-preview__row" v-else-if="sessionType === EntitiesEnum.Event">
-            <strong class="training-preview__row__title">Session quantity</strong>
+          <div
+            class="training-preview__row"
+            v-if="compSessionType === EntitiesEnum.Event"
+          >
+            <strong class="training-preview__row__title"
+              >Session quantity</strong
+            >
             <span class="training-preview__row__data">
-              1 Session
+              {{ event?.booked_count }} Session
             </span>
           </div>
           <div class="training-preview__row">
@@ -63,7 +81,8 @@
           </div>
         </div>
 
-        <ion-button v-if="isWeb"
+        <ion-button
+          v-if="isWeb"
           color="medium"
           expand="block"
           fill="outline"
@@ -77,7 +96,9 @@
     </template>
 
     <template #footer v-if="showfooterBtn && !isWeb">
-      <div :class="['footer', 'ion-padding-horizontal', { 'web-footer': isWeb }]">
+      <div
+        :class="['footer', 'ion-padding-horizontal', { 'web-footer': isWeb }]"
+      >
         <ion-button
           color="medium"
           expand="block"
@@ -103,7 +124,7 @@
     @decline="hideModal"
   />
   <terms-of-use
-    :is-confirmed="isConfirmed || !closeModal"
+    :is-confirmed="isConfirmed || closeModal"
     :is-web="isWeb"
     @agree="onAgree"
     @decline="onDecline"
@@ -112,12 +133,22 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import { IonButton, IonIcon, IonText, toastController } from "@ionic/vue";
+import {
+  IonButton,
+  IonIcon,
+  IonText,
+  toastController,
+  IonSpinner,
+} from "@ionic/vue";
 import TermsOfUse from "@/general/components/modals/terms/TermsOfUse.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import QRCodeStyling, { DrawType } from "qr-code-styling";
-import { computed, ref, onMounted } from "vue";
+import {
+  computed,
+  ref,
+  onMounted,
+} from "vue";
 import CryptoJs from "crypto-js";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import {
@@ -140,12 +171,15 @@ import useId from "@/hooks/useId";
 import EventItem from "@/general/components/EventItem.vue";
 import useRoles from "@/hooks/useRole";
 
-const props = withDefaults(defineProps<{
-  isWeb?:boolean,
-  webSessionType?:string
-}>(), {
-  isWeb: false
-})
+const props = withDefaults(
+  defineProps<{
+    isWeb?: boolean;
+    webSessionType?: string;
+  }>(),
+  {
+    isWeb: false,
+  }
+);
 
 const router = useRouter();
 const route = useRoute();
@@ -155,21 +189,28 @@ const closeModal = ref(true);
 const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
 const sessionType = route.query.type;
 const compSessionType = sessionType || props?.webSessionType;
+const loadingStart = ref(false);
 
 const dateLabel = computed(() => {
   if (role === RoleEnum.User) {
-    if (compSessionType === EntitiesEnum.FacilityDropins || compSessionType === EntitiesEnum.Facilities) {
+    if (
+      compSessionType === EntitiesEnum.FacilityDropins ||
+      compSessionType === EntitiesEnum.Facilities
+    ) {
       return "Expiry date";
     }
-  } 
+  }
   return "Date";
 });
 
 const showSearchResult = computed(() => {
-  if (compSessionType === EntitiesEnum.Facility || (role === RoleEnum.User && compSessionType === EntitiesEnum.FacilityDropins)) {
+  if (
+    compSessionType === EntitiesEnum.Facility ||
+    (role === RoleEnum.User && compSessionType === EntitiesEnum.FacilityDropins)
+  ) {
     return true;
-  } 
-})
+  }
+});
 
 const {
   mutate: cancelTraining,
@@ -217,8 +258,8 @@ const planType = computed(() => {
 });
 const showTime = computed(() => {
   if (role !== RoleEnum.User) {
-    return true
-  } else if (role === RoleEnum.User){
+    return true;
+  } else if (role === RoleEnum.User) {
     if (compSessionType === EntitiesEnum.Training) {
       return true;
     }
@@ -231,19 +272,22 @@ const showfooterBtn = computed(() => {
       return true;
     }
   } else if (role === RoleEnum.User) {
-      return true;
-  } 
+    return true;
+  }
 });
 
 const cancelBtnTxt = computed(() => {
   if (role !== RoleEnum.User) {
     return sessionTypeName;
-  } else if (role === RoleEnum.User){
-    if (compSessionType === EntitiesEnum.Event || compSessionType === EntitiesEnum.FacilityDropins) {
+  } else if (role === RoleEnum.User) {
+    if (
+      compSessionType === EntitiesEnum.Event ||
+      compSessionType === EntitiesEnum.FacilityDropins
+    ) {
       return "session";
-    } else if(compSessionType === EntitiesEnum.Training){
+    } else if (compSessionType === EntitiesEnum.Training) {
       return "training";
-    } else if (compSessionType === EntitiesEnum.Facility){
+    } else if (compSessionType === EntitiesEnum.Facility) {
       return "membership";
     }
   }
@@ -252,16 +296,15 @@ const cancelBtnTxt = computed(() => {
 const isConfirmed = computed(() => {
   if (role !== RoleEnum.User) {
     return true;
-  }else if (role === RoleEnum.User) {
+  } else if (role === RoleEnum.User) {
     if (compSessionType === EntitiesEnum.Training) {
       return false;
     } else {
       return true;
     }
   }
-  return false
+  return false;
 });
-
 
 const {
   result: facilityResult,
@@ -287,7 +330,8 @@ const {
   id: route.params.id,
 });
 
-onMounted(() => {
+onMounted(async () => {
+  loadingStart.value = true;
   switch (compSessionType) {
     case EntitiesEnum.Facility:
       getFacility();
@@ -325,14 +369,14 @@ const facility = ref();
 const dummyFacility = {
   media: [
     {
-      pathUrl: "assets/backgrounds/Gym_1.png"
-    }
+      pathUrl: "assets/backgrounds/Gym_1.png",
+    },
   ],
   name: "Diamond Gym",
   score: "4.6",
   address: {
-    street: "Light Street, 24"
-  }
+    street: "Light Street, 24",
+  },
 };
 
 const dummyTraings = {
@@ -340,68 +384,73 @@ const dummyTraings = {
   first_name: "Tamra",
   last_name: "Dae",
   score: 4.6,
-  address: "“Summer Gym”, Wall Street, 24"
-}
+  address: "“Summer Gym”, Wall Street, 24",
+};
 
 const dummyEvent = {
-  media:[
+  media: [
     {
       pathUrl: "assets/backgrounds/food1.png",
-    }
+    },
   ],
   title: "Food Festival",
   address: {
-    street: "Light Street, 24"
-  }
-}
+    street: "Light Street, 24",
+  },
+};
 
 const onAgree = () => {
-  console.log('on agree');
-  closeModal.value = false
-}
+  console.log("on agree");
+  closeModal.value = false;
+};
 
 const onDecline = () => {
-  console.log('call ondecline');
-  
-}
+  console.log("call ondecline");
+};
 
 gotFacility((response) => {
   const facilityPass = response.data.facilityItemPass;
   if (!facilityPass) return;
-
-  if (facilityPass.facilityItem.facility.id) {
-    const encryptedEvent = CryptoJs.AES.encrypt(
-      `facilityPass/${route.params.id}`,
-      facilityPass.facilityItem.facility.id
-    ).toString();
-
-    qrOptions.value.data = encryptedEvent;
-    facility.value = facilityPass.facilityItem.facility;
+  facility.value = facilityPass.facilityItem.facility;
+  if (facilityPass.facilityItem.facility?.id) {
+    generateQr(facilityPass.facilityItem.facility.id);
+    // const encryptedEvent = CryptoJs.AES.encrypt(
+    //   `facilityPass/${route.params.id}`,
+    //   facilityPass.facilityItem.facility.id
+    // ).toString();
+    // qrOptions.value.data = encryptedEvent;
+  } else {
+    generateQr(null, true);
   }
 
-  const qrCode = new QRCodeStyling(qrOptions.value);
-  qrCode.append(qrCodeEl.value);
+  // const qrCode = new QRCodeStyling(qrOptions.value);
+  // qrCode.append(qrCodeEl.value);
 });
 
 gotTraining((response) => {
+  loadingStart.value = false;
+
   const training = response.data.training;
   if (!training) return;
 
   if (training.state !== TrainingStatesEnum.Accepted) {
     showToast(`Error! Training state is ${training.state}`, "warning-toast");
   }
-
+  trainer.value = training.trainer;
   if (training.trainer.id) {
-    const encryptedTraining = CryptoJs.AES.encrypt(
-      `training/${route.params.id}`,
-      training.trainer.id
-    ).toString();
+    setTimeout(() => {
+      generateQr(training.trainer.id);
+    }, 1000);
+    // const encryptedTraining = CryptoJs.AES.encrypt(
+    //   `training/${route.params.id}`,
+    //   training.trainer.id
+    // ).toString();
 
-    qrOptions.value.data = encryptedTraining;
+    // qrOptions.value.data = encryptedTraining;
+    // console.log("qrCodeEl.value", qrCodeEl.value);
 
-    const qrCode = new QRCodeStyling(qrOptions.value);
-    qrCode.append(qrCodeEl.value);
-    trainer.value = training.trainer;
+    // const qrCode = new QRCodeStyling(qrOptions.value);
+    // qrCode.append(qrCodeEl.value);
   }
 });
 
@@ -413,27 +462,31 @@ gotEvent((response) => {
 
   const { id } = useId();
   if (event.value.trainer?.id) {
-    const encryptedEvent = CryptoJs.AES.encrypt(
-      `event/${route.params.id}/${id}`,
-      event.value.trainer.id
-    ).toString();
-
-    qrOptions.value.data = encryptedEvent;
     trainer.value = event.value.trainer;
+    generateQr(event.value.trainer?.id);
+    // const encryptedEvent = CryptoJs.AES.encrypt(
+    //   `event/${route.params.id}/${id}`,
+    //   event.value.trainer.id
+    // ).toString();
+
+    // qrOptions.value.data = encryptedEvent;
   }
 
   if (event.value.facility?.id) {
-    const encryptedEvent = CryptoJs.AES.encrypt(
-      `event/${route.params.id}/${id}`,
-      event.value.facility.id
-    ).toString();
-
-    qrOptions.value.data = encryptedEvent;
     facility.value = event.value.facility;
-  }
+    generateQr(event.value.facility.id);
+    // const encryptedEvent = CryptoJs.AES.encrypt(
+    //   `event/${route.params.id}/${id}`,
+    //   event.value.facility.id
+    // ).toString();
 
-  const qrCode = new QRCodeStyling(qrOptions.value);
-  qrCode.append(qrCodeEl.value);
+    // qrOptions.value.data = encryptedEvent;
+  }
+  if (!event.value.facility?.id && !event.value.trainer?.id) {
+    generateQr(null, true);
+  }
+  // const qrCode = new QRCodeStyling(qrOptions.value);
+  // qrCode.append(qrCodeEl.value);
 });
 
 const trainingStartDate = computed(() => {
@@ -492,7 +545,7 @@ const trainingTotal = computed(() => {
       return eventResult.value?.event.front_price;
 
     default:
-      return "";
+      return "0.00";
   }
 });
 
@@ -502,6 +555,22 @@ const back = () => {
 
 const cancel = () => {
   showModal();
+};
+
+const generateQr = (id: any, forceCreate = false) => {
+  setTimeout(() => {
+    if (!forceCreate && id) {
+      const encryptedTraining = CryptoJs.AES.encrypt(
+        `training/${route.params.id}`,
+        id
+      ).toString();
+      qrOptions.value.data = encryptedTraining;
+      console.log("qrCodeEl.value", qrCodeEl.value);
+    }
+
+    const qrCode = new QRCodeStyling(qrOptions.value);
+    qrCode.append(qrCodeEl.value);
+  }, 1000);
 };
 
 const showToast = async (
@@ -628,7 +697,8 @@ const showToast = async (
   }
 
   .training-preview__row {
-    &__title , &__data{
+    &__title,
+    &__data {
       font-family: Yantramanav;
     }
   }
@@ -636,7 +706,6 @@ const showToast = async (
 
 .user-footer {
   ion-button {
-
   }
 }
 
@@ -657,7 +726,7 @@ const showToast = async (
 
 .web-training {
   :deep {
-    ion-content{
+    ion-content {
       --background: var(--gray-700);
     }
   }

@@ -2,8 +2,10 @@
   <component-base-layout title="Change Language"
     sub-title="Manage which languages are used to personalize your Spotter experience">
     <template #content>
-      <CustomSelection :selected-value="selectedLanguage" :options="languages" label="Language"
+      <div class="flex-2">
+        <CustomSelection :selected-value="selectedLanguage" :options="languages" label="Language"
         @select-change="(e) => selectedLanguage = e"></CustomSelection>
+      </div>
     </template>
   </component-base-layout>
 </template>
@@ -13,7 +15,6 @@ import { ref } from "vue";
 import ComponentBaseLayout from "./ComponentBaseLayout.vue";
 import CustomSelection from "./CustomSelection.vue";
 
-const selectedLanguage = ref("Ukrainian");
 const languages = [
   {
     title: "English",
@@ -51,7 +52,9 @@ const languages = [
     title: "Georgian",
     value: "Georgian"
   },
-]
+];
+const selectedLanguage = ref(languages[1]);
+
 
 </script>
 <style scoped lang="scss"></style>
