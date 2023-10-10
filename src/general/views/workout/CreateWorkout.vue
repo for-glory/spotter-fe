@@ -7,7 +7,7 @@
       <div class="content">
         <workout-form 
           ref="workoutForm"
-          exit-button-text="Finish"
+          exit-button-text="Upload Dailys"
           @open-picker="openPicker"
           @submit="createDailys"
         />
