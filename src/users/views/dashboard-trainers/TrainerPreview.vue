@@ -248,15 +248,10 @@ const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, 
   })
 );
 const handleMore = async () => {
-    console.log("call more");
     const actionSheet = await actionSheetController.create({
         mode: "ios",
         cssClass: 'profile-action-sheet',
         buttons: [
-            {
-                text: "Edit profile",
-                role: "edit",
-            },
             {
                 text: "Share profile",
                 role: "share",

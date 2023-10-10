@@ -234,7 +234,6 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 );
 
 const handleMore = async () => {
-  console.log("call more");
   const actionSheet = await actionSheetController.create({
     mode: "ios",
     cssClass: 'profile-action-sheet',

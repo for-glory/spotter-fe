@@ -1,49 +1,49 @@
 <template>
-	<div>
+	<div class="table-wrapper">
 		<ion-grid class="event-table">
 			<ion-row class="table-header">
-				<ion-col size="1.7" class="table-th">
+				<ion-col class="table-th">
 					<ion-text class="gray">Event name</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				<ion-col class="table-th">
 					<ion-text  class="gray">Venue</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				<!-- <ion-col class="table-th">
 					<ion-text  class="gray">Reservations left</ion-text>
-				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				</ion-col> -->
+				<ion-col class="table-th">
 					<ion-text>Entry Fee</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				<ion-col class="table-th">
 					<ion-text class="gray">Start date</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				<ion-col class="table-th">
 					<ion-text class="gray">End date</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-th">
+				<ion-col class="table-th">
 					<ion-text class="gray">Status</ion-text>
 				</ion-col>
 			</ion-row>
 			<ion-row class="table-row" v-for="event in events" :key="event.id" @click="onHandleDetailsPage(EntitiesEnum.DashboardEventDetail, event.id)">
-				<ion-col size="1.7" class="table-td">
+				<ion-col class="table-td">
 					<ion-text class="gray">{{ event.title }}</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				<ion-col class="table-td">
 					<ion-text class="gray font-12">{{ event?.address?.street }}</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				<!-- <ion-col class="table-td">
 					<ion-text class="gray">{{ event.max_participants - event.booked_count }}</ion-text>
-				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				</ion-col> -->
+				<ion-col class="table-td">
 					<ion-text>${{ formatNumber(event.price?event.price/100:0) }}</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				<ion-col class="table-td">
 					<ion-text class="gray">{{ dayjs(event.start_date).format("DD/MM/YYYY") }}</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				<ion-col class="table-td">
 					<ion-text class="gray">{{ dayjs(event.end_date).format("DD/MM/YYYY") }}</ion-text>
 				</ion-col>
-				<ion-col size="1.7" class="table-td">
+				<ion-col class="table-td">
 					<div class="upcoming">{{ event.status }}</div>
 					<!-- <ion-text class="gray">{{ event.status }}</ion-text> -->
 				</ion-col>
@@ -141,6 +141,11 @@ const onHandleDetailsPage = (pathName: string, id: string) => {
 
 .table-row {
 	border-top: 1px solid var(--fitnesswhite);
+}
+
+.table-wrapper {
+	padding: 0 30px;
+    padding-bottom: 30px;
 }
 
 </style>

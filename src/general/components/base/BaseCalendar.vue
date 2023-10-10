@@ -9,7 +9,7 @@
         <div class="calendar__footer">
           <ion-text class="time__label">Start Time</ion-text>
         </div>
-        <base-carousel :items="times.slice(0, (times.length - 1))" width-auto>
+        <base-carousel :items="times.slice(0, (times.length - 2))" width-auto>
           <template v-slot:default="times">
             <div :class="{
               'carousel__item--on-selected': selectedTime === times.item.value,
@@ -146,6 +146,8 @@ const onSelectEndTime = (event: CustomEvent, updatedTime: string) => {
 onMounted(() => {
   if (props.times?.length) {
     selectedTime.value = props.times[0].value;
+    selectedPaymentTime.value = props.times[0].paymentTime;
+    getEndTimes();
   }
 
   if (calendar.value) {

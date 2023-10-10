@@ -34,7 +34,7 @@
                   :members="`${eventData?.bookedCount}/${eventData?.maxParticipants}`"
                   members-label="Members"
                 />
-                <follow />
+                <!-- <follow /> -->
               </div>
       
               <div class="mt-3">

@@ -6,15 +6,8 @@
     <template #content>
       <ion-spinner v-if="loading" name="lines" class="spinner" />
       <div v-else class="content">
-        <radio-group
-          :value="workoutType"
-          @on-change="onChange"
-          :options="workoutTypes"
-        />
-        <ion-button
-          expand="block"
-          @click="submit"
-        >
+        <radio-group :value="workoutType" @on-change="onChange" :options="workoutTypes" />
+        <ion-button expand="block" @click="submit">
           Save
         </ion-button>
       </div>
@@ -56,7 +49,7 @@ const onChange = (value: WorkoutType) => {
 };
 const submit = () => {
   router.go(-1);
-}
+};
 const onBack = () => {
   router.go(-1);
 };
@@ -75,11 +68,14 @@ const onLogout = () => {
 
 .content {
   padding: 24px 24px calc(20px + var(--ion-safe-area-bottom));
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
 
   ion-button {
     width: 100%;
     margin-top: 16px;
   }
 }
-
 </style>

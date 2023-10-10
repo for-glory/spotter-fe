@@ -75,6 +75,7 @@ const orderDetail = ref<boolean>(false);
 const selectedTime = ref<Dayjs | null>(null);
 const isConfirmed = ref<boolean>(true);
 const isExpanded = ref<boolean>(false);
+const selectedHourDifferent = ref<number>(1);
 const cart = ref<Cart | null>(null);
 
 const { mutate: createChatMutation } = useMutation(CreateChatDocument);
@@ -167,7 +168,13 @@ const hourlyRate = computed(() => {
             );
         }
     }
-    return rate?.value ? getSumForPayment(rate.value, true) : "0.00";
+    let calcRate: any = rate?.value ? getSumForPayment(rate.value, true) : "0.00";
+    const diff = dayjs(paymentStore.endDate).diff(dayjs(paymentStore.startDate),'hour',true);
+    if(diff){
+       return (calcRate * diff)
+    }
+    return calcRate;
+    
 });
 const uptime = computed(() =>
     availabilityResult.value?.userAvailability.hours?.reduce(
@@ -185,20 +192,25 @@ const uptime = computed(() =>
             const dateTo = dayjs(cur.to);
 
             for (let i = 0; i < dateTo.diff(dateFrom, "hour"); i++) {
-                const currHour = dayjs(cur.from).add(i, "hour").format("hh:mm A");
+                let currHour = null;
+                if(dayjs(cur.from).minute() > 30){
+                    currHour = dayjs(cur.from).add(i, "hour").format("hh:30 A");
+                }
+                else {
+                    currHour = dayjs(cur.from).add(i, "hour").format("hh:00 A");
+                }
                 const halfAnHourBefore = dayjs(cur.from)
                     .add(i * 60 - 30, "minute")
-                    .format("hh:mm A");
+                    .format("hh:00 A");
                 const halfAnHourAfter = dayjs(cur.from)
                     .add(i * 60 + 30, "minute")
-                    .format("hh:mm A");
+                    .format(`hh:${dayjs(cur.from).minute() > 30 ? '00' : '30'} A`);
                 const hourAfter = dayjs(cur.from)
                     .add(i * 60 + 60, "minute")
-                    .format("hh:mm A");
+                    .format("hh:00 A");
 
                 if (
                     !trainingTimes?.includes(currHour) &&
-                    !trainingTimes?.includes(halfAnHourBefore) &&
                     !trainingTimes?.includes(halfAnHourBefore)
                 ) {
                     // set each hour
@@ -220,7 +232,7 @@ const uptime = computed(() =>
                 }
             }
             if (acc.length) {
-                paymentStore.setValue("date", selectedDay.value);
+                paymentStore.setValue("startDate", acc[0].paymentTime);
                 paymentStore.setValue("time", acc[0].value);
                 paymentStore.setValue("paymentTime", acc[0].paymentTime);
                 selectedTime.value = acc[0].paymentTime;
@@ -232,13 +244,14 @@ const uptime = computed(() =>
 );
 const onChangeDay = (day: Dayjs) => {
     selectedDay.value = day;
-    paymentStore.setValue("date", day);
+    paymentStore.setValue("startDate", day);
     availabilityRefetch(getParams());
 };
 
 const onChangeTime = (time: string, timeLabel: string) => {
     selectedTime.value = time;
     paymentStore.setValue("paymentTime", time);
+    paymentStore.setValue("startDate", time);
     paymentStore.setValue("time", timeLabel);
 };
 const onAgree = () => {
@@ -256,6 +269,7 @@ const handleBack = () => {
     if (orderDetail?.value) {
         orderDetail.value = false;
         cart.value = null;
+        paymentStore.setValue('endDate','');
         return;
     }
     router.back();

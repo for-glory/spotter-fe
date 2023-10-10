@@ -427,6 +427,12 @@ html:not(.plt-capacitor) .show-if-web {
 .ios-app-top {
   padding-top: 64px !important;
 }
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-auto {
+  overflow: auto;
+}
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
