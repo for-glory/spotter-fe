@@ -2,10 +2,11 @@
   <div class="attendance">
     <div class="d-flex align-items-center justify-content-between">
       <ion-title class="title">Attendance Trend</ion-title>
-      <div class="view-option">
+      <BaseSelect :id="'trigger-attendance'" :options="TrainerSelectOptions" defualtCheck="This Year" />
+      <!-- <div class="view-option">
         <ion-text>This Year</ion-text>
         <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
-      </div>
+      </div> -->
     </div>
     <div class="block attendance">
       <custom-chart :chartData="attendanceChartData" :chartOptions="attendanceChartOption" />
@@ -36,40 +37,19 @@
 
 <script setup lang="ts">
 import {
-  IonRadioGroup,
-  IonButton,
-  IonIcon,
-  IonModal,
   IonTitle,
   IonImg,
   IonAvatar
 } from "@ionic/vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import {
-  Query,
-  RoleEnum,
-  SettingsCodeEnum,
-  UserDocument,
-  DeleteProfileDocument,
-  SubscriptionsTypeEnum,
-} from "@/generated/graphql";
-import ProgressAvatar from "@/general/components/ProgressAvatar.vue";
-import AddressItem from "@/general/components/AddressItem.vue";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import { EntitiesEnum } from "@/const/entities";
-import { clearAuthItems } from "@/router/middleware/auth";
+import BaseSelect from "../base/BaseSelect.vue";
 import { useRoute, useRouter } from "vue-router";
 import { 
   computed, 
-  onMounted, 
   ref, 
   watch,
-  withDefaults,
   defineProps,
 } from "vue";
-import useRoles from "@/hooks/useRole";
-import useId from "@/hooks/useId";
-import { Capacitor } from "@capacitor/core";
+import { TrainerSelectOptions } from '@/const/TrainerSelectOption'
 import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 
 const router = useRouter();

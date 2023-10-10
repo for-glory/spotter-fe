@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Teams">
+      <page-header back-btn @back="onBack" title="Gym Managers">
         <template #custom-btn>
           <ion-icon id="header" @click="handleAddGymManager" src="assets/icon/plus.svg" />
         </template>
@@ -16,59 +16,63 @@
       <div v-else class="main-content">
         <ion-grid class="managers-table" v-if="managerData?.length > 0">
           <ion-row class="table-header">
-            <ion-col size="4" class="table-th">
+            <ion-col size="5" class="table-th">
               <ion-text>Full Name</ion-text>
             </ion-col>
             <ion-col size="4" class="table-th">
               <ion-text>Type</ion-text>
             </ion-col>
-            <ion-col size="4" class="table-th">
-              <ion-text>Availability</ion-text>
+            <ion-col size="3" class="table-th">
+              <ion-text>Phone</ion-text>
             </ion-col>
           </ion-row>
-          <ion-row @click="handleViewProfile(manager)" v-for="manager in managerData" :key="manager?.id" class="table-row ion-align-items-center">
-            <ion-col size="4" class="table-td">
-              <ion-text>{{ manager?.first_name + ' ' + manager?.last_name }}</ion-text>
+          <ion-row @click="handleViewProfile(manager)" v-for="manager in managerData" :key="manager?.id" class="table-row">
+            <ion-col size="5" class="table-td">
+              <div class="d-flex-col name-wrapper">
+                <ion-text class="name">{{ (manager?.first_name || manager?.last_name) ? manager?.first_name + ' ' + manager?.last_name : "N/A" }}</ion-text>
+                <span class="email">{{ manager?.email }}</span>
+              </div>
             </ion-col>
             <ion-col size="4" class="table-td">
-              <ion-text>{{ manager?.type ?? 'Full Time' }}</ion-text>
+              <ion-text class="color-60">{{ manager?.type ?? 'Full Time' }}</ion-text>
             </ion-col>
-            <ion-col size="4" class="table-td" id="status">
-              <span
+            <ion-col size="3" class="table-td" id="status">
+              <ion-text>N/A</ion-text>
+              <!-- <span
                 class="status-text"
                 :class="manager?.availability==='available'?'available':'unavailable'"
               >
                 {{ manager?.availability ?? 'unavailiable' }}
-              </span>
+              </span> -->
             </ion-col>
           </ion-row>
         </ion-grid>
         <div class="membership">
           <ion-title class="title">Membership Summary</ion-title>
           <div class="block">
-            <table class="custom-table">
+            <!-- <table class="custom-table">
               <tr>
-                <td>
-                  <summary-item title="Total" keyText="New Signs-up" value="14" />
-                </td>
-                <td>
-                  <summary-item title="Total" keyText="Active" value="60" />
-                </td>
+                <td> -->
+                  <summary-item title="Total" keyText="Drop-ins" value="14" />
+                <!-- </td>
+                <td> -->
+                  <summary-item title="Total" keyText="Gym pass" value="60" />
+                <!-- </td>
               </tr>
               <tr>
-                <td>
+                <td> -->
                   <summary-item title="Today's" keyText="Event counts" value="23" />
-                </td>
-                <td>
+                <!-- </td>
+                <td> -->
                   <summary-item title="Today's" keyText="Message counts" value="13" />
-                </td>
+                <!-- </td>
               </tr>
               <tr>
-                <td colspan="1">
-                  <summary-item title="Total" keyText="Expiring membership" value="24" />
-                </td>
+                <td> -->
+                  <summary-item title="Total" keyText="Dailys" value="24" />
+                <!-- </td>
               </tr>
-            </table>
+            </table> -->
           </div>
         </div>
       </div>
@@ -78,12 +82,11 @@
 
 <script setup lang="ts">
 import {
-  IonButton,
   IonIcon,
-  IonLabel,
-  IonSegment,
-  IonSegmentButton,
-  IonSpinner
+  IonSpinner,
+  IonRow,
+  IonCol,
+  IonText
 } from "@ionic/vue";
 import {
   Query,
@@ -132,9 +135,9 @@ const handleAddGymManager = () => {
 }
 
 const handleViewProfile = (manager: any) => {
-  store.setName(manager.first_name, manager.last_name);
-  store.setAddress(manager.address.lat, manager.address.lng, manager.address.street);
-  store.setAvatarUrl(manager.avatarUrl);
+  store.setName(manager?.first_name, manager?.last_name);
+  store.setAddress(manager?.address?.lat, manager?.address?.lng, manager?.address?.street);
+  store.setAvatarUrl(manager?.avatarUrl);
   router.push({ name: EntitiesEnum.ManagerProfile, params: { id: manager.id } });
 }
 
@@ -142,7 +145,7 @@ onMounted(() => {
   console.log("********", userStore.owned_facilities);
 });
 
-gotManagers(({data}) => {
+gotManagers(({data}) => {  
   console.log({data});
   managerData.value = data.managers.data;
 })
@@ -174,7 +177,7 @@ const onBack = () => {
   ion-col {
     padding: 7px 15px 7px;
     border: 1px solid;
-    border-color: #E1DBC5;
+    // border-color: #E1DBC5;
   }
   ion-text {
     font: 14px/1 Lato;
@@ -188,7 +191,7 @@ const onBack = () => {
     border: 1px solid var(--beige);
   }
   ion-text {
-    color: #ffffff6a;
+    color: var(--gray-60);
     font: 12px/1 Lato;
   }
 }
@@ -241,14 +244,18 @@ const onBack = () => {
   border-radius: 8px;
   margin-bottom: 1rem;
   padding: 26px 14px 16px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 18px;
+  row-gap: 25px;
 }
 
 .title {
   padding: 8px 0px;
-  font-size: 1.6rem;
-  line-height: 1.3;
-  font-weight: 400;
   color: var(--fitnesswhite);
+  font-family: Lato;
+  font-size: 16px;
+  font-weight: 600;
 }
 .spinner {
   display: block;
@@ -265,10 +272,29 @@ td {
 
 ion-col#status {
   background-color: #19191B;
+  text-align: center;
 }
+
 
 ion-icon#header {
   width: 18px;
   height: 18px;
+}
+
+.name-wrapper {
+  .name {
+    color: var(--gray-60);
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .email {
+    color: var(--gray-60);
+    font-family: Lato;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+  }
 }
 </style>
