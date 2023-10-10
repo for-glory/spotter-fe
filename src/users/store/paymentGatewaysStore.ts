@@ -38,19 +38,12 @@ export const paymentGatewaysStore = defineStore("paymentgateways", {
       this.facility = null;
       this.place = null;
       this.purchasable = "";
+      this.startDate = '';
+      this.endDate ='';
     },
   },
   getters: {
-    getStartDate: (state) => {
-      if (state.time) {
-        return `${dayjs(state.date).local().format("YYYY-MM-DD")} ${dayjs
-          .utc(state.paymentTime)
-          .local()
-          .format("hh:mm:ss")}`;
-      } else {
-        return `${dayjs.utc(state.date).local().format("YYYY-MM-DD 00:00:00")}`;
-      }
-    },
+    getStartDate: (state) => state.startDate,
     getEndDate: (state) => state.endDate
   },
 });

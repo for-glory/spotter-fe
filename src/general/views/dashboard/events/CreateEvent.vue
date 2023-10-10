@@ -1,5 +1,11 @@
 <template>
-	<div class="content">
+	<div class="content h-100 d-flex-col">
+    <div class="d-flex align-items-center page-header">
+      <ion-button class="common-back-btn" fill="clear" @click="$router.back()">
+        <ion-icon src="assets/icon/arrow-back.svg" />
+      </ion-button>
+      <ion-title class="banner__title">Create event</ion-title>
+    </div>
 		<event-form
 			ref="eventForm"
 			has-skip-button
@@ -120,5 +126,19 @@ const showSuccessToast = async () => {
 }
 .dashboard-btn {
   margin-top: 10px;
+}
+.page-header {
+    padding-top: 21px;
+    margin-bottom: 26px;
+    ion-title {
+        font-size: 24px;
+        padding-left: 7px;
+        color: var(--gold);
+        line-height: 31.2px;
+    }
+    ion-icon {
+        color: var(--gray-500);
+        font-size: 20px;
+    }
 }
 </style>

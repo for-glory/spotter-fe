@@ -262,7 +262,6 @@ const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>
 );
 
 const handleMore = async () => {
-    console.log("call more");
     const actionSheet = await actionSheetController.create({
         mode: "ios",
         cssClass: 'profile-action-sheet',

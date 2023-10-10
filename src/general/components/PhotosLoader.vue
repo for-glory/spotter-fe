@@ -252,8 +252,8 @@ const getUploadedImg = (image: string) => {
 .add-photo {
   display: flex;
   padding: 2px 0;
-  overflow-x: auto;
-  margin-right: -24px;
+  // overflow-x: auto;
+  // margin-right: -24px;
   margin-bottom: 25px;
 
   &__file {
@@ -313,7 +313,7 @@ const getUploadedImg = (image: string) => {
 .web-add-photo {
   flex-direction: column;
   gap: 10px;
-  overflow: hidden;
+  // overflow: hidden;
   .add-photo__file {
     margin: 0;
     height: 112px;

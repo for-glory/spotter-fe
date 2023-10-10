@@ -56,7 +56,7 @@ import { Capacitor } from "@capacitor/core";
 const props = defineProps<{
   trainer: User;
   endButton?: string;
-  distance: boolean;
+  distance?: boolean;
 }>();
 
 const { role } = useRoles();

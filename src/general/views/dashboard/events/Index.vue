@@ -3,7 +3,7 @@
 		class="holder-content ion-padding-horizontal"
 		:class="{ 'holder-content--empty': !eventsLoading && !events?.length }" 
 	>
-    <div class="banner" style="background: url('assets/backgrounds/eventBanner.png')">
+    <div class="banner ion-text-start" style="background: url('assets/backgrounds/eventBanner.png')">
       <ion-title class="banner__title">Create events for clients and trainers</ion-title>
       <ion-text class="banner__text">
         Your hub for creating memorable gatherings. Effortlessly set up events, and easily track registrations to ensure a seamless experience.
@@ -84,6 +84,8 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   InfiniteScrollCustomEvent,
+  IonTitle,
+  IonText
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import EventDataTable from "@/general/components/dataTables/EventDataTable.vue";
@@ -110,7 +112,7 @@ import { routes } from "@/general/routes";
 
 const eventsPage = ref<number>(1);
 const totalEvents = ref<number>(0);
-const filter = ref<string>('all');
+const filter = ref<string>('upcoming');
 
 const { id: myId } = useId();
 const currentFacility = useFacilityStore();

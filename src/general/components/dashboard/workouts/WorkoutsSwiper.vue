@@ -18,7 +18,7 @@
     <swiper
       v-if="workouts?.length"
       free-mode
-      slidesPerView="auto"
+      :slidesPerView="Capacitor.isNativePlatform() ? 1.2 : 3.2"
       :spaceBetween="16"
       :slidesOffsetAfter="16"
       :slidesOffsetBefore="16"
