@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" :title="'Create ' + type" />
+      <page-header back-btn @back="isConfirmedModalOpen = true" :title="'Create ' + type" />
     </template>
     <template #content>
       <div class="form-body">
@@ -9,24 +9,44 @@
           <ion-row>
             <ion-col size="12" size-md="6">
               <div class="form-row">
-                <div class="label">Title of {{ type }}</div>
-                <input
-                  class="input-text-field"
-                  type="text"
-                  :placeholder="previousItem?.title"
-                  name="plan"
-                  disabled
-                />
+                <div class="label">Duration</div>
+                <wheel-picker :options="dayOptions" :name="type">
+                  <template #button>
+                    <choose-block add-border 
+                        border-color="var(--gray-500)"
+                        end-icon-color="var(--gray-500)"
+                        title="Duration"
+                        :value="nextSelectedOption"
+                        @handle-click="
+                          openPicker(type, nextSelectedOption, dayOptions, 'next')
+                        "
+                      />
+                  </template>
+                </wheel-picker>
               </div>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col size="12" size-md="6">
+              <!-- <div class="form-row">
+                <div class="label">Title of {{ type }}</div>
+                <input
+                  class="input-text-field prev"
+                  type="text"
+                  :placeholder="previousItem?.title"
+                  name="plan"
+                  disabled
+                />
+              </div> -->
               <div class="form-row">
-                <div class="label">Duration</div>
-                <select class="input-select-field" name="cars" id="cars" disabled>
-                  <option value="1">1 day</option>
-                </select>
+                <div class="label">Choose equipment and amenities</div>
+                <choose-block add-border
+                  border-color="var(--gray-60)"
+                  end-icon-color="var(--gray-500)"
+                  title="Equipment and amenities"
+                  @handle-click="onChooseAmenities"
+                  :value="facilityEquipments?.length + facilityAmenities?.length || ''"
+                />
               </div>
             </ion-col>
           </ion-row>
@@ -35,7 +55,7 @@
               <div class="form-row">
                 <div class="label">Set the price for {{ type }}(USD $)</div>
                 <input
-                  class="input-text-field"
+                  class="input-text-field prev"
                   type="number"
                   :placeholder="previousItem?.price"
                   name="cost"
@@ -46,7 +66,7 @@
           </ion-row>
           <ion-row>
             <ion-col size="12" size-md="6">
-              <ion-title>Next {{ type }}</ion-title>
+              <ion-title class="next-title">Next {{ type }}</ion-title>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -83,9 +103,19 @@
             <ion-col size="12" size-md="6">
               <div class="form-row">
                 <div class="label">Duration</div>
-                <select class="input-select-field" name="cars" id="cars">
-                  <option value="1">1 day</option>
-                </select>
+                <wheel-picker :options="dayOptions" :name="type">
+                  <template #button>
+                    <choose-block add-border 
+                        border-color="var(--gray-60)"
+                        end-icon-color="var(--gray-500)"
+                        title="Duration"
+                        :value="selectedOption"
+                        @handle-click="
+                          openPicker(type, selectedOption, dayOptions)
+                        "
+                      />
+                  </template>
+                </wheel-picker>
               </div>
             </ion-col>
           </ion-row>
@@ -93,7 +123,9 @@
             <ion-col size="12" size-md="6">
               <div class="form-row">
                 <div class="label">Choose equipment and amenities</div>
-                <choose-block
+                <choose-block add-border
+                  border-color="var(--gray-60)"
+                  end-icon-color="var(--gray-500)"
                   title="Equipment and amenities"
                   @handle-click="onChooseAmenities"
                   :value="facilityEquipments?.length + facilityAmenities?.length || ''"
@@ -137,19 +169,22 @@
     ref="equipmentAndAmenitiessModal"
     @cancel="equipmentAndAmenitiessSelected"
   />
+  <discard-changes
+    :is-open="isConfirmedModalOpen"
+    @close="discardModalClosed"
+    title="Do you want to discard changes?"
+    text="Changes will not be saved"
+    cancelButton="Cancel"
+    button="Discard changes"
+  />
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon, IonLabel, toastController } from "@ionic/vue";
+import { IonButton, toastController, IonTitle, IonGrid, IonRow, IonCol, pickerController, PickerColumnOption } from "@ionic/vue";
 import {
   ref,
   computed,
-  defineEmits,
-  withDefaults,
-  defineProps,
-  defineExpose,
 } from "vue";
-import { chevronBackOutline } from "ionicons/icons";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter, useRoute } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
@@ -159,14 +194,17 @@ import {
   CreateFacilityItemDocument
 } from "@/generated/graphql";
 import EquipmentAndAmenities from "@/general/views/EquipmentAndAmenities.vue";
+import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { EquipmentAndAmenitiesModalResult } from "@/interfaces/EquipmentAndAmenitiesModal";
-import { newFacilityStoreTypes } from "@/ts/types/store";
 import { useNewFacilityStore } from "../../facilities/store/new-facility";
 import { CheckboxValueType } from "@/ts/types/checkbox-value";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
+import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
+import ChooseBlock from "@/general/components/blocks/Choose.vue";
+import { daysDuration } from "@/const/days-durations";
 
 const router = useRouter();
 const navigate = (name: EntitiesEnum) => {
@@ -179,7 +217,7 @@ const equipmentAndAmenitiessModal = ref<typeof EquipmentAndAmenities | null>(
 
 const store = useNewFacilityStore();
 const currentFacility = useFacilityStore();
-
+const isConfirmedModalOpen = ref(false);
 const facilityEquipments = computed(() => store.equipments);
 const facilityAmenities = computed(() => store.amenities);
 const facilityPhotos = computed(() => store.photos);
@@ -188,6 +226,11 @@ const itemDuration = ref<number>();
 const itemPrice = ref<number>();
 const previousItem = ref<any>(null);
 const type = computed(() => route.params.type);
+console.log("type", type.value);
+const selectedOption = ref<any>(null);
+const nextSelectedOption = ref(null);
+const activePicker = ref('create');
+const days = daysDuration(type.value === "drop-ins" ? 31 : 13);
 
 const equipmentAndAmenitiessSelected = (
   result: EquipmentAndAmenitiesModalResult
@@ -198,6 +241,37 @@ const equipmentAndAmenitiessSelected = (
 
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
+
+const dayCoulmns = [
+  {
+    name: "days",
+    options: days,
+  },
+]
+
+const dayOptions = {
+  columns: dayCoulmns,
+  buttons: [
+    {
+      text: "Select number of " + (type.value === "drop-ins" ? "days" : "months"),
+      role: "cancel",
+    },
+    {
+      text: "Choose " + (type.value === "drop-ins" ? "number" : "months"),
+      handler: (value: any) => {
+        console.log("value", value);
+        console.log("activePicker.value", activePicker.value);
+          
+        if(activePicker.value === 'create'){
+          selectedOption.value = value?.days.value;
+        } else {
+          nextSelectedOption.value = value?.days.value;
+        }
+      }
+    }
+  ]
+
+}
 
 const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   context: {
@@ -214,6 +288,53 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
 });
 
 let abort: any;
+
+
+const openPicker = async (
+  name: string,
+  values: any,
+  options: { columns: any[]; buttons: any },
+  from = 'create'
+) => {
+  activePicker.value = from
+  const columns = options.columns.map(
+    (column: { options: any[]; name: any }) => {
+      const options = column.options.map(
+        (option: { value: any; text: any }) => {
+          return {
+            value: option.value,
+            text: option.text,
+          };
+        }
+      );
+      return {
+        name: column.name,
+        options,
+        selectedIndex: values
+          ? column.options.findIndex(
+              (option: { value: any }) => option.value === values
+            )
+          : -1,
+      };
+    }
+  );
+
+  const picker = await pickerController.create({
+    buttons: options.buttons,
+    mode: "ios",
+    columns,
+    cssClass: 'trainer-picker',
+  });
+
+  await picker.present();
+};
+
+const discardModalClosed = (approved: boolean) => {
+  isConfirmedModalOpen.value = false;
+  if (approved) {
+      onBack()
+  }
+};
 
 const uploadPhoto = async (photo: string, index?: number) => {
   const file = dataURItoFile(photo, uuidv4());
@@ -316,7 +437,7 @@ const onBack = () => {
 }
 
 .form-body {
-  padding: 0px 32px;
+  padding: 0px 16px;
 }
 
 ion-button {
@@ -342,10 +463,10 @@ ion-label {
   width: 100%;
   padding: 14px;
   background: #262626;
-  border: 1px solid var(--gray-500);
+  border: 1px solid var(--gray-60);
   border-radius: 8px;
   font-size: 13px;
-  color: var(--ion-color-medium);
+  color: var(--color-white);
 }
 
 .input-select-field {
@@ -376,6 +497,24 @@ input:focus {
 }
 .form-row {
   margin-bottom: 0px;
+
+  .label {
+    color: var(--gray-60);
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .prev {
+    border: 1px solid var(--gray-500);
+  }
+}
+.next-title {
+  text-align: center;
+  font-family: Lato;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
 }
 .submit-buttons {
   display: flex;

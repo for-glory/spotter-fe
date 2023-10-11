@@ -1,9 +1,9 @@
 <template>
-	<ion-menu menu-id="add-manager-menu" side="end" content-id="main-content" class="add-manager-panel">
+	<ion-menu menu-id="add-manager-menu" side="end" content-id="main-content"  class="add-manager-panel">
     <ion-header class="ion-no-border">
       <ion-toolbar class="title">
         <!-- <ion-menu-toggle slot="start" class="back-btn" :auto-hide="false" > -->
-          <IonButton fill="clear" size="small" slot="start" @click="onBack">
+          <IonButton fill="clear" size="small" shape="round" slot="start" @click="onBack">
             <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
           </IonButton>
         <!-- </ion-menu-toggle> -->
@@ -12,8 +12,13 @@
     </ion-header>
     <ion-content class="ion-padding">
       <div class="tile">
+        <IonLabel>Choose profile photo</IonLabel>
+        <photos-loader />
+      </div>
+      <div class="tile">
         <base-input
           label="Full name"
+          gray-input
           placeholder="First name, Last name"
           name="first-last-name"
           class="form-row__control"
@@ -34,6 +39,7 @@
       <div class="tile">
         <base-input
           label="Email"
+          gray-input
           v-model:value="emailInput"
           :error-message="emailInputError"
           type="email"
@@ -43,6 +49,7 @@
       <div class="tile">
         <base-input
           label="Phone"
+          gray-input
           v-model:value="postal"
           name="phone"
           class="form-row__control"
@@ -65,42 +72,53 @@
           name="birth"
           class="form-row__control"
         /> -->
-        <ion-item class="address-input ion-no-padding" lines="none">
+        <!-- <ion-item class="address-input ion-no-padding" lines="none"> -->
           <choose-block
-            title="Date of birth"
+            title="Date of birth" add-border is-light-item
+            end-icon-color="var(--gray-500)"
             :value="birth ? dayjs(birth).format('D MMMM') : ''"
             @handle-click="showDatePikerModal(DateFieldsEnum.birth, {title: 'Date of birth',})"
           />
-        </ion-item>
+        <!-- </ion-item> -->
       </div>
       <div class="tile">
-        <ion-label>Address</ion-label>
-        <ion-item class="address-input" lines="none">
+         <ion-label>Address</ion-label>
+        <ChooseBlock title="Address" end-icon-color="var(--gray-500)" add-border :value="selectedAddress" @handle-click="openLocationModal" :isLightItem="true" />
+        <!-- <ion-item class="address-input" lines="none">
           <GMapAutocomplete
             placeholder="Enter your address"
             class="search-form__control form-row__control"
             @place_changed="setPlace"
           >
           </GMapAutocomplete>
-        </ion-item>
+        </ion-item>  -->
       </div>
       <div class="tile">
-        <ion-label>Employment Type</ion-label>
-        <ion-item class="address-input" lines="none">
+        <CustomSelection choose-block 
+                        border-color="var(--gray-600)"
+                        active-bg-color="var(--gray-700)"
+                        label="Employment Type" 
+                        placeholder="Full Time" 
+                        :selected-value="selectedEmpType"
+                        @select-change="(e) => selectedEmpType = e"
+                        :options="empOptions" />
+        <!-- <ion-item class="address-input" lines="none"> -->
           <!-- <ion-input placeholder="Full Time"></ion-input> -->
-          <ion-select
+          <!-- <ion-select
             interface="popover"
             placeholder="Select type"
           >
             <ion-select-option>Full Time</ion-select-option>
             <ion-select-option>Contract</ion-select-option>
           </ion-select>
-        </ion-item>
+        </ion-item> -->
       </div>
       <div class="tile">
         <base-input
           label="Tax ID"
+          gray-input
           v-model:value="taxId"
+          placeholder="Enter Tax ID"
           name="taxId"
           class="form-row__control"
         />
@@ -110,6 +128,7 @@
       </ion-menu-toggle>
     </ion-content>
   </ion-menu>
+  <ChooseLocationModal ref="chooseLocationModal" title="Address" :forAddress="true" :is-web-view="true" @select="addressSelected" />
   <!-- <date-picker-modal ref="datePickerModal" @select="dateSelected" /> -->
   <date-picker-modal ref="datePickerModal" @select="dateSelected" />
   <discard-changes
@@ -140,9 +159,12 @@ import {
   IonSelectOption,
   IonItem
 } from "@ionic/vue";
-import { EntitiesEnum } from "@/const/entities";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
+import PhotosLoader from "@/general/components/PhotosLoader.vue";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+import ChooseBlock from "@/general/components/blocks/Choose.vue";
+import CustomSelection from "@/general/views/dashboard/settings/CustomSelection.vue";
 import {
   FilePreloadDocument,
   EmploymentTypeEnum,
@@ -182,8 +204,20 @@ enum DateFieldsEnum {
   birth = "BIRTH_DATE"
 }
 const isConfirmedModalOpen = ref(false);
+const selectedEmpType = ref(null)
+const empOptions = [
+  {
+    title: "Full Time",
+    value: "Full Time"
+  },
+  {
+    title: "Contract",
+    value: "Contract"
+  }
+];
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 const filter = ref<string>('profile');
 const imageUrl = ref<string>('');
 
@@ -315,6 +349,17 @@ const addManager = () => {
         console.error(error)
       });
   }
+}
+
+const addressSelected = () => {
+  console.log("addressSelected");
+}
+
+const openLocationModal = () => {
+  console.log('openLocationModal');  
+  chooseLocationModal.value?.present({
+    title: "Address",
+  });
 }
 const removePhoto = () => {
   previewUrl.value = "";
@@ -475,13 +520,14 @@ const dateSelected = (result: DatePickerModalResult) => {
 
 const onBack = () => {
   // menuController.enable(false);
-  menuController.close();
+  // menuController.close();
   isConfirmedModalOpen.value = true;
 };
 
 const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
+    menuController.close();
     // router.push({
     //   name: router?.currentRoute?.value?.name,
     //   params: { step: 'upload' },
@@ -515,6 +561,7 @@ const discardModalClosed = (approved: boolean) => {
     max-height: 48px;
     --padding-bottom: 10px;
     --padding-top: 10px;
+    --border-radius: 50%;
   }
 }
 .back-btn {
@@ -534,6 +581,10 @@ const discardModalClosed = (approved: boolean) => {
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
+
+  ion-label {
+    color: var(--gray-60);
+  }
 }
 .image-upload {
   background-color: var(--main-color);
