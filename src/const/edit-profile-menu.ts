@@ -121,7 +121,7 @@ export const editProfileMenu: EditProfileMenu = {
       label: "Notifications",
     },
     {
-      name: EntitiesEnum.Profile,
+      name: EntitiesEnum.ProfileAddSocialLink,
       label: "Add social links",
     },
     {

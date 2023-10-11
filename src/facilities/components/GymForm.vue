@@ -1,5 +1,5 @@
 <template>
-  <page-header @back="cancel" back-btn :title="!edit ? 'Add New Gym' : 'Edit gym Profile'">
+  <page-header v-if="showHeader" @back="cancel" back-btn :title="!edit ? 'Add New Gym' : 'Edit gym Profile'">
     <template #custom-btn>
     </template>
   </page-header>
@@ -201,8 +201,10 @@ const props = withDefaults(
     nextButton?: boolean;
     footerFixed?: boolean;
     edit?: boolean;
+    showHeader?:boolean;
   }>(),{
-    edit: false
+    edit: false,
+    showHeader: true
   }
 );
 

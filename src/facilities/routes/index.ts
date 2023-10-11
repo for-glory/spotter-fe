@@ -163,8 +163,13 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     name: EntitiesEnum.FacilityDropins,
-    path: "/facilities/dropins/list",
+    path: "/facilities/:type/list",
     component: () => import("@/facilities/views/dropins/List.vue"),
+  },
+  {
+    name: EntitiesEnum.FacilityDropinsList,
+    path: "/facilities/dropins/dropin-list",
+    component: () => import("@/facilities/views/dropins/DropsinList.vue"),
   },
   {
     name: EntitiesEnum.FacilityCreateEvent,
