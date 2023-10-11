@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { BodyPartsDocument, BodyPartsQuery } from "@/generated/graphql";
 import { useWorkoutsStore } from "@/trainers/store/workouts";
-import { IonSpinner, IonButton } from "@ionic/vue";
+import { IonSpinner, IonButton, modalController } from "@ionic/vue";
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -49,10 +49,8 @@ import CheckboxGroup from "@/general/components/blocks/CheckboxGroup.vue";
 const props = withDefaults(defineProps<{
   isModal?:boolean
 }>(), {
-
   isModal: false
 });
-console.log(props);
 
 
 const router = useRouter();
@@ -127,6 +125,9 @@ const discardModalClosed = (approved: boolean) => {
   }
 };
 const submit = () => {
+  if (props?.isModal) {  
+    return modalController.dismiss();
+  }
   router.go(-1);
 }
 </script>

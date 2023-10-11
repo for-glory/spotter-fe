@@ -1,6 +1,6 @@
 <template>
   <ion-modal ref="modal" class="equipment-amenities-modal">
-    <IonHeader  class="ion-no-border">
+    <IonHeader  class="ion-no-border" v-if="isNative">
       <IonToolbar class="header ion-no-border">
         <IonButtons slot="start">
           <IonButton @click="select">
@@ -249,7 +249,7 @@ defineExpose({
 }
 
 .web-modal {
-  --padding-bottom: 30px;
+  --padding-bottom: 15px;
   --padding-start: 30px;
 }
 </style>
