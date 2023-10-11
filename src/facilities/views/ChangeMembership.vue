@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn title="Change Membership2" @back="onBack" />
+      <page-header back-btn title="Change Membership" @back="onBack" />
     </template>
     <template #content>
       <ion-spinner

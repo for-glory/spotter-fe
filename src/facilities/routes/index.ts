@@ -191,4 +191,9 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/facilities/managers/profile/:id",
     component: () => import("@/facilities/views/managers/ManagerProfile.vue"),
   },
+  {
+    name: EntitiesEnum.EmploymentType,
+    path: "/facilities/employment-type",
+    component: () => import("@/facilities/views/EmploymentType.vue"),
+  }
 ];

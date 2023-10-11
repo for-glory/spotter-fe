@@ -1,5 +1,5 @@
 <template>
-	<ion-menu menu-id="add-manager-menu" side="end" content-id="main-content"  class="add-manager-panel">
+	<ion-menu menu-id="add-manager-menu" :swipe-gesture="false" @ion-did-close="sideMenuStore.setToDefault()" side="end" content-id="main-content"  class="add-manager-panel">
     <ion-header class="ion-no-border">
       <ion-toolbar class="title">
         <!-- <ion-menu-toggle slot="start" class="back-btn" :auto-hide="false" > -->
@@ -7,11 +7,11 @@
             <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
           </IonButton>
         <!-- </ion-menu-toggle> -->
-        <ion-title>Invite Team Member</ion-title>
+        <ion-title>{{ options.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <div class="tile">
+      <div class="tile" v-if="options.showImg">
         <IonLabel>Choose profile photo</IonLabel>
         <photos-loader />
       </div>
@@ -74,7 +74,7 @@
         /> -->
         <!-- <ion-item class="address-input ion-no-padding" lines="none"> -->
           <choose-block
-            title="Date of birth" add-border is-light-item
+            :title="selectDate" add-border is-light-item
             end-icon-color="var(--gray-500)"
             :value="birth ? dayjs(birth).format('D MMMM') : ''"
             @handle-click="showDatePikerModal(DateFieldsEnum.birth, {title: 'Date of birth',})"
@@ -144,20 +144,15 @@
 <script setup lang="ts">
 import {
   IonButton,
-  IonText,
   IonTitle,
   IonIcon,
   IonMenuToggle,
-  IonInput,
   IonMenu,
   IonContent,
   IonToolbar,
   IonLabel,
   IonHeader,
   menuController,
-  IonSelect,
-  IonSelectOption,
-  IonItem
 } from "@ionic/vue";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
 import BaseInput from "@/general/components/base/BaseInput.vue";
@@ -195,6 +190,8 @@ import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
+import { useSideMenu } from "@/general/stores/sideMenuStore";
+import { storeToRefs } from "pinia";
 
 interface MenuCustomEvent<T = any> extends CustomEvent {
   detail: T;
@@ -215,6 +212,10 @@ const empOptions = [
     value: "Contract"
   }
 ];
+
+const sideMenuStore = useSideMenu();
+const { options, values } = storeToRefs(sideMenuStore);
+const selectDate = ref('DD/MM/YY')
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
@@ -514,7 +515,7 @@ const showDatePikerModal = (
 
 const dateSelected = (result: DatePickerModalResult) => {
   if (result.date) {
-    console.log('selected date: ', result?.date);
+    selectDate.value = dayjs(new Date(result?.date)).format('DD/MM/YY')
   }
 };
 
@@ -524,10 +525,10 @@ const onBack = () => {
   isConfirmedModalOpen.value = true;
 };
 
-const discardModalClosed = (approved: boolean) => {
+const discardModalClosed = async (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
-    menuController.close();
+    await menuController.close();
     // router.push({
     //   name: router?.currentRoute?.value?.name,
     //   params: { step: 'upload' },
@@ -554,6 +555,7 @@ const discardModalClosed = (approved: boolean) => {
     font-size: 20px;
     font-style: normal;
     font-weight: 500;
+    width: 85%;
   }
 
   ion-button {

@@ -1,8 +1,8 @@
 <template>
-	<ion-modal id="modal" ref="modal" :class="{'tr-membership-modal': (role === RoleEnum.Trainer || role === RoleEnum.FacilityOwner) }" :is-open="isVisible"  :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :class="['tr-membership-modal', { 'native-modal':Capacitor.isNativePlatform() }]" :is-open="isVisible"  :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Change Membership Plan1</ion-title>
+				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="handleCancel">
 						<ion-icon src="assets/icon/close.svg" class="close" />
@@ -10,14 +10,14 @@
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
-		<div v-if="!Capacitor.isNativePlatform()" class="ion-padding">
+		<div v-if="false" class="ion-padding">
       <ion-row>
         <ion-col size="6">
-          <div class="plan">
+          <div class="plan current-plan d-flex-col align-items-start">
             <ion-text>Current Plan</ion-text>
-            <div class="paragraph">
+            <div class="paragraph d-flex align-items-center gap-12">
               <ion-title class="radiobutton__label">
-                {{ currentPlan.title }}
+                {{ currentPlan?.title.split(' ')[0] }}
               </ion-title>
 
               <ion-text class="radiobutton__cost"
@@ -32,6 +32,7 @@
                 <ion-icon
                   src="assets/icon/medal.svg"
                   class="silver grade-image"
+                  :class="currentPlan?.tier === 'GOLD' ? 'gold' : currentPlan?.tier === 'SILVER' ? 'silver' : 'bronze'"
                 />
               </div>
               <div>
@@ -44,7 +45,7 @@
                     <div>
                       <ion-icon src="assets/icon/accessibility.svg" />
                     </div>
-                    <div>
+                    <div class="benefit">
                       <ion-text>{{ benefit?.description }}</ion-text>
                     </div>
                   </li>
@@ -54,11 +55,11 @@
           </div>
         </ion-col>
         <ion-col size="6">
-          <div class="plan">
+          <div class="plan new-plan d-flex-col align-items-start">
             <ion-text>New Plan</ion-text>
-            <div class="paragraph">
+            <div class="paragraph d-flex align-items-center gap-12">
               <ion-title class="radiobutton__label">
-                {{ newPlan.title }}
+                {{ newPlan.title.split(' ')[0] }}
               </ion-title>
 
               <ion-text class="radiobutton__cost"
@@ -73,6 +74,7 @@
                 <ion-icon
                   src="assets/icon/medal.svg"
                   class="silver grade-image"
+                  :class="[newPlan?.tier === 'GOLD' ? 'gold' : newPlan?.tier === 'SILVER' ? 'silver' : 'bronze', newPlan.tier]"
                 />
               </div>
               <div>
@@ -85,7 +87,7 @@
                     <div>
                       <ion-icon src="assets/icon/accessibility.svg" />
                     </div>
-                    <div>
+                    <div class="benefit">
                       <ion-text>{{ benefit?.description }}</ion-text>
                     </div>
                   </li>
@@ -97,7 +99,7 @@
       </ion-row>
 			<div class="buttons">
 				<ion-button class="confirm" @click="handleConfirm">Confirm change</ion-button>
-				<ion-button class="cancel" @click="handleCancel">Back</ion-button>
+				<ion-button class="cancel" @click="handleCancel">Cancel</ion-button>
 			</div>
 		</div>
     <div v-else class="ion-padding">
@@ -183,9 +185,9 @@ import {
   IonToolbar,
   IonText,
   IonTitle,
-	IonGrid,
 	IonRow,
-	IonCol
+	IonCol,
+  IonIcon
 } from "@ionic/vue";
 import { defineProps, defineEmits, withDefaults } from "vue";
 import { Capacitor } from '@capacitor/core';
@@ -255,6 +257,10 @@ const handleCancel = () => {
 .paragraph {
   padding-top: 1.2rem;
   padding-bottom: 0.8rem;
+  text-align: start;
+  ion-title {
+    padding: 0;
+  }
   span {
     font-size: 0.7rem;
   }
@@ -276,7 +282,13 @@ ul {
         font-size: 6px;
       }
       ion-text {
-        font-size: 0.7rem;
+        font-family: Yantramanav;
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .benefit {
+        text-align: start;
       }
     }
   }
@@ -292,7 +304,7 @@ ul {
   width: 10rem;
   color: var(--gold);
   margin-right: 1.5rem;
-  --background: rgb(43, 42, 42);
+  --background: var(--gray-600);
   height: 45px;
 }
 .cancel {
@@ -324,9 +336,13 @@ ion-modal#modal {
 	color: var(--gold);
 	text-align: center;
 }
+
+.radiobutton__cost {
+  padding: 0;
+}
 .tr-membership-modal {
   &::part(content){
-    --width: 87%;
+    --width: 724px;
   }
 
   .title {
@@ -367,10 +383,6 @@ ion-modal#modal {
     padding: 23px;
     background: var(--main-color);
   }
-  .grade-image {
-     width: 4rem;
-     height: 4rem;
-  }
 
   .split {
     width: 77px;
@@ -378,14 +390,6 @@ ion-modal#modal {
     background: var(--gold);
     flex-shrink: 0;
     margin: 30px 0;
-  }
-
-  .accessibility {
-    padding-bottom: 2px;
-    ion-text {
-      font-size: 12px;
-      font-weight: 500;
-    }
   }
 
   .paragraph {
@@ -426,6 +430,24 @@ ion-modal#modal {
     }
     .location {
       color: var(--gray-500);
+    }
+  }
+}
+
+.native-modal {
+  &::part(content){
+    --width: 87%;
+  }
+  .grade-image {
+     width: 4rem;
+     height: 4rem;
+  }
+
+  .accessibility {
+    padding-bottom: 2px;
+    ion-text {
+      font-size: 12px;
+      font-weight: 500;
     }
   }
 

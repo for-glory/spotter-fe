@@ -78,18 +78,13 @@
 
 <script setup lang="ts">
 import {
-  IonIcon,
   IonButton,
   IonSpinner,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
   InfiniteScrollCustomEvent,
   IonTitle,
   IonText
 } from "@ionic/vue";
-import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import EventDataTable from "@/general/components/dataTables/EventDataTable.vue";
-import EventItem from "@/general/components/EventItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
   EventsDocument,
@@ -100,14 +95,13 @@ import {
   SortOrder,
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
-import { ref, watch, computed , withDefaults, defineProps, } from "vue";
+import { ref, watch, computed } from "vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { useRouter } from "vue-router";
 import useId from "@/hooks/useId";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
-import { routes } from "@/general/routes";
 
 
 const eventsPage = ref<number>(1);

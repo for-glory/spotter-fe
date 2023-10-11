@@ -466,3 +466,23 @@ html:not(.plt-capacitor) .show-if-web {
     background: var(--gray-700);
     font-size: 15px;
 }
+
+.getting-paid-info {
+  background: linear-gradient(0deg, rgba(11, 11, 11, 0.10) 0%, rgba(11, 11, 11, 0.10) 100%), #2D2D2D;
+  border-radius: 8px;
+  margin-bottom: 24px;
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin: 0;
+
+    span {
+      color: #109CF1;
+    }
+  }
+}

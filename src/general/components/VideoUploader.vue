@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonButton, IonText, isPlatform } from "@ionic/vue";
+import { IonIcon, IonButton, IonText, isPlatform, actionSheetController } from "@ionic/vue";
 import { defineEmits, defineProps, ref } from "vue";
 import {
   CameraPro,
@@ -53,7 +53,12 @@ import CircleProgress from "@/general/components/CircleProgress.vue";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { EntitiesEnum } from "@/const/entities";
 
-defineProps<{
+enum VideoActionTypes {
+  VideoLibrary = "VIDEO_LIBRARY",
+  RecordVideo = "RECORD_VIDEO"
+}
+
+const props = defineProps<{
   video: string;
   buttonText: string;
   loading: boolean;
@@ -63,6 +68,7 @@ defineProps<{
   videoPath?: string;
 	thumbnail?: string;
   newDedc?: boolean;
+  showSheet?:boolean
 }>();
 
 const emits = defineEmits<{
@@ -80,7 +86,7 @@ const videoOptions: VideoOptions = {
   promptLabelVideo: "Record a video",
 };
 
-const chooseVideo = () => {
+const chooseVideo = async () => {
   console.log(maxVideoSize.value);
   if (isPlatform("capacitor")) {
     CameraPro.getVideo(videoOptions)
@@ -110,6 +116,7 @@ const chooseVideo = () => {
       });
   } else {
     const input: HTMLInputElement = document.createElement("input");
+    input.style.display = "none";
     input.type = "file";
     input.accept = "video/mp4,video/x-m4v,video/*";
     document.body.appendChild(input);
@@ -137,7 +144,31 @@ const chooseVideo = () => {
       emits("change", file, fileSize, fileName);
       input.remove();
     };
-    input.click();
+    if(props.showSheet){
+        const actionSheet = await actionSheetController.create({
+        mode: "ios",
+        buttons: [
+          {
+            text: "Record a video",
+            data: {
+              type: VideoActionTypes.RecordVideo
+            }
+          },
+          {
+            text: "Video library",
+            data: {
+              type: VideoActionTypes.VideoLibrary
+            },
+            handler() {
+              input.click();
+            },
+          }
+        ]
+      });
+      actionSheet.present()
+    } else {
+      input.click();
+    }
   }
 };
 
