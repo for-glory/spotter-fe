@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Invite Team Member">
+      <page-header back-btn @back="onBack" title="Add New Manager">
       </page-header>
     </template>
     <template #content>
@@ -10,19 +10,6 @@
           class="inputs-form"
           :class="{ 'inputs-form--footer-fixed': footerFixed }"
         >
-          <div class="form-row">
-            <ion-label class="label"> Choose profile photo</ion-label>
-            <photos-loader
-              @upload="uploadPhoto"
-              @delete="deletePhoto"
-              @change="uploadPhoto"
-              :circle-shape="false"
-              :photos="media"
-              :loading="photoOnLoad"
-              :progress="percentPhotoLoaded"
-            />
-          </div>
-
           <div class="form-row">
             <base-input
               required
@@ -37,6 +24,13 @@
               v-model:value="managerEmail"
               placeholder="Enter email address"
               label="Email"
+            />
+          </div>
+          <div class="form-row">
+            <base-input
+              label="Phone number"
+              v-model:value="managerPhoneNumber"
+              placeholder="Phone number"
             />
           </div>
           <div class="form-row">
@@ -73,10 +67,11 @@
           </div>
 
           <div class="form-row">
-            <base-input
-              label="Employment Type"
-              v-model:value="managerType"
-              placeholder="Full Time"
+            <ion-label class="label"> Employement Type </ion-label>
+            <choose-block
+              title="Full Time"
+              @handle-click="$router.push({ name: EntitiesEnum.EmploymentType })"
+              class="form-row__control"
             />
           </div>
 
@@ -85,14 +80,6 @@
               label="Tax ID"
               v-model:value="managerTaxID"
               placeholder="Tax ID"
-            />
-          </div>
-
-          <div class="form-row">
-            <base-input
-              label="Phone number"
-              v-model:value="managerPhoneNumber"
-              placeholder="Phone number"
             />
           </div>
 

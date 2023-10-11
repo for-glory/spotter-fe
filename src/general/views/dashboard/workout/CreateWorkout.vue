@@ -26,6 +26,7 @@
                   @delete="removeVideo"
                   @change="videoSelected"
                   :thumbnail="thumbnail"
+                  :show-sheet="role === RoleEnum.FacilityOwner ? true : false"
                   :loading="videoOnLoading"
                   :video-size="videoInfo.size"
                   :video-name="videoInfo.name"
@@ -72,6 +73,7 @@
                 <!-- <ion-item class="choose-place choose-block">
                   <div class="d-flex align-items-center justify-content-between w-100"> -->
                     <CustomSelection choose-block 
+                                      active-bg-color="var(--main-color)"
                                       label="Choose intensity level" 
                                       placeholder="Workout type" 
                                       :selected-value="selectedType"
@@ -169,16 +171,11 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, inject } from "vue";
 import {
-	IonTitle,
   IonButton,
   IonLabel,
-  PickerColumnOption,
-  PickerOptions,
 	IonGrid,
 	IonRow,
 	IonCol,
-  IonSelect,
-  IonSelectOption,
   toastController,
   IonSpinner,
 modalController
@@ -189,21 +186,14 @@ import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
 import { useWorkoutsStore } from "../../../../trainers/store/workouts";
 import { requiredFieldSchema } from "@/validations/authValidations";
-import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
 import VideoUploader from "@/general/components/VideoUploader.vue";
-import { v4 as uuidv4 } from "uuid";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import { Emitter, EventType } from "mitt";
 import {
   VideoPreloadDocument,
   CreateDailyDocument,
   CreateDailyInput,
-  Workout,
-  WorkoutDocument,
-  WorkoutVideosInput,
   WorkoutTypesQuery,
   WorkoutTypesDocument,
   WorkoutType,

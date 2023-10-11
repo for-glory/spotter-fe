@@ -5,7 +5,7 @@
     </template>
     <template #content>
       <div class="getting-paid">
-        <div class="info-wrapper ion-padding d-flex align-items-center gap-12">
+        <div class="info-wrapper getting-paid-info ion-padding d-flex align-items-center gap-12">
           <ion-icon src="assets/icon/warning-2.svg" />
           <p>In order to withdraw income, please set up the <span>Withdrawal method</span>.</p>
         </div>
@@ -88,26 +88,6 @@ const onBack = () => {
 <style scoped lang="scss">
 .getting-paid {
   padding: 16px 20px calc(32px + var(--ion-safe-area-bottom));
-
-  .info-wrapper {
-    background: linear-gradient(0deg, rgba(11, 11, 11, 0.10) 0%, rgba(11, 11, 11, 0.10) 100%), #2D2D2D;
-    border-radius: 8px;
-    margin-bottom: 24px;
-
-    ion-icon {
-      font-size: 24px;
-    }
-
-    p {
-      font-size: 12px;
-      color: var(--gray-500);
-      margin: 0;
-
-      span {
-        color: #109CF1;
-      }
-    }
-  }
 
   .fund-card-wrapper {
     padding: 16px 24px;

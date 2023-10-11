@@ -86,9 +86,13 @@
   </div>
   <base-layout v-else>
     <template #header>
-      <page-header back-btn @back="onBack" title="Getting paid" />
+      <page-header back-btn @back="onBack" title="Getting paid" title-class="header_trainer__title"  />
     </template>
     <template #content>
+      <div class="info-wrapper getting-paid-info ion-padding d-flex align-items-center gap-12">
+          <ion-icon src="assets/icon/warning-2.svg" />
+          <p>In order to withdraw income, please set up the <span>Withdrawal method</span>.</p>
+      </div>
       <ion-grid>
         <ion-row>
           <ion-col size="12" size-xl="8">
@@ -99,9 +103,6 @@
                   >Your available balance is
                   <span class="fund">$3,689,076</span>
                 </ion-text>
-                <IonButton class="get" @click="handleGet"
-                  >Get paid now</IonButton
-                >
               </div>
             </div>
             <div class="box2__native">
@@ -244,6 +245,10 @@ const revenue = computed(() => {
 </script>
 
 <style scoped lang="scss">
+
+.info-wrapper {
+  margin: 16px;
+  }
 .page {
   color: var(--gold);
   font-size: 25px;
@@ -337,7 +342,7 @@ const revenue = computed(() => {
 
   &__native {
     background-color: #54534e;
-    padding: 20px 20px 8px 20px;
+    padding: 20px
   }
 
   .title {

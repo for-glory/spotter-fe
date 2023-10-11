@@ -10,7 +10,7 @@
     </div>
     <div class="content-container">
       <div class="content-box d-flex justify-content-end tool-bar">
-        <ion-menu-toggle :auto-hide="false">
+        <ion-menu-toggle :auto-hide="false" @click="onMenuClick">
           <ion-button expand="block">Invite Team Member</ion-button>
         </ion-menu-toggle>
       </div>
@@ -171,10 +171,12 @@ import CustomChart from "@/general/components/dashboard/CustomChart.vue";
 import { Capacitor } from '@capacitor/core';
 import { v4 as uuidv4 } from "uuid";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import { useSideMenu } from "@/general/stores/sideMenuStore";
 
 
 const filter = ref<string>('profile');
 const currentFacility = useFacilityStore();
+const menuStore = useSideMenu();
 
 const { result, loading } = useQuery(GetManagersByFacilityDocument, {
   facilities: [currentFacility.facility?.id],
@@ -188,6 +190,10 @@ const managers = computed(() => {
 });
 
 const router = useRouter();
+
+const onMenuClick = () => {
+  menuStore.setOption({ showImg: false, title: "Add New Team Member" })
+}
 
 const handleEdit = (id) => {
   console.log(id)

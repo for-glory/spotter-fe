@@ -3,7 +3,7 @@
     class="position-relative"
     :style="{
       '--border-color': borderColor,
-      '--active-bg': '#262626',
+      '--active-bg': activeBgColor,
     }"
   >
     <div
@@ -107,7 +107,7 @@ const { role } = useRoles();
     overflow: hidden;
     position: relative;
     &.active {
-      background: var(--active-background);
+      background: var(--active-bg);
 
       // .divider {
       //     display: block;

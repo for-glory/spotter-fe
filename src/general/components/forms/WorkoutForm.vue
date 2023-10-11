@@ -86,35 +86,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onMounted, ref, inject, defineProps, defineEmits, withDefaults } from "vue";
-import BaseAuthLayout from "@/general/components/base/BaseAuthLayout.vue";
+import { computed, watch, onMounted, ref, defineProps, defineEmits, withDefaults } from "vue";
 import {
-	IonTitle,
   IonButton,
   IonLabel,
-  PickerColumnOption,
-  PickerOptions,
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
-import { minutesDuration } from "@/const/minutes-durations";
 import { useField } from "vee-validate";
 import { EntitiesEnum } from "@/const/entities";
-import { useWorkoutsStore } from "../../../trainers/store/workouts";
 import { requiredFieldSchema } from "@/validations/authValidations";
-import WheelPicker from "@/general/components/blocks/WheelPicker.vue";
 import { v4 as uuidv4 } from "uuid";
 import { VideoPreloadDocument } from "@/generated/graphql";
 import { useMutation } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
 import UploadVideo from "@/general/components/UploadVideo.vue"; 
-import { clearAuthItems } from "@/router/middleware/auth";
 import { useDailysStore } from "@/general/stores/useDailysStore";
-import { Emitter, EventType } from "mitt";
+
 
 const router = useRouter();
-
 const store = useDailysStore();
 
 const videoPath = computed(() => store.exercises?.videoPath);

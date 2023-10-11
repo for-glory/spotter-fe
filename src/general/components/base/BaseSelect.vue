@@ -1,6 +1,6 @@
 <template>
-  <div :class="['base-select', { 'gray-select': graySelect }]" :id="id">
-    <IonText >{{ title }}</IonText>
+  <div :class="['base-select', { 'gray-select': graySelect, 'pointer': !Capacitor.isNativePlatform() }]" :id="id">
+    <IonText>{{ title }}</IonText>
     <IonIcon src="assets/icon/arrow-down-light.svg"></IonIcon>
   </div>
   <IonPopover v-if="role === RoleEnum.Trainer || role === RoleEnum.FacilityOwner" :trigger="id" reference="event"  side="bottom" alignment="start" dismiss-on-select>
@@ -26,6 +26,7 @@ interface SelectProps {
  }
 import { RoleEnum } from '@/generated/graphql';
 import useRoles from '@/hooks/useRole';
+import { Capacitor } from '@capacitor/core';
  import { IonIcon, IonPopover, IonText, IonContent, IonList, IonItem } from '@ionic/vue';
 import { ref } from 'vue';
 
@@ -65,6 +66,11 @@ const title = ref(props.defualtCheck)
   //   line-height: 150%;
   //   margin-right: 3px;
   // }
+}
+
+
+.pointer:hover {
+  cursor: pointer;
 }
 
 .gray-select {

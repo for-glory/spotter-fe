@@ -55,6 +55,7 @@ const discardModalClosed = (approved: boolean) => {
   isConfirmedModalOpen.value = false;
   if (approved) {
     eventForm.value?.clearStore();
+    router.go(-1);
     // router.push({ name: EntitiesEnum.Dashboard });
   }
 };
@@ -102,7 +103,6 @@ const onLogout = () => {
 };
 const onBack = () => {
   isConfirmedModalOpen.value = true
-  router.go(-1);
 };
 </script>
 

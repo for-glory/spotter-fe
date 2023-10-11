@@ -4,6 +4,19 @@
       <page-header :back-btn="!isTrainer" :title="title" class="page-header" @back="onBack" />
     </template>
     <template #content>
+      <div class="search-header">
+            <IonSearchbar class="search ion-no-border" />
+            <div class="tabs ion-margin-bottom">
+          <div :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
+            @click="handleTab(RoomType.Chat)">
+           All
+          </div>
+          <div :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'"
+            @click="handleTab(RoomType.Request)">
+            Unread
+          </div>
+          </div>
+      </div>
       <ion-spinner v-if="loading" class="spinner" />
       <div class="rooms__container" v-else>
         <list-empty v-if="!data.chats.length" :title="currenTab" :chats="role === RoleEnum.User ? true : false" />
@@ -40,7 +53,7 @@ import { onValue } from "firebase/database";
 import useId from "@/hooks/useId";
 import { mapChats, mapRequests } from "@/helpers/chats/chatroom";
 import { useMutation } from "@vue/apollo-composable";
-import { IonSpinner } from "@ionic/vue";
+import { IonSpinner, IonSearchbar } from "@ionic/vue";
 
 const { id } = useId();
 
@@ -105,6 +118,10 @@ const tabsChanged = (ev: RoomType) => {
       name: EntitiesEnum.ChatList,
     });
   }
+};
+
+const handleTab = (tab: RoomType) => {
+  activeTab.value = tab;
 };
 
 const onBack = () => {
@@ -254,5 +271,38 @@ onMounted(() => {
 .spinner {
   display: block;
   margin: 30vh auto;
+}
+
+.search {
+  color: #efefef;
+  font-family: Lato;
+  font-size: 14px;
+}
+
+.search-header {
+  .tabs {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: var(--gold);
+    margin-top: 20px;
+    line-height: 2;
+  }
+
+  .tab-item {
+  width: 34.5%;
+  text-align: center;
+  font-size: 16px;
+  border-bottom: 1px solid #efefef;
+  color: #efefef;
+  opacity: 0.4;
+  cursor: pointer;
+
+  &__active {
+    color: 2px solid #e1dbc5;
+    border-bottom: 2px solid #e1dbc5;
+    opacity: 1;
+  }
+}
 }
 </style>
