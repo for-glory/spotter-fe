@@ -3,10 +3,6 @@
     <div class="d-flex align-items-center justify-content-between">
       <ion-title class="title">Attendance Trend</ion-title>
       <BaseSelect :id="'trigger-attendance'" :options="TrainerSelectOptions" defualtCheck="This Year" />
-      <!-- <div class="view-option">
-        <ion-text>This Year</ion-text>
-        <ion-img src="assets/icon/arrow-down-light.svg"></ion-img>
-      </div> -->
     </div>
     <div class="block attendance">
       <custom-chart :chartData="attendanceChartData" :chartOptions="attendanceChartOption" />

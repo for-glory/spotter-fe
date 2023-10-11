@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym Managers">
+      <page-header back-btn @back="onBack" title="Teams">
         <template #custom-btn>
           <ion-icon id="header" @click="handleAddGymManager" src="assets/icon/plus.svg" />
         </template>

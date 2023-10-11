@@ -124,7 +124,7 @@
         />
       </div>
       <ion-menu-toggle>
-        <ion-button class="add-manager-btn" @click="addManager">Save</ion-button>
+        <ion-button class="add-manager-btn" @click="addManager">Send Invitation</ion-button>
       </ion-menu-toggle>
     </ion-content>
   </ion-menu>
