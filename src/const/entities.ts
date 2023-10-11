@@ -249,4 +249,5 @@ export enum EntitiesEnum {
   Upcoming = "UPCOMING",
   Dailys = "DAILYS",
   Trending = "TRENDING",
+  EmploymentType = "EMPLOYMENT_TYPE",
 }
