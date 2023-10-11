@@ -1,9 +1,5 @@
 <template>
-  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem, 'in-active': isInactive, 'active': isActive, 'font-lato-bold': fontLatoBold, 'dark-value': webEventItem, 'item-border': addBorder }" :fill="itemOutline ? 'outline' : undefined" :lines="isWebItem ? 'none' : undefined"
-   :style="{
-    '--end-icon-color': endIconColor,
-    '--item-border': borderColor
-   }">
+  <ion-item :disabled="disabled" class="choose-place"  @click="onClick" :class="{'web-item': isWebItem, 'light-item': isLightItem, 'in-active': isInactive, 'active': isActive, 'font-lato-bold': fontLatoBold, 'dark-value': webEventItem }" :fill="itemOutline ? 'outline' : undefined" :lines="isWebItem ? 'none' : undefined">
     <ion-text class="choose-place__label" :class="{'trainer-label-color': role === RoleEnum.Trainer, 'danger-title': dangerTitle}" slot="start">
       <ion-icon
         v-if="icon"
@@ -52,9 +48,6 @@ withDefaults(
     isActive?:boolean;
     fontLatoBold?: boolean;
     webEventItem?: boolean;
-    addBorder?: boolean;
-    endIconColor?:string
-    borderColor?:string
   }>(),
   {
     disabled: false,
@@ -65,10 +58,7 @@ withDefaults(
     isInactive: false,
     isActive: false,
     fontLatoBold: false,
-    webEventItem: false,
-    addBorder: false,
-    endIconColor: "var(--gray-400)",
-    borderColor: "var(--gray-600)"
+    webEventItem: false
   }
 );
 
@@ -123,7 +113,7 @@ const onClick = () => {
     font-size: 24px;
     margin-right: 2px;
     margin-left: 4px;
-    color: var(--end-icon-color);
+    color: var(--gray-400);
   }
 
   &__icon--start {
@@ -196,11 +186,4 @@ const onClick = () => {
     color: var(--gray-500);
   }
 }
-
-.item-border {
-  &::part(native){
-    border: 1px solid var(--item-border);
-  }
-}
-
 </style>

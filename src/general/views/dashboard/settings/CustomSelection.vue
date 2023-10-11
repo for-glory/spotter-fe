@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="position-relative"
-    :style="{
-      '--border-color': borderColor,
-      '--active-bg': '#262626',
-    }"
-  >
+  <div class="position-relative">
     <div
       :class="[
         'select-container',
@@ -27,8 +21,7 @@
               >{{ placeholder }}</IonLabel
             >
             <IonLabel v-else>{{ selectedValue.title }}</IonLabel>
-            <ion-icon
-              :class="{ rotate: chooseBlock && isSelect }"
+            <ion-icon :class="{ 'rotate': chooseBlock && isSelect }"
               src="assets/icon/arrow-next.svg"
             />
           </div>
@@ -75,13 +68,9 @@ const props = withDefaults(
     selectedValue: SelectValue;
     chooseBlock?: boolean;
     placeholder?: string;
-    borderColor?: string;
-    activeBgColor?: string;
   }>(),
   {
     label: "Language",
-    borderColor: "var(--gray-60)",
-    activeBgColor: "var(--gray-800)",
   }
 );
 const emit = defineEmits<{
@@ -107,7 +96,7 @@ const { role } = useRoles();
     overflow: hidden;
     position: relative;
     &.active {
-      background: var(--active-background);
+      background: var(--gray-800);
 
       // .divider {
       //     display: block;
@@ -134,7 +123,7 @@ const { role } = useRoles();
 
   .custom-select {
     padding: 13px 16px;
-    border: 0.5px solid var(--border-color);
+    border: 0.5px solid var(--60, rgba(255, 255, 255, 0.60));
     border-radius: 8px;
 
     ion-label {
@@ -145,8 +134,8 @@ const { role } = useRoles();
 }
 
 .rotate {
-  rotate: 90deg;
-}
+        rotate: 90deg;
+    }
 
 .divider {
   background: var(--grey-text);
@@ -162,14 +151,14 @@ const { role } = useRoles();
   max-height: 210px;
   position: absolute;
   z-index: 99;
-  background: var(--active-bg);
+  background: var(--gray-800);
   width: 100%;
 
   .sticky-header {
     height: 22px;
     position: sticky;
     top: 0;
-    background: var(--active-bg);
+    background: var(--gray-800);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,7 +196,7 @@ const { role } = useRoles();
     margin: 0;
 
     .item-label {
-      color: var(--fitnesswhite);
+        color: var(--fitnesswhite);
     }
   }
   .custom-select {
@@ -215,8 +204,7 @@ const { role } = useRoles();
     background: var(--gray-700);
 
     ion-icon {
-      color: var(--gray-500);
-      font-size: 22px;
+        color: var(--gray-500);
     }
   }
 }

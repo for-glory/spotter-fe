@@ -1,28 +1,17 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header :title="title">
-        <template #avatar-field>
-          <ion-avatar class="common-avatar-field" @click="openSettings">
-            <ion-img v-if="avatarUrl" :src="avatarUrl"></ion-img>
-            <template v-else>
-              {{ userStore.first_name?.charAt(0) }}
-            </template>
-          </ion-avatar>
-        </template>
+      <page-header back-btn @back="onBack" title="Drop-ins">
         <template #custom-btn>
           <ion-button @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
-          <ion-button @click="openQR" class="header-btn">
-            <ion-icon src="assets/icon/scan.svg" />
-          </ion-button>
         </template>
       </page-header>
       <div class="pass-list ion-margin-top">
-        <div class="d-flex justify-content-between pass-list__top">
-          <div class="filter-tabs d-flex align-items-center justify-content-center gap-16">
+        <div v-if="!loadingCustomers && customersList?.getCustomersByFacilityItems?.data?.length" class="d-flex justify-content-between pass-list__top">
+          <div class="filter-tabs d-flex align-items-center justify-content-between">
             <ion-button 
               :fill="selectedTab === 'All' ? 'solid' : 'outline'"
               :color="selectedTab === 'All' ? '' : 'medium'"
@@ -56,17 +45,12 @@
       />
       <div v-else class="main-content">
         <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <EmptyBlock 
-          hide-button
-          :icon="emptyBlock.icon"
-          :title="emptyBlock.title" 
-          :text="emptyBlock.text" />
-          <ion-button @click="handleCreate">View {{ btnText }}</ion-button>
-          <!-- <div class="empty-box d-flex-col align-items-center">
+          <ion-button @click="handleCreate">Create {{ type === 'pass' ? 'Pass' : 'Drop-in' }}</ion-button>
+          <div class="empty-box d-flex-col align-items-center">
             <ion-icon :src="type === 'pass' ? 'assets/icon/pass.svg' : 'assets/icon/drop-ins.svg'"></ion-icon>
             <ion-text class="status">{{ type === 'pass' ? 'Pass' : 'Drop-in' }} Empty</ion-text>
             <ion-text class="description">No booked client yet</ion-text>
-          </div> -->
+          </div>
         </div>
         <div v-else>
           <ion-grid class="pass-table">
@@ -111,34 +95,32 @@
 import {
   IonButton,
   IonIcon,
-  IonSpinner,
-  IonAvatar,
-  IonImg,
-  IonGrid,
-  IonRow, 
-  IonCol,
-  IonText
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
+  IonSpinner
 } from "@ionic/vue";
 import {
+  PaymentGatewayRefundDocument,
+  Query,
+  SettingsCodeEnum,
+  TrainingDocument,
+  TrainingStatesEnum,
+  FacilityItemPassDocument,
   GetCustomersByFacilityItemsDocument,
 } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
+import { chevronBackOutline } from "ionicons/icons";
 import { computed, onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import useFacilityId from "@/hooks/useFacilityId";
 import useRoles from "@/hooks/useRole";
+import { v4 as uuidv4 } from "uuid";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import useId from "@/hooks/useId";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
-import { useUserStore } from "@/general/stores/user";
-import { useRoute } from "vue-router";
-
-enum TypeEnum {
-  Dropins = "dropins",
-  Passes = "passes"
-}
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -146,46 +128,6 @@ const currentFacility = useFacilityStore();
 const selectedTab = ref("All");
 const { role } = useRoles();
 const { id } = useId();
-const userStore = useUserStore();
-const facilityStore = useFacilityStore();
-const route = useRoute();
-const title = computed(() => {
-  switch (route.params?.type) {
-    case TypeEnum.Dropins:
-      return "Drop-ins"
-  
-    default:
-      return "Gym pass"
-  }
-});
-
-const btnText = computed(() => {
-  switch (route.params?.type) {
-    case TypeEnum.Dropins:
-      return "Drop-in";
-  
-    default:
-      return "Passes";
-  }
-});
-
-const emptyBlock = computed(() => {
-  switch (route.params?.type) {
-    case TypeEnum.Dropins:
-      return {
-        icon: "assets/icon/drop-ins.svg",
-        title: "Customers list Empty" ,
-        text: "No Drop-ins sold yet",
-      }
-  
-    default:
-    return {
-        icon: "assets/icon/gym-user-icon.svg",
-        title: "Members list Empty" ,
-        text: "No Pass created yet.",
-      }
-  }
-})
 
 const {
   result: customersList,
@@ -198,11 +140,6 @@ const {
 const customerData = ref<any>();
 
 const unreadMessages = ref<number[]>([]);
-const avatarUrl = computed(() => {
-  return facilityStore.facility?.media
-        ? facilityStore.facility?.media[0]?.pathUrl
-        : userStore.avatarUrl;
-})
 
 const handleSelectTab = (tabName: string) => {
   selectedTab.value = tabName;
@@ -231,7 +168,7 @@ onMounted(() => {
 });
 
 const handleCreate = () => {
-  router.push({ name: route.params.type === TypeEnum.Dropins ? EntitiesEnum.FacilityDropinsList : EntitiesEnum.FacilityPassList });
+  router.push({ name: EntitiesEnum.CreateItem, params: { type: 'drop-ins' } });
 }
 
 gotCustomers(({ data }) => {
@@ -245,15 +182,6 @@ const handleView = () => {
 
 const onBack = () => {
   router.go(-1);
-};
-
-const openQR = () => {
-  router.push({name:EntitiesEnum.ProfileScan})
-}
-const openSettings = () => {
-  router.push({
-    name: EntitiesEnum.Profile,
-  });
 };
 </script>
 
@@ -280,7 +208,7 @@ const openSettings = () => {
 
   &__top {
     margin-bottom: 16px;
-    padding: 16px 24px;
+    padding: 8px 24px;
     .button {
       height: 42px;
     }
@@ -339,12 +267,7 @@ ion-label {
 
   ion-button {
     width: 100%;
-    color: var(--dark-gray);
-    font-family: Lato;
-    font-size: 16px;
-    font-weight: 500;
-    min-height: 48px;
-    margin: 20px 0;
+    font: 500 16px/1 Yantramanav;
   }
   .empty-box {
 

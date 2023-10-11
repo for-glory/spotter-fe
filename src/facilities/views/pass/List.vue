@@ -4,7 +4,7 @@
       <page-header back-btn @back="onBack" title="Passes">
         <template #custom-btn>
           <ion-button @click="handleCreate" class="header-btn">
-            <ion-icon src="assets/icon/plus.svg" />
+            <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
         </template>
@@ -45,17 +45,12 @@
       />
       <div v-else class="main-content">
         <div v-if="!customersList.getCustomersByFacilityItems?.data?.length" class="empty-pass d-flex-col align-items-center justify-content-center gap-25">
-          <EmptyBlock 
-          hide-button
-          icon="assets/icon/gym-user-icon.svg"
-          title="Pass List is Empty" 
-          text="No Pass created yet." />
           <ion-button @click="handleCreate">Create Passes</ion-button>
-          <!-- <div class="empty-box d-flex-col align-items-center">
+          <div class="empty-box d-flex-col align-items-center">
             <ion-icon src="assets/icon/pass.svg"></ion-icon>
             <ion-text class="status">Passes Empty</ion-text>
             <ion-text class="description">No registered member yet</ion-text>
-          </div> -->
+          </div>
         </div>
         <div v-else>
           <ion-grid class="pass-table">
@@ -125,7 +120,6 @@ import { v4 as uuidv4 } from "uuid";
 import { onValue } from "firebase/database";
 import { chatsRef } from "@/firebase/db";
 import useId from "@/hooks/useId";
-import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const router = useRouter();
 const activeTab = ref("subscribers");
@@ -268,14 +262,10 @@ ion-label {
   height: 100%;
 
   ion-button {
-      width: 100%;
-      color: var(--dark-gray);
-      font-family: Lato;
-      font-size: 16px;
-      font-weight: 500;
-      min-height: 48px;
-      margin: 20px 0;
-    }  .empty-box {
+    width: 100%;
+    font: 500 16px/1 Yantramanav;
+  }
+  .empty-box {
 
     ion-icon {
       width: 36px;

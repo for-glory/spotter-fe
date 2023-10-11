@@ -64,9 +64,6 @@ withDefaults(
     margin-bottom: 24px;
     margin-top: 32px;
     color: var(--gray-600);
-    ion-icon {
-      color: var(--gray-500);
-    }
   }
 
   &__title {

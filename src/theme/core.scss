@@ -302,9 +302,6 @@ ion-modal.auto-height {
 .justify-content-around {
   justify-content: space-around;
 }
-.justify-content-evenly {
-  justify-content: space-evenly;
-}
 .align-items-center {
   align-items: center;
 }
@@ -450,19 +447,4 @@ html:not(.plt-capacitor) .show-if-web {
 }
 .duration-select {
   top: -30%;
-}
-
-.common-avatar-field {
-    min-width: 28px;
-    min-height: 28px;
-    max-width: 28px;
-    max-height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-transform: capitalize;
-    font-family: 'Yantramanav';
-    font-weight: 600;
-    background: var(--gray-700);
-    font-size: 15px;
 }

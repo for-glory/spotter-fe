@@ -1,8 +1,8 @@
 <template>
-	<ion-modal id="modal" ref="modal" :class="{'tr-membership-modal': (role === RoleEnum.Trainer || role === RoleEnum.FacilityOwner) }" :is-open="isVisible"  :backdrop-dismiss="false">
+	<ion-modal id="modal" ref="modal" :class="{'tr-membership-modal': role === RoleEnum.Trainer }" :is-open="isVisible"  :backdrop-dismiss="false">
 		<ion-header class="title">
 			<ion-toolbar>
-				<ion-title>Change Membership Plan1</ion-title>
+				<ion-title>Change Membership Plan</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="handleCancel">
 						<ion-icon src="assets/icon/close.svg" class="close" />
@@ -286,7 +286,7 @@ ul {
 }
 .buttons {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
 }
 .confirm {
   width: 10rem;
