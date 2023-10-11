@@ -5,8 +5,7 @@
     'form-row__input__web': fromSettings, 
     'font-lato': (role === RoleEnum.User && fromSettings),
     'font-lato-bold': fontLatoBold,
-    'white-input': whiteInput,
-    'gray-input': grayInput
+    'white-input': whiteInput
   }">
     <ion-label class="label" v-if="label">{{ label }}</ion-label>
     <transition name="border">
@@ -90,7 +89,6 @@ const props = withDefaults(
     fromSettings?: boolean;
     fontLatoBold?: boolean;
     whiteInput?: boolean;
-    grayInput?: boolean;
   }>(),
   {
     placeholder: "",
@@ -170,12 +168,6 @@ ion-item.input-container {
     &.item-has-focus {
     --border-color: none;
     }
-  }
-}
-
-.gray-input {
-  .label {
-    color: var(--gray-60);
   }
 }
 ion-input,

@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn title="Change Membership2" @back="onBack" />
+      <page-header back-btn title="Change Membership" @back="onBack" />
     </template>
     <template #content>
       <ion-spinner
@@ -74,7 +74,7 @@
     </template>
     <template #footer>
       <div class="holder-button">
-        <div class="checkbox" v-if="role !== RoleEnum.Trainer && role !== RoleEnum.FacilityOwner">
+        <div class="checkbox" v-if="role !== RoleEnum.Trainer">
           <ion-checkbox
             mode="ios"
             :modelValue="isAgreed"
@@ -109,6 +109,7 @@
         <ion-button
           expand="block"
           @click="handleChange"
+          :disabled="!isAgreed || isLoading"
         >
           <ion-spinner name="lines" v-if="isLoading"></ion-spinner>
           <template v-else>Continue</template>

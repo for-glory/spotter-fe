@@ -9,7 +9,7 @@
       <template v-if="type !== EntitiesEnum.Address">
         <template v-if="forAddress">
           <search-form placeholder="Enter address name" :no-padding="role === RoleEnum.User ? true : false"
-            :extra-padding="false" hide-results hidden-cancel></search-form>
+            :extra-padding="true" hide-results hidden-cancel></search-form>
           <div class="address-list hide-scrollbar">
             <ion-item lines="full">
               <ion-icon slot="start" src="/assets/icon/location.svg"></ion-icon>
@@ -119,13 +119,12 @@ const selectedAddress = ref<NativeGeocoderResult | null>(null);
 const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 
 withDefaults(defineProps<{
-    title?:string,
-    forAddress?:boolean,
-    isWebView?:boolean
-  }>(),  {
-    forAddress: false,
-    isWebView: false
-  });
+  forAddress?: boolean,
+  isWebView?: boolean;
+}>(), {
+  forAddress: false,
+  isWebView: false
+});
 
 const emits = defineEmits<{
   (e: "cancel"): void;

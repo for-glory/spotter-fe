@@ -1,15 +1,14 @@
 <template>
   <base-layout hide-navigation-menu>
     <template #header>
-      <page-header back-btn @back="isConfirmedModalOpen = true" title="Edit gym profile" />
+      <page-header back-btn @back="onBack" title="Edit gym profile" />
     </template>
     <template #content>
       <ion-spinner name="lines" class="spinner" v-if="loading" />
       <div v-else class="content">
         <gym-form
           ref="gymForm"
-          :show-header="false"
-          next-button-text="Save"
+          button-text="Save"
           @submit="editFacility"
           @on-delete-media="deletePhoto"
           edit
@@ -17,21 +16,12 @@
       </div>
     </template>
   </base-layout>
-  <discard-changes
-    :is-open="isConfirmedModalOpen"
-    @close="discardModalClosed"
-    title="Do you want to discard changes?"
-    text="Changes will not be saved"
-    cancelButton="Cancel"
-    button="Discard changes"
-  />
 </template>
 
 <script setup lang="ts">
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { IonSpinner, toastController } from "@ionic/vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
-import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNewFacilityStore } from "../store/new-facility";
@@ -49,7 +39,6 @@ import { computed } from "@vue/reactivity";
 const router = useRouter();
 const route = useRoute();
 const store = useNewFacilityStore();
-const isConfirmedModalOpen = ref(false);
 
 const gymForm = ref<typeof GymForm | null>(null);
 
@@ -67,13 +56,6 @@ const { mutate: deleteMediaMutate } = useMutation(DeleteMediaDocument);
 const onBack = () => {
   store.clear();
   router.go(-1);
-};
-
-const discardModalClosed = (approved: boolean) => {
-  isConfirmedModalOpen.value = false;
-  if (approved) {
-      onBack()
-  }
 };
 
 const deletePhoto = (id: string) => {

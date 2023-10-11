@@ -5,13 +5,10 @@
       </page-header>
     </template>
     <template #content>
-      <div class="main-content d-flex-col justify-content-between">
+      <div class="main-content">
         <div class="profile-field">
           <div class="contact-field">
-            <img v-if="avatarUrl" :src="avatarUrl" id="avatar" />
-            <div v-else class="avatar-text d-flex justify-content-center align-items-center">
-              {{ name.charAt(0) }}
-            </div>
+            <img :src="avatarUrl" id="avatar" />
             <ion-label class="name">
               {{ name }}
               <ion-icon slot="icon-only" src="assets/icon/arrow-down-light.svg"></ion-icon>
@@ -20,31 +17,24 @@
             <ion-text class="contact">{{"gymmanager@spotterfitness.com"}}</ion-text>
             <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text>
           </div>
-          <div class="gym-info d-flex-col gap-16">            
-            <div class="data-box d-flex align-items-center justify-content-between">
-              <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{40}}</ion-text>
-                <ion-text class="field-label">Age</ion-text>
-              </div>
-              <div class="vertical-line"/>
-              <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"Full-Time"}}</ion-text>
-                <ion-text class="field-label">Employment type</ion-text>
-              </div>
-              <div class="vertical-line"/>
-              <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"Manager"}}</ion-text>
-                <ion-text class="field-label">Position</ion-text>
-              </div>
-            </div>
-            <div class="horizontal-line"/>
+          <div class="data-box d-flex align-items-center justify-content-between">
             <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"23 Lantly South Carolina, USA"}}</ion-text>
-                <ion-text class="field-label">Address</ion-text>
-              </div>
+              <ion-text id="main">{{40}}</ion-text>
+              <ion-text class="field-label">Age</ion-text>
+            </div>
+            <div class="vertical-line"/>
+            <div class="d-flex-col align-items-center">
+              <ion-text id="main">{{"Full-Time"}}</ion-text>
+              <ion-text class="field-label">Employment type</ion-text>
+            </div>
+            <div class="vertical-line"/>
+            <div class="d-flex-col align-items-center">
+              <ion-text id="main">{{"Manager"}}</ion-text>
+              <ion-text class="field-label">Position</ion-text>
+            </div>
           </div>
         </div>
-        <!-- <week-calendar
+        <week-calendar
           v-model="selectedDate"
           :bookings="bookings"
           @handle-view="onViewCalendar"
@@ -74,7 +64,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-        </div> -->
+        </div>
         <ion-button @click="showModal" fill="outline" color="danger" id="delete">Delete Manager</ion-button>
       </div>
     </template>
@@ -133,12 +123,7 @@ const { id } = useId();
 const store = useManagerStore();
 const managerId = computed(() => route.params.id);
 
-const name = computed(() => {
-  if (store?.first_nametion || store?.last_name) {
-    return store.first_name + ' ' + store.last_name;
-  }
-  return "N/A";
-});
+const name = computed(() => store.first_name + ' ' + store.last_name);
 const avatarUrl = computed(() => store.avatarUrl);
 const address = computed(() => store.address);
 const selectedDate = ref<Dayjs | null>(dayjs());
@@ -210,6 +195,7 @@ const onBack = () => {
   padding: 16px 20px;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 }
 .vertical-line {
   border: solid;
@@ -258,24 +244,20 @@ img#avatar {
   width: 86px;
   height: 86px;
 }
-.horizontal-line {
-  height: 1px;
-  background: var(--main-color);
-  margin: 8px;
-}
-.gym-info {
+.data-box {
   background-color: var(--gray-700);
   padding-top: 15px;
   padding-bottom: 15px;
   padding-right: 28px;
   padding-left: 28px;
   border-radius: 8px;
-}
+
   .field-label {
     font: 300 14px/1 var(--ion-font-family);
     color: var(--gray-400);
     padding-top: 4px;
   }
+}
 .d-flex-col {
   display: flex;
   flex-direction: column;
@@ -335,18 +317,5 @@ ion-button#delete {
   line-height: 1.3;
   font: 400 16px/1 Lato;
   color: var(--fitnesswhite);
-}
-
-.avatar-text {
-  height: 100px;
-  width: 100px;
-  background: var(--gray-700);
-  border-radius: 50%;
-  color: var(--fitnesswhite);
-  font-family: Lato;
-  padding: 12px;
-  font-size: 26px;
-  font-style: normal;
-  font-weight: 900;
 }
 </style>

@@ -107,14 +107,12 @@ export const navigationMenu: NavigationMenu = {
       label: "Drop-ins",
       icon: "assets/icon/drop-ins.svg",
       category: "/facilities/dropins",
-      queryParam: 'dropins'
     },
     {
-      name: EntitiesEnum.FacilityDropins,
+      name: EntitiesEnum.FacilityPassList,
       label: "Passes",
       icon: "assets/icon/gym-user-icon.svg",
-      category: "/facilities/passes",
-      queryParam: 'passes'
+      category: "/facilities/pass",
     },
     // {
     //   name: EntitiesEnum.Profile,
