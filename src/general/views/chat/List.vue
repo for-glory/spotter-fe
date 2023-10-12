@@ -4,15 +4,13 @@
       <page-header :back-btn="!isTrainer" :title="title" class="page-header" @back="onBack" />
     </template>
     <template #content>
-      <div class="search-header">
+      <div class="search-header" v-if="role === RoleEnum.FacilityOwner">
             <IonSearchbar class="search ion-no-border" />
             <div class="tabs ion-margin-bottom">
-          <div :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'"
-            @click="handleTab(RoomType.Chat)">
+          <div :class="activeTab === RoomType.Chat ? 'tab-item tab-item__active' : 'tab-item'">
            All
           </div>
-          <div :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'"
-            @click="handleTab(RoomType.Request)">
+          <div :class="activeTab === RoomType.Request ? 'tab-item tab-item__active' : 'tab-item'">
             Unread
           </div>
           </div>
