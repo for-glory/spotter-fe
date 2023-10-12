@@ -19,6 +19,17 @@ const activityReducer = (trainer: any) => {
         address: item?.address,
       };
     }
+    if (item.__typename === "FacilityItem") {
+      return {
+        __typename: item.__typename,
+        id: item?.id,
+        name: item?.title,
+        media: item?.facility?.media,
+        address: item?.facility?.address,
+        facility_id: item?.facility?.id,
+        item_type: item?.item_type,
+      };
+    }
     if (item.__typename === "User") {
       return {
         __typename: item.__typename,

@@ -30,7 +30,12 @@
                 <div class="content ion-padding-horizontal">
                     <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
                     <div v-else class="d-flex flex-wrap gap-16">
-                        <review-item v-for="review in reviews" :key="review.id" class="review-item"
+                        <div v-if="!reviews || !reviews.length" style="width:100%; ">
+                            <div class="color-gold " style="font-size: 16px; text-align: center; padding: 24px;">
+                                <ion-text>No reviews yet</ion-text>
+                            </div>
+                        </div>
+                        <review-item v-else v-for="review in reviews" :key="review.id" class="review-item"
                             :avatar-url="review.avatarUrl" :full-name="review.fullName" :date="review.date"
                             :rating="review.rating" :text="review.text" />
                     </div>
@@ -92,7 +97,7 @@
                         </div>
 
                         <div class="review__bottom-button">
-                            <ion-button class="button--submit" expand="block" :disabled="!review">
+                            <ion-button class="button--submit" expand="block" :disabled="!review" @click="onSubmitReview">
                                 Submit review
                             </ion-button>
                         </div>
@@ -125,9 +130,9 @@ import {
     ReviewsDocument,
     ReviewTypeEnum,
     RoleEnum,
+    FacilityDocument
 } from "@/generated/graphql";
 import { useRoute } from "vue-router";
-import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import useRoles from "@/hooks/useRole";
 
 const route = useRoute();
@@ -149,47 +154,6 @@ const tabs: TabItem[] = [
         name: ReviewTypeEnum.Negative,
         label: "Negative",
     },
-];
-const tempReviews: UserReview[] = [{
-    id: "1",
-    date: new Date().toString(),
-    rating: 4.9,
-    text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
-    avatarUrl: "https://picsum.photos/200/300",
-    fullName: 'Sharon Jem',
-},
-{
-    id: "2",
-    date: new Date().toString(),
-    rating: 4.5,
-    text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
-    avatarUrl: "https://picsum.photos/200/300",
-    fullName: 'Sharon Jem',
-},
-{
-    id: "3",
-    date: new Date().toString(),
-    rating: 4.5,
-    text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
-    avatarUrl: "https://picsum.photos/200/300",
-    fullName: 'Sharon Jem',
-},
-{
-    id: "4",
-    date: new Date().toString(),
-    rating: 4.5,
-    text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
-    avatarUrl: "https://picsum.photos/200/300",
-    fullName: 'Sharon Jem',
-},
-{
-    id: "5",
-    date: new Date().toString(),
-    rating: 4.5,
-    text: 'Had such an amazing session. She instantly picked up on the level of my fitness and adjusted the workout to suit me.',
-    avatarUrl: "https://picsum.photos/200/300",
-    fullName: 'Sharon Jem',
-}
 ];
 
 const activeTab = ref<ReviewTypeEnum>(ReviewTypeEnum.Recent);
@@ -240,27 +204,20 @@ const reviews = computed(() =>
                 avatarUrl: cur.author?.avatarUrl || "",
                 fullName: `${cur.author?.first_name} ${cur.author?.last_name}`,
             });
-            const t: UserReview = {
-                id: "1",
-                date: new Date().toString(),
-                rating: cur.score || 0,
-                text: cur.review,
-                avatarUrl: cur.author?.avatarUrl || "",
-                fullName: 'Test user',
-            };
-            acc.push(t);
             return acc;
         },
         []
     )
 );
 
-const { result } = useQuery<Pick<Query, "facility">>(
-    GetFacilityDocument,
+const { result, refetch:refetchFacility } = useQuery<Pick<Query, "facility">>(
+    FacilityDocument,
     {
         id: route.params.id,
     }
 );
+
+const { mutate:leftFeedback, loading } = useMutation(LeftFeedbackDocument);
 
 const facility = computed(() => result.value?.facility);
 
@@ -285,6 +242,49 @@ const progressValue = computed(() => {
         return 0;
     }
 });
+
+const getParams = () => {
+  const params: LeftFeedbackInput = {
+    feedback_entity_id: route.params.id as string,
+    feedback_entity: FeedbackEntityEnum.Facility,
+    recommend: EntitiesEnum.Positive.toLowerCase() == feedback.value,
+  };
+
+  if (stars.value) {
+    params.score = Number(stars.value);
+  }
+
+  if (review.value) {
+    params.message = review.value;
+  }
+  return params;
+};
+
+const onSubmitReview = () => {
+    leftFeedback({
+        input: getParams(),
+    })
+        .then(() => {
+            showToast("Thank you! Succesfully added review", "success", "success");
+            isWriteReviewModal.value = false;
+            isAddReviewModal.value = false;
+            refetchFacility()
+            refetch();
+        })
+        .catch((error) => {
+            showToast("Something went wrong", "danger", "info");
+            throw new Error(error);
+        });
+}
+const showToast = async (msg: string, key: string, icon: string) => {
+  const toast = await toastController.create({
+    message: msg,
+    duration: 2000,
+    icon: `assets/icon/${icon}.svg`,
+    cssClass: `${key}-toast`,
+  });
+  return toast.present();
+};
 </script>
   
 <style scoped lang="scss">

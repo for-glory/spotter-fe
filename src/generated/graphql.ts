@@ -26,7 +26,7 @@ export type Scalars = {
   Upload: any;
 };
 
-export type Activity = Facility | User | Workout;
+export type Activity = Facility | User | Workout | FacilityItem;
 
 export type AddFacilityItemToCartInput = {
   cart_id?: InputMaybe<Scalars["ID"]>;
@@ -3730,6 +3730,18 @@ export type ActivitiesQuery = {
         } | null;
       }
     | {
+        __typename: "FacilityItem";
+        id: string;
+        title: string;
+        facility: {
+          __typename?: "Facility";
+          id: string;
+          name: string;
+          media?: Array<{ __typename?: "Media"; pathUrl: string } | null> | null;
+          address?: { __typename?: "Address"; street?: string | null } | null;
+        };
+      }
+    | {
         __typename: "User";
         id: string;
         first_name?: string | null;
@@ -6481,6 +6493,25 @@ export const ActivitiesDocument = gql`
           street
         }
       }
+      ... on FacilityItem {
+        id
+        facility {
+          id
+          name
+          media {
+            pathUrl
+          }
+          address {
+            lat
+            lng
+            street
+          }
+        }
+        title
+        price
+        front_price
+        item_type
+      }
     }
   }
 `;
@@ -7881,6 +7912,7 @@ export const UsersDocument = gql`
       data {
         id
         score
+        distance_from_current_location
         first_name
         last_name
         avatarUrl

@@ -113,6 +113,7 @@ const navigate = (name: EntitiesEnum) => {
 // Passes start
 const {
   result: facilityItemPassResultList,
+  loading: loadingFacilityPass,
   refetch
 } = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
   facility_id: currentFacility.facility.id,

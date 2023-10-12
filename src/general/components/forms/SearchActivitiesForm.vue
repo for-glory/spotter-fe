@@ -54,10 +54,10 @@
       <router-link
         v-else-if="!activityLoading && searchResults?.length"
         v-for="searchResult in searchResults"
-        :key="searchResult.id"
+        :key="searchResult?.id"
         :to="{
-          name: handleRedirect(searchResult.__typename),
-          params: { id: searchResult.id },
+          name: handleRedirect(searchResult?.__typename),
+          params: setParam(searchResult),
         }"
       >
         <search-result
@@ -216,9 +216,27 @@ const handleRedirect: any = (itemType: string) => {
         return EntitiesEnum.GymDetails;
       }
       return EntitiesEnum.Facility;
+    case EntitiesEnum.FacilityItem:
+      if (role === RoleEnum.User && !isNative) {
+        return EntitiesEnum.DropinsPassesList;
+      }
+      return EntitiesEnum.Facility;
 
     default:
       return EntitiesEnum.Facility;
+  }
+};
+// Redirect handler
+const setParam: any = (item: any) => {
+  switch (item.__typename) {
+    case "FacilityItem":
+      return {
+        id: item?.facility_id,
+        type: item?.item_type,
+      };
+
+    default:
+      return {id: item?.id};
   }
 };
 </script>

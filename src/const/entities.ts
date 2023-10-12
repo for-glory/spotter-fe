@@ -44,6 +44,7 @@ export enum EntitiesEnum {
   Membership="MEMBERSHIP",
   ChangeMembership = "CHANGE_MEMBERSHIP",
   Facility = "FACILITY",
+  FacilityItem = "FACILITYITEM",
   Trainers = "TRAINERS",
   TrainerPreview = "TRAINER_PREVIEW",
   TrainerBooking = "TRAINER_BOOKING",
@@ -250,4 +251,5 @@ export enum EntitiesEnum {
   Dailys = "DAILYS",
   Trending = "TRENDING",
   EmploymentType = "EMPLOYMENT_TYPE",
+  DropinsPassesList = "DROPINS_PASSES_LIST",
 }
