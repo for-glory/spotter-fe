@@ -203,8 +203,12 @@ const fetchChats = () => {
   loading.value = true;
   if (!chatListener.value) {
     chatListener.value = true;
+    console.log('call firebase chat listener=======>');
+    
     onValue(chatsRef, (snapshot) => {
-      if (data.chats.length) data.chats = [];
+      console.log(`firebase main chat response ${role}=======>`, snapshot.val());
+      data.chats = [];
+      data.pendingChats = [];
       if (snapshot.val()) {
         const chats = getChats(snapshot.val());
         chats.forEach(async (chat: any) => {
@@ -226,16 +230,19 @@ const fetchRequest = () => {
   loading.value = true;
   if (!requestListener.value) {
     requestListener.value = true;
-  }
-  onValue(requestsRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      if (childSnapshot.key === id) {
-        const mappedValues = mapRequests(childSnapshot.val(), id);
-        data.requestChats.push(...mappedValues);
-      }
+    console.log('call firebase request listener========>');
+    onValue(requestsRef, (snapshot) => {
+      console.log(`firebase requestsRef response=======>`, snapshot.val());
+      data.requestChats = [];
+      snapshot.forEach((childSnapshot) => {
+        if (childSnapshot.key === id) {
+          const mappedValues = mapRequests(childSnapshot.val(), id);
+          data.requestChats.push(...mappedValues);
+        }
+      });
+      loading.value = false;
     });
-    loading.value = false;
-  });
+  }
 };
 
 const fetchActiveUsers = () => {
@@ -435,4 +442,5 @@ onMounted(() => {
 
 .fs-48 {
   font-size: 48px;
-}</style>
+}
+</style>

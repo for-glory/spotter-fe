@@ -189,8 +189,6 @@ const progress = ref<string | number>("");
 const facilities = computed(() => result.value?.user?.owned_facilities);
 
 gotUser(() => {
-  console.log('call got user====');
-  
   switch(role) {
     case RoleEnum.OrganizationOwner :
     case RoleEnum.FacilityOwner :
