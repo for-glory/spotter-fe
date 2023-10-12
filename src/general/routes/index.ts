@@ -797,6 +797,14 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DropinsPassesList,
+        path: "pass-dropin/details/:id?/:type?",
+        component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
+        meta: {
+          middleware: [gymOwnerSubscription],
+        },
+      },
+      {
         name: EntitiesEnum.DashboardPassCreate,
         path: "pass/create-pass/:id?",
         component: () =>

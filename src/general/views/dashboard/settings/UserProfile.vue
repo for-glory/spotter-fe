@@ -147,7 +147,15 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div v-if="!offerEvents || !offerEvents.length">
+                            <empty-block
+                            title="Events Empty"
+                            hideButton
+                            text="No Events available, create new event to get started"
+                            icon= "assets/icon/events.svg"
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
@@ -207,6 +215,7 @@ import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
 import { FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');

@@ -293,10 +293,18 @@ const handleMore = async () => {
         });
     }
 };
-const { result: reviewsResult } = useQuery(ReviewsDocument, {
+const {
+  result: reviewsResult,
+  loading: reviewLoading,
+  refetch: refetchReviews,
+} = useQuery(ReviewsDocument, () => ({
   id: route.params.id,
+  type: FeedbackEntityEnum.Facility,
+  review_type: ReviewTypeEnum.Recent,
+}));
+const reviewsData = computed(() => {
+  return reviewsResult.value?.reviews?.data;
 });
-console.log('result',reviewsResult);
 
 const user = computed(() => {
     // return result.value?.user;
@@ -346,7 +354,7 @@ const handleBuy = () => {
 const viewAllReview = () => {
     router.push({
         name: EntitiesEnum.GymReviews,
-        params: { id: 52 },
+        params: { id: route.params.id },
     });
 }
 

@@ -47,8 +47,9 @@
             </ion-label>
           </ion-item>
           <div class="btn-container">
-            <ion-button size="small" @click="toEdit(item)">Edit</ion-button>
-            <ion-button size="small" color="danger" fill="outline" @click="toDelete(item)">Delete</ion-button>
+            <ion-button size="small" @click="toPurchase(item)" v-if="isPurchase">Purchase</ion-button>
+            <ion-button size="small" @click="toEdit(item)" v-if="!isPurchase">Edit</ion-button>
+            <ion-button size="small" color="danger" fill="outline" @click="toDelete(item)" v-if="!isPurchase">Delete</ion-button>
           </div>
         </div>
       </ion-col>
@@ -66,17 +67,20 @@ import { defineProps, withDefaults } from "vue";
 withDefaults(
   defineProps<{
     dataList: any,
-    unit: string
+    unit: string,
+    isPurchase: boolean
   }>(),
   {
     dataList: [],
-    unit: ''
+    unit: '',
+    isPurchase: false
   }
 );
 
 const emits = defineEmits<{
   (e: "delete", data: any): void;
   (e: "edit", data: any): void;
+  (e: "purchase"): void;
 }>();
 
 const toDelete = (pass: any) => {
@@ -89,6 +93,10 @@ const toDelete = (pass: any) => {
 const toEdit = (pass: any) => {
   console.log('toEdit', pass);
   emits("edit", pass);
+}
+
+const toPurchase = (pass: any) => {
+  emits("purchase");
 }
 
 const formatNumber = ((num: any) => {

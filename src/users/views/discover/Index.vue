@@ -17,43 +17,18 @@
 
           <page-tabs-New :tabs="tabs" class="page-tabs" :value="activeTab" @change="tabsChanged" />
         </div>
-        <!-- <div class="dashboards-items">
-          <dashboard-item :items="activityItems">
-            <template #title>
-              <ion-icon src="assets/icon/activity.svg" class="activity-icon" />
-              Activity
-            </template>
-          </dashboard-item>
-          <dashboard-item :items="ratingItems">
-            <template #title>
-              <ion-icon src="assets/icon/trophy.svg" class="trophy-icon" />
-              My Ratings
-            </template>
-            <template #bottom>
-              <div class="rating__container">
-                <ion-text class="rating-likes">
-                  {{ widgetInfo?.positive_reviews_count || 0 }}
-                  <ion-icon class="like-icon" src="assets/icon/like.svg" />
-                </ion-text>
-                <ion-text class="rating-dislikes">
-                  {{ widgetInfo?.negative_reviews_count || 0 }}
-                  <ion-icon class="dislike-icon" src="assets/icon/dislike.svg" />
-                </ion-text>
-              </div>
-            </template>
-          </dashboard-item>
-        </div> -->
-        <!-- <week-calendar v-model="selectedDate" :bookings="bookings" @handle-view="onViewCalendar" /> -->
         <div class="events__container">
-          <!-- <items-header :title="dynamicTitle" @handle-view="onViewAllEvents" :hide-view-more="!selectedEvents?.length ||
-            isFacilitiesLoading ||
-            isTrainingsLoading ||
-            isEventsLoading || isDropinsLoading
-            " /> -->
-            <!-- <div data-v-2b823bc0="" class="fixed-content"></div> -->
-            <div data-v-2b823bc0="" class="draggable-content display-grid">
+          <div data-v-2b823bc0="" class="draggable-content display-grid">
           <template v-if="activeTab == EntitiesEnum.Facilities">
-            <ion-item lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymDetail(item.facility?.id)" v-for="item in passes" :key="item.id">
+            <div v-if="!passes || !passes.length">
+              <empty-block
+                title="Gym Passes Empty"
+                hideButton
+                text="No Passes available"
+                icon= "assets/icon/gym-user-icon.svg"
+              />
+            </div>
+            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.facility_id, 'PASS')" v-for="item in passes" :key="item.id">
               <ion-thumbnail class="event__photo">
                 <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
@@ -77,7 +52,15 @@
             </ion-item>
           </template>
           <template v-if="activeTab == EntitiesEnum.FacilityDropins">
-            <ion-item lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymDetail(item.facility?.id)" v-for="item in dropins" :key="item.id">
+            <div v-if="!dropins || !dropins.length">
+              <empty-block
+                title="Drop-ins Empty"
+                hideButton
+                text="No Dropins available"
+                icon= "assets/icon/dropin.svg"
+              />
+            </div>
+            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.facility?.id, 'DROPIN')" v-for="item in dropins" :key="item.id">
               <ion-thumbnail class="event__photo">
                 <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
@@ -101,12 +84,15 @@
             </ion-item>
           </template>
           <template v-if="activeTab == EntitiesEnum.Trainings">
-            <!-- <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)" /> -->
-
-
-            <ion-item lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')" v-for="item in trainers" :key="item.id">
+            <div v-if="!trainers || !trainers.length">
+              <empty-block
+								title="Trainers Empty"
+								hideButton
+								text="No Trainers available"
+								icon= "assets/icon/trainers.svg"
+							/>
+            </div>
+            <ion-item v-else lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')" v-for="item in trainers" :key="item.id">
               <ion-thumbnail class="event__photo img-rounded">
                 <img :src="item.avatarUrl?item.avatarUrl:''" class="event__img img-rounded" />
               </ion-thumbnail>
@@ -119,8 +105,8 @@
                 </ion-text>
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex" style="font-size:13px;">
-                    <ion-icon src="assets/icon/time.svg" class="time-icon" />
-                    09:00 AM - 06:00 PM
+                    <ion-icon src="assets/icon/address.svg" class="time-icon" />
+                    {{ item.distance_from_current_location.toFixed(2) }} miles away from you
                   </div>
                   <ion-text class="status-text">
                     <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
@@ -131,11 +117,15 @@
 
           </template>
           <template v-if="activeTab == EntitiesEnum.Events">
-            <!-- <event-item v-for="event in selectedEvents" :key="event.id" :item="event"
-              :rounded="activeTab === EntitiesEnum.Trainings" :date-range="activeTab === EntitiesEnum.Facilities"
-              @click="openEvent(event.id)" /> -->
-
-            <ion-item lines="none" :class="['event', { 'mt-2': !isWeb }]" :key="event.id" v-for="event in events">
+            <div v-if="!events || !events.length">
+              <empty-block
+								title="Events Empty"
+								hideButton
+								text="No Events available"
+								icon= "assets/icon/events.svg"
+							/>
+            </div>
+            <ion-item v-else lines="none" :class="['event', { 'mt-2': !isWeb }]" :key="event.id" v-for="event in events">
               <ion-thumbnail class="event__photo">
                 <img :src="event.media?.length?event.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
@@ -202,6 +192,7 @@ import { chatsRef } from "@/firebase/db";
 import SearchForm from "@/general/components/forms/SearchActivitiesForm.vue";
 import useRoles from "@/hooks/useRole";
 import { Capacitor } from "@capacitor/core";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 withDefaults(defineProps<{
   isWeb:boolean
@@ -323,11 +314,12 @@ const refetchBooking = () => {
   }
 };
 
-const goToGymDetail = (id) => {
+const goToGymPassDropinDetail = (id, type) => {
   router.push({
-    name: Capacitor.isNativePlatform() ? EntitiesEnum.Facility : EntitiesEnum.GymDetails,
+    name: EntitiesEnum.DropinsPassesList,
     params: {
-      id: id,
+      id,
+      type
     },
   });
 }

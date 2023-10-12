@@ -68,9 +68,18 @@
             </div>
           </div>
         </ion-col>
-        <ion-col size="12" size-lg="3" v-if="role !== RoleEnum.User">
+        <ion-col size="12" size-lg="3">
           <div class="event-action">
             <ion-button
+              expand="block"
+              v-if="role === RoleEnum.User && isTrusted"
+              v-show="!ordered"
+              class="primary btn-event" style="margin-bottom: 20px;"  @click="onBook">
+              Book 
+            </ion-button>
+
+            <ion-button
+              v-if="role !== RoleEnum.User"
               expand="block"
               class="primary btn-event" style="margin-bottom: 20px;"  @click="shareEvent">
               Share Event 
@@ -78,12 +87,14 @@
             </ion-button>
       
             <ion-button
+              v-if="role !== RoleEnum.User"
               expand="block"
               class="primary btn-event" style="margin-bottom: 20px;" @click="editEvent">
               Edit
             </ion-button>
       
             <ion-button
+              v-if="role !== RoleEnum.User"
               expand="block"
               class="btn-event"
               color="danger" fill="outline" @click="showModal">
