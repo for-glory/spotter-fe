@@ -57,7 +57,7 @@
         :key="searchResult?.id"
         :to="{
           name: handleRedirect(searchResult?.__typename),
-          params: setParam(searchResult),
+          params: {id: searchResult?.id},
         }"
       >
         <search-result
@@ -224,19 +224,6 @@ const handleRedirect: any = (itemType: string) => {
 
     default:
       return EntitiesEnum.Facility;
-  }
-};
-// Redirect handler
-const setParam: any = (item: any) => {
-  switch (item.__typename) {
-    case "FacilityItem":
-      return {
-        id: item?.facility_id,
-        type: item?.item_type,
-      };
-
-    default:
-      return {id: item?.id};
   }
 };
 </script>

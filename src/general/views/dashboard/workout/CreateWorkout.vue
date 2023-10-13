@@ -137,7 +137,6 @@
                 @click="handleSubmit"
                 type="submit"
                 expand="block"
-                :disabled="!isValidForm"
               >
                 Post Daily
               </ion-button>
@@ -332,7 +331,7 @@ const isValidForm = computed(
     store.workoutMuscleTypesIds?.length &&
     store.workoutPreview &&
     store.videoPath &&
-    store.workoutType && 
+    selectedType.value && 
     store.description
 );
 
@@ -343,7 +342,7 @@ const params = computed(() => ({
   preview: store.workoutPath,
   video: store.path,
   body_parts: store.workoutMuscleTypesIds,
-  type_id: store.workoutType?.id,
+  type_id: selectedType.value?.value,
   title: store.workoutTitle,
   description: store.description,
   duration: Number(store.workoutDuration),

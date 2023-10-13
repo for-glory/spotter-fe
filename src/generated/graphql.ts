@@ -65,6 +65,7 @@ export type Address = {
   lat?: Maybe<Scalars["Float"]>;
   lng?: Maybe<Scalars["Float"]>;
   street?: Maybe<Scalars["String"]>;
+  distance_from_auth_location?: Maybe<Scalars["Float"]>;
 
 };
 
@@ -6748,6 +6749,7 @@ export const EventsDocument = gql`
           lat
           lng
           street
+          distance_from_auth_location
         }
         amenities {
           icon
@@ -7912,7 +7914,6 @@ export const UsersDocument = gql`
       data {
         id
         score
-        distance_from_current_location
         first_name
         last_name
         avatarUrl
@@ -7922,6 +7923,7 @@ export const UsersDocument = gql`
           lat
           lng
           street
+          distance_from_auth_location
         }
         facilities {
           id
@@ -8573,7 +8575,27 @@ export const FacilityItemDocument = gql`
       id
       title
       price
-      facility_id
+      facility {
+        id
+        media {
+          pathUrl
+        }
+        address {
+          id
+          lat
+          lng
+          extra
+          street
+          city {
+            id
+            name
+            state {
+              name
+            }
+          }
+        }
+        name
+      }
       product_id
       duration
       item_type
@@ -8596,11 +8618,13 @@ export const FacilityItemsByFacilityIdAndTypeDocument = gql`
         price
         facility {
           id
+          name
           media {
             pathUrl
           }
           address {
             street
+            distance_from_auth_location
           }
         }
         product_id

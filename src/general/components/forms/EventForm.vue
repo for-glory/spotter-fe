@@ -46,7 +46,7 @@
                 " />
           </div>
         </ion-col>
-        <!-- <ion-col size="12" size-lg="6">
+        <ion-col size="12" size-lg="6">
           <div class="form-row">
             <base-input
               type="text"
@@ -71,7 +71,7 @@
               placeholder="Enter discount value"
             />
           </div>
-        </ion-col> -->
+        </ion-col>
         <ion-col size="12" size-lg="6">
           <div class="form-row">
             <ion-label class="label"> Choose date of event </ion-label>
