@@ -2,12 +2,13 @@
   <div>
     <ion-item class="title ion-text-start">
       <ion-icon
+        @click="onBack"
         class=""
         mode="ios"
         color="medium"
         :icon="chevronBackOutline">
       </ion-icon>
-      <span @click="onBack" class="medium ion-padding-end clickable">Back</span>
+      <span class="medium ion-padding-end clickable">{{ facilityItem?.facility?.name }}</span>
     </ion-item>
   </div>
   <ion-grid fixed>
@@ -15,7 +16,7 @@
       <ion-col size="12">
         <ion-spinner v-if="loadingFacilityPass" name="lines" class="spinner" />
         <div v-else>
-          <div  v-if="!facilityItems || !facilityItems.length">
+          <div  v-if="!facilityItem">
             <empty-block
               class="empty-block"
               :title="emptyTitle"
@@ -25,8 +26,62 @@
             />
           </div>
          <div v-else>
-          <pass-dropins-list :dataList="facilityItems" :unit="unit" is-purchase  @purchase="handlePurchase"/>
-         </div>
+          <div class="list-container">
+            <ion-item class="thumbnail-container ion-no-padding" lines="none">
+              <ion-avatar slot="start">
+                <img :src="facilityItem.facility.media[0].pathUrl" />
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  {{ facilityItem.title }}
+                </h3>
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label>
+                <p>
+                  Duration
+                </p>
+                <h4>
+                  {{ facilityItem.duration }} {{ unit }}
+                </h4>
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label>
+                <p>
+                  Features
+                </p>
+                <h4>
+                  Full access(amenities & equipment)
+                </h4>
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label>
+                <p>
+                  Pass Fee
+                </p>
+                <h4>
+                  ${{ formatNumber(facilityItem.price) }}
+                </h4>
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label>
+                <p>
+                  Address
+                </p>
+                <h4>
+                  {{ facilityItem.facility?.address?.street }} {{ facilityItem.facility?.address?.city?.name }}, {{ facilityItem.facility?.address?.city?.state?.name }}
+                </h4>
+              </ion-label>
+            </ion-item>
+            <div class="btn-container">
+              <ion-button size="small" @click="handlePurchase">Purchase</ion-button>
+            </div>
+          </div>
+        </div>
         </div>
       </ion-col>
     </ion-row>
@@ -42,7 +97,7 @@ import {
   IonCol
 } from "@ionic/vue";
 import {
-  FacilityItemsByFacilityIdAndTypeDocument,
+  FacilityItemDocument,
 } from "@/generated/graphql";
 import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
 import { useQuery } from "@vue/apollo-composable";
@@ -56,17 +111,16 @@ const route = useRoute();
 
 // facility items
 const {
-  result: facilityItemPassResultList,
-  loading: loadingFacilityPass
-} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
-  facility_id: route.params.id,
-  item_type: route.params.type
+  result: facilityItemResult,
+  loading: loadingFacilityPass,
+  onResult
+} = useQuery(FacilityItemDocument, {
+  id: route.params.id
 });
 
-const facilityItems = computed(() => {
-  return facilityItemPassResultList.value?.facilityItemsByFacilityIdAndType?.data;
+const facilityItem = computed(() => {
+  return facilityItemResult.value?.facilityItemById;
 });
-
 const unit = computed(() => {
   return route.params.type === "PASS" ? "Months" : "Days";
 });
@@ -90,6 +144,10 @@ const handlePurchase = () => {
 const onBack = () => {
   router.go(-1);
 };
+
+const formatNumber = ((num: any) => {
+  return (Math.round((num / 100) * 100) / 100).toFixed(2)
+})
 </script>
 
 <style scoped lang="scss">
@@ -158,5 +216,59 @@ ion-label {
     margin-right: 8px;
     margin-left: -6px;
   }
+}
+
+.btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+
+  ion-button {
+    width: 6.313vw;
+    cursor: pointer;
+  }
+}
+
+.list-container {
+  background-color: #262626;
+  padding: 16px 8px;
+  margin: 12px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.thumbnail-container {
+  border-bottom: 2px solid #3d3d3d;
+
+  ion-avatar {
+    height: 80px;
+    width: 80px;
+
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  p {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Lato';
+    color: #AFAFAF;
+    text-transform: capitalize;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-family: 'Lato';
+    font-weight: 500;
+    color: #EFEFEF;
+  }
+}
+
+ion-item {
+  --background: transparent;
 }
 </style>

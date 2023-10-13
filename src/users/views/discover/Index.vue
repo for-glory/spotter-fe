@@ -28,16 +28,16 @@
                 icon= "assets/icon/gym-user-icon.svg"
               />
             </div>
-            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.facility_id, 'PASS')" v-for="item in passes" :key="item.id">
+            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.id)" v-for="item in passes" :key="item.id">
               <ion-thumbnail class="event__photo">
                 <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
               <div class="facility-item__holder">
                 <div style="width: calc(100% - 80px);">
-                  <ion-label class="facility-item__title">{{ item.title }}</ion-label>
+                  <ion-label class="facility-item__title">{{ item.facility?.name }}</ion-label>
                   <div class="facility-item__address">
                     <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.street }}</ion-title>
+                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.distance_from_auth_location.toFixed(1) }} miles away from you</ion-title>
                   </div>
                 </div>
                 <div>
@@ -47,6 +47,7 @@
                   <ion-text class="facility-item__status-text ">
                     <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</span> <br><span style="font-size:16px;">Access</span> 
                   </ion-text>
+                  <!-- <ion-button class="evnt_btn" @click="goToGymPassDropinDetail(item.id)">Subscribe</ion-button> -->
                 </div>
               </div>
             </ion-item>
@@ -60,16 +61,16 @@
                 icon= "assets/icon/dropin.svg"
               />
             </div>
-            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.facility?.id, 'DROPIN')" v-for="item in dropins" :key="item.id">
+            <ion-item v-else lines="none" :class="['event','facility-item', { 'mt-2': !isWeb }]" @click="goToGymPassDropinDetail(item.id)" v-for="item in dropins" :key="item.id">
               <ion-thumbnail class="event__photo">
                 <img :src="item.facility?.media?.length?item.facility?.media[0].pathUrl:''" class="event__img" />
               </ion-thumbnail>
               <div class="facility-item__holder">
                 <div style="width: calc(100% - 80px);">
-                  <ion-label class="facility-item__title">{{ item.title }}</ion-label>
+                  <ion-label class="facility-item__title">{{ item.facility?.name }}</ion-label>
                   <div class="facility-item__address">
                     <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.street }}</ion-title>
+                    <ion-title style="padding-left:10px;">{{ item.facility?.address?.distance_from_auth_location.toFixed(1) }} miles away from you</ion-title>
                   </div>
                 </div>
                 <div>
@@ -79,6 +80,7 @@
                   <ion-text class="facility-item__status-text ">
                     <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</span> <br><span style="font-size:16px;">Access</span> 
                   </ion-text>
+                  <!-- <ion-button class="evnt_btn" @click="goToGymPassDropinDetail(item.id)">Buy</ion-button> -->
                 </div>
               </div>
             </ion-item>
@@ -106,7 +108,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex" style="font-size:13px;">
                     <ion-icon src="assets/icon/address.svg" class="time-icon" />
-                    {{ item.distance_from_current_location.toFixed(2) }} miles away from you
+                    {{ item.address?.distance_from_auth_location.toFixed(1) }} miles away from you
                   </div>
                   <ion-text class="status-text">
                     <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
@@ -135,25 +137,22 @@
                   <ion-icon src="assets/icon/time.svg" class="time-icon" />
                   {{ dayjs(event.start_date).format("h:mm A") }}
                 </div>
-                <div>
-                <div class="d-flex align-items-center justify-content-between">
-                  <div>
-                    <ion-text class="event__date">
-                      {{ formatEventDate(event) }}
-                      <template>- endDate </template>
-                    </ion-text>
-                    <div class="event__address">
-                        <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
-                        <ion-title style="padding-left:10px;">{{ event.address?.street }}</ion-title>
+                <div class="w-100">
+                  <div class="d-flex align-items-center justify-content-between w-100">
+                    <div style="width: calc(100% - 80px);">
+                      <ion-text class="event__date">
+                        {{ formatEventDate(event) }}
+                        <template>- endDate </template>
+                      </ion-text>
+                      <div class="event__address">
+                          <ion-img src="assets/icon/pin_loc.png" class="img-fluid" style="width:15px;"/>
+                          <ion-title style="padding-left:10px;">{{ event.address?.distance_from_auth_location.toFixed(1) }} miles away from you</ion-title>
+                      </div>
                     </div>
+                    <ion-button class="evnt_btn" @click="goToEventDetail(event.id)">Register</ion-button>
                   </div>
-                  <ion-text class="status-text">
-
-                  </ion-text>
-                  <ion-button class="evnt_btn" @click="goToEventDetail(event.id)">Register</ion-button>
                 </div>
-              </div>
-              </div>
+                </div>
             </ion-item>
           </template>
         </div>
@@ -314,12 +313,11 @@ const refetchBooking = () => {
   }
 };
 
-const goToGymPassDropinDetail = (id, type) => {
+const goToGymPassDropinDetail = (id) => {
   router.push({
     name: EntitiesEnum.DropinsPassesList,
     params: {
-      id,
-      type
+      id
     },
   });
 }
@@ -658,7 +656,7 @@ const formatCurrency = (num: number, type: string) => {
 
   &__holder {
     min-height: 73px;
-    width: calc(100% - 105px);
+    width: 100%;
     font-family: 'Yantramanav';
     .event--time-hidden & {
       display: flex;
@@ -703,7 +701,6 @@ const formatCurrency = (num: number, type: string) => {
     }
   }
   &__address {
-    width: calc(100% - 54px);
     display: flex;
     ion-title {
       width: calc(100% - 30px);
