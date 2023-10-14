@@ -45,7 +45,7 @@
                     {{ formatCurrency(item.price/100, "fixed") }}
                   </div>
                   <ion-text class="facility-item__status-text ">
-                    <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</span> <br><span style="font-size:16px;">Access</span> 
+                    <span style="color:#E1DBC5;">{{ item.duration }} {{ item.duration>1?"Months":"Month" }}</span> <br><span style="font-size:16px;">Access</span> 
                   </ion-text>
                   <!-- <ion-button class="evnt_btn" @click="goToGymPassDropinDetail(item.id)">Subscribe</ion-button> -->
                 </div>

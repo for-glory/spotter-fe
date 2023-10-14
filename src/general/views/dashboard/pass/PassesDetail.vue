@@ -78,7 +78,7 @@
               </ion-label>
             </ion-item>
             <div class="btn-container">
-              <ion-button size="small" @click="handlePurchase">Purchase</ion-button>
+              <ion-button size="small" @click="handlePurchase">{{ facilityItem.item_type === "PASS" ? 'Subscribe' : 'Buy' }}</ion-button>
             </div>
           </div>
         </div>

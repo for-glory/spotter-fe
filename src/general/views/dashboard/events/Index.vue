@@ -171,7 +171,7 @@ gotEvents((response) => {
   response.data?.events?.data.map(item => {
     allEvents.value.push({
       ...item,
-      status: dayjs().isBefore(item.end_date) ?  'upcoming' : 'finished',
+      status: dayjs().isBefore(item.start_date) ?  'upcoming' : dayjs().isBefore(item.end_date)?'ongoing':'finished',
     })
   });
 });

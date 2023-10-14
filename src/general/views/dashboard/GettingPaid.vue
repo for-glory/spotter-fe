@@ -14,7 +14,7 @@
               <div class="flex-container">
                 <ion-text class="content"
                   >Your available balance is
-                  <span class="fund">${{ revenue?.year_earn }}</span>
+                  <span class="fund">{{ formatCurrency(revenue?.year_earn, "fixed") }}</span>
                 </ion-text>
                 <IonButton class="get" @click="handleGet"
                   >Get paid now</IonButton
@@ -47,7 +47,7 @@
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
-                      <div class="chain">${{ revenue?.today_earn }}</div>
+                      <div class="chain">{{ formatCurrency(revenue?.today_earn, "fixed") }}</div>
                     </div>
                   </ion-col>
                   <ion-col size="12" size-xl="12">
@@ -60,7 +60,7 @@
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
                         <div class="chain">
-                          ${{ revenue?.earn_last_thirty_days }}
+                          {{ formatCurrency(revenue?.earn_last_thirty_days, "fixed") }}
                         </div>
                       </div>
                     </div>
@@ -73,7 +73,7 @@
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
-                      <div class="chain">${{ revenue?.year_earn }}</div>
+                      <div class="chain">{{ formatCurrency(revenue?.year_earn, "fixed") }}</div>
                     </div>
                   </ion-col>
                 </ion-row>
@@ -196,6 +196,7 @@ import { computed, ref } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { TrainerSelectOptions } from "@/const/TrainerSelectOption";
+import { formatCurrency } from "@/helpers/currency-formater";
 import useRoles from "@/hooks/useRole";
 
 const currentFacility = useFacilityStore();
