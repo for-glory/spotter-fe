@@ -137,6 +137,7 @@
                 @click="handleSubmit"
                 type="submit"
                 expand="block"
+                :disabled="!isValidForm"
               >
                 Post Daily
               </ion-button>
