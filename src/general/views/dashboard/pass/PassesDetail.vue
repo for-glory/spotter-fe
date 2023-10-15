@@ -122,19 +122,19 @@ const facilityItem = computed(() => {
   return facilityItemResult.value?.facilityItemById;
 });
 const unit = computed(() => {
-  return route.params.type === "PASS" ? "Months" : "Days";
+  return facilityItem.value?.item_type === "PASS" ? "Months" : "Days";
 });
 
 const emptyTitle = computed(() => {
-  return route.params.type === "PASS" ? "Passes Empty" : "Drop-ins Empty";
+  return facilityItem.value?.item_type === "PASS" ? "Passes Empty" : "Drop-ins Empty";
 });
 
 const emptyText = computed(() => {
-  return route.params.type === "PASS" ? "No Gym pass created yet" : "No drop-ins created yet";
+  return facilityItem.value?.item_type === "PASS" ? "No Gym pass created yet" : "No drop-ins created yet";
 });
 
 const emptyImage = computed(() => {
-  return route.params.type === "PASS" ? "assets/icon/gym-user-icon.svg" : "assets/icon/dropin.svg";
+  return facilityItem.value?.item_type === "PASS" ? "assets/icon/gym-user-icon.svg" : "assets/icon/dropin.svg";
 });
 
 const handlePurchase = () => {

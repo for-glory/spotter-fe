@@ -94,7 +94,7 @@
 								icon= "assets/icon/trainers.svg"
 							/>
             </div>
-            <ion-item v-else lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview')" v-for="item in trainers" :key="item.id">
+            <ion-item v-else lines="none" :class="['event', 'trainers', { 'mt-2': !isWeb }]" @click="goToTrainerDetail('preview', item.id)" v-for="item in trainers" :key="item.id">
               <ion-thumbnail class="event__photo img-rounded">
                 <img :src="item.avatarUrl?item.avatarUrl:''" class="event__img img-rounded" />
               </ion-thumbnail>
@@ -111,7 +111,7 @@
                     {{ item.address?.distance_from_auth_location.toFixed(1) }} miles away from you
                   </div>
                   <ion-text class="status-text">
-                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book')">Book</ion-button>
+                    <ion-button class="btn_txt" @click.stop="goToTrainerDetail('book', item.id)">Book</ion-button>
                   </ion-text>
                 </div>
               </div>
@@ -322,16 +322,16 @@ const goToGymPassDropinDetail = (id) => {
   });
 }
 
-const goToTrainerDetail = (type:string) => {
+const goToTrainerDetail = (type:string, id:number) => {
   if(Capacitor.isNativePlatform()){
     return router.push({ 
       name: type === 'preview' ? EntitiesEnum.Trainer : EntitiesEnum.BookTrainer, 
-      params: { id: 5345 } 
+      params: { id } 
    });
   }
   router.push({ 
     name: type === 'preview' ? EntitiesEnum.TrainerPreview : EntitiesEnum.TrainerBooking, 
-    params: { id: 5345 } 
+    params: { id } 
   })
 }
 
