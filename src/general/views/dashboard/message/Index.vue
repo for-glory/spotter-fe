@@ -84,7 +84,7 @@ import Personal from "@/general/views/dashboard/message/Personal.vue";
 import Room from "@/general/components/blocks/chat/Room.vue";
 import { useRoute } from "vue-router";
 import { RoleEnum, DeleteChatDocument } from "@/generated/graphql";
-import { computed, onMounted, reactive, ref, onBeforeMount } from "vue";
+import { computed, onMounted, reactive, ref, onBeforeMount, watch } from "vue";
 import ListEmpty from "@/general/components/blocks/chat/ListEmpty.vue";
 import useRoles from "@/hooks/useRole";
 import { RoomType } from "@/ts/enums/chat";
@@ -118,7 +118,7 @@ const selectedRoom = ref({
   avatar: "",
   roomName: "",
   roomId: "",
-  participantId: 0.,
+  participantId: 0,
   type: "",
   userId: ""
 });
@@ -143,20 +143,19 @@ const currenTab = computed(() =>
 
 const handleTab = (tab: RoomType) => {
   activeTab.value = tab;
+  selectedRoom.value.roomId = "";
 };
 
 // const requests = computed(
 //   () => activeTab.value === RoomType.Request
 // );
 
-// watch(
-//   () => requests.value,
-//   () => {
-//     if(role !== RoleEnum.User){
-//       fetchChats();
-//     }
-//   }
-// );
+watch(
+  () => route.params,
+  () => {
+    handleTab(RoomType.Chat);
+  }
+);
 
 
 const isOnline = (id: number) => {
@@ -164,7 +163,9 @@ const isOnline = (id: number) => {
 };
 
 const onOpen = (event: any, room: any) => {
-  selectedRoom.value = room;
+  console.log('room',room);
+  
+  selectedRoom.value = {...room};
 };
 
 const onDelete = (e: any, roomId: string) => {
@@ -182,7 +183,7 @@ const onDelete = (e: any, roomId: string) => {
 const getChats = (snapshot) => {
   return Object.values(snapshot).reduce((acc, chat) => {
     if (chat?.participants?.length) {
-      chat.participants.forEach(async (user: { user_id: any; }) => {
+      chat.participants?.forEach(async (user: { user_id: any; }) => {
         if (Number(user.user_id) === Number(id)) {
           acc.push({
             ...chat,
@@ -203,16 +204,15 @@ const fetchChats = () => {
   loading.value = true;
   if (!chatListener.value) {
     chatListener.value = true;
-    console.log('call firebase chat listener=======>');
     
     onValue(chatsRef, (snapshot) => {
-      console.log(`firebase main chat response ${role}=======>`, snapshot.val());
       data.chats = [];
       data.pendingChats = [];
       if (snapshot.val()) {
         const chats = getChats(snapshot.val());
         chats.forEach(async (chat: any) => {
           const mappedValues = await mapChats(chat, id);
+          
           if (!mappedValues.locked) {
             data.chats.push(mappedValues);
           }
@@ -230,9 +230,7 @@ const fetchRequest = () => {
   loading.value = true;
   if (!requestListener.value) {
     requestListener.value = true;
-    console.log('call firebase request listener========>');
     onValue(requestsRef, (snapshot) => {
-      console.log(`firebase requestsRef response=======>`, snapshot.val());
       data.requestChats = [];
       snapshot.forEach((childSnapshot) => {
         if (childSnapshot.key === id) {

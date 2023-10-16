@@ -67,7 +67,7 @@
       <div class="order__item">
         <ion-text class="order__label">{{ infoThreeTitle }}</ion-text>
         <ion-text class="order__info">
-          {{ infoThreeValue ? infoThreeValue : `$${(event?.order?.total || 0).toFixed(2)}` }}
+          {{ infoThreeValue ? infoThreeValue : `$${(event?.order?.total / 100 || 0).toFixed(2)}` }}
         </ion-text>
       </div>
     </div>

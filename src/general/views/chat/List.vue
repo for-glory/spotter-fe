@@ -155,7 +155,7 @@ const onDelete = (e: CustomEvent, roomId: string) => {
 const getChats = (snapshot) => {
   return Object.values(snapshot).reduce((acc, chat) => {
     if (chat?.participants?.length) {
-      chat.participants.forEach(async (user: { user_id: any; }) => {
+      chat.participants?.forEach(async (user: { user_id: any; }) => {
         if (Number(user.user_id) === Number(id)) {
           acc.push({
             ...chat,
