@@ -114,7 +114,7 @@ const fetchChats = async () => {
       } else {
         const chat = childSnapshot.val();
         if (chat.id == props.roomId) {
-          chat.participants.forEach(
+          chat.participants?.forEach(
             async (user: {
               user_id: number;
               avatar: string;

@@ -72,7 +72,7 @@ const handleBookBtn = () => {
 
 const address = computed(() => {
   return (
-    props.trainer?.facilities?.[0]?.address?.street ?? props.trainer.address?.street
+    props.trainer?.facilities?.[0]?.address?.street ?? props.trainer?.address?.street
   );
 });
 

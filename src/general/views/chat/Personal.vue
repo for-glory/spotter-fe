@@ -124,7 +124,7 @@ const fetchChats = async () => {
       } else {
         const chat = childSnapshot.val();
         if (chat?.id == route.params.id) {
-          chat.participants.forEach(
+          chat.participants?.forEach(
             async (user: {
               user_id: number;
               avatar: string;

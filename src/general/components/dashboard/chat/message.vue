@@ -189,7 +189,10 @@ const onHandleApproveOrder = () => {
   mutate({
     input: { id: props.trainingId, state: TrainingStatesEnum.Accepted },
   })
-    .then(async () => {
+    .then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
       const toast = await toastController.create({
         message: "Order successfully approved",
         duration: 2000,
@@ -219,7 +222,10 @@ const onHandleDeclineOrder = () => {
   mutate({
     input: { id: props.trainingId, state: TrainingStatesEnum.Rejected },
   })
-    .then(async () => {
+    .then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
       const toast = await toastController.create({
         message: "Order successfully declined",
         duration: 2000,

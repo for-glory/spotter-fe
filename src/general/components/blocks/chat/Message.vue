@@ -212,7 +212,7 @@ const presentAlert = async () => {
 };
 
 const getErrorMessage = ({ graphQLErrors }) => {
-  if (graphQLErrors.length) {
+  if (graphQLErrors?.length) {
     const errsExt = graphQLErrors[0];
     if (errsExt?.debugMessage) {
       return errsExt?.debugMessage;
@@ -229,7 +229,10 @@ const onHandleApproveOrder = () => {
   mutate({
     input: { id: props.trainingId, state: TrainingStatesEnum.Accepted },
   })
-    .then(async () => {
+    .then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
       const toast = await toastController.create({
         message: "Order successfully approved",
         duration: 2000,
@@ -246,7 +249,7 @@ const onHandleApproveOrder = () => {
       else {
         router.push({
         name: EntitiesEnum.DashboardMessage,
-        query: { type: RoomType.Request.toLocaleLowerCase() },
+        query: { type: RoomType.Chat.toLocaleLowerCase() },
       });
       }
     })
@@ -267,7 +270,10 @@ const onHandleDeclineOrder = () => {
   mutate({
     input: { id: props.trainingId, state: TrainingStatesEnum.Rejected },
   })
-    .then(async () => {
+    .then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
       const toast = await toastController.create({
         message: "Order successfully declined",
         duration: 2000,
@@ -284,7 +290,7 @@ const onHandleDeclineOrder = () => {
       else {
         router.push({
         name: EntitiesEnum.DashboardMessage,
-        query: { type: RoomType.Request.toLocaleLowerCase() },
+        query: { type: RoomType.Chat.toLocaleLowerCase() },
       });
       }
     })
@@ -399,6 +405,7 @@ const onHandleDeclineOrder = () => {
 
     &--rejected {
       color: var(--ion-color-danger-tint);
+      background: var(--gray-700) !important;
     }
 
     &--pending {
