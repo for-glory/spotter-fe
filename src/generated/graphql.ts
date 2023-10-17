@@ -2744,6 +2744,7 @@ export type UpdateUserInput = {
   avatar?: InputMaybe<Scalars["StringOrUpload"]>;
   certificates?: InputMaybe<Array<DocumentUploadInput>>;
   email?: InputMaybe<Scalars["String"]>;
+  description?: InputMaybe<Scalars["String"]>;
   facility_id?: InputMaybe<Scalars["ID"]>;
   first_name?: InputMaybe<Scalars["String"]>;
   front_settings?: InputMaybe<Scalars["JSON"]>;
@@ -2784,6 +2785,7 @@ export type User = {
   currentSubscription: SubscriptionsTierEnum;
   done_workouts_count: Scalars["Int"];
   email?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
   email_verified_at?: Maybe<Scalars["DateTime"]>;
   facilities?: Maybe<Array<Maybe<Facility>>>;
   facilityItemPasses?: Maybe<Array<Maybe<FacilityItemPass>>>;
@@ -7275,6 +7277,7 @@ export const MyTrainingsDocument = gql`
         id
         state
         start_date
+        end_date
         trainer {
           avatarUrl
           first_name
@@ -7712,6 +7715,7 @@ export const TrainingDocument = gql`
     training(id: $id) {
       id
       start_date
+      end_date
       state
       order {
         id
@@ -7766,6 +7770,7 @@ export const UserDocument = gql`
       role
       first_name
       last_name
+      description
       avatar
       was_commented_by_me
       was_visited_by_me
@@ -8402,6 +8407,7 @@ export const TrainerTrainingsDocument = gql`
         address_string
         id
         start_date
+        end_date
         state
         user {
           id

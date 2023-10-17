@@ -34,6 +34,7 @@ export const GetTrainerDocument = gql`
       id
       first_name
       last_name
+      description
       avatar
       score
       avatarUrl
