@@ -7762,7 +7762,7 @@ export const UserDocument = gql`
   query user($id: ID!) {
     user(id: $id) {
       id
-      email      
+      email
       employment_type
       birth
       postal
