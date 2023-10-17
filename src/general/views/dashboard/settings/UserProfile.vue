@@ -72,7 +72,8 @@
                             </div>
                         </div>
                         <div class="review-cards">
-                            <base-carousel v-if="reviews.length" class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
+                            <base-carousel v-if="reviews.length" class="review-swiper" show-start :items="reviews"
+                                :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
                                     <div class="review-card" v-for="review in reviews">
                                         <div class="review-header">
@@ -95,7 +96,8 @@
                                     </div>
                                 </template>
                             </base-carousel>
-                            <div v-else class="font-bold color-gold " style="font-size: 24px; text-align: center; padding: 24px;">
+                            <div v-else class="font-bold color-gold "
+                                style="font-size: 24px; text-align: center; padding: 24px;">
                                 <ion-text>No reviews yet</ion-text>
                             </div>
                         </div>
@@ -126,7 +128,8 @@
                             <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
                         </div>
                     </div>
-                    <div class="offer-card" v-else-if="segmentValue == 'daily'"  style="max-height: 300px; overflow-y: scroll;">
+                    <div class="offer-card" v-else-if="segmentValue == 'daily'"
+                        style="max-height: 300px; overflow-y: scroll;">
                         <div class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
@@ -139,21 +142,18 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type }}</ion-text>
                                 </div>
-                                <div class="total">
+                                <!-- <div class="total">
                                     <ion-icon src="assets/icon/profile.svg"></ion-icon>
                                     <ion-text>{{ item.totalUser }}</ion-text>
-                                </div>
+                                </div> -->
+                                <ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
                         <div v-if="!offerEvents || !offerEvents.length">
-                            <empty-block
-                            title="Events Empty"
-                            hideButton
-                            text="No Events available, create new event to get started"
-                            icon= "assets/icon/events.svg"
-                            />
+                            <empty-block title="Events Empty" hideButton
+                                text="No Events available, create new event to get started" icon="assets/icon/events.svg" />
                         </div>
                         <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
@@ -203,7 +203,7 @@
 </template>
     
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
+import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar, toastController } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { ellipse } from "ionicons/icons";
 import { computed, ref } from "vue";
@@ -213,8 +213,9 @@ import { Share } from "@capacitor/share";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { EntitiesEnum } from "@/const/entities";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
@@ -223,25 +224,25 @@ const segmentValue = ref('trainer');
 const trainer = useTrainerStore();
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
-  WorkoutsDocument,{
+    WorkoutsDocument, {
     page: 1,
     first: 1000,
     order: SortOrder.Asc,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    trainer_id: trainer.trainer?.id 
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
+    trainer_id: trainer.trainer?.id
+},
+    {
+        fetchPolicy: "no-cache",
+    }
 );
 
 const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, onResult: getReviews } = useQuery(
-  ReviewsDocument,
-  () => ({
-    id: trainer?.trainer?.id,
-    type: FeedbackEntityEnum.User,
-    review_type: "Recent",
-  })
+    ReviewsDocument,
+    () => ({
+        id: trainer?.trainer?.id,
+        type: FeedbackEntityEnum.User,
+        review_type: "Recent",
+    })
 );
 
 const handleMore = async () => {
@@ -277,15 +278,46 @@ const handleMore = async () => {
     }
 };
 const offerList = computed(() => dailysResult.value.workouts.data.map((daily: any) => {
-  return {
-    id: daily?.id,
-    name: daily?.title,
-    trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
-    time: daily?.duration,
-    totalUser: daily?.views_count,
-    type: daily?.type.name
-  }
+    return {
+        id: daily?.id,
+        name: daily?.title,
+        trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.last_name}`,
+        time: daily?.duration,
+        totalUser: daily?.views_count,
+        type: daily?.type.name
+    }
 }));
+
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+    useMutation(AddToCartDocument);
+const purchaseWorkout = (id: string) => {
+    addToCartMutation({
+        input: {
+            purchasable_id: id,
+            purchasable: AddToCartPurchasableEnum.Workout,
+        },
+    })
+        .then((res) => {
+            router.push({
+                name: EntitiesEnum.WorkoutOrder,
+                params: {
+                    id: id,
+                },
+                query: {
+                    cart_id: res?.data?.addToCart?.id,
+                },
+            });
+        })
+        .catch(async () => {
+            const toast = await toastController.create({
+                message: "Something went wrong. Try again.",
+                duration: 2000,
+                icon: "assets/icon/info.svg",
+                cssClass: "warning-toast",
+            });
+            toast.present();
+        });
+};
 
 const reviews = computed(() => {
     return {
@@ -298,31 +330,31 @@ const reviews = computed(() => {
 
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
-  // return result.value?.user;
-  return {
-    id: trainer.trainer.id,
-    title: `${trainer.trainer.first_name} ${trainer.trainer.last_name}`,
-    address: {
-      street: "Arizona, Phoenix, USA",
-    },
-    start_date: "10 month",
-    userId: "5328",
-    first_name: trainer.trainer.first_name,
-    last_name: trainer.trainer.last_name,
-    avatarUrl: trainer.trainer.avatarUrl,
-    created_at: new Date().setFullYear(2022,10),
-    positive_reviews_count: trainer.trainer.positive_reviews_count ?? 0,
-    negative_reviews_count: trainer.trainer.negative_reviews_count ?? 0,
-    score: trainer.trainer.score ?? 0,
-    trainerRates: trainer.trainer.trainerRates,
-    quizzes: [
-      {
-        code: "DISCOVER_YOUR_NEEDS",
-        answers:
-          "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
-      }
-    ]
-  }
+    // return result.value?.user;
+    return {
+        id: trainer.trainer.id,
+        title: `${trainer.trainer.first_name} ${trainer.trainer.last_name}`,
+        address: {
+            street: "Arizona, Phoenix, USA",
+        },
+        start_date: "10 month",
+        userId: "5328",
+        first_name: trainer.trainer.first_name,
+        last_name: trainer.trainer.last_name,
+        avatarUrl: trainer.trainer.avatarUrl,
+        created_at: new Date().setFullYear(2022, 10),
+        positive_reviews_count: trainer.trainer.positive_reviews_count ?? 0,
+        negative_reviews_count: trainer.trainer.negative_reviews_count ?? 0,
+        score: trainer.trainer.score ?? 0,
+        trainerRates: trainer.trainer.trainerRates,
+        quizzes: [
+            {
+                code: "DISCOVER_YOUR_NEEDS",
+                answers:
+                    "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
+            }
+        ]
+    }
 });
 
 const symbols = computed(() => {
@@ -671,6 +703,15 @@ const specialNeeds = computed<string | null>(() => {
                 }
             }
         }
+
+        ion-button {
+            height: 30px;
+            font-weight: 600;
+            --color: var(--gray-700);
+            --border-radius: 4px;
+            margin: 0;
+            min-width: 117px;
+        }
     }
 }
 
@@ -751,10 +792,12 @@ const specialNeeds = computed<string | null>(() => {
     // overflow: auto;
     position: relative;
     width: 100%;
+
     .review-swiper {
         position: absolute;
         width: 100%;
     }
+
     .review-card {
         padding: 16px;
         // max-width: 324px;
