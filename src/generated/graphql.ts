@@ -7275,6 +7275,7 @@ export const MyTrainingsDocument = gql`
         id
         state
         start_date
+        end_date
         trainer {
           avatarUrl
           first_name
@@ -7712,6 +7713,7 @@ export const TrainingDocument = gql`
     training(id: $id) {
       id
       start_date
+      end_date
       state
       order {
         id
@@ -8402,6 +8404,7 @@ export const TrainerTrainingsDocument = gql`
         address_string
         id
         start_date
+        end_date
         state
         user {
           id
