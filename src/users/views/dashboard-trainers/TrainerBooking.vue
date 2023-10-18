@@ -253,6 +253,7 @@ const onChangeTime = (time: string, timeLabel: string) => {
     paymentStore.setValue("paymentTime", time);
     paymentStore.setValue("startDate", time);
     paymentStore.setValue("time", timeLabel);
+    paymentStore.setValue("endDate", '');
 };
 const onAgree = () => {
     localStorage.setItem("terms_of_use", JSON.stringify(true));

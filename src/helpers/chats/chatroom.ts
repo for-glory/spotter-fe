@@ -43,6 +43,7 @@ const mapChats = (chat: any, userId: any) => {
       .split(" ")[0]
       .charAt(0)} ${chat.participant.chat_name.split(" ")[1].charAt(0)}`,
     unread: chat.unread[userId],
+    operation_data: chat?.message?.operation_data
   };
 };
 
@@ -67,6 +68,7 @@ export const mapRequests = (chats: any, id: string) => {
           Number(participant.user_id) !== Number(id)
       )?.user_id,
       key: uuidv4(),
+      operation_data: cur?.operation_data
     });
     return acc;
   }, []);

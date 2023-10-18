@@ -53,7 +53,7 @@
           <div class="training-preview__row" v-if="showTime">
             <strong class="training-preview__row__title">Time</strong>
             <span class="training-preview__row__data">
-              {{ trainingStartTime }}
+              {{ trainingStartTime }} - {{ trainingEndTime }}
             </span>
           </div>
           <div class="training-preview__row" v-if="planType">
@@ -523,6 +523,26 @@ const trainingStartTime = computed(() => {
 
     case EntitiesEnum.Event:
       return dayjs(eventResult.value?.event.start_date).format("hh:mm A");
+
+    default:
+      return "";
+  }
+});
+
+const trainingEndTime = computed(() => {
+  switch (compSessionType) {
+    case EntitiesEnum.Facility:
+      return dayjs(facilityResult.value?.facilityItemPass.end_date).format(
+        "hh:mm A"
+      );
+
+    case EntitiesEnum.Training:
+      return dayjs(trainingResult.value?.training?.end_date).format(
+        "hh:mm A"
+      );
+
+    case EntitiesEnum.Event:
+      return dayjs(eventResult.value?.event.end_date).format("hh:mm A");
 
     default:
       return "";

@@ -7,7 +7,7 @@
       <ion-spinner v-if="loading" name="lines" class="spinner" />
       <template v-if="!loading && showAdditionalContent && times?.length">
         <div class="calendar__footer">
-          <ion-text class="time__label">Start Time</ion-text>
+          <ion-text class="time__label">Start Time*</ion-text>
         </div>
         <base-carousel :items="times.slice(0, (times.length - 2))" width-auto>
           <template v-slot:default="times">
@@ -19,7 +19,7 @@
           </template>
         </base-carousel>
         <div class="calendar__footer" v-if="endTimes?.length">
-          <ion-text class="time__label">End Time</ion-text>
+          <ion-text class="time__label">End Time*</ion-text>
         </div>
         <base-carousel :items="endTimes" width-auto>
           <template v-slot:default="endTimes">

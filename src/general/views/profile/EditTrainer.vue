@@ -399,7 +399,6 @@ const openChooseGym = async () => {
 };
 
 const addressSelected = (e: any) => {
-  console.log('its working',e);
   trainerAddress.value = e;
 }
 
