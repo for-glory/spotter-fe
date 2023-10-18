@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
-            <div class="offer-item" :key="item.id" v-for="item in offerList">
+            <div class="offer-item" :key="item.id" v-for="item in dailyList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
                 <div class="trainer">{{ item.trainer }}</div>
@@ -69,12 +69,12 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-            <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+            <div class="offer-item" :key="item.id" v-for="item in eventList">
               <div class="header-section events">
                 <div class="name">{{ item.name }}</div>
                 <div class="event-time">
                   <ion-icon src="assets/icon/time.svg"></ion-icon>
-                  <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                  <ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
                 </div>
               </div>
               <ion-label class="date-label">{{ item.date }}</ion-label>
@@ -120,6 +120,13 @@ import {
   TrainerTypeEnum,
   MeDocument,
   RoleEnum,
+  WorkoutsDocument,
+  SortOrder,
+  QueryWorkoutsOrderByColumn,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  EventsQuery,
+  EventsDocument
 } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
@@ -133,6 +140,7 @@ import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import { Share } from "@capacitor/share";
 import useRoles from "@/hooks/useRole";
 import { ellipse } from "ionicons/icons";
+import dayjs from "dayjs";
 
 const route = useRoute();
 const router = useRouter();
@@ -191,58 +199,6 @@ const passList = [
     type: "Standard",
   }
 ];
-const offerList = [{
-  id: 1,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}, {
-  id: 2,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Standard",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-
-}, {
-  id: 3,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}];
-const offerEvents = [{
-  id: 1,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}, {
-  id: 2,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-
-}, {
-  id: 3,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}];
 const handleBuy = () => {
   // router.push({ name: EntitiesEnum.FacilitySubscription });
 };
@@ -447,6 +403,74 @@ const handleFollow = () => {
 
 const onOpenDocumet = async (url: string) => {
   await Browser.open({ url: url });
+};
+
+const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
+  WorkoutsDocument,{
+    page: 1,
+    first: 1000,
+    order: SortOrder.Asc,
+    orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
+    trainer_id: route.params.id
+  },
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+const dailyList = computed(() => dailysResult.value.workouts.data.map((daily: any) => {
+  return {
+    id: daily?.id,
+    name: daily?.title,
+    trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
+    time: daily?.duration,
+    totalUser: daily?.views_count,
+    type: daily?.type.name
+  }
+}));
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    address: event?.address?.street
+  }
+}));
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
 };
 </script>
 

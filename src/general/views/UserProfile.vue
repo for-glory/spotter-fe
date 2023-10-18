@@ -136,12 +136,12 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="segmentValue == 'events'">
-            <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+            <div class="offer-item" :key="item.id" v-for="item in eventList">
               <div class="header-section events">
                 <div class="name">{{ item.name }}</div>
                 <div class="event-time">
                   <ion-icon src="assets/icon/time.svg"></ion-icon>
-                  <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                  <ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
                 </div>
               </div>
               <ion-label class="date-label">{{item.date}}</ion-label>
@@ -199,7 +199,17 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
-import { QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import {
+  QueryWorkoutsOrderByColumn,
+  SortOrder,
+  UserDocument,
+  WorkoutsDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  EventsQuery,
+  EventsDocument,
+
+} from "@/generated/graphql";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -307,6 +317,51 @@ const offerEvents = [{
   date: "17 June",
   address: "Light Street, 1",
 }]
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    totalUser: event?.booked_count,
+    address: event?.address?.street
+  }
+}));
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 

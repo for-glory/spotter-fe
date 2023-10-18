@@ -22,14 +22,14 @@
     <template #content v-if="role === RoleEnum.User">
       <div class="reviews__header">
         <ion-text class="reviews__title">Reviews</ion-text>
-        <rating is-total :value="4.6" />
+        <rating is-total :value="result?.facility?.score ?? 0" />
         <ion-text class="rating rating__likes">
           <ion-icon src="assets/icon/like.svg" class="rating__icon" />
-          {{ 64 }}
+          {{ result?.facility?.positive_reviews_count??0 }}
         </ion-text>
         <ion-text class="rating rating__dislikes">
           <ion-icon src="assets/icon/dislike.svg" class="rating__icon" />
-          {{ 48 }}
+          {{ result?.facility?.negative_reviews_count??0 }}
         </ion-text>
         <router-link :to="{ name: EntitiesEnum.FacilityReviews }" class="reviews__all">
           View all
@@ -43,70 +43,101 @@
           </ion-segment-button>
         </ion-segment>
         <div class="ion-margin-top offer-card" v-if="activeSegment === EntitiesEnum.FacilityPassList">
-          <div class="offer-item" :key="item.id" v-for="item in passList">
+          <div class="card-background"  v-if="!dropins || !dropins.length">
+            <empty-block
+              title="Drop-ins Empty"
+              hideButton
+              text="No Dropins available for this location"
+              icon= "assets/icon/dropin.svg"
+            />
+          </div>
+          <div class="offer-item" :key="item.id" v-for="item in dropins">
             <div class="header-section events">
-              <div class="name">{{ item.name }}</div>
+              <div class="name">{{ item.title }}</div>
               <div class="price">
-                {{ item.price }}
+                ${{ formatNumber(item.price/100, "fixed") }}
               </div>
             </div>
-            <ion-label class="date-label">{{ item.time }}</ion-label>
+            <ion-label class="date-label">{{ item.duration }} {{ item.duration>1?"Days":"Day" }}</ion-label>
             <div class="detail-section">
-              <div class="only-address">
+              <!-- <div class="only-address">
                 {{ item.address }}
-              </div>
+              </div> -->
               <ion-button @click="handleBuy">Buy</ion-button>
             </div>
           </div>
         </div>
         <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Facilities">
-          <div class="offer-item" :key="item.id" v-for="item in passList">
+          <div class="card-background"  v-if="!passes || !passes.length">
+            <empty-block
+            title="Passes Empty"
+            hideButton
+            text="No Passes available for this location"
+            icon= "assets/icon/gym-user-icon.svg"
+            />
+          </div>
+          <div class="offer-item" :key="item.id" v-for="item in passes">
             <div class="header-section events">
-              <div class="name">{{ item.name }}</div>
+              <div class="name">{{ item.title }}</div>
               <div class="price">
-                {{ item.price }}
+                ${{ formatNumber(item.price/100, "fixed") }}
               </div>
             </div>
-            <ion-label class="date-label">{{ item.type }}</ion-label>
+            <ion-label class="date-label">{{ item.duration }} {{ item.duration>1?"Months":"Month" }}</ion-label>
             <div class="detail-section">
-              <div class="only-address">
+              <!-- <div class="only-address">
                 {{ item.address }}
-              </div>
+              </div> -->
               <ion-button @click="handleBuy">Subscribe</ion-button>
             </div>
           </div>
         </div>
         <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
-          <div class="offer-item" :key="item.id" v-for="item in offerList">
+          <div class="card-background"  v-if="!dailysData || !dailysData.length">
+            <empty-block
+            title="Dailys Empty"
+            hideButton
+            text="No dailys available for this location"
+            icon="assets/icon/daily.svg"
+            />
+          </div>
+          <div class="offer-item" :key="item.id" v-for="item in dailysData">
             <div class="header-section">
-              <div class="name">{{ item.name }}</div>
-              <div class="trainer">{{ item.trainer }}</div>
+              <div class="name">{{ item.title }}</div>
+              <div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
             </div>
             <div class="detail-section">
               <div class="time">
                 <ion-icon src="assets/icon/time.svg"></ion-icon>
-                <ion-text>{{ item.time }}</ion-text>
+                <ion-text>{{ getDurationText(item.duration) }}</ion-text>
                 <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
-                <ion-text>{{ item.type }}</ion-text>
+                <ion-text>{{ item.type.name }}</ion-text>
               </div>
-              <ion-button @click="handleBuy">Subscribe</ion-button>
+              <ion-button @click="purchaseWorkout(item.id)">Buy</ion-button>
             </div>
           </div>
         </div>
         <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-          <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+          <div class="card-background"  v-if="!allEvents || !allEvents.length">
+            <empty-block
+              title="Events Empty"
+              hideButton
+              text="No Events available for this location"
+              icon= "assets/icon/events.svg"
+            />
+          </div>
+          <div class="offer-item" :key="item.id" v-for="item in allEvents">
             <div class="header-section events">
-              <div class="name">{{ item.name }}</div>
+              <div class="name">{{ item.title }}</div>
               <div class="event-time">
-                <ion-icon src="assets/icon/time.svg"></ion-icon>
-                <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                <ion-text class="color-fitness-white fs-14">${{ formatNumber(item?.price/100, "fixed") }}</ion-text>
               </div>
             </div>
-            <ion-label class="date-label">{{ item.date }}</ion-label>
+            <ion-label class="date-label">{{ dayjs(item?.start_date).format('D MMMM') }}</ion-label>
             <div class="detail-section">
               <div class="time">
                 <ion-icon src="assets/icon/location.svg"></ion-icon>
-                <ion-text>{{ item.address }}</ion-text>
+                <ion-text>{{ item?.address?.street }}</ion-text>
               </div>
               <ion-button>Register</ion-button>
             </div>
@@ -116,12 +147,7 @@
       <div class="more">
         <ion-text class="section-title">Equipment</ion-text>
         <div class="items">
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
-          <advantage-item :icon="'assets/icon/certificate.svg'" :title="'Gym Items'" />
+          <advantage-item :icon="item.iconUrl" :title="item.name" v-for="(item, id) in result?.facility?.equipments" :key="id" />
         </div>
       </div>
     </template>
@@ -129,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { actionSheetController, IonSpinner, IonText, IonIcon, IonLabel, IonButton, IonSegment, IonSegmentButton } from "@ionic/vue";
+import { actionSheetController, IonSpinner, IonText, IonIcon, IonLabel, IonButton, IonSegment, IonSegmentButton, toastController } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
 import Detail from "@/general/components/Detail.vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -144,6 +170,16 @@ import {
   RoleEnum,
   SettingsCodeEnum,
   UnfollowDocument,
+  WorkoutsByFacilityDocument,
+  SortOrder,
+  QueryFacilityWorkoutsOrderByColumn,
+  FacilityItemsByFacilityIdAndTypeDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  EventsQuery,
+  EventsDocument,
+  AddToCartDocument,
+  AddToCartPurchasableEnum
 } from "@/generated/graphql";
 import { Review as UserReview } from "@/ts/types/user";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
@@ -154,11 +190,14 @@ import { EntitiesEnum } from "@/const/entities";
 import useRoles from "@/hooks/useRole";
 import Rating from "@/general/components/blocks/ratings/Rating.vue";
 import { ellipse } from "ionicons/icons";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import dayjs from "dayjs";
 
 const route = useRoute();
 const router = useRouter();
 const isFollowed = ref(false);
 const isTrusted = ref(false);
+const currentFacilityId = route.params.id;
 const activeSegment = ref<EntitiesEnum>(
   EntitiesEnum.Facilities
 );
@@ -182,85 +221,6 @@ const segmentTabs = [
     icon: "assets/icon/events.svg",
   },
 ];
-const passList = [
-  {
-    id: 1,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Basic",
-  },
-  {
-    id: 2,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Standard",
-  },
-  {
-    id: 3,
-    name: "Summer gym",
-    price: "$20.98",
-    address: "Wall Street, 24",
-    time: "1 Day",
-    type: "Standard",
-  }
-];
-const offerList = [{
-  id: 1,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}, {
-  id: 2,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Standard",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-
-}, {
-  id: 3,
-  name: "Full Body Stretching",
-  trainer: "Tamra Dae",
-  type: "Basic",
-  price: "$20.98",
-  address: "Wall Street, 24",
-  time: "8 min",
-}];
-const offerEvents = [{
-  id: 1,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}, {
-  id: 2,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-
-}, {
-  id: 3,
-  name: "Run competition",
-  trainer: "Tamra Dae",
-  time: "8 min",
-  totalUser: 30,
-  date: "17 June",
-  address: "Light Street, 1",
-}];
-
 const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
   GetFacilityDocument,
   {
@@ -395,6 +355,138 @@ const onEdit = async () => {
   });
 
   await actionSheet.present();
+};
+
+// Dailys data
+const {
+  result: dailysResult,
+  loading: dailysLoading,
+} = useQuery(WorkoutsByFacilityDocument, 
+	{
+		page: 1,
+		first: 1000,
+		facility_id: route.params.id,
+		orderByColumn: QueryFacilityWorkoutsOrderByColumn.CreatedAt,
+		order: SortOrder.Asc,
+	},
+	{
+		fetchPolicy: "no-cache",
+  }
+);
+
+const dailysData = computed(() => {
+  return dailysResult.value?.facilityWorkouts?.data;
+});
+const getDurationText = (value: number) => {
+  if(value < 60) {
+    return value + ' s';
+  } else if(value < 3600) {
+    return (value / 60).toFixed(0) + ' min ' + value % 60 + ' s';
+  } else {
+    return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
+  }
+};
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+  useMutation(AddToCartDocument);
+const purchaseWorkout = (id) => {
+  addToCartMutation({
+    input: {
+      purchasable_id: id,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+      router.push({
+        name: EntitiesEnum.WorkoutOrder,
+        params: {
+          id: id,
+        },
+        query: {
+          cart_id: res?.data?.addToCart?.id,
+        },
+      });
+    })
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
+};
+// Dailys End
+
+// Passes start
+const {
+  result: facilityItemPassResult,
+  loading: loadingFacilityPass,
+  onResult: gotFacility,
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacilityId,
+  item_type: "PASS"
+});
+
+const passes = computed(() => {
+  return facilityItemPassResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Passes End
+
+
+// Dropins start
+const {
+  result: dropinResult,
+  loading: loadingFacilityDropin
+} = useQuery(FacilityItemsByFacilityIdAndTypeDocument, {
+  facility_id: currentFacilityId,
+  item_type: "DROPIN"
+});
+
+const dropins = computed(() => {
+  return dropinResult.value?.facilityItemsByFacilityIdAndType?.data;
+});
+
+// Dropins End
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_facility: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const allEvents = computed(() => {
+  return eventResult.value?.events?.data;
+});
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
 };
 </script>
 
