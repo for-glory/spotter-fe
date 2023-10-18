@@ -56,7 +56,7 @@
                         <ion-radio-group v-model="feedback">
                             <h1>Your feedback matters</h1>
                             <ion-label class="review__question">
-                                Would you recommend this gym?
+                                Would you recommend this Trainer?
                             </ion-label>
                             <ion-item lines="none" class="radiobutton radiobutton--positive">
                                 <ion-icon class="radiobutton__icon" src="assets/icon/like.svg" />
@@ -78,7 +78,7 @@
                     </div>
                     <div class="review__holder write-review" v-else>
                         <div>
-                            <h1>{{ EntitiesEnum.Positive.toLowerCase() == feedback ? 'How would you rate this gym?' :
+                            <h1>{{ EntitiesEnum.Positive.toLowerCase() == feedback ? 'How would you rate this trainer?' :
                                 'We\'re sorry you weren\'t satisfied.' }}</h1>
                             <ion-label class="review__question">
                                 {{ EntitiesEnum.Positive.toLowerCase() == feedback ? 

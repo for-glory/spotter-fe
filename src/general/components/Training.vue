@@ -60,7 +60,7 @@
           {{
             infoTwoValue
               ? infoTwoValue
-              : dayjs(event?.start_date).format("h:mm A")
+              : (dayjs(event?.start_date).format("h:mm A") +  ' - ' + dayjs(event?.end_date).format("h:mm A"))
           }}
         </ion-text>
       </div>

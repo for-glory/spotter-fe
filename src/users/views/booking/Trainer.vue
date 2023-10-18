@@ -1,9 +1,5 @@
 <template>
-  <base-layout
-    :full-width-footer="false"
-    :header-fixed="false"
-    :content-full-height="false"
-  >
+  <base-layout :full-width-footer="false" :header-fixed="false" :content-full-height="false">
     <template #header>
       <page-header back-btn title="Book your trainer" @back="onBack" />
     </template>
@@ -11,24 +7,15 @@
       <ion-spinner v-if="loading" class="spinner" />
       <div class="content__container" v-else>
         <trainer-item :trainer="trainer" class="trainer" />
-        <base-calendar
-          :times="uptime"
-          @change-day="onChangeDay"
-          :loading="availabilityLoading"
-          @change-time="onChangeTime"
-          :selected="selectedDay"
-        />
+        <base-calendar :times="uptime" @change-day="onChangeDay" :loading="availabilityLoading"
+          @change-time="onChangeTime" :selected="selectedDay" />
       </div>
     </template>
 
     <template #footer>
-      <ion-button
-        :class="['submit-btn', { 'user-submit-btn': role === RoleEnum.User }]"
-        :disabled="disabledBtn"
-        @click="$router.push({ name: EntitiesEnum.ConfirmOrder })"
-      >
-        Next</ion-button
-      >
+      <ion-button :class="['submit-btn', { 'user-submit-btn': role === RoleEnum.User }]" :disabled="disabledBtn"
+        @click="next">
+        Next</ion-button>
     </template>
   </base-layout>
 </template>
@@ -91,10 +78,12 @@ const {
 } = useQuery<UserAvailabilityQuery>(UserAvailabilityDocument, getParams());
 
 const trainer = computed(() => result.value?.user);
+console.log('trainer', trainer);
+
 
 const uptime = computed(() =>
   availabilityResult.value?.userAvailability.hours?.reduce(
-    (acc: { value: string; paymentTime: Dayjs }[], cur) => {
+    (acc: { value: string; paymentTime: Dayjs; }[], cur) => {
       const trainingTimes =
         availabilityResult.value?.userAvailability.trainings?.reduce(
           (acc: string[], cur) => {
@@ -108,37 +97,47 @@ const uptime = computed(() =>
       const dateTo = dayjs(cur.to);
 
       for (let i = 0; i < dateTo.diff(dateFrom, "hour"); i++) {
-        const currHour = dayjs(cur.from).add(i, "hour").format("hh:mm A");
+        let currHour = null;
+        if (dayjs(cur.from).minute() > 30) {
+          currHour = dayjs(cur.from).add(i, "hour").format("hh:30 A");
+        }
+        else {
+          currHour = dayjs(cur.from).add(i, "hour").format("hh:00 A");
+        }
         const halfAnHourBefore = dayjs(cur.from)
           .add(i * 60 - 30, "minute")
-          .format("hh:mm A");
+          .format("hh:00 A");
         const halfAnHourAfter = dayjs(cur.from)
           .add(i * 60 + 30, "minute")
-          .format("hh:mm A");
+          .format(`hh:${dayjs(cur.from).minute() > 30 ? '00' : '30'} A`);
         const hourAfter = dayjs(cur.from)
           .add(i * 60 + 60, "minute")
-          .format("hh:mm A");
+          .format("hh:00 A");
 
         if (
           !trainingTimes?.includes(currHour) &&
-          !trainingTimes?.includes(halfAnHourBefore) &&
           !trainingTimes?.includes(halfAnHourBefore)
         ) {
           // set each hour
-          acc.push({
-            value: currHour,
-            paymentTime: dayjs(cur.from).add(i, "hour"),
-          });
-          if (!trainingTimes?.includes(hourAfter)) {
+          if (!(dayjs().isSame(cur.from, 'date') && dayjs().isAfter(dayjs(new Date(`${dayjs(cur.from).format('YYYY-MMM-DD')} ${currHour}`)), 'minutes'))) {
             acc.push({
-              value: halfAnHourAfter,
-              paymentTime: dayjs(cur.from).add(i * 60 + 30, "minute"),
+              value: currHour,
+              paymentTime: dayjs(cur.from).add(i, "hour"),
             });
+
+            if (!trainingTimes?.includes(hourAfter)) {
+              acc.push({
+                value: halfAnHourAfter,
+                paymentTime: dayjs(cur.from).add(i * 60 + 30, "minute"),
+              });
+            }
           }
+
+
         }
       }
       if (acc.length) {
-        paymentStore.setValue("date", selectedDay.value);
+        paymentStore.setValue("startDate", acc[0].paymentTime);
         paymentStore.setValue("time", acc[0].value);
         paymentStore.setValue("paymentTime", acc[0].paymentTime);
         selectedTime.value = acc[0].paymentTime;
@@ -155,7 +154,7 @@ const hasFreeHours = computed(
 //
 
 const disabledBtn = computed(
-  () => !selectedDay.value || !selectedTime.value || !hasFreeHours.value
+  () => !selectedDay.value || !selectedTime.value || !hasFreeHours.value || !paymentStore.endDate
 );
 
 const onBack = () => {
@@ -164,14 +163,23 @@ const onBack = () => {
 
 const onChangeDay = (day: Dayjs) => {
   selectedDay.value = day;
-  paymentStore.setValue("date", day);
+  paymentStore.setValue("startDate", day);
   availabilityRefetch(getParams());
 };
 
 const onChangeTime = (time: string, timeLabel: string) => {
   selectedTime.value = time;
   paymentStore.setValue("paymentTime", time);
+  paymentStore.setValue("startDate", time);
   paymentStore.setValue("time", timeLabel);
+  paymentStore.setValue("endDate", '');
+};
+
+const next = () => {
+  router.push({
+    name: EntitiesEnum.ConfirmOrder,
+    params: { id: route.params.id },
+  });
 };
 
 const confirmOrder = async () => {

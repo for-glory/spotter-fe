@@ -52,12 +52,14 @@ import { EntitiesEnum } from "@/const/entities";
 import useRoles from "@/hooks/useRole";
 import { useRouter } from "vue-router";
 import { Capacitor } from "@capacitor/core";
+import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 
 const props = defineProps<{
   trainer: User;
   endButton?: string;
   distance?: boolean;
 }>();
+const paymentProductsStore = paymentGatewaysStore();
 
 const { role } = useRoles();
 const router = useRouter();
@@ -67,7 +69,8 @@ const handleRouting = () => {
 }
 
 const handleBookBtn = () => {
-  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.BookTrainer : EntitiesEnum.TrainerBooking, params: { id: props.trainer?.id } })
+  paymentProductsStore.clearCart();
+  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.BookTrainer : EntitiesEnum.BookTrainer, params: { id: props.trainer?.id } });
 }
 
 const address = computed(() => {

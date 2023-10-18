@@ -1,72 +1,36 @@
 <template>
-  <base-layout
-    :full-width-footer="false"
-    :header-fixed="false"
-    :content-full-height="false"
-  >
+  <base-layout :full-width-footer="false" :header-fixed="false" :content-full-height="false">
     <template #header>
-      <page-header
-        @back="onBack"
-        back-btn
-        title="My Order"
-        class="page-header"
-      />
+      <page-header @back="onBack" back-btn title="My Order" class="page-header" />
     </template>
     <template #content>
       <ion-spinner name="lines" class="spinner" v-if="loading" />
       <template v-else>
         <div class="order">
-          <order-item
-            :type="EntitiesEnum.Trainer"
-            :item="trainer"
-            :hourly-rate="store.price"
-            :orderDate="store.date"
-            :orderTime="store.time"
-            :is-mobile="isMo"
-          />
+          <order-item :type="EntitiesEnum.Trainer" :item="trainer" :hourly-rate="hourlyRate" :orderDate="store.startDate"
+            :orderTime="store.time" :trainer-cart="cart" />
         </div>
-        <div :class="['training-place__container', { 'user-place__container': role === RoleEnum.User  }]" v-if="showChoosePlace">
+        <div :class="['training-place__container', { 'user-place__container': role === RoleEnum.User }]"
+          v-if="(showChoosePlace || !cart)">
           <ion-text class="training-place__title">
-            Choose training location
+            Choose training location*
           </ion-text>
-          <choose
-            :value="store?.place?.text"
-            title="Place"
-            @handle-click="onChoosePlace"
-            class="training-place__info"
-          />
+          <choose :value="store?.place?.text" title="Place" @handle-click="onChoosePlace" class="training-place__info" />
         </div>
       </template>
     </template>
     <template #footer>
-      <ion-button
-        @click="confirmOrder"
-        :class="['submit-btn', { 'native-app': role === RoleEnum.User }]"
-        :disabled="disabled || addToCartLoading"
-      >
+      <ion-button @click="confirmOrder" :class="['submit-btn', { 'native-app': role === RoleEnum.User }]"
+        :disabled="disabled || addToCartLoading">
         Confirm
       </ion-button>
     </template>
   </base-layout>
 
-  <terms-of-use
-    :is-confirmed="isConfirmed"
-    @agree="onAgree"
-    @decline="onDecline"
-  />
-  <discard-changes
-    :is-open="isConfirmedModalOpen"
-    @close="discardModalClosed"
-    title="Do you want to discard changes?"
-    text="Changes will not be saved"
-    cancelButton="Cancel"
-    button="Discard changes"
-  />
-  <waiting
-    :is-open="store.isOpenWaitingModal"
-    @close="onCloseModal"
-    @open-chat="openChat"
-  />
+  <terms-of-use :is-confirmed="isConfirmed" @agree="onAgree" @decline="onDecline" />
+  <discard-changes :is-open="isConfirmedModalOpen" @close="discardModalClosed" title="Do you want to discard changes?"
+    text="Changes will not be saved" cancelButton="Cancel" button="Discard changes" />
+  <waiting :is-open="store.isOpenWaitingModal" @close="onCloseModal" @open-chat="openChat" />
 </template>
 
 <script setup lang="ts">
@@ -87,8 +51,10 @@ import {
   AddTrainingToCartDocument,
   AvailableTrainingOptionsEnum,
   CreateChatDocument,
-RoleEnum,
-PurchasableProductsEnum,
+  RoleEnum,
+  PurchasableProductsEnum,
+  Cart,
+  SettingsCodeEnum,
 } from "@/generated/graphql";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
@@ -98,6 +64,8 @@ import { toastController } from "@ionic/core";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
+import { GetTrainerDocument } from "@/graphql/documents/userDocuments";
+import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 
 const isConfirmed = ref(false);
 const router = useRouter();
@@ -105,6 +73,7 @@ const route = useRoute();
 const store = paymentGatewaysStore();
 const loading = ref(true);
 const { role } = useRoles();
+const cart = ref<Cart | null>(null);
 
 const stopLoading = debounce(() => {
   loading.value = false;
@@ -141,6 +110,9 @@ const openChat = () => {
 onMounted(() => {
   isConfirmed.value = !!localStorage.getItem("terms_of_use");
   stopLoading();
+  if (route.query.type === 'addToCart') {
+    addToCart();
+  }
 });
 
 const onDecline = () => {
@@ -151,7 +123,7 @@ const disabled = computed(() => {
   if (showChoosePlace.value && store.place?.value === PlaceType.UserGym) {
     return !store.facility;
   } else {
-    return showChoosePlace.value && !store.place?.value;
+    return showChoosePlace.value && !store.place?.value && !cart.value;
   }
 });
 
@@ -199,6 +171,31 @@ const getParams = () => {
   return params;
 };
 
+const hourlyRate = computed(() => {
+  let rate;
+  if (result?.value?.user?.trainer_type === TrainerTypeEnum.Freelancer) {
+    rate = result.value?.user?.settings?.find(
+      (setting: any) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
+    );
+  } else {
+    rate = result.value?.user?.settings?.find(
+      (setting: any) => setting.setting?.code === SettingsCodeEnum.HourlyRate
+    );
+    if (store?.place?.value === PlaceType.UserHome) {
+      rate = result.value?.user?.settings?.find(
+        (setting: any) => setting.setting?.code === SettingsCodeEnum.RemoteHourlyRate
+      );
+    }
+  }
+  let calcRate: any = rate?.value ? getSumForPayment(rate.value, true) : "0.00";
+  const diff = dayjs(store.endDate).diff(dayjs(store.startDate), 'hour', true);
+  if (diff) {
+    return (calcRate * diff);
+  }
+  return calcRate;
+
+});
+
 const confirmOrder = () => {
   // if (role === RoleEnum.User) {
   //   router.push({
@@ -213,19 +210,36 @@ const confirmOrder = () => {
 
   //   return;
   // }
+  if (!cart.value) {
+    addToCart();
+    return;
+  }
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: {
+      orderId: route.params.id,
+    },
+    query: {
+      cart_id: cart?.value?.id,
+    },
+  });
+};
+
+const addToCart = () => {
   addToCartMutation({
     input: getParams(),
   })
     .then((res) => {
-      router.push({
-        name: EntitiesEnum.PaymentsMethods,
-        params: {
-          orderId: route.params.id,
-        },
-        query: {
-          cart_id: res?.data?.addTrainingToCart?.id,
-        },
-      });
+      cart.value = res?.data?.addTrainingToCart;
+      // router.push({
+      //   name: EntitiesEnum.PaymentsMethods,
+      //   params: {
+      //     orderId: route.params.id,
+      //   },
+      //   query: {
+      //     cart_id: res?.data?.addTrainingToCart?.id,
+      //   },
+      // });
     })
     .catch(async () => {
       const toast = await toastController.create({
@@ -238,7 +252,7 @@ const confirmOrder = () => {
     });
 };
 
-const { result } = useQuery<Pick<Query, "user">>(UserDocument, {
+const { result } = useQuery<Pick<Query, "user">>(GetTrainerDocument, {
   id: route.params.id,
 });
 

@@ -96,6 +96,7 @@ import { useMutation } from "@vue/apollo-composable";
 import ChatHeader from "@/general/components/dashboard/chat/ChatHeader.vue";
 import { chatRoom } from "@/interfaces/chats/chatRoom";
 import { Message } from "@/ts/types/chat";
+import dayjs from "dayjs";
 
 const { id } = useId();
 
@@ -163,9 +164,7 @@ const isOnline = (id: number) => {
 };
 
 const onOpen = (event: any, room: any) => {
-  console.log('room',room);
-  
-  selectedRoom.value = {...room};
+  selectedRoom.value = { ...room };
 };
 
 const onDelete = (e: any, roomId: string) => {
@@ -204,7 +203,7 @@ const fetchChats = () => {
   loading.value = true;
   if (!chatListener.value) {
     chatListener.value = true;
-    
+
     onValue(chatsRef, (snapshot) => {
       data.chats = [];
       data.pendingChats = [];
@@ -212,7 +211,7 @@ const fetchChats = () => {
         const chats = getChats(snapshot.val());
         chats.forEach(async (chat: any) => {
           const mappedValues = await mapChats(chat, id);
-          
+
           if (!mappedValues.locked) {
             data.chats.push(mappedValues);
           }
@@ -234,7 +233,14 @@ const fetchRequest = () => {
       data.requestChats = [];
       snapshot.forEach((childSnapshot) => {
         if (childSnapshot.key === id) {
-          const mappedValues = mapRequests(childSnapshot.val(), id);
+          const mappedValues: any = mapRequests(childSnapshot.val(), id);
+          if (mappedValues?.length) {
+            mappedValues.map((chatData: any) => {
+              if (chatData?.type === RoomType.Chat) {
+                chatData.lastMessage.time = `${dayjs(chatData.operation_data.start_date).format('ddd DD,hh:mm A')} - ${dayjs(chatData.operation_data.end_date).format('hh:mm A')}`;
+              }
+            });
+          }
           data.requestChats.push(...mappedValues);
         }
       });
