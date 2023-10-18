@@ -12,8 +12,8 @@
       ref="videoRef"
       autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%"
-    />
-    <div  class="shadow" />
+    ></video>
+    <div  class="shadow"></div> 
   </ion-item>
 </template>
 

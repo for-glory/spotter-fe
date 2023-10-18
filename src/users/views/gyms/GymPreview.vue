@@ -58,14 +58,14 @@
                                 <ion-text class="section-title">Equipment</ion-text>
                                 <div class="doc-items">
                                     <advantage-item v-for="(item, index) in result?.facility?.equipments" :key="index"
-                                        :icon="item?.iconUrl" :title="item?.name" />
+                                        :icon="item?.iconUrl ??''" :title="item?.name ?? ''" />
                                 </div>
                             </div>
                             <div class="document-cards">
                                 <ion-text class="section-title">Amenities</ion-text>
                                 <div class="doc-items">
                                     <advantage-item v-for="(item, index) in result?.facility?.amenities" :key="index"
-                                        :icon="item?.iconUrl" :title="item?.name" />
+                                        :icon="item?.iconUrl ?? ''" :title="item?.name ?? ''" />
                                 </div>
                             </div>
                         </div>
