@@ -315,7 +315,7 @@ const refetchBooking = () => {
 
 const goToGymPassDropinDetail = (id) => {
   router.push({
-    name: EntitiesEnum.DropinsPassesList,
+    name: Capacitor.isNativePlatform()?EntitiesEnum.DropinsPassesList:EntitiesEnum.DashboardDropinsPassesList,
     params: {
       id
     },

@@ -805,11 +805,11 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        name: EntitiesEnum.DropinsPassesList,
+        name: EntitiesEnum.DashboardDropinsPassesList,
         path: "pass-dropin/purchase/:id?",
         component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
         meta: {
-          middleware: [gymOwnerSubscription],
+          middleware: [auth],
         },
       },
       {

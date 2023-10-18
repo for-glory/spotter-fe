@@ -218,9 +218,9 @@ const handleRedirect: any = (itemType: string) => {
       return EntitiesEnum.Facility;
     case EntitiesEnum.FacilityItem:
       if (role === RoleEnum.User && !isNative) {
-        return EntitiesEnum.DropinsPassesList;
+        return EntitiesEnum.DashboardDropinsPassesList;
       }
-      return EntitiesEnum.Facility;
+      return EntitiesEnum.DropinsPassesList;
 
     default:
       return EntitiesEnum.Facility;

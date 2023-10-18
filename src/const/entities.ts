@@ -252,5 +252,6 @@ export enum EntitiesEnum {
   Dailys = "DAILYS",
   Trending = "TRENDING",
   EmploymentType = "EMPLOYMENT_TYPE",
+  DashboardDropinsPassesList = "DASHBOARD_DROPINS_PASSES_LIST",
   DropinsPassesList = "DROPINS_PASSES_LIST",
 }

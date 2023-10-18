@@ -395,9 +395,17 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    name: 'DISCOVER',
+    name: EntitiesEnum.Discover,
     path: "/users/discover",
     component: () => import("@/users/views/discover/Index.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.DropinsPassesList,
+    path: "/users/pass-dropin/purchase/:id?",
+    component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
     meta: {
       middleware: [auth],
     },
