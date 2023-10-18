@@ -116,6 +116,14 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="segmentValue == 'daily'" style="max-height: 300px; overflow-y: scroll;">
+            <div class="card-background"  v-if="!offerList || !offerList.length">
+              <empty-block
+              title="Dailys Empty"
+              hideButton
+              text="No dailys available"
+              icon="assets/icon/daily.svg"
+              />
+            </div>
             <div class="offer-item" :key="item.id" v-for="item in offerList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
@@ -136,6 +144,14 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="segmentValue == 'events'">
+            <div class="card-background"  v-if="!eventList || !eventList.length">
+              <empty-block
+                title="Events Empty"
+                hideButton
+                text="No Events available"
+                icon= "assets/icon/events.svg"
+              />
+            </div>
             <div class="offer-item" :key="item.id" v-for="item in eventList">
               <div class="header-section events">
                 <div class="name">{{ item.name }}</div>
@@ -217,6 +233,7 @@ import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 import { ellipse } from "ionicons/icons";
 import { Share } from "@capacitor/share";
 import { useTrainerStore } from "@/general/stores/useTrainerStore"
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 dayjs.extend(relativeTime);
 

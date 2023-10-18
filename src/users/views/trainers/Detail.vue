@@ -52,6 +52,14 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
+            <div class="card-background"  v-if="!dailyList || !dailyList.length">
+              <empty-block
+              title="Dailys Empty"
+              hideButton
+              text="No dailys available"
+              icon="assets/icon/daily.svg"
+              />
+            </div>
             <div class="offer-item" :key="item.id" v-for="item in dailyList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
@@ -69,6 +77,14 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
+            <div class="card-background"  v-if="!eventList || !eventList.length">
+              <empty-block
+                title="Events Empty"
+                hideButton
+                text="No Events available"
+                icon= "assets/icon/events.svg"
+              />
+            </div>
             <div class="offer-item" :key="item.id" v-for="item in eventList">
               <div class="header-section events">
                 <div class="name">{{ item.name }}</div>
@@ -141,6 +157,7 @@ import { Share } from "@capacitor/share";
 import useRoles from "@/hooks/useRole";
 import { ellipse } from "ionicons/icons";
 import dayjs from "dayjs";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 const route = useRoute();
 const router = useRouter();

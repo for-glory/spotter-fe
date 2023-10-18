@@ -111,6 +111,14 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'daily'"  style="max-height: 300px; overflow-y: scroll;">
+                        <div class="card-background"  v-if="!offerList || !offerList.length">
+                            <empty-block
+                                title="Dailys Empty"
+                                hideButton
+                                text="No Dailys available"
+                                icon="assets/icon/daily.svg"
+                            />
+                        </div>
                         <div class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
@@ -131,12 +139,20 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div class="card-background"  v-if="!eventList || !eventList.length">
+                            <empty-block
+                            title="Events Empty"
+                            hideButton
+                            text="No Events available"
+                            icon= "assets/icon/events.svg"
+                            />
+                        </div>
+                        <div class="offer-item" :key="item.id" v-for="item in eventList">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
-                                    <ion-icon src="assets/icon/time.svg"></ion-icon>
-                                    <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                                    <!-- <ion-icon src="assets/icon/time.svg"></ion-icon> -->
+                                    <ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
                                 </div>
                             </div>
                             <ion-label class="date-label">{{ item.date }}</ion-label>
@@ -193,12 +209,25 @@ import { Share } from "@capacitor/share";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import {
+    FeedbackEntityEnum,
+    Query,
+    QueryWorkoutsOrderByColumn,
+    ReviewsDocument,
+    SortOrder,
+    UserDocument,
+    WorkoutsDocument,
+    QueryEventsOrderByColumn,
+    EventsQueryVariables,
+    EventsQuery,
+    EventsDocument,
+} from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -316,6 +345,52 @@ const viewAllReview = () => {
         params: { id: route.params.id },
     });
 }
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    address: event?.address?.street,
+    totalUser: event?.booked_count
+  }
+}));
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 
 </script>
   
