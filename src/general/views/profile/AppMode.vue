@@ -5,23 +5,23 @@
     </template>
     <template #content>
       <div class="modes">
-        <ion-radio-group v-model="selectedAppMode" v-on:ion-change="changeAppMode">
+        <ion-radio-group v-model="selectedAppMode">
           <base-radiobutton
             light
-            :is-checked="selectedAppMode === 'SYSTEM_MODE'"
-            value="SYSTEM_MODE"
+            :is-checked="selectedAppMode === 'system'"
+            value="system"
             title="System mode"
           />
           <base-radiobutton
             light
-            :is-checked="selectedAppMode === 'DARK_MODE'"
-            value="DARK_MODE"
+            :is-checked="selectedAppMode === 'dark'"
+            value="dark"
             title="Dark mode"
           />
           <base-radiobutton
             light
-            :is-checked="selectedAppMode === 'LIGHT_MODE'"
-            value="LIGHT_MODE"
+            :is-checked="selectedAppMode === 'light'"
+            value="light"
             title="Light mode"
           />
         </ion-radio-group>
@@ -37,48 +37,10 @@ import BaseRadiobutton from "@/general/components/base/BaseRadiobutton.vue";
 import { IonRadioGroup } from "@ionic/vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { UpdateUserDocument, MeDocument, SettingsCodeEnum } from "@/generated/graphql";
-import useId from "@/hooks/useId";
-import { useMutation, useQuery } from "@vue/apollo-composable";
 
-const selectedAppMode = ref("SYSTEM_MODE");
+const selectedAppMode = ref("System mode");
 
 const router = useRouter();
-const { id } = useId();
-
-const { mutate } = useMutation(UpdateUserDocument);
-
-const { onResult, loading, refetch } = useQuery(MeDocument, { id });
-
-onResult(({ data }) => {
-  const apiMode = data.me?.settings?.find(
-    (setting: any) =>
-      setting.setting.code === SettingsCodeEnum.AppMode
-  )?.value;
-  if(apiMode){
-    selectedAppMode.value = apiMode;
-  }
-});
-
-const changeAppMode = () => {
-  mutate({
-    id,
-    input: {
-      settings: [
-        {
-          code: SettingsCodeEnum.AppMode,
-          value: selectedAppMode.value,
-        },
-      ],
-    },
-  })
-    .then(() => {
-      refetch();
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
-};
 
 const onBack = () => {
   router.go(-1);

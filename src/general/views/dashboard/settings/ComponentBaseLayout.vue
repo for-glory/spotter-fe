@@ -9,7 +9,7 @@
     <slot name="content"></slot>
     <div class="footer-btn" v-if="footer">
         <IonButton color="medium" fill="outline" @click="$emit('cancel')">Cancel</IonButton>
-        <IonButton @click="$emit('save')" :disabled="disabled">Save</IonButton>
+        <IonButton color="primary" @click="$emit('save')" :disabled="disabled">Save</IonButton>
     </div>
 </template>
   

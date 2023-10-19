@@ -241,6 +241,7 @@ const menuType =
 const menu = editProfileMenu[menuType];
 
 const webItemClick = (name: EntitiesEnum) => {
+    console.log("name", name);    
     filter.value = name;
 };
 

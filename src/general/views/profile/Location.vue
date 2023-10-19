@@ -5,7 +5,9 @@
         :back-btn="isFromModal ? false : true"
         :title="
           isFreelancer ||
-            role === RoleEnum.User
+          role !== RoleEnum.Manager ||
+          role !== RoleEnum.FacilityOwner ||
+          role !== RoleEnum.OrganizationOwner || role !== RoleEnum.Trainer
             ? 'Location'
             : 'Choose my location'
         "
@@ -163,7 +165,6 @@ import {
   IonLabel,
   PickerColumnOption,
   IonSpinner,
-modalController,
 } from "@ionic/vue";
 import { distance } from "@/const/distance";
 import { Emitter, EventType } from "mitt";
@@ -188,7 +189,6 @@ import {
 } from "@awesome-cordova-plugins/native-geocoder";
 import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 import useRoles from "@/hooks/useRole";
-import ChooseGymAccount from "@/trainers/views/registration/ChooseGymAccount.vue";
 
 const props = defineProps<{
   isFromModal?:boolean
@@ -615,18 +615,7 @@ const startTimeOptions = {
   ],
 };
 
-const openChooseGym = async () => {
-  if(props.isFromModal){
-    const modal = await modalController.create({
-      component: ChooseGymAccount,
-      cssClass: 'tr-choose-gym-modal',
-      componentProps: {
-        fromModal: true
-      }
-    });
-    modal.present();
-    return;
-  }
+const openChooseGym = () => {
   router.push({
     name: EntitiesEnum.ChooseGymAccount,
   });

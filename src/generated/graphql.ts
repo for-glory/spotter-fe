@@ -521,14 +521,12 @@ export type Trainer = {
   id: Scalars["ID"];
   first_name: Scalars["String"];
   last_name: Scalars["String"];
-  description: Scalars["String"];
   tax_id?: Maybe<Scalars["String"]>;
   avatarUrl: Scalars["String"];
   email: Scalars["String"];
   address?: Maybe<Address>;
   currentSubscription: SubscriptionsTierEnum;
   certificates?: Maybe<Array<Document>>;
-  weiver_and_labilities?: Maybe<Array<Document>>;
   score?: Maybe<Scalars["Float"]>;
   reviews_count?: Maybe<Scalars["Int"]>;
   recommended_count?: Maybe<Scalars["Int"]>;
@@ -7114,7 +7112,6 @@ export const MeDocument = gql`
       id
       first_name
       last_name
-      description
       avatar
       avatarUrl
       trainer_type

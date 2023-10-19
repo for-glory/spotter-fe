@@ -88,6 +88,8 @@ const emit = defineEmits<{
   (e: "selectChange", value: SelectValue): void;
 }>();
 
+console.log(props);
+
 const isSelect = ref<boolean>(false);
 const { role } = useRoles();
 </script>
