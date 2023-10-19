@@ -145,7 +145,7 @@ import {
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useRouter, useRoute } from "vue-router";
-import { useLazyQuery, useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery, useMutation } from "@vue/apollo-composable";
 import {
   MeDocument,
   PlansDocument,
@@ -153,8 +153,13 @@ import {
   SubscriptionProvidersEnum,
   SubscriptionsTypeEnum,
   UpdateSubscriptionDocument,
-	SubscriptionUserDocument,
+  SubscriptionUserDocument,
 } from "@/generated/graphql";
+import {
+  Stripe as capacitorStripe,
+  ApplePayEventsEnum,
+  GooglePayEventsEnum,
+} from "@capacitor-community/stripe";
 import useId from "@/hooks/useId";
 import { ref, onMounted } from "vue";
 import useRoles from "@/hooks/useRole";
@@ -182,14 +187,16 @@ const selectedPlanId = ref<string | number | boolean | undefined>(undefined);
 const isAgreed = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const currentPlan = ref<any>();
+const currentStripeSubscription = ref<any>();
 const changeMembershipModal = ref<typeof ChangeMembership | null>(null);
 const currentFacility = useFacilityStore();
 const selectedPlan = ref<any>({});
+const VUE_APP_STRIPE_PUBLIC_KEY = process.env.VUE_APP_STRIPE_PUBLIC_KEY;
 
 const {
-	showConfirmationModal: showChangeConfirmModal,
-	hideModal: hideChangeModal,
-	showModal: showChangeModal
+  showConfirmationModal: showChangeConfirmModal,
+  hideModal: hideChangeModal,
+  showModal: showChangeModal
 } = useConfirmationModal();
 
 const { currentSubscription } = useSubscription();
@@ -209,8 +216,21 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
 );
 const { loading: subscriptionUserLoading, onResult } = useQuery(
   SubscriptionUserDocument,
-  { facility_id: currentFacility.facility?.id }
+  {
+    facility_id: currentFacility.facility?.id,
+    unique_identifier: currentStripeSubscription?.value?.unique_identifier,
+  }
 );
+
+onResult(({ data }) => {
+  currentStripeSubscription.value = data?.subscriptionUser;
+
+  if (!data?.subscriptionUser) {
+    router.push({
+      name: EntitiesEnum.StartMembership,
+    });
+  }
+});
 
 onMounted(async () => {
   InAppPurchase2.validator =
@@ -222,7 +242,7 @@ onMounted(async () => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
         const subscriptionPlan = cur.subscriptionPlans.filter(
-          (i: any) => i.provider === getPlatform()
+          (i: any) => i.provider === SubscriptionProvidersEnum.Web
         );
         acc.push({
           ...cur,
@@ -240,6 +260,13 @@ onMounted(async () => {
       products.value = InAppPurchase2.products;
       console.log("set up listeners after ready");
     });
+    if (Capacitor.isPluginAvailable("Stripe")) {
+      console.log("PUBLIC KEY==>>>>", VUE_APP_STRIPE_PUBLIC_KEY)
+      debugger;
+      capacitorStripe.initialize({
+        publishableKey: VUE_APP_STRIPE_PUBLIC_KEY,
+      })
+    }
     await registerProducts();
   });
 });
@@ -320,40 +347,52 @@ const setupListeners = async () => {
   InAppPurchase2.when().approved(approvedEvent);
   InAppPurchase2.when().verified(verifiedEvent);
   InAppPurchase2.when().owned(ownedEvent);
-
   InAppPurchase2.error(errorEvent);
 };
 
 const selectMembership = () => {
-	plans.value.forEach((plan: any) => {
-		if (plan.id == selectedPlanId.value) {
-			console.log(plan)
-			selectedPlan.value = plan
-			selectedItem.value = plan.subscriptionPlan
-		}
-	});
+  plans.value.forEach((plan: any) => {
+    if (plan.id == selectedPlanId.value) {
+      console.log("SelectedMembership=>>>>", plan)
+      selectedPlan.value = plan
+      selectedItem.value = plan.subscriptionPlan
+    }
+  });
 }
 
 const handleChange = () => {
-	selectMembership()
-	showChangeModal();
+  selectMembership()
+  showChangeModal();
 };
 
+const {
+  mutate: updateSubscription,
+  onDone: updatedSubscription,
+  loading: updateLoading,
+} = useMutation(UpdateSubscriptionDocument);
+
 const handleChangeMembership = () => {
-	hideChangeModal();
-	// updateSubscription({
-	// 	unique_identifier: currentStripeSubscription.value.unique_identifier,
-	// 	new_product_id: selectedItem.value.product_id,
-	// 	fees_percent: selectedPlan.value.fee,
-	// 	facility_id: currentFacility.facility?.id
-  // }).then((data) => {
-  //     console.log("data==>", data)
-  //     let intent = JSON.parse(data?.data?.updateSubscription?.session);
-  //     backendStripe.redirectToCheckout(intent.id);
-  //   })
-  //   .catch((err) => {
-  //     throw new Error(err);
-  //   });
+  hideChangeModal();
+  console.log("************Change Membership********");
+  updateSubscription({
+    unique_identifier: currentStripeSubscription.value.unique_identifier,
+    new_product_id: selectedItem.value.product_id,
+    fees_percent: selectedPlan.value.fee,
+    facility_id: currentFacility.facility?.id
+  }).then(async (data) => {
+    console.log("data==>", data)
+    let intent = JSON.parse(data?.data?.updateSubscription?.session);
+    console.log("session id=>>>", intent.id)
+    await capacitorStripe.createPaymentSheet({
+      paymentIntentClientSecret: intent.id,
+      merchantDisplayName: "Inclusive Innovation Incubator",
+    });
+    const { paymentResult } = await capacitorStripe.presentPaymentSheet();
+    console.log("paymentResutl===>", paymentResult);
+  })
+    .catch((err) => {
+      throw new Error(err);
+    });
 };
 
 const selectProduct = (plan: any) => {
@@ -386,6 +425,7 @@ gotMyProfile(({ data }) => {
     onBack();
   }
 });
+
 const getPlatform = () => {
   if (Capacitor.isNativePlatform()) {
     if (isPlatform("android")) {
@@ -397,7 +437,7 @@ const getPlatform = () => {
   } else {
     return SubscriptionProvidersEnum.Web;
   }
-  
+
 };
 
 const onBack = () => {
@@ -481,14 +521,16 @@ const showAgreement = async (url: string) => {
     box-shadow: inset 0 0 0 0.8px var(--gray-600);
 
     .gold {
-			color: var(--new-gold);
-		}
-		.silver {
-			color: var(--silver);
-		}
-		.bronze {
-			color: var(--bronze);
-		}
+      color: var(--new-gold);
+    }
+
+    .silver {
+      color: var(--silver);
+    }
+
+    .bronze {
+      color: var(--bronze);
+    }
   }
 
   &__description {
@@ -562,6 +604,7 @@ const showAgreement = async (url: string) => {
     }
   }
 }
+
 .status-text {
   font-family: "Lato";
   color: var(--gray-700);
@@ -573,6 +616,7 @@ const showAgreement = async (url: string) => {
   margin-left: 11px;
   line-height: 150%;
 }
+
 .holder-button {
   backdrop-filter: blur(10px);
   background: rgba(var(--ion-color-gray-900-rgb), 0.88);
@@ -612,6 +656,7 @@ const showAgreement = async (url: string) => {
     white-space: normal;
   }
 }
+
 .plan-unit {
   font-family: "Lato";
   font-size: 14px;
@@ -619,6 +664,7 @@ const showAgreement = async (url: string) => {
   font-weight: 500;
   line-height: 150%;
 }
+
 .short-note {
   font-family: "Lato";
   font-size: 10px;

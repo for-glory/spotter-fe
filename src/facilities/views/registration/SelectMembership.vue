@@ -148,6 +148,12 @@ import {
 } from "@/generated/graphql";
 import { InAppPurchase2, IAPProduct } from "@ionic-native/in-app-purchase-2";
 import { Capacitor } from "@capacitor/core";
+import {
+  Stripe as capacitorStripe,
+  ApplePayEventsEnum,
+  GooglePayEventsEnum,
+} from "@capacitor-community/stripe";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
 const router = useRouter();
 
@@ -166,9 +172,9 @@ const errorMessage = ref("");
 const products = ref<any[]>([]);
 const isAgreed = ref<boolean>(true);
 const selectedProductId = ref<string | number | boolean | undefined>(undefined);
-
+const VUE_APP_STRIPE_PUBLIC_KEY = process.env.VUE_APP_STRIPE_PUBLIC_KEY
 const backendStripe = new BackendStripe(
-  process.env.VUE_APP_STRIPE_PUBLIC_KEY || ""
+  VUE_APP_STRIPE_PUBLIC_KEY || ""
 );
 
 const typeValue = computed(() => {
@@ -183,13 +189,22 @@ const { onResult: onPlansResult, loading: plansLoading } = useQuery(
   PlansDocument,
   { type: typeValue.value as SubscriptionsTypeEnum, first: 100, page: 1 }
 );
+
+const currentFacility = useFacilityStore();
+
 onMounted(async () => {
   backendStripe.init();
+  if (Capacitor.isPluginAvailable("Stripe")) {
+    console.log("PUBLIC KEY==>>>>", VUE_APP_STRIPE_PUBLIC_KEY)
+    capacitorStripe.initialize({
+      publishableKey: VUE_APP_STRIPE_PUBLIC_KEY,
+    })
+  }
   onPlansResult(async ({ data }) => {
     plans.value = data?.plans?.data.reduce((acc: any[], cur: any) => {
       if (cur.is_active) {
         const subscriptionPlan = cur.subscriptionPlans.filter(
-          (i: any) => i.provider === getPlatform()
+          (i: any) => i.provider === SubscriptionProvidersEnum.Web
         );
         acc.push({
           ...cur,
@@ -224,11 +239,19 @@ const handleContinue = () => {
   createSubscriptionIntent({
     product_id: selectedItem.value.product_id,
     fees_percent: selectedPlan.value.fee,
+    facility_id: currentFacility.facility?.id,
   })
-    .then((data) => {
-      console.log("data==>", data);
+    .then(async (data) => {
+      console.log("registrationData==>", data);
       let intent = JSON.parse(data?.data?.createSubscriptionIntent?.session);
-      backendStripe.redirectToCheckout(intent.id);
+      console.log("session id=>>>", intent.id)
+      await capacitorStripe.createPaymentSheet({
+        paymentIntentClientSecret: intent.id,
+        merchantDisplayName: "Inclusive Innovation Incubator",
+      });
+      const { paymentResult } = await capacitorStripe.presentPaymentSheet();
+      console.log("paymentResutl===>", paymentResult);
+      // backendStripe.redirectToCheckout(intent.id);
     })
     .catch((err) => {
       errorMessage.value = err;
@@ -251,11 +274,13 @@ const selectMembership = (id: any) => {
 .header {
   padding: 10px 0;
   border-bottom: 1px solid var(--fitnesswhite);
+
   .logo {
     width: 13.75rem;
     min-width: 60px;
   }
 }
+
 .back {
   color: var(--gold);
   font-size: 1.5rem;
@@ -263,6 +288,7 @@ const selectMembership = (id: any) => {
   font-weight: 400;
   line-height: 130%;
 }
+
 .page-content {
   display: flex;
   flex-direction: column;
@@ -286,6 +312,7 @@ const selectMembership = (id: any) => {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+
   .plan-features {
     display: flex;
     flex-direction: column;
@@ -304,6 +331,7 @@ const selectMembership = (id: any) => {
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
+
   .radiobutton {
     max-width: 340px;
     --min-height: 100%;
@@ -381,9 +409,11 @@ const selectMembership = (id: any) => {
     .gold {
       color: var(--gold);
     }
+
     .silver {
       color: var(--silver);
     }
+
     .bronze {
       color: var(--bronze);
     }
@@ -466,6 +496,7 @@ const selectMembership = (id: any) => {
   @media (max-width: 992px) {
     flex-direction: column;
     align-items: center;
+
     .radiobutton {
       width: 80%;
       max-width: unset;
@@ -482,6 +513,7 @@ const selectMembership = (id: any) => {
 .buttons {
   margin-top: 1rem;
   width: 40%;
+
   .button {
     margin: 0;
     text-align: center;
@@ -496,6 +528,7 @@ const selectMembership = (id: any) => {
     }
   }
 }
+
 .checkbox {
   display: flex;
   font-size: 14px;
