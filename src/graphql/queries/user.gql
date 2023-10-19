@@ -3,6 +3,7 @@ query user($id: ID!) {
         id
         first_name
         last_name
+        description
         avatar
         was_commented_by_me
         was_visited_by_me

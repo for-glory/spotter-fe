@@ -9,7 +9,7 @@
       />
       <div class="user-item__inner">
         <div class="w-100">
-          <div class="user-item__head" :class="lastMessage && typeof lastMessage === 'string' ? 'mb-6' : ''">
+          <div class="user-item__head">
             <ion-label class="user-item__title">
               {{ roomName }}
             </ion-label>
@@ -28,6 +28,10 @@
             unread
           }}</ion-text>
           </ion-label>
+          <!-- <div class="waiting-info d-flex align-items-center" v-if="role === RoleEnum.User">
+            <ion-icon src="assets/icon/info.svg" />
+            <p>Waiting approval</p>
+          </div> -->
           <!-- class="user-item__last-message" -->
           <div
           v-else-if="lastMessage"
@@ -106,7 +110,6 @@ const props = defineProps<{
   unread?: number;
   currentTab?: string;
 }>();
-console.log(props);
 
 defineEmits<{
   (e: "open", roomId: number): void;
@@ -264,5 +267,19 @@ const { role } = useRoles();
    .time-icon {
       color: var(--gray-500);
     }
+}
+.waiting-info {
+  margin-top: 3px;
+  gap: 3px;
+  ion-icon, p {
+    color: var(--gray-500);
+  }
+  ion-icon {
+    font-size: 16px;
+  }
+  p{
+    font-size: 14px;
+    margin: 0;
+  }
 }
 </style>

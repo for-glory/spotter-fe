@@ -717,6 +717,14 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
+        name: EntitiesEnum.DashboardTrainerReviews,
+        path: "trainers/:id(\\d+)/reviews",
+        component: () => import("@/users/views/dashboard-trainers/TrainerReviews.vue"),
+        meta: {
+          middleware: [auth],
+        },
+      },
+      {
         name: EntitiesEnum.TrainerBooking,
         path: "trainers/:id(\\d+)/booking",
         component: () => import("@/users/views/dashboard-trainers/TrainerBooking.vue"),

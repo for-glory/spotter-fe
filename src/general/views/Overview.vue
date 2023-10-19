@@ -129,7 +129,7 @@ onMounted(() => {
   fetchChats();
 });
 
-const activeFacilityId = computed(() => facilityStore.facility.id );
+const activeFacilityId = computed(() => facilityStore?.facility?.id );
 
 const {
   result: dashboardData,

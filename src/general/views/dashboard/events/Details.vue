@@ -9,15 +9,15 @@
         </div>
       </div>
       <ion-row :class="['detail-container']">
-        <ion-col size="12" :size-lg="role !== RoleEnum.User ? '9' : '12'">
+        <ion-col size="12" size-lg="9">
           <div class="event-detail">
             <div>
               <div class="event-detail__img">
-                        <ion-img :src="eventData?.media" />
-                        <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
-                            <ion-icon :icon="ellipsisVertical" />
-                        </ion-button>
-                    </div>
+                  <ion-img :src="eventData?.media" />
+                  <!-- <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
+                      <ion-icon :icon="ellipsisVertical" />
+                  </ion-button> -->
+              </div>
               <div class="d-flex ion-justify-content-between align-items-center">
                 <div>
                   <ion-title class="event-detail__title" v-html="eventData?.title || ''"> </ion-title>
@@ -75,7 +75,7 @@
               v-if="role === RoleEnum.User && isTrusted"
               v-show="!ordered"
               class="primary btn-event" style="margin-bottom: 20px;"  @click="onBook">
-              Book 
+              Register 
             </ion-button>
 
             <ion-button

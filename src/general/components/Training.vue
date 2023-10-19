@@ -60,14 +60,14 @@
           {{
             infoTwoValue
               ? infoTwoValue
-              : dayjs(event?.start_date).format("h:mm A")
+              : (dayjs(event?.start_date).format("h:mm A") +  ' - ' + dayjs(event?.end_date).format("h:mm A"))
           }}
         </ion-text>
       </div>
       <div class="order__item">
         <ion-text class="order__label">{{ infoThreeTitle }}</ion-text>
         <ion-text class="order__info">
-          {{ infoThreeValue ? infoThreeValue : `$${(event?.order?.total || 0).toFixed(2)}` }}
+          {{ infoThreeValue ? infoThreeValue : `$${(event?.order?.total / 100 || 0).toFixed(2)}` }}
         </ion-text>
       </div>
     </div>

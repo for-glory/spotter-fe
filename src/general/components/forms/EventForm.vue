@@ -21,7 +21,7 @@
 
         <ion-col size="12" size-lg="6">
           <div class="form-row">
-            <base-input type="text" :disabled="loading" font-lato-bold :white-input="isNative ? false : true"
+            <base-input type="number" :disabled="loading" font-lato-bold :white-input="isNative ? false : true"
               @change="eventPriceChange" v-model:value="eventPrice" label="Entry fee(USD $)"
               placeholder="Set entry fee" />
           </div>
@@ -49,7 +49,7 @@
         <ion-col size="12" size-lg="6">
           <div class="form-row">
             <base-input
-              type="text"
+              type="number"
               font-lato-bold
               :white-input="isNative ? false : true"
               :disabled="loading"
@@ -63,7 +63,7 @@
         <ion-col size="12" size-lg="6">
           <div class="form-row">
             <base-input
-              type="text"
+              type="number"
               font-lato-bold
               :white-input="isNative ? false : true"
               :disabled="loading"
@@ -131,19 +131,17 @@
     <div class="btn d-flex ion-padding-top">
       <template v-if="!isNative">
         <ion-button style="margin-right: 14px;" v-if="saveBtn" expand="block" class="secondary"
-          @click="submitEvent('exit')" :disabled="!props.edit ? !eventTitle?.length || !eventPhotos?.length || !selectedAddress : false
-            ">
+          @click="submitEvent('exit')" :disabled="invalid">
           {{ saveButtonText || 'Save' }}
         </ion-button>
         <ion-button style="margin-right: 14px;" expand="block" class="secondary" @click="submitEvent('next')"
-          v-if="nextButton" :disabled="!eventTitle?.length || !eventPhotos?.length || !selectedAddress
-            ">
+          v-if="nextButton" :disabled="invalid">
           {{ nextButtonText || 'Next' }}
         </ion-button>
         <ion-button @click="onSkip" fill="outline" :color="skipButtonColor" v-if="skipButton">
           {{ skipButtonText || 'Discard' }}
         </ion-button>
-        <ion-button v-if="primaryBtnText" @click="submitEvent('exit')">
+        <ion-button v-if="primaryBtnText" @click="submitEvent('exit')" :disabled="invalid">
           {{ primaryBtnText }}
         </ion-button>
       </template>
@@ -327,9 +325,6 @@ const eventDescriptionChange = (value: string) => {
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
-console.log(selectedAddress.value?.thoroughfare, 'address');
-console.log({ selectedCity });
-console.log({ selectedState });
 
 const eventStartDate = computed(() => store.start_date);
 const eventEndDate = computed(() => store.end_date);
@@ -634,10 +629,11 @@ const invalid = computed<boolean>(
     !eventTitle.value?.length ||
     (!props.edit &&
       (!eventStartDate.value ||
-        !selectedState.value ||
-        !selectedCity.value ||
-        !selectedAddress.value ||
+        !eventStartTime.value ||
         !eventEndDate.value ||
+        !selectedAddress.value ||
+        !eventPhotos.value||
+        !eventEndTime.value ||
         !eventMaxParticipants.value))
 );
 

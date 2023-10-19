@@ -52,6 +52,7 @@ import useId from "@/hooks/useId";
 import { mapChats, mapRequests } from "@/helpers/chats/chatroom";
 import { useMutation } from "@vue/apollo-composable";
 import { IonSpinner, IonSearchbar } from "@ionic/vue";
+import dayjs from "dayjs";
 
 const { id } = useId();
 
@@ -155,7 +156,7 @@ const onDelete = (e: CustomEvent, roomId: string) => {
 const getChats = (snapshot) => {
   return Object.values(snapshot).reduce((acc, chat) => {
     if (chat?.participants?.length) {
-      chat.participants.forEach(async (user: { user_id: any; }) => {
+      chat.participants?.forEach(async (user: { user_id: any; }) => {
         if (Number(user.user_id) === Number(id)) {
           acc.push({
             ...chat,
@@ -181,6 +182,13 @@ const fetchChats = () => {
       snapshot.forEach((childSnapshot) => {
         if (childSnapshot.key === id) {
           const mappedValues = mapRequests(childSnapshot.val(), id);
+          if (mappedValues?.length) {
+            mappedValues.map((chatData: any) => {
+              if (chatData?.type === RoomType.Chat) {
+                chatData.lastMessage.time = `${dayjs(chatData.operation_data.start_date).format('ddd DD,hh:mm A')} - ${dayjs(chatData.operation_data.end_date).format('hh:mm A')}`;
+              }
+            });
+          }
           data.chats.push(...mappedValues);
         }
       });

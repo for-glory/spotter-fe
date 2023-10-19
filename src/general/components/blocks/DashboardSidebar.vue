@@ -159,7 +159,7 @@
           <ion-text>Message</ion-text>
         </div>
       </div>
-      <div class="main-menu" v-if="role === RoleEnum.User">
+      <div class="setting-menu" v-if="role === RoleEnum.User">
         <div
           :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.DashboardBookingsHistory : EntitiesEnum.ProfileBookingHistory)"
           @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.DashboardBookingsHistory : EntitiesEnum.ProfileBookingHistory)"

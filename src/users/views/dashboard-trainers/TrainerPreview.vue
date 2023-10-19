@@ -68,31 +68,15 @@
                                 </ion-text>
                             </div>
                             <div class="end-content">
-                                <ion-text class="end-content__title">View All</ion-text>
+                                <ion-text class="end-content__title cursor-pointer" @click="viewAllReview">View All</ion-text>
                             </div>
                         </div>
                         <div class="review-cards">
                             <base-carousel v-if="reviews?.length" class="review-swiper" show-start :items="reviews" :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
-                                    <div class="review-card" v-for="review in reviews">
-                                        <div class="review-header">
-                                            <div class="review-user">
-                                                <div class="user-avatar">
-                                                    <img src="https://picsum.photos/200/300" alt="">
-                                                </div>
-                                                <p>{{ review?.name }}</p>
-                                                <div class="d-flex">
-                                                    <div class="review-badge">{{ review?.rating }}</div>
-                                                </div>
-                                            </div>
-                                            <div class="review-date">
-                                                <span>6 June, 2022</span>
-                                            </div>
-                                        </div>
-                                        <div class="review-desc">
-                                            <p>{{ review?.desc }}</p>
-                                        </div>
-                                    </div>
+                                    <review-item v-for="review in reviews" :key="review.id" class="review-item"
+                                :avatar-url="review.avatarUrl" :full-name="review.fullName" :date="review.date"
+                                :rating="review.rating" :text="review.text" />
                                 </template>
                             </base-carousel>
                             <div v-else class="font-bold color-gold " style="font-size: 24px; text-align: center; padding: 24px;">
@@ -231,6 +215,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
+import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -341,6 +326,12 @@ const onOpenDocument = async (url: string) => {
 };
 const bookTrainer = () => {
     router.push({name: EntitiesEnum.TrainerBooking,params: route.params.id})
+}
+const viewAllReview = () => {
+    router.push({
+        name: EntitiesEnum.DashboardTrainerReviews,
+        params: { id: route.params.id },
+    });
 }
 
 </script>
