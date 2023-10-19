@@ -79,13 +79,14 @@ gotUser(({ data }) => {
       facilities.value?.length && facilities.value[0]
         ? facilities.value[0].id
         : null;
-  }
-
+  }  
+  
   if (role === RoleEnum.Trainer) {
     let trainer = {
       id: data?.user?.id,
       first_name: data?.user?.first_name,
       last_name: data?.user?.last_name,
+      description:data?.user?.description,
       avatarUrl: data?.user?.avatarUrl,
       tax_id: data?.user?.tax_id,
       email: data?.user?.email,
@@ -102,6 +103,8 @@ gotUser(({ data }) => {
       trainer_type: data?.user?.trainer_type,
       trainerRates: data?.user?.trainerRates,
       created_at: data?.user?.created_at,
+      weiver_and_labilities: data?.user?.weiver_and_labilities,
+      certificates: data?.user?.certificates,
     };
     trainerStore.setTrainer(trainer);
   }
