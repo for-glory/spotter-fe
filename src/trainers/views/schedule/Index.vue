@@ -261,7 +261,7 @@ const trainings = computed(() =>
         address: {
           street: training.user.address?.street,
         },
-        media: [{ pathUrl:training.user.avatarUrl }],
+        media: training.user.media,
         start_date: training.start_date,
         state: training.state,
         userId: training.user.id,

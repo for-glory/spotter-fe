@@ -5,8 +5,9 @@
     </template>
     <template #content>
       <div class="notification">
-        <base-toggle @change="changeNotificationSetting($event,notification.id)" v-for="notification in notifications" :value="notification.value"
-          :content="notification.title" />
+        <base-toggle :value="true" content="Show notification" />
+        <base-toggle :value="true" content="With sound" />
+        <base-toggle :value="false" content="With vibration" />
       </div>
     </template>
   </base-layout>
@@ -17,73 +18,15 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseToggle from "@/general/components/base/BaseToggle.vue";
 import { useRouter } from "vue-router";
-import { SettingsCodeEnum, UpdateUserDocument, MeDocument } from "@/generated/graphql";
-import useId from "@/hooks/useId";
-import { toastController } from "@ionic/vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { ref } from "vue";
 
 const router = useRouter();
-const { id } = useId();
-const notificationData = [
-  {
-    title: "Show notification",
-    value: false,
-    id: SettingsCodeEnum.ShowNotifications
-  },
-  {
-    title: "With sound",
-    value: false,
-    id: SettingsCodeEnum.EnableSoundForNotifications
-  },
-  {
-    title: "With vibration",
-    value: false,
-    id: SettingsCodeEnum.EnableVibrationOnNotification
-  }
-];
-const notifications = ref(notificationData);
 
-const { mutate } = useMutation(UpdateUserDocument);
-
-const { onResult, loading, refetch } = useQuery(MeDocument, { id });
-
-onResult(({ data }) => {
-  if (data.me?.settings?.length) {
-    data.me?.settings.forEach((setting: any) => {
-      const f = notifications.value.findIndex(e => e.id === setting?.setting.code);
-      if (f >= 0) {
-        notifications.value[f].value = setting.value;
-      }
-    });
-  }
-});
-
-const changeNotificationSetting = (value:boolean,code: string) => {
-  mutate({
-    id,
-    input: {
-      settings: [{
-        code: code,
-        value: value
-      }]
-    },
-  })
-    .then(async () => {
-      refetch();
-      const toast = await toastController.create({
-        message: "Updated successfully",
-        duration: 2000,
-        icon: "assets/icon/success.svg",
-        cssClass: "success-toast",
-      });
-      toast.present();
-
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
-};
+// SHOW_NOTIFICATIONS
+// SHOW_NOTIFICATIONS
+// ENABLE_SOUND_FOR_NOTIFICATIONS
+// ENABLE_SOUND_FOR_NOTIFICATIONS
+// ENABLE_VIBRATION_ON_NOTIFICATION
+// ENABLE_VIBRATION_ON_NOTIFICATION
 
 const onBack = () => {
   router.go(-1);

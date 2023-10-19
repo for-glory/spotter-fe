@@ -5,60 +5,66 @@
     </template>
     <template #content>
       <div class="languages">
-        <ion-radio-group v-model="selectedLanguage" v-on:ion-change="changeLanguage">
+        <ion-radio-group v-model="selectedLanguage">
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'ENGLISH'"
-            value="ENGLISH"
+            :is-checked="selectedLanguage === 'English'"
+            value="English"
             title="English"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'UKRAINIAN'"
-            value="UKRAINIAN"
+            :is-checked="selectedLanguage === 'Ukrainian'"
+            value="Ukrainian"
             title="Ukrainian"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'SPANISH'"
-            value="SPANISH"
+            :is-checked="selectedLanguage === 'Spanish'"
+            value="Spanish"
             title="Spanish"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'ITALIAN'"
-            value="ITALIAN"
+            :is-checked="selectedLanguage === 'Italian'"
+            value="Italian"
             title="Italian"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'GERMAN'"
-            value="GERMAN"
+            :is-checked="selectedLanguage === 'German'"
+            value="German"
             title="German"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'ARABIC'"
-            value="ARABIC"
+            :is-checked="selectedLanguage === 'Arabic'"
+            value="Arabic"
             title="Arabic"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'BULGARIAN'"
-            value="BULGARIAN"
+            :is-checked="selectedLanguage === 'Bulgarian'"
+            value="Bulgarian"
             title="Bulgarian"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'CROATIAN'"
-            value="CROATIAN"
+            :is-checked="selectedLanguage === 'Croatian'"
+            value="Croatian"
             title="Croatian"
           />
           <base-radiobutton
             light
-            :is-checked="selectedLanguage === 'GEORGIAN'"
-            value="GEORGIAN"
+            :is-checked="selectedLanguage === 'Georgian'"
+            value="Georgian"
             title="Georgian"
+          />
+          <base-radiobutton
+            light
+            :is-checked="selectedLanguage === 'Italian'"
+            value="Italian"
+            title="Italian"
           />
         </ion-radio-group>
       </div>
@@ -73,48 +79,10 @@ import BaseRadiobutton from "@/general/components/base/BaseRadiobutton.vue";
 import { IonRadioGroup } from "@ionic/vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { UpdateUserDocument, MeDocument, SettingsCodeEnum } from "@/generated/graphql";
-import useId from "@/hooks/useId";
-import { useMutation, useQuery } from "@vue/apollo-composable";
 
-const selectedLanguage = ref("ENGLISH");
+const selectedLanguage = ref("Ukrainian");
 
 const router = useRouter();
-const { id } = useId();
-
-const { mutate } = useMutation(UpdateUserDocument);
-
-const { onResult, loading, refetch } = useQuery(MeDocument, { id });
-
-onResult(({ data }) => {
-  const apiLang = data.me?.settings?.find(
-    (setting: any) =>
-      setting.setting.code === SettingsCodeEnum.Language
-  )?.value;
-  if(apiLang){
-    selectedLanguage.value = apiLang;
-  }
-});
-
-const changeLanguage = () => {
-  mutate({
-    id,
-    input: {
-      settings: [
-        {
-          code: SettingsCodeEnum.Language,
-          value: selectedLanguage.value,
-        },
-      ],
-    },
-  })
-    .then(() => {
-      refetch();
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
-};
 
 const onBack = () => {
   router.go(-1);

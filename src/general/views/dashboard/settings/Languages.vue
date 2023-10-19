@@ -1,10 +1,10 @@
 <template>
   <component-base-layout title="Change Language"
-    sub-title="Manage which languages are used to personalize your Spotter experience" @save="changeLanguage">
+    sub-title="Manage which languages are used to personalize your Spotter experience">
     <template #content>
       <div class="flex-2">
         <CustomSelection :selected-value="selectedLanguage" :options="languages" label="Language"
-          @select-change="(e) => selectedLanguage = e"></CustomSelection>
+        @select-change="(e) => selectedLanguage = e"></CustomSelection>
       </div>
     </template>
   </component-base-layout>
@@ -14,96 +14,46 @@
 import { ref } from "vue";
 import ComponentBaseLayout from "./ComponentBaseLayout.vue";
 import CustomSelection from "./CustomSelection.vue";
-import useId from "@/hooks/useId";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { UpdateUserDocument, MeDocument, SettingsCodeEnum } from "@/generated/graphql";
-import { toastController } from "@ionic/vue";
 
 const languages = [
   {
     title: "English",
-    value: "ENGLISH"
+    value: "English"
   },
   {
     title: "Ukrainian",
-    value: "UKRAINIAN"
+    value: "Ukrainian"
   },
   {
     title: "Spanish",
-    value: "SPANISH"
+    value: "Spanish"
   },
   {
     title: "Italian",
-    value: "ITALIAN"
+    value: "Italian"
   },
   {
     title: "German",
-    value: "GERMAN"
+    value: "German"
   },
   {
     title: "Arabic",
-    value: "ARABIC"
+    value: "Arabic"
   },
   {
     title: "Bulgarian",
-    value: "BULGARIAN"
+    value: "Bulgarian"
   },
   {
     title: "Croatian",
-    value: "CROATIAN"
+    value: "Croatian"
   },
   {
     title: "Georgian",
-    value: "GEORGIAN"
+    value: "Georgian"
   },
 ];
 const selectedLanguage = ref(languages[1]);
-
-const { id } = useId();
-
-const { mutate } = useMutation(UpdateUserDocument);
-
-const { onResult, loading, refetch } = useQuery(MeDocument, { id });
-
-onResult(({ data }) => {
-  const apiLang = data.me?.settings?.find(
-    (setting: any) =>
-      setting.setting.code === SettingsCodeEnum.Language
-  )?.value;
-  if (apiLang) {
-    selectedLanguage.value = {
-      title: apiLang,
-      value: apiLang
-    };
-  }
-});
-
-const changeLanguage = () => {
-  mutate({
-    id,
-    input: {
-      settings: [
-        {
-          code: SettingsCodeEnum.Language,
-          value: selectedLanguage.value.value,
-        },
-      ],
-    },
-  })
-    .then(async () => {
-      refetch();
-      const toast = await toastController.create({
-        message: "Updated successfully",
-        duration: 2000,
-        icon: "assets/icon/success.svg",
-        cssClass: "success-toast",
-      });
-      toast.present();
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
-};
 
 
 </script>
