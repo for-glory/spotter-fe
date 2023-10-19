@@ -130,7 +130,15 @@
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'daily'"
                         style="max-height: 300px; overflow-y: scroll;">
-                        <div class="offer-item" :key="item.id" v-for="item in offerList">
+                        <div v-if="!offerList || !offerList.length">
+                            <empty-block 
+                                title="Dailys Empty" 
+                                hideButton
+                                text="No Dailys available." 
+                                icon="assets/icon/daily.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="trainer">{{ item.trainer }}</div>
@@ -152,8 +160,12 @@
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
                         <div v-if="!offerEvents || !offerEvents.length">
-                            <empty-block title="Events Empty" hideButton
-                                text="No Events available, create new event to get started" icon="assets/icon/events.svg" />
+                            <empty-block 
+                                title="Events Empty" 
+                                hideButton
+                                text="No Events available." 
+                                icon="assets/icon/events.svg" 
+                            />
                         </div>
                         <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">

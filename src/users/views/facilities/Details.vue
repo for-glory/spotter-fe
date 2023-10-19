@@ -39,8 +39,12 @@
 				</ion-segment>
 				<div class="ion-margin-top offer-card" v-if="activeSegment === EntitiesEnum.FacilityPassList">
 					<div class="card-background" v-if="!dropins || !dropins.length">
-						<empty-block title="Drop-ins Empty" hideButton text="No Dropins available for this location"
-							icon="assets/icon/dropin.svg" />
+						<empty-block 
+							title="Drop-ins Empty" 
+							hideButton 
+							text="No Dropins available for this location"
+							icon="assets/icon/dropin.svg" 
+						/>
 					</div>
 					<div class="offer-item" v-else :key="item.id" v-for="item in dropins">
 						<div class="header-section events">
@@ -62,8 +66,12 @@
 				</div>
 				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Facilities">
 					<div class="card-background" v-if="!passes || !passes.length">
-						<empty-block title="Passes Empty" hideButton text="No Passes available for this location"
-							icon="assets/icon/gym-user-icon.svg" />
+						<empty-block 
+							title="Passes Empty" 
+							hideButton 
+							text="No Passes available for this location"
+							icon="assets/icon/gym-user-icon.svg" 
+						/>
 					</div>
 					<div class="offer-item" v-else :key="item.id" v-for="item in passes">
 						<div class="header-section events">
@@ -84,10 +92,14 @@
 				</div>
 				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
 					<div class="card-background" v-if="!dailysData || !dailysData.length">
-						<empty-block title="Dailys Empty" hideButton text="No dailys available for this location"
-							icon="assets/icon/daily.svg" />
+						<empty-block 
+							title="Dailys Empty" 
+							hideButton 
+							text="No dailys available for this location"
+							icon="assets/icon/daily.svg" 
+						/>
 					</div>
-					<div class="offer-item" :key="item.id" v-for="item in dailysData">
+					<div class="offer-item" v-else :key="item.id" v-for="item in dailysData">
 						<div class="header-section">
 							<div class="name">{{ item.title }}</div>
 							<div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
@@ -105,8 +117,12 @@
 				</div>
 				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
 					<div class="card-background" v-if="!allEvents || !allEvents.length">
-						<empty-block title="Events Empty" hideButton text="No Events available for this location"
-							icon="assets/icon/events.svg" />
+						<empty-block 
+							title="Events Empty" 
+							hideButton 
+							text="No Events available for this location"
+							icon="assets/icon/events.svg" 
+						/>
 					</div>
 					<div class="offer-item" v-else :key="event.id" v-for="event in allEvents">
 						<div class="header-section events">

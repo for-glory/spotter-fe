@@ -52,7 +52,15 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.CreateDailys">
-            <div class="offer-item" :key="item.id" v-for="item in offerList">
+            <div v-if="!offerList || !offerList.length">
+              <empty-block 
+                title="Dailys Empty" 
+                hideButton
+                text="No Dailys available." 
+                icon="assets/icon/daily.svg" 
+              />
+            </div>
+            <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
               <div class="header-section">
                 <div class="name">{{ item.name }}</div>
                 <div class="trainer">{{ item.trainer }}</div>
@@ -69,7 +77,15 @@
             </div>
           </div>
           <div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-            <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+            <div v-if="!offerEvents || !offerEvents.length">
+              <empty-block 
+                title="Events Empty" 
+                hideButton
+                text="No Events available." 
+                icon="assets/icon/events.svg" 
+              />
+            </div>
+            <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
               <div class="header-section events">
                 <div class="name">{{ item.name }}</div>
                 <div class="event-time">
@@ -132,6 +148,7 @@ import { Browser } from "@capacitor/browser";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
 import { Share } from "@capacitor/share";
 import useRoles from "@/hooks/useRole";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { ellipse } from "ionicons/icons";
 
 const route = useRoute();

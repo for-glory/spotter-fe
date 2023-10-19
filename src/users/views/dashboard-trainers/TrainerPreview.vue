@@ -127,7 +127,15 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'daily'"  style="max-height: 300px; overflow-y: scroll;">
-                        <div class="offer-item" :key="item.id" v-for="item in offerList">
+                        <div v-if="!offerList || !offerList.length">
+                            <empty-block 
+                                title="Dailys Empty" 
+                                hideButton
+                                text="No Dailys available." 
+                                icon="assets/icon/daily.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="trainer">{{ item.trainer }}</div>
@@ -147,7 +155,15 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div v-if="!offerEvents || !offerEvents.length">
+                            <empty-block 
+                                title="Events Empty" 
+                                hideButton
+                                text="No Events available." 
+                                icon="assets/icon/events.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
@@ -206,6 +222,7 @@ import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Share } from "@capacitor/share";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
