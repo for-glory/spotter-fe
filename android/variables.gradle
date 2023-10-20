@@ -1,6 +1,21 @@
+def propertiesFile = file("${project.rootDir}/version.properties")
+def properties = new Properties()
+
+// Load existing versionCode from properties file
+properties.load(propertiesFile.newDataInputStream())
+
+// Get the last used versionCode and increment it
+def lastVersionCode = properties.versionCode.toInteger()
+def newVersionCode = lastVersionCode + 1
+
+// Update the properties file with the new versionCode
+properties.setProperty("versionCode", newVersionCode.toString())
+properties.store(propertiesFile.newWriter(), null)
+
+
 ext {
-    versionCode = 8
-    versionName = '1.1'
+    versionCode = newVersionCode
+    versionName = "1.1.${versionCode}"
     minSdkVersion = 22
     compileSdkVersion = 33
     targetSdkVersion = 33
