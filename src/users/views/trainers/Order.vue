@@ -190,10 +190,9 @@ const hourlyRate = computed(() => {
   let calcRate: any = rate?.value ? getSumForPayment(rate.value, true) : "0.00";
   const diff = dayjs(store.endDate).diff(dayjs(store.startDate), 'hour', true);
   if (diff) {
-    return (calcRate * diff);
+    return (calcRate * diff).toFixed(2);
   }
-  return calcRate;
-
+  return calcRate.toFixed(2);
 });
 
 const confirmOrder = () => {
