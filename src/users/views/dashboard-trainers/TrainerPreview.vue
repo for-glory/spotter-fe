@@ -137,7 +137,7 @@
                                     <ion-icon src="assets/icon/profile.svg"></ion-icon>
                                     <ion-text>{{ item.totalUser }}</ion-text>
                                 </div>
-                                <ion-button v-else @click="purchaseWorkout(item.id)">Subscribe</ion-button>
+                                <ion-button v-else @click="handleSubscribe(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
@@ -331,6 +331,10 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
   }
 }));
 
+const handleSubscribe = (id: number) => {
+    selectedDailyId.value = id;
+    purchaseWorkout();
+}
 const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
 const purchaseWorkout = () => {
@@ -361,6 +365,23 @@ const previewDaily = (daily: any) => {
     dailyModal.value?.present({daily: daily, preview: true})
     isOpenPreviewModal.value = true;
     selectedDailyId.value = daily.id;
+}
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onPurchase = () => {
+  isOpenPurchaseModal.value = false;
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: { orderId: selectedDailyId.value },
+    query: { cart_id: cartId.value },
+  });
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
 }
 const reviews = computed(() =>
   reviewsResult?.value?.reviews?.data.reduce(
@@ -407,23 +428,7 @@ const viewAllReview = () => {
         params: { id: route.params.id },
     });
 }
-const onTrialEnd = () => {
-    isOpenBlurredScreenModal.value = true;
-}
 
-const onPurchase = () => {
-  isOpenPurchaseModal.value = false;
-  router.push({
-    name: EntitiesEnum.PaymentsMethods,
-    params: { orderId: selectedDailyId.value },
-    query: { cart_id: cartId.value },
-  });
-}
-
-const onClosePreview = () => {
-    console.log("OOOO")
-    isOpenPreviewModal.value = false;
-}
 
 </script>
 
