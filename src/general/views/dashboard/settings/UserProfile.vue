@@ -8,7 +8,7 @@
             <ion-title class="banner__title">Profile</ion-title>
         </div>
         <div class="d-flex gap-24">
-            <div>
+            <div class="flex-2">
                 <div class="user-container">
                     <div class="photo">
                         <ion-img v-if="trainer?.avatarUrl" :src="trainer?.avatarUrl" />
@@ -86,7 +86,7 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="flex-1">
                 <div class="offerings">
                     <ion-text class="section-title">Offerings</ion-text>
                     <ion-segment mode="ios" v-model="segmentValue">
@@ -222,7 +222,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
     first: 1000,
     order: SortOrder.Asc,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    trainer_id: trainer.trainer?.id
+    trainer_id: trainer?.id
 },
     {
         fetchPolicy: "no-cache",
@@ -232,7 +232,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, onResult: getReviews } = useQuery(
     ReviewsDocument,
     () => ({
-        id: trainer?.trainer?.id,
+        id: trainer?.id,
         type: FeedbackEntityEnum.User,
         review_type: "Recent",
     })
