@@ -112,7 +112,15 @@
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'daily'"
                         style="max-height: 300px; overflow-y: scroll;">
-                        <div class="offer-item" :key="item.id" v-for="item in offerList">
+                        <div v-if="!offerList || !offerList.length">
+                            <empty-block 
+                                title="Dailys Empty" 
+                                hideButton
+                                text="No Dailys available." 
+                                icon="assets/icon/daily.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="trainer">{{ item.trainer }}</div>
@@ -124,17 +132,22 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type }}</ion-text>
                                 </div>
-                                <div class="total">
+                                <!-- <div class="total">
                                     <ion-icon src="assets/icon/profile.svg"></ion-icon>
                                     <ion-text>{{ item.totalUser }}</ion-text>
-                                </div>
+                                </div> -->
+                                <ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
                         <div v-if="!offerEvents || !offerEvents.length">
-                            <empty-block title="Events Empty" hideButton
-                                text="No Events available, create new event to get started" icon="assets/icon/events.svg" />
+                            <empty-block 
+                                title="Events Empty" 
+                                hideButton
+                                text="No Events available." 
+                                icon="assets/icon/events.svg" 
+                            />
                         </div>
                         <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
@@ -180,7 +193,7 @@
 </template>
     
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
+import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar, toastController } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { ellipse } from "ionicons/icons";
 import { computed, ref } from "vue";
@@ -190,8 +203,9 @@ import { Share } from "@capacitor/share";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { EntitiesEnum } from "@/const/entities";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import { Browser } from "@capacitor/browser";
@@ -208,7 +222,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
     first: 1000,
     order: SortOrder.Asc,
     orderByColumn: QueryWorkoutsOrderByColumn.CreatedAt,
-    trainer_id: trainer?.id
+    trainer_id: trainer.trainer?.id
 },
     {
         fetchPolicy: "no-cache",
@@ -218,7 +232,7 @@ const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, on
 const { result: reviewsResult, loading: reviewLoading, refetch: refetchReviews, onResult: getReviews } = useQuery(
     ReviewsDocument,
     () => ({
-        id: trainer?.id,
+        id: trainer?.trainer?.id,
         type: FeedbackEntityEnum.User,
         review_type: "Recent",
     })
@@ -292,6 +306,37 @@ const symbols = computed(() => {
         (trainer?.last_name?.length ? trainer.last_name?.charAt(0) : "")
     );
 });
+
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+    useMutation(AddToCartDocument);
+const purchaseWorkout = (id: string) => {
+    addToCartMutation({
+        input: {
+            purchasable_id: id,
+            purchasable: AddToCartPurchasableEnum.Workout,
+        },
+    })
+        .then((res) => {
+            router.push({
+                name: EntitiesEnum.WorkoutOrder,
+                params: {
+                    id: id,
+                },
+                query: {
+                    cart_id: res?.data?.addToCart?.id,
+                },
+            });
+        })
+        .catch(async () => {
+            const toast = await toastController.create({
+                message: "Something went wrong. Try again.",
+                duration: 2000,
+                icon: "assets/icon/info.svg",
+                cssClass: "warning-toast",
+            });
+            toast.present();
+        });
+};
 
 const onOpenDocument = async (url: string) => {
     await Browser.open({ url: url });
@@ -630,6 +675,15 @@ const onOpenDocument = async (url: string) => {
                     font-size: 24px;
                 }
             }
+        }
+
+        ion-button {
+            height: 30px;
+            font-weight: 600;
+            --color: var(--gray-700);
+            --border-radius: 4px;
+            margin: 0;
+            min-width: 117px;
         }
     }
 }

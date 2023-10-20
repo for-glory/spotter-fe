@@ -254,7 +254,7 @@ SPEC CHECKSUMS:
   CapawesomeCapacitorFilePicker: 3c6c193300649c9c7ce49426e17582edbf7ed601
   CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
   CordovaPlugins: 28dbf60e7e21722dd2f9dfb0338f10907aafa21a
-  CordovaPluginsResources: 1b3992e05cb6336d2850cd77dd5e3054f2f76f96
+  CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
   DevaCommunityCapacitorCameraPro: 59a65ca94ad1b9076becd5bf4d52669254edafd7
   FBAEMKit: a899515e45476027f73aef377b5cffadcd56ca3a
   FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
@@ -276,4 +276,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: cfe0f619f60149d995d987f1f6c6a997a9b11054
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0

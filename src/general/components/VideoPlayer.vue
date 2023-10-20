@@ -4,7 +4,7 @@
       <slot name="custom-header-btn"></slot>
     </template>
   </page-header>
-  <video-player
+  <!-- <video-player
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
@@ -20,18 +20,16 @@
     @play="handlePlay"
     @pause="handlePlause"
     @ended="handleVideoEnded"
-  />
-  <!-- <div class="w-100 h-100" style="padding: 12px;">
-    <video
-      class="video-player vjs-big-play-centered"
-      style="object-fit: cover;"
+  /> -->
+  <div class="w-100 h-100" style="padding: 12px;">
+    <video 
+      class="video-player vjs-big-play-centered" 
       :src="`${VUE_APP_CDN}${daily?.video}`"
-      :controls="freeDuration === 0 || showControl"
+      :controls="freeDuration === 0 || showControl" 
       :poster="daily?.previewUrl"
-      :height="props.height"
-      :width="props.width"
-    />
-  </div> -->
+      style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%">
+    </video>
+  </div>
   <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
     <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
     <ion-text class="daily-info">
@@ -74,7 +72,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
 import { Capacitor } from "@capacitor/core";
-
+import route from "@/router"
 const props = withDefaults(
   defineProps<{
     pathUrl: string;
@@ -178,7 +176,8 @@ const onBack = () => {
   if(props.backName === EntitiesEnum.UserWorkouts && !Capacitor.isNativePlatform()) {
     router.push({ name: EntitiesEnum.DashboardClientDailys });
   } else {
-    router.push({ name: props.backName });
+    // router.push({ name: props.backName });
+    route.go(-1)
   }
 };
 

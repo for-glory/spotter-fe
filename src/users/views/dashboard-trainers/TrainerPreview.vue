@@ -101,17 +101,27 @@
                     <div class="ion-margin-top info mx-100" v-if="segmentValue == 'trainer'">
                         <div class="info-item">
                             <strong class="info-item__title">${{ user?.trainerRates[1]?.front_price }}</strong>
-                            <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
+                            <ion-text color="secondary" class="font-light">Hourly rate</ion-text>
+                            <ion-text color="secondary" class="font-light">(client's home)</ion-text>
                         </div>
                         <div class="info-item">
                             <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
-                            <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
+                            <ion-text color="secondary" class="font-light">Hourly rate</ion-text>
+                            <ion-text color="secondary" class="font-light">(In gym)</ion-text>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'daily'"  style="max-height: 300px; overflow-y: scroll;">
-                        <div class="offer-item" :key="item.id" v-for="item in offerList">
+                        <div v-if="!offerList || !offerList.length">
+                            <empty-block 
+                                title="Dailys Empty" 
+                                hideButton
+                                text="No Dailys available." 
+                                icon="assets/icon/daily.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
-                                <div class="name">{{ item.name }}</div>
+                                <div class="name" @click="previewDaily(item.video)">{{ item.name }}</div>
                                 <div class="trainer">{{ item.trainer }}</div>
                             </div>
                             <div class="detail-section">
@@ -121,15 +131,24 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type }}</ion-text>
                                 </div>
-                                <div class="total">
+                                <div v-if="item.purchases > 0" class="total">
                                     <ion-icon src="assets/icon/profile.svg"></ion-icon>
                                     <ion-text>{{ item.totalUser }}</ion-text>
                                 </div>
+                                <ion-button v-else @click="purchaseWorkout(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div v-if="!offerEvents || !offerEvents.length">
+                            <empty-block 
+                                title="Events Empty" 
+                                hideButton
+                                text="No Events available." 
+                                icon="assets/icon/events.svg" 
+                            />
+                        </div>
+                        <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
@@ -178,29 +197,32 @@
           </ion-button>
         </div>
     </div>
+    <preview-daily-modal ref="dailyModal"/>
 </template>
     
 <script setup lang="ts">
-import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonBadge, IonSegment, IonSegmentButton, IonLabel, IonAvatar } from "@ionic/vue";
+import { IonIcon, IonTitle, IonButton, IonImg, IonText, actionSheetController, IonSegment, IonSegmentButton, IonLabel, toastController } from "@ionic/vue";
 import { useRoute, useRouter } from "vue-router";
 import { ellipse } from "ionicons/icons";
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Share } from "@capacitor/share";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
+import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
-
+const dailyModal = ref<typeof PreviewDailyModal | null>(null);
 const route = useRoute();
 const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
   UserDocument,
@@ -265,10 +287,45 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
     trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
     time: daily?.duration,
     totalUser: daily?.views_count,
-    type: daily?.type.name
+    purchases: daily?.purchases,
+    type: daily?.type.name,
+    video: daily?.video,
   }
 }));
 
+const { mutate: addToCartMutation, loading: addToCartLoading } =
+  useMutation(AddToCartDocument);
+const purchaseWorkout = (id: string) => {
+  addToCartMutation({
+    input: {
+      purchasable_id: id,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+      router.push({
+        name: EntitiesEnum.WorkoutOrder,
+        params: {
+          id: id,
+        },
+        query: {
+          cart_id: res?.data?.addToCart?.id,
+        },
+      });
+    })
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
+};
+const previewDaily = (url: string) => {
+    dailyModal.value?.present({video: url, preview: true})
+}
 const reviews = computed(() =>
   reviewsResult?.value?.reviews?.data.reduce(
     (acc: any, cur: any) => {
@@ -582,6 +639,7 @@ const viewAllReview = () => {
                 font-weight: 500;
                 line-height: 150%;
                 color: var(--ion-color-white);
+                cursor: pointer;
             }
 
             .trainer {
@@ -607,6 +665,13 @@ const viewAllReview = () => {
             justify-content: space-between;
             width: 100%;
 
+            ion-button {
+                height: 30px;
+                font-weight: 600;
+                --color: var(--gray-700);
+                --border-radius: 4px;
+                min-width: 117px;
+            }
             .time {
                 display: flex;
                 align-items: center;
