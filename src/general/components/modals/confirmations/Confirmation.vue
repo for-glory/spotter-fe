@@ -139,6 +139,7 @@ ion-modal::part(backdrop) {
 
 .close-btn {
   position: absolute;
+  cursor: pointer;
   top: 16px;
   right: 16px;
   height: 24px;

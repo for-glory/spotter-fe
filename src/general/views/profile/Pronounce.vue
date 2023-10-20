@@ -108,7 +108,7 @@ const onChange = (
   })
     .then(() => {
       refetch();
-      showToast("Pronounce succesfully updated", "success", "success");
+      showToast("Pronounce successfully updated", "success", "success");
     })
     .catch(() => {
       showToast("Pronounce went wrong. Try again.", "danger", "info");

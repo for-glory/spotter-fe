@@ -148,6 +148,7 @@ import {
   TrainerTypeEnum,
   UpdateUserDocument,
   SubscriptionsTierEnum,
+SettingsCodeEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
 import { withDefaults,defineProps } from "vue";
@@ -294,6 +295,11 @@ const { onResult, refetch, result, loading } = useQuery(
 
 onResult(({ data }) => {
   previewUrl.value = data.me.avatarUrl;
+  data.me.settings.forEach((e: any)=>{
+    if(settings[e.setting.code]){
+      settings[e.setting.code] = e.value;
+    }
+  })
 });
 
 const onBack = () => {
@@ -330,9 +336,9 @@ const goTo = (name: EntitiesEnum) => {
 };
 
 const settings = {
-  [EntitiesEnum.Language]: "English",
-  [EntitiesEnum.AppMode]: "Dark mode",
-  [EntitiesEnum.ProfilePronounce]: "She",
+  [SettingsCodeEnum.Language]: "English",
+  [SettingsCodeEnum.AppMode]: "System",
+  [SettingsCodeEnum.UserPronounce]: "She",
 };
 
 const isProfile = computed(

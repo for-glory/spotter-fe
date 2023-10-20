@@ -2,21 +2,15 @@
   <ion-page ref="page">
     <base-layout>
       <template #header>
-        <page-header back-btn @back="onBack" title="Location and Rate" />
+        <page-header back-btn @back="onBack" title="Location" />
       </template>
       <template #content>
         <div class="page">
-          <choose-block
-            title="Choose your gym location"
-            class="form-row__control tr-class"
-            @handle-click="chooseGymLocation"
-            :value="
-              selectedAddress
-                ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
-                : ''
-            "
-             :isLightItem="role === RoleEnum.Trainer ? true : false"
-          />
+          <choose-block title="Choose your gym location" class="form-row__control tr-class"
+            @handle-click="chooseGymLocation" :value="selectedAddress
+              ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`
+              : ''
+              " :isLightItem="role === RoleEnum.Trainer ? true : false" />
           <!-- <choose-block
             title="State"
             class="page__control"
@@ -55,12 +49,7 @@
       </template>
       <template #footer>
         <div class="holder-button">
-          <ion-button
-            @click="onBack"
-            :disabled="!selectedCity"
-            class="button--submit"
-            expand="block"
-          >
+          <ion-button @click="save" :disabled="!selectedCity" class="button--submit" expand="block">
             Save
           </ion-button>
         </div>
@@ -74,6 +63,7 @@
 import {
   IonPage,
   IonButton,
+  toastController,
 } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
@@ -84,7 +74,9 @@ import { State, IState, City, ICity } from "country-state-city";
 import { useNewFacilityStore } from "@/facilities/store/new-facility";
 import { useNewEventStore } from "@/general/stores/new-event";
 import useRoles from "@/hooks/useRole";
-import { RoleEnum } from "@/generated/graphql";
+import { MeDocument, RoleEnum, UpdateFacilityDocument } from "@/generated/graphql";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
 
 const router = useRouter();
 const route = useRoute();
@@ -95,24 +87,95 @@ const cities = ref<ICity[]>();
 
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 const description = ref("");
-console.log(route.params.type);
-const store = route.params.type === 'event' ? useNewEventStore() : useNewFacilityStore();
+const store = route?.params?.type === 'event' ? useNewEventStore() : useNewFacilityStore();
 const selectedState = computed(() => store.address.state);
 const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
 
-const { role } = useRoles()
+const { role } = useRoles();
+const { mutate } = useMutation(UpdateFacilityDocument);
 
+const { onResult, result, loading, refetch } = useQuery(
+  MeDocument,
+  {},
+  {
+    fetchPolicy: "no-cache",
+  }
+);
+
+onResult(({ data }) => {
+  const curFacility = data.me?.owned_facilities.find(
+    (facility) => facility.id === route.query.facilityId
+  );
+
+  if (curFacility) {
+    store.setAddress(
+      curFacility.address?.city.state,
+      curFacility.address?.city,
+      {
+        thoroughfare: curFacility.address?.street,
+        subThoroughfare: curFacility.address?.extra,
+        latitude: curFacility.address?.lat,
+        longitude: curFacility.address?.lng,
+      } as NativeGeocoderResult
+    );
+    store.setTitle(curFacility.name);
+  }
+});
 const onBack = () => {
-  store.setAddress(selectedState, selectedCity, selectedAddress);
   router.go(-1);
 };
+
+const save = () => {
+  store.setAddress(selectedState, selectedCity, selectedAddress);
+  if (role === RoleEnum.FacilityOwner && route?.query?.facilityId) {
+    updateFacilityLocation();
+    return;
+  }
+}
 
 const chooseGymLocation = () => {
   chooseLocationModal.value?.present({
     title: "Address",
   });
-}
+};
+
+const updateFacilityLocation = () => {
+  mutate({
+    id: route.query.facilityId,
+    input: {
+      name: store.$state.title,
+      address: {
+        lat: Number(store.$state.address.address?.latitude),
+        lng: Number(store.$state.address.address?.longitude),
+        street: store.$state.address.address?.thoroughfare,
+        city_id: store.$state.address.city?.id,
+        extra: store.$state.address.address?.subThoroughfare,
+      },
+    },
+  })
+    .then(async () => {
+      const toast = await toastController.create({
+        message: "Updated successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      // refetch();
+      router.back();
+    })
+    .catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+
+      throw new Error(error);
+    });
+};
 
 </script>
 

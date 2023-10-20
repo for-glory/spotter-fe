@@ -1,5 +1,6 @@
 import { EditProfileMenuItem } from "@/interfaces/EditProfileMenuItem";
 import { EntitiesEnum } from "@/const/entities";
+import { SettingsCodeEnum } from "@/generated/graphql";
 
 type EditProfileMenu = Record<string, EditProfileMenuItem[]>;
 
@@ -20,21 +21,21 @@ export const editProfileMenu: EditProfileMenu = {
     {
       name: EntitiesEnum.ProfileLanguages,
       label: "Language",
-      value: EntitiesEnum.Language,
+      value: SettingsCodeEnum.Language,
     },
     {
       name: EntitiesEnum.ProfileAppMode,
       label: "App mode",
-      value: EntitiesEnum.AppMode,
+      value: SettingsCodeEnum.AppMode,
     },
     {
       name: EntitiesEnum.ProfileNotifications,
       label: "Notifications",
     },
-    {
-      name: EntitiesEnum.ProfilePreferences,
-      label: "Preferences",
-    },
+    // {
+    //   name: EntitiesEnum.ProfilePreferences,
+    //   label: "Preferences",
+    // },
     // {
     //   name: EntitiesEnum.ProfileAddSocialLink,
     //   label: "Add social links",
@@ -43,11 +44,11 @@ export const editProfileMenu: EditProfileMenu = {
       name: EntitiesEnum.ProfileLocation,
       label: "Location",
     },
-    {
-      name: EntitiesEnum.ProfilePronounce,
-      label: "Pronouns",
-      value: EntitiesEnum.ProfilePronounce,
-    },
+    // {
+    //   name: EntitiesEnum.ProfilePronounce,
+    //   label: "Pronouns",
+    //   value: SettingsCodeEnum.UserPronounce,
+    // },
   ],
   TRAINER: [
     {
@@ -125,7 +126,7 @@ export const editProfileMenu: EditProfileMenu = {
       label: "Add social links",
     },
     {
-      name: EntitiesEnum.DashboardListGyms,
+      name: EntitiesEnum.ChooseLocation,
       label: "Location",
     },
     {

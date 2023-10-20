@@ -9,6 +9,7 @@ export const useTrainerStore = defineStore("currentTrainer", {
         id: "",
         first_name: "",
         last_name: "",
+        description:"",
         avatarUrl: "",
         tax_id: "",
         email: "",
@@ -25,6 +26,8 @@ export const useTrainerStore = defineStore("currentTrainer", {
         trainer_type: TrainerTypeEnum.Both,
         trainerRates: [],
         created_at: "",
+        weiver_and_labilities: [],
+        certificates: [],
       },
     };
   },
@@ -38,6 +41,7 @@ export const useTrainerStore = defineStore("currentTrainer", {
         first_name: "",
         last_name: "",
         avatarUrl: "",
+        description:"",
         tax_id: "",
         email: "",
         address: null,
@@ -53,6 +57,8 @@ export const useTrainerStore = defineStore("currentTrainer", {
         trainer_type: TrainerTypeEnum.Both,
         trainerRates: [],
         created_at: "",
+        certificates: [],
+        weiver_and_labilities: []
       };
     },
   },

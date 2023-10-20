@@ -6,97 +6,61 @@
     </template>
     <template #content>
       <div class="main-content">
-        <div
-          class="inputs-form"
-          :class="{ 'inputs-form--footer-fixed': footerFixed }"
-        >
+        <div class="inputs-form" :class="{ 'inputs-form--footer-fixed': footerFixed }">
           <div class="form-row">
-            <base-input
-              required
-              v-model:value="managerName"
-              placeholder="First name, Last name"
-              label="Full name"
-            />
+            <base-input required v-model:value="managerName" placeholder="First name, Last name" label="Full name" />
           </div>
           <div class="form-row">
-            <base-input
-              required
-              v-model:value="managerEmail"
-              placeholder="Enter email address"
-              label="Email"
-            />
+            <base-input required v-model:value="managerEmail" placeholder="Enter email address" label="Email" />
           </div>
           <div class="form-row">
-            <base-input
-              label="Phone number"
-              v-model:value="managerPhoneNumber"
-              placeholder="Phone number"
-            />
+            <base-input label="Phone number" v-model:value="managerPhoneNumber" placeholder="Phone number" />
           </div>
           <div class="form-row">
-            <base-input
-              required
-              v-model:value="managerCode"
-              placeholder=""
-              label="Postal Code"
-            />
+            <base-input required v-model:value="managerCode" placeholder="" label="Postal Code" />
           </div>
           <div class="form-row">
             <ion-label class="label"> Date of Birth </ion-label>
-            <choose-block
-              title="Date of Birth"
-              :value="managerBOD ? dayjs(managerBOD).format('D MMMM YYYY') : ''"
+            <choose-block title="Date of Birth" :value="managerBOD ? dayjs(managerBOD).format('D MMMM YYYY') : ''"
               @handle-click="
-                showDatePikerModal( 'DOB', managerBOD, {
+                showDatePikerModal('DOB', managerBOD, {
                   min: 0,
                   title: 'Date of Birth',
                 })
-              "
-              :disabled="loading"
-            />
+                " :disabled="loading" />
           </div>
 
           <div class="form-row">
             <ion-label class="label"> Address </ion-label>
-            <choose-block
+            <choose-block title="Address"
+              :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` : ''"
+              @handle-click="onChooseLocation" />
+            <!-- <choose-block
               title="Address"
               class="form-row__control"
-              @handle-click="onChooseLocation"
+              @handle-click="openAddressModal"
               :value="(selectedState?.name ? selectedState?.name : '') + (selectedCity?.name ? ', ' + selectedCity?.name : '')"
-            />
+            /> -->
           </div>
 
           <div class="form-row">
             <ion-label class="label"> Employement Type </ion-label>
-            <choose-block
-              title="Full Time"
-              @handle-click="$router.push({ name: EntitiesEnum.EmploymentType })"
-              class="form-row__control"
-            />
+            <choose-block title="Full Time" @handle-click="$router.push({ name: EntitiesEnum.EmploymentType })"
+              class="form-row__control" />
           </div>
 
           <div class="form-row">
-            <base-input
-              label="Tax ID"
-              v-model:value="managerTaxID"
-              placeholder="Tax ID"
-            />
+            <base-input label="Tax ID" v-model:value="managerTaxID" placeholder="Tax ID" />
           </div>
 
-          <div
-            class="actions-wrapper"
-            :class="{ 'actions-wrapper--fixed': footerFixed }"
-          >
-            <ion-button
-              expand="block"
-              fill="solid"
-              @click="addManager"
-            >
+          <div class="actions-wrapper" :class="{ 'actions-wrapper--fixed': footerFixed }">
+            <ion-button expand="block" fill="solid" @click="addManager">
               Send Invitation
             </ion-button>
           </div>
         </div>
-        <choose-address-modal ref="chooseAddressModal" @select="addressSelected" />
+        <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
+        <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
         <date-picker-modal ref="datePickerModal" @select="dateSelected" />
       </div>
     </template>
@@ -104,47 +68,40 @@
 </template>
 
 <script setup lang="ts">
-import { 
+import {
   IonLabel,
   IonButton,
   toastController
- } from "@ionic/vue";
+} from "@ionic/vue";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
   ref,
   computed,
-  defineEmits,
-  withDefaults,
-  defineProps,
-  defineExpose,
 } from "vue";
 import { useRouter } from "vue-router";
-import ChooseAddressModal from "@/general/components/ChooseAddressModal.vue";
-import { 
-  FilePreloadDocument, 
-  CitiesDocument, 
-  CreateMangerDocument,
+import {
+  FilePreloadDocument,
+  CitiesDocument,
   MeDocument,
   EmploymentTypeEnum,
+  CreateManagerDocument,
 } from "@/generated/graphql";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { v4 as uuidv4 } from "uuid";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable";
 import { useNewFacilityStore } from "@/facilities/store/new-facility";
-import { newFacilityStoreTypes } from "@/ts/types/store";
-import { CheckboxValueType } from "@/ts/types/checkbox-value";
-import {
-  NativeGeocoderResult,
-} from "@awesome-cordova-plugins/native-geocoder";
 import DatePickerModal from "@/general/components/DatePickerModal.vue";
 import {
   DatePickerModalResult,
-  DatePickerOptions,
 } from "@/interfaces/DatePickerModal";
 import dayjs from "dayjs";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
+import BaseInput from "@/general/components/base/BaseInput.vue";
+import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 
 const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
@@ -178,10 +135,10 @@ const media = ref<
 >([]);
 const error = ref<string>();
 
-const selectedState = computed(() => store.address.state);
-const selectedCity = computed(() => store.address.city);
+// const selectedState = computed(() => store.address.state);
+// const selectedCity = computed(() => store.address.city);
 const selectedAddress = computed(() => store.address.address);
-const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
+const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 
 const photoOnLoad = ref<boolean>(false);
 const percentPhotoLoaded = ref<number | undefined>();
@@ -189,23 +146,30 @@ const percentPhotoLoaded = ref<number | undefined>();
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const currentFacility = useFacilityStore();
 
-const { mutate } = useMutation(CreateMangerDocument);
+const { mutate } = useMutation(CreateManagerDocument);
 
 const { onResult, refetch, loading, result } = useQuery(MeDocument, { id: currentFacility.facility.id });
 
 const onChooseLocation = () => {
-  router.push({
-    name: EntitiesEnum.ChooseLocation, 
-    params: { type: 'facility' }
+  // router.push({
+  //   name: EntitiesEnum.ChooseLocation,
+  //   params: { type: 'facility' }
+  // });
+  chooseLocationModal.value?.present({
+    title: "Address",
   });
+};
+
+const addressSelected = (selected: ChooseAddresModalResult) => {
+  store.setAddress(selected.state, selected.city, selected.address);
 };
 
 const savedMedia = computed(() =>
   result.value?.me?.media
     ? result.value?.me?.media.reduce((acc: any, cur: any) => {
-        acc.push({ ...cur, url: cur.pathUrl });
-        return acc;
-      }, [])
+      acc.push({ ...cur, url: cur.pathUrl });
+      return acc;
+    }, [])
     : []
 );
 
@@ -236,6 +200,21 @@ const uploadPhoto = async (photo: string, index?: number) => {
 };
 
 let abort: any;
+
+// const openAddressModal = () => {
+//   chooseAddressModal.value?.present({
+//     type: EntitiesEnum.City,
+//     title: "Choose your address",
+//     // selected: selectedAddress.value?.latitude
+//     //   ? {
+//     //     lat: Number(selectedAddress.value?.latitude),
+//     //     lng: Number(selectedAddress.value?.longitude),
+//     //   }
+//     //   : null,
+//     // state: selectedState.value,
+//     // city: selectedCity.value,
+//   });
+// };
 
 const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   context: {
@@ -270,7 +249,7 @@ const dateSelected = (result: DatePickerModalResult) => {
 const getMedia = (media: any, savedMedia: any) => {
   return media.reduce((acc: any, cur: any) => {
     const isMediaSaved = savedMedia?.filter(
-      (i: { id: string }) => i.id === cur.id
+      (i: { id: string; }) => i.id === cur.id
     );
     if (!isMediaSaved?.length) {
       acc.push({
@@ -282,11 +261,11 @@ const getMedia = (media: any, savedMedia: any) => {
     return acc;
   }, []);
 };
-const phoneRegex = /^(?:\+1)?[-. ]?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$/ as RegExp;
+// const phoneRegex = /^(?:\+1)?[-. ]?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$/ as RegExp;
 
-function isValidPhoneNumber(phoneNumber: any): boolean {
-  return phoneRegex.test(phoneNumber);
-}
+// function isValidPhoneNumber(phoneNumber: any): boolean {
+//   return phoneRegex.test(phoneNumber);
+// }
 
 const addManager = () => {
   const newMedia = getMedia(media.value, savedMedia.value);
@@ -298,46 +277,39 @@ const addManager = () => {
       last_name: managerName.value.split(" ")[1],
       email: managerEmail.value,
       address: {
-          lat: selectedAddress.value?.address?.latitude
-            ? Number(selectedAddress.value?.address.latitude)
-            : 34.034744,
-          lng: selectedAddress.value?.address?.longitude
-            ? Number(selectedAddress.value?.address.longitude)
-            : -118.2381,
-          street: `${
-            selectedAddress.value?.address?.thoroughfare
-              ? selectedAddress.value?.address?.thoroughfare + ", "
-              : ""
-          }${selectedAddress.value?.address?.subThoroughfare || ""}`,
-          city_id: selectedCity.value?.id,
-        },
+        lat: Number(store.$state.address.address?.latitude),
+        lng: Number(store.$state.address.address?.longitude),
+        street: store.$state.address.address?.thoroughfare,
+        city_id: store.$state.address.city?.id,
+        extra: store.$state.address.address?.subThoroughfare,
+      },
       role: 'MANAGER',
       employment_type: managerType.value?.toLocaleLowerCase() === 'full time' ? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.PartTime,
       tax_id: managerTaxID.value,
       postal: managerCode.value,
       facility_id: currentFacility?.facility.id,
+      birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss")
     }
   }).then(async () => {
-        const toast = await toastController.create({
-          message: "Added successfully",
-          duration: 2000,
-          icon: "assets/icon/success.svg",
-          cssClass: "success-toast",
-        });
-        toast.present();
-        refetch();
-      })
-      .catch(async (error) => {
-      const toast = await toastController.create({
-        message: "Something went wrong. Please try again.",
-        icon: "assets/icon/info.svg",
-        cssClass: "danger-toast",
-      });
-      toast.present();
-
-      throw new Error(error);
+    const toast = await toastController.create({
+      message: "Added successfully",
+      duration: 2000,
+      icon: "assets/icon/success.svg",
+      cssClass: "success-toast",
     });
-}
+    toast.present();
+    refetch();
+  }).catch(async (error) => {
+    const toast = await toastController.create({
+      message: "Something went wrong. Please try again.",
+      icon: "assets/icon/info.svg",
+      cssClass: "danger-toast",
+    });
+    toast.present();
+
+    throw new Error(error);
+  });
+};
 
 const onBack = () => {
   router.go(-1);
@@ -351,6 +323,7 @@ const onBack = () => {
   height: 100%;
   overflow-y: scroll;
 }
+
 .managers-table {
   border: 1px solid #E1DBC5;
   background: var(--gray-700);
@@ -358,6 +331,7 @@ const onBack = () => {
   padding: 0;
   margin-top: 14px;
 }
+
 .table-header {
   background-color: var(--main-color);
   color: var(--gold);
@@ -366,6 +340,7 @@ const onBack = () => {
   ion-col {
     padding: 7px 15px 7px;
   }
+
   ion-text {
     font: 14px/1 Lato;
     color: #E1DBC5;
@@ -373,11 +348,13 @@ const onBack = () => {
 }
 
 .table-row {
+
   // border-top: 1px solid var(--beige);
   ion-col {
     padding: 15px 15px;
     border: 1px solid var(--beige);
   }
+
   ion-text {
     color: #ffffff6a;
     font: 12px/1 Lato;
@@ -390,16 +367,19 @@ const onBack = () => {
   text-transform: capitalize;
   font: 10px/1 Lato;
 }
+
 .available {
   color: #2ED47A;
   border: solid 1px #2ED47A;
   padding: 2px 8px;
 }
+
 .unavailable {
   color: #FFB946;
   border: solid 1px #FFB946;
   padding: 2px 8px;
 }
+
 .membership {
   margin-top: 16px;
 
@@ -409,15 +389,18 @@ const onBack = () => {
     padding-left: 0.6rem;
     font-weight: bold;
   }
+
   .period {
     font-size: 1rem;
     color: grey;
     padding-bottom: 0.6rem;
   }
+
   .time {
     font-size: 0.875rem;
     color: var(--gold);
   }
+
   .content {
     font-size: 1rem;
     color: #797979;
@@ -428,6 +411,7 @@ const onBack = () => {
     gap: 24px;
   }
 }
+
 .block {
   width: 100%;
   background-color: #262626;
@@ -440,6 +424,7 @@ const onBack = () => {
     padding-bottom: 4px;
   }
 }
+
 .title {
   padding: 8px 0px;
   font-size: 1.6rem;
@@ -447,6 +432,7 @@ const onBack = () => {
   font-weight: 400;
   color: var(--fitnesswhite);
 }
+
 .spinner {
   display: block;
   pointer-events: none;

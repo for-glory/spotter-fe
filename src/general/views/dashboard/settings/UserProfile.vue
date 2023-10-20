@@ -11,7 +11,7 @@
             <div>
                 <div class="user-container">
                     <div class="photo">
-                        <ion-img v-if="user?.avatarUrl" :src="user?.avatarUrl" />
+                        <ion-img v-if="trainer?.avatarUrl" :src="trainer?.avatarUrl" />
                         <span v-else>{{ symbols }}</span>
                         <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
                             <ion-icon :icon="ellipsisVertical" />
@@ -21,50 +21,48 @@
                         <div class="header d-flex align-items-center mb-10">
                             <div class="flex-1 align-self-start">
                                 <strong class="username">
-                                    {{ user?.first_name }} {{ user?.last_name }}
+                                    {{ trainer?.first_name }} {{ trainer?.last_name }}
                                 </strong>
-                                <ion-text class="address" color="secondary" v-if="user?.address?.street">
+                                <ion-text class="address" color="secondary" v-if="trainer?.address?.street">
                                     <ion-icon src="assets/icon/address.svg" class="address__icon" />
-                                    {{ user?.address?.street }}
+                                    {{ trainer?.address?.street }}
                                 </ion-text>
                             </div>
 
                             <div class="info flex-2">
                                 <div class="info-item">
-                                    <strong class="info-item__title"> 12</strong>
+                                    <strong class="info-item__title">{{ trainer?.trainings_count }}</strong>
                                     <ion-text color="secondary" class="font-light">Trainings</ion-text>
                                 </div>
                                 <div class="info-item">
                                     <strong class="info-item__title">
-                                        {{ user ? dayjs(user.created_at).fromNow(true) : "&nbsp;" }}
+                                        {{ trainer ? dayjs(trainer.created_at).fromNow(true) : "&nbsp;" }}
                                     </strong>
                                     <ion-text color="secondary" class="font-light">in Spotter</ion-text>
                                 </div>
                                 <div class="info-item">
-                                    <strong class="info-item__title"> 12</strong>
+                                    <strong class="info-item__title">{{ trainer?.reviews_count }}</strong>
                                     <ion-text color="secondary" class="font-light">Feedbacks</ion-text>
                                 </div>
                             </div>
                         </div>
-                        <div class="info-section" v-if="specialNeeds?.length">
+                        <div class="info-section">
                             <ion-text class="info-section__title mb-10">Description:</ion-text>
-                            <ion-text class="info-section__desc">Want your body to be healthy? Join our program with
-                                directions according to body’s goals. Increasing physical strength is the goal of strenght
-                                training.</ion-text>
+                            <ion-text class="info-section__desc">{{ trainer?.description }}</ion-text>
                         </div>
                         <div class="reviews d-flex justify-content-between">
                             <div class="d-flex align-items-center flex-2">
                                 <div class="d-flex">
                                     <ion-text class="reviews__title">Reviews</ion-text>
-                                    <div class="review-badge">{{ user?.score }}</div>
+                                    <div class="review-badge">{{ trainer?.score }}</div>
                                 </div>
                                 <ion-text class="rating rating__likes">
                                     <ion-icon src="assets/icon/like.svg" class="rating__icon" />
-                                    {{ user?.positive_reviews_count }}
+                                    {{ trainer?.positive_reviews_count }}
                                 </ion-text>
                                 <ion-text class="rating rating__dislikes">
                                     <ion-icon src="assets/icon/dislike-outline.svg" class="rating__icon" />
-                                    {{ user?.negative_reviews_count }}
+                                    {{ trainer?.negative_reviews_count }}
                                 </ion-text>
                             </div>
                             <div class="end-content">
@@ -72,28 +70,12 @@
                             </div>
                         </div>
                         <div class="review-cards">
-                            <base-carousel v-if="reviews.length" class="review-swiper" show-start :items="reviews"
+                            <base-carousel v-if="reviews?.length" class="review-swiper" show-start :items="reviews"
                                 :slides-offset-after="0" :slides-offset-before="0">
                                 <template v-slot:default="reviews">
-                                    <div class="review-card" v-for="review in reviews">
-                                        <div class="review-header">
-                                            <div class="review-user">
-                                                <div class="user-avatar">
-                                                    <img src="https://picsum.photos/200/300" alt="">
-                                                </div>
-                                                <p>{{ review.name }}</p>
-                                                <div class="d-flex">
-                                                    <div class="review-badge">{{ review.rating }}</div>
-                                                </div>
-                                            </div>
-                                            <div class="review-date">
-                                                <span>6 June, 2022</span>
-                                            </div>
-                                        </div>
-                                        <div class="review-desc">
-                                            <p>{{ review.desc }}</p>
-                                        </div>
-                                    </div>
+                                    <review-item v-for="review in reviews" :key="review.id" class="review-item"
+                                        :avatar-url="review.avatarUrl" :full-name="review.fullName" :date="review.date"
+                                        :rating="review.rating" :text="review.text" />
                                 </template>
                             </base-carousel>
                             <div v-else class="font-bold color-gold "
@@ -120,11 +102,11 @@
                     </ion-segment>
                     <div class="ion-margin-top info mx-100" v-if="segmentValue == 'trainer'">
                         <div class="info-item">
-                            <strong class="info-item__title">${{ user?.trainerRates[0]?.front_price }}</strong>
+                            <strong class="info-item__title">${{ trainer?.trainerRates[0]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (client's home)</ion-text>
                         </div>
                         <div class="info-item">
-                            <strong class="info-item__title">${{ user?.trainerRates[1]?.front_price }}</strong>
+                            <strong class="info-item__title">${{ trainer?.trainerRates[1]?.front_price }}</strong>
                             <ion-text color="secondary" class="font-light">Hourly rate (In gym)</ion-text>
                         </div>
                     </div>
@@ -191,22 +173,18 @@
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Certifications</ion-text>
-                    <div class="doc-items">
-                        <ion-button :class="index == 0 ? 'active' : ''" fill="outline" :key="item"
-                            v-for="(item, index) in docList">
-                            <ion-icon src="assets/icon/certificate.svg"></ion-icon>
-                            {{ item }}
-                        </ion-button>
+                    <div class="doc-items" v-if="trainer?.certificates?.length">
+                        <advantage-item v-for="(item, index) in trainer.certificates" :key="index"
+                            :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'" :title="(item.title as string)"
+                            @click="onOpenDocument(item.pathUrl)" />
                     </div>
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Waiver and Labilities</ion-text>
                     <div class="doc-items">
-                        <ion-button :class="index == 0 ? 'active' : ''" fill="outline" :key="item"
-                            v-for="(item, index) in docList">
-                            <ion-icon src="assets/icon/certificate.svg"></ion-icon>
-                            {{ item }}
-                        </ion-button>
+                        <advantage-item v-for="(item, index) in trainer?.weiver_and_labilities" :key="index"
+                            :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'" :title="(item.title as string)"
+                            @click="onOpenDocument(item.pathUrl)" />
                     </div>
                 </div>
             </div>
@@ -229,11 +207,14 @@ import { EntitiesEnum } from "@/const/entities";
 import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
+import { Browser } from "@capacitor/browser";
+import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
 
-const trainer = useTrainerStore();
+const { trainer } = useTrainerStore();
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
     WorkoutsDocument, {
@@ -293,12 +274,38 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
     return {
         id: daily?.id,
         name: daily?.title,
-        trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.last_name}`,
+        trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
         time: daily?.duration,
         totalUser: daily?.views_count,
         type: daily?.type.name
-    }
+    };
 }));
+
+const reviews = computed(() =>
+    reviewsResult?.value?.reviews?.data.reduce(
+        (acc: any, cur: any) => {
+            acc.push({
+                id: cur.id,
+                date: cur.created_at,
+                rating: cur.score || 0,
+                text: cur.review,
+                avatarUrl: cur.author?.avatarUrl || "",
+                fullName: `${cur.author?.first_name} ${cur.author?.last_name}`,
+            });
+            return acc;
+        },
+        []
+    )
+);
+
+const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
+
+const symbols = computed(() => {
+    return (
+        (trainer?.first_name?.length ? trainer.first_name?.charAt(0) : "") +
+        (trainer?.last_name?.length ? trainer.last_name?.charAt(0) : "")
+    );
+});
 
 const { mutate: addToCartMutation, loading: addToCartLoading } =
     useMutation(AddToCartDocument);
@@ -331,55 +338,9 @@ const purchaseWorkout = (id: string) => {
         });
 };
 
-const reviews = computed(() => {
-    return {
-        id: reviewsResult?.value?.data?.id,
-        name: `${reviewsResult?.value?.data?.author.first_name} ${reviewsResult?.value?.data?.author.last_name}`,
-        desc: reviewsResult?.value?.data?.review,
-        rating: reviewsResult?.value?.data?.score
-    }
-});
-
-const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
-const user = computed(() => {
-    // return result.value?.user;
-    return {
-        id: trainer.trainer.id,
-        title: `${trainer.trainer.first_name} ${trainer.trainer.last_name}`,
-        address: {
-            street: "Arizona, Phoenix, USA",
-        },
-        start_date: "10 month",
-        userId: "5328",
-        first_name: trainer.trainer.first_name,
-        last_name: trainer.trainer.last_name,
-        avatarUrl: trainer.trainer.avatarUrl,
-        created_at: new Date().setFullYear(2022, 10),
-        positive_reviews_count: trainer.trainer.positive_reviews_count ?? 0,
-        negative_reviews_count: trainer.trainer.negative_reviews_count ?? 0,
-        score: trainer.trainer.score ?? 0,
-        trainerRates: trainer.trainer.trainerRates,
-        quizzes: [
-            {
-                code: "DISCOVER_YOUR_NEEDS",
-                answers:
-                    "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
-            }
-        ]
-    }
-});
-
-const symbols = computed(() => {
-    return (
-        (user.value?.first_name?.length ? user.value.first_name?.charAt(0) : "") +
-        (user.value?.last_name?.length ? user.value.last_name?.charAt(0) : "")
-    );
-});
-
-const specialNeeds = computed<string | null>(() => {
-    const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
-    return answers ? answers : null;
-});
+const onOpenDocument = async (url: string) => {
+    await Browser.open({ url: url });
+};
 
 </script>
   

@@ -3,42 +3,28 @@
     <template #custom-btn>
     </template>
   </page-header>
-  <div
-    class="inputs-form ion-margin-top"
-    :class="{ 'inputs-form--footer-fixed': footerFixed }"
-  >
+  <div class="inputs-form ion-margin-top" :class="{ 'inputs-form--footer-fixed': footerFixed }">
     <div class="form-row">
       <ion-label class="label"> Choose photos for gym </ion-label>
-      <photos-loader
-        @upload="uploadPhoto"
-        @delete="deletePhoto"
-        @change="uploadPhoto"
-        :circle-shape="false"
-        :photos="facilityPhotos"
-        :loading="photoOnLoad"
-        :progress="percentPhotoLoaded"
-      />
+      <photos-loader @upload="uploadPhoto" @delete="deletePhoto" @change="uploadPhoto" :circle-shape="false"
+        :photos="facilityPhotos" :loading="photoOnLoad" :progress="percentPhotoLoaded" />
     </div>
 
     <div class="form-row">
-      <base-input
-        required
-        @change="facilityTitleChange"
-        v-model:value="facilityTitle"
-        placeholder="Enter gym name"
-        label="What's the name of your gym"
-      />
+      <base-input required @change="facilityTitleChange" v-model:value="facilityTitle" placeholder="Enter gym name"
+        label="What's the name of your gym" class="form-row__input" />
     </div>
 
     <div class="form-row">
-      <base-input
-        :rows="3"
-        :maxlength="150"
-        label="Describe your gym"
-        @change="facilityDescriptionChange"
-        v-model:value="facilityDescription"
-        placeholder="Enter description for gym"
-      />
+      <base-input :rows="3" :maxlength="150" label="Describe your gym" @change="facilityDescriptionChange"
+        v-model:value="facilityDescription" placeholder="Enter description for gym" class="form-row__input" />
+    </div>
+
+    <div class="form-row">
+      <ion-label class="label font-yantramanav label-web"> Choose your gym location </ion-label>
+      <choose-block title="Location"
+        :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` : ''"
+        @handle-click="onChooseLocation" />
     </div>
 
     <div class="form-row">
@@ -48,13 +34,10 @@
         @handle-click="onChooseLocation"
         :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`: ''"
       /> -->
-      <GMapAutocomplete
-        placeholder="Enter your address"
-        class="search-form__control"
-        :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}`: ''"
-        :class="{'search-form__control--on-focus': isFocused}"
-        @place_changed="setPlace">
-      </GMapAutocomplete>
+      <!-- <GMapAutocomplete placeholder="Enter your address" class="search-form__control"
+        :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` : ''"
+        :class="{ 'search-form__control--on-focus': isFocused }" @place_changed="setPlace">
+      </GMapAutocomplete> -->
       <!-- <ion-label class="label"> Choose your gym location </ion-label>
       <choose-block
         title="Location"
@@ -109,48 +92,25 @@
 
     <div class="form-row">
       <ion-label class="label"> Choose equipment and amenitites </ion-label>
-      <choose-block
-        class="form-row__control cursor-pointer"
-        title="Equipment and amenities"
-        @handle-click="onChooseAmenities"
-        :value="facilityEquipments?.length + facilityAmenities?.length || ''"
-      />
+      <choose-block class="form-row__control cursor-pointer" title="Equipment and amenities"
+        @handle-click="onChooseAmenities" :value="facilityEquipments?.length + facilityAmenities?.length || ''" />
     </div>
 
-    <div
-      class="actions-wrapper"
-      :class="{ 'actions-wrapper--fixed': footerFixed }"
-    >
-      <ion-button
-        expand="block"
-        class="secondary create-btn cursor-pointer"
-        @click="onSaveAndExit"
-        v-if="!edit"
-        :disabled="
-          !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
-        "
-      >
+    <div class="actions-wrapper" :class="{ 'actions-wrapper--fixed': footerFixed }">
+      <ion-button expand="block" class="secondary create-btn cursor-pointer" @click="onSaveAndExit" v-if="!edit"
+        :disabled="!facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
+          ">
         Add New Gym
       </ion-button>
-      <ion-button
-        expand="block"
-        class="secondary create-btn cursor-pointer"
-        @click="onNext"
-        v-if="edit"
-        :disabled="
-          !facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
-        "
-      >
+      <ion-button expand="block" class="secondary create-btn cursor-pointer" @click="onNext" v-if="edit" :disabled="!facilityTitle?.length || !facilityPhotos?.length || !selectedAddress
+        ">
         {{ nextButtonText }}
       </ion-button>
     </div>
   </div>
   <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
   <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
-  <equipment-and-amenities
-    ref="equipmentAndAmenitiessModal"
-    @cancel="equipmentAndAmenitiessSelected"
-  />
+  <equipment-and-amenities ref="equipmentAndAmenitiessModal" @cancel="equipmentAndAmenitiessSelected" />
 </template>
 
 <script setup lang="ts">
@@ -181,6 +141,7 @@ import {
   NativeGeocoderResult,
 } from "@awesome-cordova-plugins/native-geocoder";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
+import BaseInput from "@/general/components/base/BaseInput.vue";
 
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 
@@ -201,11 +162,11 @@ const props = withDefaults(
     nextButton?: boolean;
     footerFixed?: boolean;
     edit?: boolean;
-    showHeader?:boolean;
-  }>(),{
-    edit: false,
-    showHeader: true
-  }
+    showHeader?: boolean;
+  }>(), {
+  edit: false,
+  showHeader: true
+}
 );
 
 const router = useRouter();
@@ -266,7 +227,7 @@ const onChooseLocation = () => {
   chooseLocationModal.value?.present({
     title: "Address",
   });
-}
+};
 
 const chooseAddressModal = ref<typeof ChooseAddressModal | null>(null);
 
@@ -288,9 +249,9 @@ const chooseCity = () => {
 };
 
 const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
-  let street_number =''
-  let route =''
-  const address:NativeGeocoderResult = {
+  let street_number = '';
+  let route = '';
+  const address: NativeGeocoderResult = {
     latitude: gmObj.geometry.location.lat().toString(),
     longitude: gmObj.geometry.location.lng().toString(),
     countryCode: '',
@@ -303,50 +264,41 @@ const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
     thoroughfare: '',
     subThoroughfare: '',
     areasOfInterest: []
-  }
-  for (let i=0; i < gmObj.address_components.length; i++)
-  {
-    if(gmObj.address_components[i].types.includes("postal_code"))
-    {
+  };
+  for (let i = 0; i < gmObj.address_components.length; i++) {
+    if (gmObj.address_components[i].types.includes("postal_code")) {
       address.postalCode = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("locality"))
-    {
+    if (gmObj.address_components[i].types.includes("locality")) {
       address.locality = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("subLocality"))
-    {
+    if (gmObj.address_components[i].types.includes("subLocality")) {
       address.subLocality = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("country"))
-    {
+    if (gmObj.address_components[i].types.includes("country")) {
       address.countryName = gmObj.address_components[i].long_name;
       address.countryCode = gmObj.address_components[i].short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_1"))
-    {
+    if (gmObj.address_components[i].types.includes("administrative_area_level_1")) {
       address.administrativeArea = gmObj.address_components[i].short_name;
     }
-    if(gmObj.address_components[i].types.includes("administrative_area_level_2"))
-    {
+    if (gmObj.address_components[i].types.includes("administrative_area_level_2")) {
       address.subAdministrativeArea = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("street_number"))
-    {
+    if (gmObj.address_components[i].types.includes("street_number")) {
       street_number = gmObj.address_components[i].long_name;
     }
-    if(gmObj.address_components[i].types.includes("route"))
-    {
+    if (gmObj.address_components[i].types.includes("route")) {
       route = gmObj.address_components[i].long_name;
     }
   }
-  address.thoroughfare = street_number + " " + route
+  address.thoroughfare = street_number + " " + route;
   return address;
-}
+};
 const setPlace = (place: any) => {
   if (place) {
-    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value)
-    const address = gmapObjToNativeGeocoderResultObject(place)
+    console.log("selected place", selectedState.value, selectedCity.value, selectedAddress.value);
+    const address = gmapObjToNativeGeocoderResultObject(place);
     if (address.locality) {
       getCityByName({
         first: 15,
@@ -354,12 +306,12 @@ const setPlace = (place: any) => {
         state_code: address.administrativeArea,
       })?.then(async (res) => {
         const res_city = res.data.cities.data[0];
-        console.log("selected city", res_city)
+        console.log("selected city", res_city);
         store.setAddress(res_city?.state, res_city, address);
-      })
+      });
     }
   }
-}
+};
 
 const chooseAddress = () => {
   chooseAddressModal.value?.present({
@@ -367,9 +319,9 @@ const chooseAddress = () => {
     title: "Choose your address",
     selected: selectedAddress.value?.latitude
       ? {
-          lat: Number(selectedAddress.value?.latitude),
-          lng: Number(selectedAddress.value?.longitude),
-        }
+        lat: Number(selectedAddress.value?.latitude),
+        lng: Number(selectedAddress.value?.longitude),
+      }
       : null,
     state: selectedState.value,
     city: selectedCity.value,
@@ -466,7 +418,7 @@ const onNext = () => {
 
 const cancel = () => {
   emits("cancel");
-}
+};
 
 const clearStore = () => {
   store.clear();
@@ -512,6 +464,7 @@ defineExpose({
     --background: #E1DBC5;
     color: #262626;
   }
+
   // .button {
   //   margin: 0 8px;
   //   flex: 1 1 calc(59% - 16px);
@@ -522,6 +475,7 @@ defineExpose({
   //   }
   // }
 }
+
 .search-form {
   position: relative;
   padding: calc(16px + var(--ion-safe-area-top)) 24px 0;
@@ -551,6 +505,7 @@ defineExpose({
     --box-shadow: inset 0 0 0 0.8px var(--gray-600);
   }
 }
+
 .address-container {
   display: flex;
   min-height: 48px;
@@ -561,6 +516,7 @@ defineExpose({
   background: var(--gray-700);
   justify-content: space-between;
 }
+
 .address-content {
   font-weight: 300;
   font-size: 14px;
@@ -579,6 +535,7 @@ defineExpose({
   border-radius: 8px;
   border: 1px solid #ffffff99;
 }
+
 .cursor-pointer {
   cursor: pointer;
 }

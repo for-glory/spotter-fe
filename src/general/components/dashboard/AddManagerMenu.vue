@@ -1,144 +1,80 @@
 <template>
-	<ion-menu menu-id="add-manager-menu" :swipe-gesture="false" @ion-did-close="sideMenuStore.setToDefault()" side="end" content-id="main-content"  class="add-manager-panel">
+  <ion-menu menu-id="add-manager-menu" :swipe-gesture="false" @ion-did-close="sideMenuStore.setToDefault()" side="end"
+    content-id="main-content" class="add-manager-panel">
     <ion-header class="ion-no-border">
       <ion-toolbar class="title">
         <!-- <ion-menu-toggle slot="start" class="back-btn" :auto-hide="false" > -->
-          <IonButton fill="clear" size="small" shape="round" slot="start" @click="onBack">
-            <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
-          </IonButton>
+        <IonButton fill="clear" size="small" shape="round" slot="start" @click="onBack">
+          <ion-icon src="assets/icon/arrow-back.svg"></ion-icon>
+        </IonButton>
         <!-- </ion-menu-toggle> -->
         <ion-title>{{ options.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
+
       <div class="tile" v-if="options.showImg">
         <IonLabel>Choose profile photo</IonLabel>
         <photos-loader />
       </div>
+
       <div class="tile">
-        <base-input
-          label="Full name"
-          gray-input
-          placeholder="First name, Last name"
-          name="first-last-name"
-          class="form-row__control"
-          required
-        />
+        <base-input label="Full name" gray-input placeholder="First name, Last name" name="fullName"
+          class="form-row__input-web" v-model:value="fullName" required :error-message="fullNameError" />
       </div>
-      <!-- <div class="tile">
-        <base-input
-          label="Last name"
-          v-model:value="lastName"
-          :error-message="lastNameError"
-          placeholder="Last Name"
-          name="lastName"
-          class="form-row__control"
-          required
-        />
+
+      <div class="tile">
+        <base-input label="Email" gray-input v-model:value="emailInput" :error-message="emailInputError" type="email"
+          placeholder="Enter email address" class="form-row__input-web" />
+      </div>
+
+      <div class="tile">
+        <base-input label="Phone" gray-input v-model:value="phoneNumber" name="phone" class="form-row__input-web"
+          placeholder="Enter phone number" />
+      </div>
+
+      <!-- <div class="tile ion-margin-bottom">
+        <ion-label class="form-label">Date Of Birth</ion-label>
+        <choose-block :title="selectDate" add-border is-light-item end-icon-color="var(--gray-500)"
+          :value="birth ? dayjs(birth).format('D MMMM') : ''"
+          @handle-click="showDatePikerModal(DateFieldsEnum.birth, { title: 'Date of birth', })" />
       </div> -->
-      <div class="tile">
-        <base-input
-          label="Email"
-          gray-input
-          v-model:value="emailInput"
-          :error-message="emailInputError"
-          type="email"
-          placeholder="Enter email address"
-        />
+
+      <div class="tile ion-margin-bottom">
+        <ion-label class="form-label"> Date of Birth </ion-label>
+        <choose-block title="Date of Birth" :value="managerBOD ? dayjs(managerBOD).format('D MMMM YYYY') : ''" @handle-click="
+          showDatePikerModal('DOB', managerBOD, {
+            min: 0,
+            title: 'Date of Birth',
+          })
+          " />
       </div>
-      <div class="tile">
-        <base-input
-          label="Phone"
-          gray-input
-          v-model:value="postal"
-          name="phone"
-          class="form-row__control"
-          placeholder="Enter phone number"
-        />
+
+      <div class="tile ion-margin-bottom">
+        <ion-label class="form-label">Address</ion-label>
+        <ChooseBlock title="Address" end-icon-color="var(--gray-500)" add-border :value="selectedAddress?.street ?? ''"
+          @handle-click="openLocationModal" :isLightItem="true" />
       </div>
-      <div class="tile">
-        <ion-label>Date Of Birth</ion-label>
-        <!-- <ion-input placeholder="DD/MM/YY"
-          :value="eventStartDate ? dayjs(eventStartDate).format('D MMMM') : ''"
-          @click="
-            showDatePikerModal(DateFieldsEnum.StartDate, eventStartDate, {
-              title: 'Start date',
-            })
-          "
-        ></ion-input> -->
-        <!-- <base-input
-          v-model:value="birth"
-          type="date"
-          name="birth"
-          class="form-row__control"
-        /> -->
-        <!-- <ion-item class="address-input ion-no-padding" lines="none"> -->
-          <choose-block
-            :title="selectDate" add-border is-light-item
-            end-icon-color="var(--gray-500)"
-            :value="birth ? dayjs(birth).format('D MMMM') : ''"
-            @handle-click="showDatePikerModal(DateFieldsEnum.birth, {title: 'Date of birth',})"
-          />
-        <!-- </ion-item> -->
+
+      <div class="tile ion-margin-bottom">
+        <CustomSelection choose-block border-color="var(--gray-600)" active-bg-color="var(--gray-700)"
+          label="Employment Type" placeholder="Full Time" :selected-value="selectedEmpType"
+          @select-change="(e) => selectedEmpType = e" :options="empOptions" />
       </div>
+
       <div class="tile">
-         <ion-label>Address</ion-label>
-        <ChooseBlock title="Address" end-icon-color="var(--gray-500)" add-border :value="selectedAddress" @handle-click="openLocationModal" :isLightItem="true" />
-        <!-- <ion-item class="address-input" lines="none">
-          <GMapAutocomplete
-            placeholder="Enter your address"
-            class="search-form__control form-row__control"
-            @place_changed="setPlace"
-          >
-          </GMapAutocomplete>
-        </ion-item>  -->
+        <base-input label="Tax ID" gray-input v-model:value="taxId" placeholder="Enter Tax ID" name="taxId"
+          class="form-row__input-web" :error-message="taxIdError" />
       </div>
-      <div class="tile">
-        <CustomSelection choose-block 
-                        border-color="var(--gray-600)"
-                        active-bg-color="var(--gray-700)"
-                        label="Employment Type" 
-                        placeholder="Full Time" 
-                        :selected-value="selectedEmpType"
-                        @select-change="(e) => selectedEmpType = e"
-                        :options="empOptions" />
-        <!-- <ion-item class="address-input" lines="none"> -->
-          <!-- <ion-input placeholder="Full Time"></ion-input> -->
-          <!-- <ion-select
-            interface="popover"
-            placeholder="Select type"
-          >
-            <ion-select-option>Full Time</ion-select-option>
-            <ion-select-option>Contract</ion-select-option>
-          </ion-select>
-        </ion-item> -->
-      </div>
-      <div class="tile">
-        <base-input
-          label="Tax ID"
-          gray-input
-          v-model:value="taxId"
-          placeholder="Enter Tax ID"
-          name="taxId"
-          class="form-row__control"
-        />
-      </div>
-      <ion-menu-toggle>
-        <ion-button class="add-manager-btn" @click="addManager">Send Invitation</ion-button>
-      </ion-menu-toggle>
+
+      <ion-button class="add-manager-btn" :disabled="!isValidForm" @click="addManager">Add Team Member</ion-button>
     </ion-content>
   </ion-menu>
-  <ChooseLocationModal ref="chooseLocationModal" title="Address" :forAddress="true" :is-web-view="true" @select="addressSelected" />
-  <!-- <date-picker-modal ref="datePickerModal" @select="dateSelected" /> -->
-  <date-picker-modal ref="datePickerModal" @select="dateSelected" />
-  <discard-changes
-    :is-open="isConfirmedModalOpen"
-    @close="discardModalClosed"
-    title="Do you want to discard changes?"
-    text="Changes will not be saved"
-    cancelButton="Cancel"
-    button="Discard changes"
-  />
+
+  <ChooseLocationModal ref="chooseLocationModal" title="Address" :is-web-view="true" @select="(addressSelected as any)" />
+  <date-picker-modal ref="datePickerModal" @select="(dateSelected as any)" />
+  <discard-changes :is-open="isConfirmedModalOpen" @close="discardModalClosed" title="Do you want to discard changes?"
+    text="Changes will not be saved" cancelButton="Cancel" button="Discard changes" />
 </template>
 
 <script setup lang="ts">
@@ -146,7 +82,6 @@ import {
   IonButton,
   IonTitle,
   IonIcon,
-  IonMenuToggle,
   IonMenu,
   IonContent,
   IonToolbar,
@@ -162,78 +97,68 @@ import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import CustomSelection from "@/general/views/dashboard/settings/CustomSelection.vue";
 import {
   FilePreloadDocument,
-  EmploymentTypeEnum,
-  CitiesDocument,
   RoleEnum,
-  CreateManagerDocument
+  CreateManagerDocument,
+  Address,
+  EmploymentTypeEnum
 } from "@/generated/graphql";
-import { useLazyQuery, useMutation } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import { useField } from "vee-validate";
 import { requiredFieldSchema, emailSchema } from "@/validations/authValidations";
 import { City, State } from "@/generated/graphql";
-import PhotoLoader from "@/general/components/blocks/PhotoLoader.vue";
-import { ref, toRef, computed } from "vue";
-import { useRouter } from "vue-router";
-import useId from "@/hooks/useId";
-import useFacilityId from "@/hooks/useFacilityId";
+import { ref, computed } from "vue";
 import dayjs from "dayjs";
-import useRoles from "@/hooks/useRole";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { v4 as uuidv4 } from "uuid";
 import { toastController } from "@ionic/vue";
 import {
   DatePickerModalResult,
-  DatePickerOptions,
 } from "@/interfaces/DatePickerModal";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import {
-  NativeGeocoderResult,
-} from "@awesome-cordova-plugins/native-geocoder";
 import DiscardChanges from "@/general/components/modals/confirmations/DiscardChanges.vue";
 import { useSideMenu } from "@/general/stores/sideMenuStore";
 import { storeToRefs } from "pinia";
+import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 
-interface MenuCustomEvent<T = any> extends CustomEvent {
-  detail: T;
-  target: HTMLIonMenuElement;
-}
-enum DateFieldsEnum {
-  birth = "BIRTH_DATE"
-}
+
 const isConfirmedModalOpen = ref(false);
-const selectedEmpType = ref(null)
+const selectedEmpType = ref({
+  title: "Full Time",
+  value: EmploymentTypeEnum.FullTime as string
+});
 const empOptions = [
   {
     title: "Full Time",
-    value: "Full Time"
+    value: EmploymentTypeEnum.FullTime
   },
   {
     title: "Contract",
-    value: "Contract"
+    value: EmploymentTypeEnum.PartTime
   }
 ];
 
 const sideMenuStore = useSideMenu();
 const { options, values } = storeToRefs(sideMenuStore);
-const selectDate = ref('DD/MM/YY')
+const managerBOD = ref<any>();
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
-const filter = ref<string>('profile');
-const imageUrl = ref<string>('');
+// const filter = ref<string>('profile');
+// const imageUrl = ref<string>('');
 
-const { id: myId } = useId();
-const { id: myFacilityId } = useFacilityId();
-const { role: myRole } = useRoles();
+// const { id: myId } = useId();
+// const { id: myFacilityId } = useFacilityId();
+// const { role: myRole } = useRoles();
 
-const { id } = JSON.parse(localStorage.getItem("user") || "{}");
+// const { id } = JSON.parse(localStorage.getItem("user") || "{}");
 
-const router = useRouter();
+// const router = useRouter();
 const currentFacility = useFacilityStore();
 
-const selectedState = ref<State | null>(null);
-const selectedCity = ref<City | null>(null);
-const selectedAddress = ref<NativeGeocoderResult | null>(null);
+// const selectedState = ref<State | null>(null);
+// const selectedCity = ref<City | null>(null);
+// const selectedAddress = ref<NativeGeocoderResult | null>(null);
+const selectedAddress = ref<Address>();
 
 
 const previewOnLoading = ref<boolean>(false);
@@ -241,13 +166,18 @@ const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
 const percentLoaded = ref<number | undefined>();
 
-const { value: firstName, errorMessage: firstNameError } = useField<string>(
-  "firstName",
-  requiredFieldSchema
-);
+// const { value: firstName, errorMessage: firstNameError } = useField<string>(
+//   "firstName",
+//   requiredFieldSchema
+// );
 
-const { value: lastName, errorMessage: lastNameError } = useField<string>(
-  "lastName",
+// const { value: lastName, errorMessage: lastNameError } = useField<string>(
+//   "lastName",
+//   requiredFieldSchema
+// );
+
+const { value: fullName, errorMessage: fullNameError } = useField<string>(
+  "fullName",
   requiredFieldSchema
 );
 
@@ -256,19 +186,26 @@ const { value: emailInput, errorMessage: emailInputError, setValue: setEmailValu
   emailSchema
 );
 
-const { value: postal } = useField<string>(
-  "postal",
+const { value: phoneNumber } = useField<string>(
+  "phoneNumber",
 );
 
-const { value: taxId } = useField<string>(
+const { value: taxId, errorMessage: taxIdError } = useField<string>(
   "taxId",
+  requiredFieldSchema
 );
 
-const { value: birth } = useField<string>(
-  "birth",
+const isValidForm = computed(
+  () =>
+    !!(
+      !fullNameError.value &&
+      !emailInputError.value &&
+      !taxIdError.value &&
+      fullName.value &&
+      emailInput.value &&
+      taxId.value
+    )
 );
-
-const isValidForm = computed(() => !emailInputError.value && emailInput.value);
 
 let abort: any;
 
@@ -289,44 +226,24 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
 const { mutate } = useMutation(CreateManagerDocument);
 
 const addManager = () => {
-  console.log({
-    avatar: previewPath.value,
-    email: emailInput.value,
-    facility_id: currentFacility.facility.id,
-    first_name: firstName.value,
-    last_name: lastName.value,
-    role: RoleEnum.Manager,
-    tax_id: taxId.value,
-    postal: postal.value,
-    birth: dayjs(birth.value).format("YYYY-MM-DD HH:mm:ss"),
-  })
   if (isValidForm.value) {
     mutate({
       input: {
         address: {
-          lat: selectedAddress.value?.latitude
-            ? Number(selectedAddress.value.latitude)
-            : 34.034744,
-          lng: selectedAddress.value?.longitude
-            ? Number(selectedAddress.value.longitude)
-            : -118.2381,
-          street: `${
-            selectedAddress.value?.thoroughfare
-              ? selectedAddress.value?.thoroughfare + ", "
-              : ""
-          }${selectedAddress.value?.subThoroughfare || ""}`,
-          city_id: selectedCity.value?.id,
+          lat: selectedAddress.value?.lat,
+          lng: selectedAddress.value?.lng,
+          street: selectedAddress.value?.street,
+          city_id: selectedAddress.value?.city?.id,
         },
         avatar: previewPath.value,
         email: emailInput.value,
         facility_id: currentFacility.facility.id,
-        first_name: firstName.value,
-        last_name: lastName.value,
+        first_name: fullName.value.split(' ')[0],
+        last_name: fullName.value.split(' ')[1],
         role: RoleEnum.Manager,
-        // employment_type: EmploymentTypeEnum.value,
+        employment_type: selectedEmpType.value.value,
         tax_id: taxId.value,
-        postal: postal.value,
-        birth: dayjs(birth.value).format("YYYY-MM-DD HH:mm:ss"),
+        birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
       },
     })
       .then(async () => {
@@ -347,21 +264,28 @@ const addManager = () => {
           cssClass: "warning-toast",
         });
         toast.present();
-        console.error(error)
-      });
+        console.error(error);
+      }).finally(() => menuController.close());
   }
-}
+};
 
-const addressSelected = () => {
-  console.log("addressSelected");
-}
+const addressSelected = (e: ChooseAddresModalResult) => {
+  console.log('selected address', e);
+  selectedAddress.value = {
+    city: { ...e.city as any },
+    street: e.address?.thoroughfare ? e.address?.thoroughfare : e.address?.subThoroughfare,
+    lat: Number(e.address?.latitude),
+    lng: Number(e.address?.longitude),
+    id: e.city?.id as string
+  };
+};
 
 const openLocationModal = () => {
-  console.log('openLocationModal');  
+  console.log('openLocationModal');
   chooseLocationModal.value?.present({
     title: "Address",
   });
-}
+};
 const removePhoto = () => {
   previewUrl.value = "";
 };
@@ -379,7 +303,7 @@ const photoSelected = async (value: string): Promise<void> => {
     .then((res) => {
       previewPath.value = res?.data.filePreload.path;
       previewUrl.value = `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`;
-      
+
       previewOnLoading.value = false;
       percentLoaded.value = undefined;
     })
@@ -399,91 +323,6 @@ const photoSelected = async (value: string): Promise<void> => {
     });
 };
 
-const gmapObjToNativeGeocoderResultObject = (gmObj: any) => {
-  let street_number =''
-  let route =''
-  const address:NativeGeocoderResult = {
-    latitude: gmObj.geometry.location.lat().toString(),
-    longitude: gmObj.geometry.location.lng().toString(),
-    countryCode: '',
-    countryName: '',
-    postalCode: '',
-    administrativeArea: '',
-    subAdministrativeArea: '',
-    locality: '',
-    subLocality: '',
-    thoroughfare: '',
-    subThoroughfare: '',
-    areasOfInterest: []
-  }
-  for (let i=0; i < gmObj?.address_components.length; i++)
-  {
-    if(gmObj?.address_components[i]?.types.includes("postal_code"))
-    {
-      address.postalCode = gmObj?.address_components[i]?.long_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("locality"))
-    {
-      address.locality = gmObj?.address_components[i]?.long_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("subLocality"))
-    {
-      address.subLocality = gmObj?.address_components[i]?.long_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("country"))
-    {
-      address.countryName = gmObj?.address_components[i]?.long_name;
-      address.countryCode = gmObj?.address_components[i]?.short_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("administrative_area_level_1"))
-    {
-      address.administrativeArea = gmObj?.address_components[i]?.short_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("administrative_area_level_2"))
-    {
-      address.subAdministrativeArea = gmObj?.address_components[i]?.long_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("street_number"))
-    {
-      street_number = gmObj?.address_components[i]?.long_name;
-    }
-    if(gmObj?.address_components[i]?.types.includes("route"))
-    {
-      route = gmObj?.address_components[i]?.long_name;
-    }
-  }
-  address.thoroughfare = street_number + " " + route
-  return address;
-}
-
-const setPlace = (place: any) => {
-  if (place) {
-    const address = gmapObjToNativeGeocoderResultObject(place)
-    if (address.locality) {
-      getCityByName({
-        first: 15,
-        name: address.locality,
-        state_code: address.administrativeArea,
-      })?.then(async (res) => {
-        const res_city = res?.data?.cities?.data[0];
-        console.log("selected city", res_city)
-        selectedState.value = res_city.state;
-        selectedCity.value = res_city;
-        selectedAddress.value = address;
-      })
-    }
-  }
-}
-
-const { load: getCities, refetch: getCityByName } = useLazyQuery(
-  CitiesDocument,
-  {
-    first: 15,
-    name: "",
-    state_code: "",
-  }
-);
-getCities();
 
 // const dateSelected = (result: DatePickerModalResult) => {
 //   switch (result.field) {
@@ -508,14 +347,15 @@ getCities();
 
 const showDatePikerModal = (
   field: string,
-  options?: DatePickerOptions
+  value?: any,
+  options?: any
 ) => {
-  datePickerModal.value?.present({ field, options });
+  datePickerModal.value?.present({ field, value, options });
 };
 
 const dateSelected = (result: DatePickerModalResult) => {
   if (result.date) {
-    selectDate.value = dayjs(new Date(result?.date)).format('DD/MM/YY')
+    managerBOD.value = result?.date;
   }
 };
 
@@ -543,6 +383,11 @@ const discardModalClosed = async (approved: boolean) => {
   --width: 375px;
 }
 
+ion-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+}
+
 .title {
   position: relative;
   text-align: center;
@@ -566,6 +411,7 @@ const discardModalClosed = async (approved: boolean) => {
     --border-radius: 50%;
   }
 }
+
 .back-btn {
   position: absolute;
   inset: 0;
@@ -588,6 +434,7 @@ const discardModalClosed = async (approved: boolean) => {
     color: var(--gray-60);
   }
 }
+
 .image-upload {
   background-color: var(--main-color);
   width: 88px;
@@ -611,6 +458,7 @@ ion-button {
   max-height: 48px;
   width: 100%;
 }
+
 ion-input {
   border: solid;
   border-color: #FFFFFF6a;
@@ -620,9 +468,11 @@ ion-input {
   margin-bottom: 6px;
   --placeholder-color: var(--ion-color-medium);
 }
+
 ion-label {
   font: 400 14px/1 var(--ion-font-family);
 }
+
 .address-input {
   --color: var(--ion-color-white);
   --background: var(--gray-700);
@@ -634,9 +484,11 @@ ion-label {
   --padding-bottom: 0;
   --min-height: 46px;
   font-size: 14px;
+
   .choose-place {
     width: 100%;
   }
+
   .form-row__control {
     background-color: transparent;
     border: none;
@@ -645,13 +497,16 @@ ion-label {
     margin: 0;
     height: 100%;
   }
+
   ion-input {
     border: none !important;
   }
+
   ion-select {
     width: 100%;
   }
 }
+
 .add-manager-btn {
   margin-top: 20.4%;
 }
@@ -660,5 +515,12 @@ ion-label {
   .add-manager-panel {
     --width: 100% !important;
   }
+}
+
+.form-label {
+  font-family: Lato;
+  font-size: 14px;
+  font-style: normal;
+  margin-top: 8px;
 }
 </style>

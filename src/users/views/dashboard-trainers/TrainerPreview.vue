@@ -48,9 +48,7 @@
                         </div>
                         <div class="info-section">
                             <ion-text class="info-section__title mb-10">Description:</ion-text>
-                            <ion-text class="info-section__desc">Want your body to be healthy? Join our program with
-                                directions according to body’s goals. Increasing physical strength is the goal of strenght
-                                training.</ion-text>
+                            <ion-text class="info-section__desc">{{ user?.description }}</ion-text>
                         </div>
                         <div class="reviews d-flex justify-content-between">
                             <div class="d-flex align-items-center flex-2">

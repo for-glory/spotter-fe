@@ -6,12 +6,12 @@
     id="main-content"
 	>
     <div class="banner">
-      <ion-title class="banner__title">Teams</ion-title>
+      <ion-title class="banner__title">Team Members</ion-title>
     </div>
     <div class="content-container">
       <div class="content-box d-flex justify-content-end tool-bar">
         <ion-menu-toggle :auto-hide="false" @click="onMenuClick">
-          <ion-button expand="block">Invite Team Member</ion-button>
+          <ion-button expand="block">Add New Team Member</ion-button>
         </ion-menu-toggle>
       </div>
       <ion-spinner
@@ -19,7 +19,7 @@
         name="lines"
         class="spinner"
       />
-      <div class="d-flex justify-content-between" v-else>
+      <div class="d-flex justify-content-between" v-else-if="managers?.length">
         <div class="flex-auto">
           <table class="manager-table">
             <thead>
@@ -47,24 +47,28 @@
                   <ion-text>{{ `${manager.first_name} ${manager.last_name}` }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text>{{ manager.employment_type }}</ion-text>
+                  <ion-text>{{ manager?.type ?? 'Full Time' }}</ion-text>
                 </td>
                 <td class="table-td">
                   <ion-text>${{ manager.email }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text>{{ manager.phone }}</ion-text>
+                  <ion-text>{{ manager?.phone ? manager.phone : 'N/A' }}</ion-text>
                 </td>
                 <td class="table-td edit-btn">
-                  <ion-button expand="block" fill="outline" @click="handleEdit(manager.id)" class="edit-button">
-                    <ion-icon slot="icon-only" src="assets/icon/three-dot.svg"></ion-icon>
+                  <ion-button expand="block" fill="outline" @click="handleEdit(manager.id)" class="edit-button ion-no-padding">
+                    <ion-icon :icon="ellipsisVertical" />
                   </ion-button>
+                  <!-- <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
+                            <ion-icon :icon="ellipsisVertical" />
+                        </ion-button> -->
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
+      <empty-block v-else hide-button hide-icon title="Team Manager List is Empty" text="No Team Member added yet" />
     </div>
 	</div>
   <base-layout v-else>
@@ -172,6 +176,8 @@ import { Capacitor } from '@capacitor/core';
 import { v4 as uuidv4 } from "uuid";
 import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useSideMenu } from "@/general/stores/sideMenuStore";
+import { ellipsisVertical } from "ionicons/icons";
+import EmptyBlock from "@/general/components/EmptyBlock.vue";
 
 
 const filter = ref<string>('profile');
@@ -186,7 +192,7 @@ const { result, loading } = useQuery(GetManagersByFacilityDocument, {
 });
 
 const managers = computed(() => {
-  return result.value?.managers.data.filter(item => item.email_verified_at);
+  return result.value?.managers.data
 });
 
 const router = useRouter();
@@ -309,7 +315,10 @@ const handleEdit = (id) => {
   
   ion-button {
     height: 36px;
-    width: 42px;
+    width: 36px;
+    ion-icon {
+      font-size: 20px;
+    }
   }
 }
 

@@ -1,62 +1,60 @@
 <template>
-  <ion-spinner
-        v-if="loading"
-        name="lines"
-        class="spinner"
-      />
-	<div
-		class="holder-content ion-padding-horizontal"
-		:class="{ 'holder-content--empty': !loading }"
-    v-else
-	>
+  <ion-spinner v-if="loading" name="lines" class="spinner" />
+  <div class="holder-content ion-padding-horizontal" :class="{ 'holder-content--empty': !loading }" v-else>
     <div class="banner d-flex justify-content-between align-items-center">
-      <ion-title class="banner__title">Gym Manager Profile</ion-title>
-      <ion-button expand="block">Edit</ion-button>
+      <ion-title class="banner__title">Team Member Profile</ion-title>
     </div>
-    <div class="content-container">
-      <div class="profile-field">
-        <div class="contact-field">
-          <ion-avatar class="photo">
-            <ion-img v-if="manager.avatarUrl" :src="manager.avatarUrl"></ion-img>
-            <template v-else>
-              {{ manager.first_name?.charAt(0) }}
-            </template>
-          </ion-avatar>
-          <ion-label class="name">
-            {{ `${manager.first_name} ${manager.last_name}`}}
-          </ion-label>
-          <!-- <ion-text class="contact">{{ manager.employment_type }}</ion-text> -->
-          <ion-text class="contact">{{ manager.email }}</ion-text>
-          <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
-        </div>
-        <div class="data-box">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex-col align-items-center data-box__item">
-              <ion-text>{{ dayjs(manager.birth).format("D MMMM YY") }}</ion-text>
-              <ion-text class="field-label">Birthday</ion-text>
-            </div>
-            <div class="vertical-line"/>
-            <div class="d-flex-col align-items-center data-box__item">
-              <ion-text>{{ manager.tax_id }}</ion-text>
-              <ion-text class="field-label">Tax ID</ion-text>
-            </div>
-            <div class="vertical-line"/>
-            <div class="d-flex-col align-items-center data-box__item">
-              <ion-text>{{ manager.postal }}</ion-text>
-              <ion-text class="field-label">Postal Code</ion-text>
-            </div>
+    <div class="d-flex">
+      <div class="content-container flex-2">
+        <div class="profile-field">
+          <div class="contact-field">
+            <ion-avatar class="photo">
+              <ion-img v-if="manager.avatarUrl" :src="manager.avatarUrl"></ion-img>
+              <template v-else>
+                {{ manager.first_name?.charAt(0) }}
+              </template>
+            </ion-avatar>
+            <ion-label class="name">
+              {{ `${manager.first_name} ${manager.last_name}` }}
+            </ion-label>
+            <!-- <ion-text class="contact">{{ manager.employment_type }}</ion-text> -->
+            <ion-text class="contact">{{ manager.email }}</ion-text>
+            <!-- <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text> -->
           </div>
-          <div class="horizontal-line"/>
-          <div>
-            <div class="d-flex-col align-items-center">
-              <ion-text>{{ `${manager.address?.street} ${manager.address?.city?.state?.name} ${manager.address?.city?.country?.name}`}}</ion-text>
-              <ion-text class="field-label">Address</ion-text>
+          <div class="data-box">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex-col align-items-center data-box__item">
+                <ion-text>{{ dayjs(manager.birth).format("D MMMM YY") }}</ion-text>
+                <ion-text class="field-label">Birthday</ion-text>
+              </div>
+              <div class="vertical-line" />
+              <div class="d-flex-col align-items-center data-box__item">
+                <ion-text>{{ manager.tax_id }}</ion-text>
+                <ion-text class="field-label">Tax ID</ion-text>
+              </div>
+              <div class="vertical-line" />
+              <div class="d-flex-col align-items-center data-box__item">
+                <ion-text>{{ manager.postal }}</ion-text>
+                <ion-text class="field-label">Postal Code</ion-text>
+              </div>
+            </div>
+            <div class="horizontal-line" />
+            <div>
+              <div class="d-flex-col align-items-center">
+                <ion-text>{{ `${manager.address?.street} ${manager.address?.city?.state?.name}
+                                  ${manager.address?.city?.country?.name}` }}</ion-text>
+                <ion-text class="field-label">Address</ion-text>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="d-flex flex-direction-column flex-1 btn-wrapper">
+        <ion-button>Edit</ion-button>
+        <ion-button class="add-gym-btn cursor-pointer" color="danger" fill="outline">Delete</ion-button>
+      </div>
     </div>
-	</div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -83,7 +81,7 @@ const route = useRoute();
 const { result, loading } = useQuery(UserDocument, {
   id: route.params.id
 });
-console.log(result.value)
+console.log(result.value);
 const manager = computed(() => {
   return result.value?.user ?? {
     first_name: "",
@@ -100,6 +98,7 @@ const manager = computed(() => {
   padding-right: 28px;
   padding-top: -40px;
 }
+
 .banner {
   width: 100%;
   position: relative;
@@ -115,6 +114,7 @@ const manager = computed(() => {
     line-height: normal;
   }
 }
+
 .content-container {
   padding-top: 51px;
   display: flex;
@@ -124,10 +124,11 @@ const manager = computed(() => {
   .top {
     margin-bottom: 40px;
   }
+
   .profile-field {
     display: flex;
     flex-direction: column;
-    gap:22px;
+    gap: 22px;
 
     .calendar-title {
       font: 20px/1 var(--ion-font-family);
@@ -135,9 +136,11 @@ const manager = computed(() => {
       padding: 0;
     }
   }
+
   .data-field {
     flex: auto;
   }
+
   .contact-field {
     display: flex;
     flex-direction: column;
@@ -148,7 +151,8 @@ const manager = computed(() => {
       font: 500 24px/1 var(--ion-font-family);
       color: var(--fitnesswhite);
     }
-    .contact{
+
+    .contact {
       font: 16px/1 var(--ion-font-family);
       color: var(--gray-400);
     }
@@ -158,6 +162,7 @@ const manager = computed(() => {
     }
   }
 }
+
 .content-box {
   background-color: var(--gray-700);
   padding-top: 34px;
@@ -167,6 +172,7 @@ const manager = computed(() => {
   border-radius: 8px;
   margin-bottom: 18px;
 }
+
 .data-box {
   background-color: var(--gray-700);
   padding-top: 15px;
@@ -188,15 +194,18 @@ const manager = computed(() => {
     padding-top: 4px;
   }
 }
+
 .notification-box {
   display: flex;
   flex-direction: column;
   gap: 17px;
 }
+
 .d-flex-col {
   display: flex;
   flex-direction: column;
 }
+
 .vertical-line {
   border: solid;
   border-width: 1px;
@@ -204,6 +213,7 @@ const manager = computed(() => {
   min-height: 32px;
   border-color: var(--main-color);
 }
+
 .horizontal-line {
   border: solid;
   border-width: 1px;
@@ -211,14 +221,22 @@ const manager = computed(() => {
   min-width: 70%;
   border-color: var(--main-color);
 }
+
 .spinner {
   display: block;
   pointer-events: none;
   margin: calc(30vh - 60px) auto 0;
 }
+
 .photo {
   width: 94px;
   height: 94px;
 }
-
+.btn-wrapper {
+  ion-button {
+    width: fit-content;
+    min-width: 173px;
+  }
+  align-items: flex-end;
+}
 </style>
