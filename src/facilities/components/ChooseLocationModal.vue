@@ -60,7 +60,7 @@
           </div>
         </template>
         <template v-else>
-          <div class="address-container" v-if="role !== RoleEnum.Trainer">
+          <div class="address-container" v-if="role === RoleEnum.User">
             <ion-text class="address-content">
               Enter address name
             </ion-text>
@@ -88,7 +88,8 @@ import {
   IonModal,
   IonLabel,
   IonItem,
-  IonIcon
+  IonIcon,
+  IonText
 } from "@ionic/vue";
 import { defineExpose, defineEmits, ref } from "vue";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";

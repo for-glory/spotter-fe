@@ -45,6 +45,7 @@ import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { NativeGeocoderResult } from "@awesome-cordova-plugins/native-geocoder";
 import { computed } from "@vue/reactivity";
+import facility from "@/general/stores/facility";
 
 const router = useRouter();
 const route = useRoute();
@@ -80,26 +81,25 @@ const deletePhoto = (id: string) => {
   deleteMediaMutate({ id });
 };
 
-const id = computed(() => result.value?.me?.owned_facilities[0].id);
+const id = computed(() => route.query.facilityId || '');
 
 onResult(({ data }) => {
-  const curFacility = data.me?.owned_facilities.filter(
+  const curFacility = data.me?.owned_facilities.find(
     (facility) => facility.id === route.query.facilityId
   );
-
-  if (curFacility?.length) {
+  if (curFacility) {
     store.setAddress(
-      curFacility[0].address?.city.state,
-      curFacility[0].address?.city,
+      curFacility.address?.city.state,
+      curFacility.address?.city,
       {
-        thoroughfare: curFacility[0].address?.street,
-        subThoroughfare: curFacility[0].address?.extra,
-        latitude: curFacility[0].address?.lat,
-        longitude: curFacility[0].address?.lng,
+        thoroughfare: curFacility.address?.street,
+        subThoroughfare: curFacility.address?.extra,
+        latitude: curFacility.address?.lat,
+        longitude: curFacility.address?.lng,
       } as NativeGeocoderResult
     );
 
-    const amenities = curFacility[0]?.amenities?.map((option) => {
+    const amenities = curFacility?.amenities?.map((option) => {
       return {
         id: option.id,
         label: option.name || "",
@@ -108,7 +108,7 @@ onResult(({ data }) => {
         iconUrl: option.iconUrl || undefined,
       };
     });
-    const equipments = curFacility[0]?.equipments?.map((option) => {
+    const equipments = curFacility?.equipments?.map((option) => {
       return {
         id: option.id,
         label: option.name || "",
@@ -117,16 +117,16 @@ onResult(({ data }) => {
         iconUrl: option.iconUrl || undefined,
       };
     });
-    curFacility[0].media?.map((option) => {
+    curFacility.media?.map((option) => {
       store.addPhoto({
         ...option,
         url: option.pathUrl,
       });
     });
     store.setAmenities(amenities);
-    store.setDescription(curFacility[0].description);
+    store.setDescription(curFacility.description);
     store.setEquipments(equipments);
-    store.setTitle(curFacility[0].name);
+    store.setTitle(curFacility.name);
   }
 });
 
@@ -167,7 +167,8 @@ const editFacility = () => {
         cssClass: "success-toast",
       });
       toast.present();
-      refetch();
+      // refetch();
+      router.back();
     })
     .catch(async (error) => {
       const toast = await toastController.create({

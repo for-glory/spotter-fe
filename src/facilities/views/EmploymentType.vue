@@ -1,7 +1,7 @@
 <template>
   <BaseLayout hide-navigation-menu>
     <template #header>
-      <PageHeader back-btn @back="$router.go(-1)" title="Employment Type" />
+      <PageHeader back-btn @back="$router.back()" title="Employment Type" />
     </template>
     <template #content>
       <div class="emp-container ion-padding">

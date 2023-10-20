@@ -1,5 +1,6 @@
 <template>
-    <div class="web-profile-edit d-flex">
+    <ion-spinner class="spinner" name="lines" v-if="profileOnDeleting"></ion-spinner>
+    <div v-else class="web-profile-edit d-flex">
         <div class="flex-1">
             <div class="d-flex align-items-center page-header">
                 <ion-icon src="assets/icon/arrow-back.svg" />
@@ -18,7 +19,8 @@
         subscriptionType !== SubscriptionsTierEnum.Gold
         " />
                     </template>
-                    <ChooseBlock class="delete-account" v-if="role === RoleEnum.User" is-web-item title="Delete account" :detail-icon="false" danger-title />
+                    <ChooseBlock class="delete-account" v-if="role === RoleEnum.User" is-web-item title="Delete account"
+                        :detail-icon="false" danger-title @handle-click="showModal"/>
                 </div>
             </div>
         </div>
@@ -31,6 +33,8 @@
             </div>
         </div>
     </div>
+    <confirmation :is-visible="showConfirmationModal" title="Do you want delete your account?"
+        description="Your account will be lost" button-text="Delete" @discard="onDeleteConfirmed" @decline="hideModal" />
 </template>
   
 <script setup lang="ts">
@@ -52,6 +56,8 @@ import {
     TrainerTypeEnum,
     UpdateUserDocument,
     SubscriptionsTierEnum,
+DeleteProfileDocument,
+SettingsCodeEnum,
 } from "@/generated/graphql";
 import useSubscription from "@/hooks/useSubscription";
 import { withDefaults, defineProps } from "vue";
@@ -69,6 +75,9 @@ import EditeProfile from "./client/EditProfile.vue";
 import Preference from "./client/Preference.vue";
 import Pronounce from "./client/Pronounce.vue";
 import SocialMedia from "./SocialMedia.vue";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { clearAuthItems } from "@/router/middleware/auth";
 
 withDefaults(
     defineProps<{
@@ -85,6 +94,7 @@ const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
 const percentLoaded = ref<number | undefined>();
+const { showConfirmationModal, hideModal, showModal } = useConfirmationModal();
 
 const router = useRouter();
 const route = useRoute();
@@ -101,8 +111,8 @@ const settingsCompo = {
     [EntitiesEnum.ProfileLocation]: Location,
     [EntitiesEnum.ProfilePronounce]: Pronounce,
     [EntitiesEnum.ProfileOrderConfirmation]: OrderConfirmation,
-    [EntitiesEnum.ProfileAddSocialLink]:SocialMedia
-}
+    [EntitiesEnum.ProfileAddSocialLink]: SocialMedia
+};
 const { id } = useId();
 
 let abort: any;
@@ -122,6 +132,22 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
 });
 
 const { mutate } = useMutation(UpdateUserDocument);
+
+const {
+  mutate: deleteProfile,
+  loading: profileOnDeleting,
+  onDone: profileDeleted,
+} = useMutation(DeleteProfileDocument);
+
+const onDeleteConfirmed = () => {
+  deleteProfile();
+  hideModal();
+};
+
+profileDeleted(() => {
+  clearAuthItems();
+  router.push({ name: EntitiesEnum.Login });
+});
 
 const removePhoto = () => {
     previewUrl.value = "";
@@ -224,7 +250,12 @@ const { onResult, refetch, result, loading } = useQuery(
 );
 
 onResult(({ data }) => {
-    previewUrl.value = data.me.avatarUrl;
+  previewUrl.value = data.me.avatarUrl;
+  data.me.settings.forEach((e: any)=>{
+    if(settings[e.setting.code]){
+      settings[e.setting.code] = e.value;
+    }
+  })
 });
 
 const onBack = () => {
@@ -241,7 +272,6 @@ const menuType =
 const menu = editProfileMenu[menuType];
 
 const webItemClick = (name: EntitiesEnum) => {
-    console.log("name", name);    
     filter.value = name;
 };
 
@@ -261,8 +291,9 @@ const goTo = (name: EntitiesEnum) => {
 };
 
 const settings = {
-    [EntitiesEnum.Language]: "English",
-    [EntitiesEnum.AppMode]: "Dark mode",
+  [SettingsCodeEnum.Language]: "English",
+  [SettingsCodeEnum.AppMode]: "System",
+  [SettingsCodeEnum.UserPronounce]: "She",
 };
 
 const isProfile = computed(
@@ -319,6 +350,7 @@ const trainerType = computed<TrainerTypeEnum>(
             top: 0;
         }
     }
+
     .flex-2-side-wrapper {
         padding-top: 78px;
         padding-right: 64px;
@@ -353,11 +385,14 @@ const trainerType = computed<TrainerTypeEnum>(
         font-size: 20px;
     }
 }
+
 .delete-account {
     margin-top: 20px;
 }
+
 .edit-profile-component {
     padding-left: 35px;
     padding-top: 14px;
-}</style>
+}
+</style>
   

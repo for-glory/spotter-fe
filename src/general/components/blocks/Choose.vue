@@ -83,6 +83,7 @@ const onClick = () => {
 
 <style scoped lang="scss">
 .choose-place {
+  cursor: pointer;
   font-size: 14px;
   font-weight: 300;
   line-height: 1.5;

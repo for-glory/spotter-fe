@@ -1,7 +1,7 @@
 <template>
   <div class="base-input-container" 
   :class="{ 
-    'form-row__input' : (role === RoleEnum.Trainer || role === RoleEnum.User),
+    'form-row__input' : (role === RoleEnum.Trainer || role === RoleEnum.User || role === RoleEnum.FacilityOwner),
     'form-row__input__web': fromSettings, 
     'font-lato': (role === RoleEnum.User && fromSettings),
     'font-lato-bold': fontLatoBold,
@@ -228,7 +228,7 @@ ion-note {
     }
   }
   ion-item {
-    ion-input {
+    ion-input,ion-textarea {
       font-family: "Yantramanav";
       font-weight: 300;
       --placeholder-opacity: 1;
