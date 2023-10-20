@@ -64,7 +64,7 @@
 					</div>
 					<div v-else class="offer-item" :key="item.id" v-for="item in offerList">
 						<div class="header-section">
-							<div class="name" @click="previewDaily(item.id)">{{ item.name }}</div>
+							<div class="name" @click="previewDaily(item)">{{ item.name }}</div>
 							<div class="trainer">{{ item.trainer }}</div>
 						</div>
 						<div class="detail-section">
@@ -74,11 +74,11 @@
 								<ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
 								<ion-text>{{ item.type }}</ion-text>
 							</div>
-							<div v-if="item.purchases > 0" class="total">
+							<div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
 								<ion-icon src="assets/icon/profile.svg"></ion-icon>
 								<ion-text>{{ item.totalUser }}</ion-text>
 							</div>
-							<ion-button v-else @click="purchaseWorkout(item.id)">Subscribe</ion-button>
+							<ion-button v-else @click="handleSubscribe(item.id)">Subscribe</ion-button>
 						</div>
 					</div>
 				</div>
@@ -106,7 +106,6 @@
 					</div>
 				</div>
 			</div>
-			<preview-daily-modal ref="dailyModal" />
 		</template>
 		<template #certificates>
 			<div v-for="certificate in user?.certificates" :key="certificate.id"
@@ -121,6 +120,20 @@
 			</div>
 		</template>
 	</detail>
+    <preview-daily-modal 
+        :daily="dailyData"  
+        :isOpen="isOpenPreviewModal"
+        @closeModal="onClosePreview"
+        :duration="myWorkouts.some((my: any) => my.id === selectedDailyId) ? 0 : 10"
+        @trialEnd="onTrialEnd"
+    />
+	<blurred-screen-modal
+		:is-open="isOpenBlurredScreenModal"
+		:preview-url="dailyData?.previewUrl"
+		@visibility="isOpenBlurredScreenModal = false"
+		@purchase-daily="purchaseWorkout"
+		:disabled="addToCartLoading"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -128,7 +141,7 @@ import { IonText, IonButton, IonSegment, IonIcon, IonSegmentButton, actionSheetC
 import { useRoute, useRouter } from "vue-router";
 import Detail from "@/general/components/Detail.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, FollowDocument, FollowTypeEnum, MeDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, RoleEnum, SettingsCodeEnum, SortOrder, TrainerTypeEnum, UserDocument, UnfollowDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, FollowDocument, FollowTypeEnum, MeDocument, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, RoleEnum, SettingsCodeEnum, SortOrder, TrainerTypeEnum, UserDocument, UnfollowDocument, WorkoutsDocument } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import ReviewSlides from "@/general/components/blocks/ratings/ReviewSlides.vue";
@@ -143,13 +156,17 @@ import useRoles from "@/hooks/useRole";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { ellipse } from "ionicons/icons";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 const route = useRoute();
 const router = useRouter();
 const { role } = useRoles();
 const segmentValue = ref('trainer');
-const dailyModal = ref<typeof PreviewDailyModal | null>(null);
 const isFollowed = ref(false);
 const isTrusted = ref(false);
+const dailyData = ref();
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
 
 const paymentProductsStore = paymentGatewaysStore();
 
@@ -160,6 +177,12 @@ const activeSegment = ref<EntitiesEnum>(
 const handleBuy = () => {
 	// router.push({ name: EntitiesEnum.FacilitySubscription });
 };
+
+const { result: myDailys, loading: myDailysLoading, refetch } = useQuery(MyWorkoutsDocument, {
+  first: 1000,
+});
+
+const myWorkouts = computed(() => myDailys.value?.myWorkouts?.data || []);
 
 const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
 	UserDocument,
@@ -203,12 +226,17 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
 	}
 }));
 
+const handleSubscribe = (id: number) => {
+	selectedDailyId.value = id;
+	purchaseWorkout();
+}
 const { mutate: addToCartMutation, loading: addToCartLoading } =
 	useMutation(AddToCartDocument);
-const purchaseWorkout = (id: string) => {
+const purchaseWorkout = () => {
+	console.log("selectedID", selectedDailyId)
 	addToCartMutation({
 		input: {
-			purchasable_id: id,
+			purchasable_id: selectedDailyId.value,
 			purchasable: AddToCartPurchasableEnum.Workout,
 		},
 	})
@@ -216,7 +244,7 @@ const purchaseWorkout = (id: string) => {
 			router.push({
 				name: EntitiesEnum.WorkoutOrder,
 				params: {
-					id: id,
+					id: selectedDailyId.value,
 				},
 				query: {
 					cart_id: res?.data?.addToCart?.id,
@@ -233,11 +261,10 @@ const purchaseWorkout = (id: string) => {
 			toast.present();
 		});
 };
-const previewDaily = (id: string) => {
-	router.push({
-		name: EntitiesEnum.UserPreviewDaily,
-        params: { id: route.params.id, dailyId: id },
-  });
+const previewDaily = (daily: any) => {
+	dailyData.value = daily;
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
 }
 
 const reviews = computed(() =>
@@ -434,6 +461,15 @@ const handleFollow = () => {
 const onOpenDocumet = async (url: string) => {
 	await Browser.open({ url: url });
 };
+
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
+}
 </script>
 
 <style scoped lang="scss">
