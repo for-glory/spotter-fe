@@ -355,6 +355,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.UserPreviewDaily,
+    path:"/users/trainers/preview-daily/:id(\\d+)/:dailyId(\\d+)",
+    component:() => import("@/users/views/workouts/PreviewDaily.vue"),
+    meta: {
+      middleware: [auth],
+    }
+  },
+  {
     name: EntitiesEnum.UserWorkoutPayment,
     path: "/users/workouts/:id(\\d+)/purchase",
     component: () => import("@/users/views/workouts/Payment.vue"),

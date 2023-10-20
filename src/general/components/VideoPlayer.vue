@@ -72,7 +72,7 @@ import { useRouter } from "vue-router";
 import { EntitiesEnum } from '@/const/entities';
 import "video.js/dist/video-js.css";
 import { Capacitor } from "@capacitor/core";
-
+import route from "@/router"
 const props = withDefaults(
   defineProps<{
     pathUrl: string;
@@ -176,7 +176,8 @@ const onBack = () => {
   if(props.backName === EntitiesEnum.UserWorkouts && !Capacitor.isNativePlatform()) {
     router.push({ name: EntitiesEnum.DashboardClientDailys });
   } else {
-    router.push({ name: props.backName });
+    // router.push({ name: props.backName });
+    route.go(-1)
   }
 };
 
