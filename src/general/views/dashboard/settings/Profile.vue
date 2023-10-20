@@ -23,10 +23,9 @@
         </ion-menu-toggle>
       </div>
     </div>
-    <div class="content-box">
+    <!-- <div class="content-box">
       <div class="content-box__top justify-content-between">
         <ion-title class="content-box__title">Personal Information</ion-title>
-        <!-- <ion-button fill="outline"  class="content-box__button">Edit</ion-button> -->
       </div>
       <ion-grid>
         <ion-row>
@@ -48,10 +47,6 @@
             <ion-label class="text-label" color="medium">Phone</ion-label>
             <ion-text class="text-value">N/A</ion-text>
           </ion-col>
-          <!-- <ion-col>
-            <ion-label class="text-label" color="medium">Phone</ion-label>
-            <ion-text class="text-value">08345678753</ion-text>
-          </ion-col> -->
         </ion-row>
         <ion-row>
           <ion-col>
@@ -63,15 +58,8 @@
             <ion-text class="text-value">N/A</ion-text>
           </ion-col>
         </ion-row>
-        <!-- <ion-row>
-          <ion-col>
-            <ion-label class="text-label" color="medium">Bio</ion-label>
-            <ion-text class="text-value">I am a Manager</ion-text>
-          </ion-col>
-        </ion-row> -->
-        
       </ion-grid>
-    </div>
+    </div> -->
     <!-- <div class="content-box">
       <div class="content-box__top justify-content-between">
         <ion-title class="content-box__title">Address</ion-title>
