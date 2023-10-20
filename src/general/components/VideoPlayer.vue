@@ -4,7 +4,7 @@
       <slot name="custom-header-btn"></slot>
     </template>
   </page-header>
-  <!-- <video-player
+  <video-player
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
@@ -20,16 +20,7 @@
     @play="handlePlay"
     @pause="handlePlause"
     @ended="handleVideoEnded"
-  /> -->
-  <div class="w-100 h-100" style="padding: 12px;">
-    <video 
-      class="video-player vjs-big-play-centered" 
-      :src="`${VUE_APP_CDN}${daily?.video}`"
-      :controls="freeDuration === 0 || showControl" 
-      :poster="daily?.previewUrl"
-      style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%">
-    </video>
-  </div>
+  />
   <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
     <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
     <ion-text class="daily-info">

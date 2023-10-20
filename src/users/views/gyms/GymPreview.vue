@@ -151,7 +151,11 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type.name }}</ion-text>
                                 </div>
-                                <ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
+                                <div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
+                                    <ion-icon src="assets/icon/profile.svg"></ion-icon>
+                                    <ion-text>{{ item.totalUser }}</ion-text>
+                                </div>
+                                <ion-button v-else @click="handleSubscribe(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
@@ -185,7 +189,28 @@
             </div>
         </div>
     </div>
-    <preview-daily-modal ref="dailyModal" />
+    <preview-daily-modal 
+        :daily="dailyData"  
+        :isOpen="isOpenPreviewModal"
+        @closeModal="onClosePreview"
+        :duration="myWorkouts.some((my: any) => my.id === selectedDailyId) ? 0 : 10"
+        @trialEnd="onTrialEnd"
+    />
+    <blurred-screen-modal
+        id="blur"
+        :is-open="isOpenBlurredScreenModal"
+        :preview-url="dailyData?.previewUrl"
+        @visibility="isOpenBlurredScreenModal = false"
+        @purchase-daily="purchaseWorkout"
+        :disabled="addToCartLoading"
+    />
+    <purchase-modal 
+        id="full"
+        :isOpen="isOpenPurchaseModal"
+        :dailyId="selectedDailyId"
+        :cartId="cartId"
+        @purchase-daily="onPurchase"
+    />
 
 </template>
     
@@ -207,6 +232,7 @@ import {
   RoleEnum,
   GetManagersByFacilityDocument,
   FeedbackEntityEnum,
+  MyWorkoutsDocument,
   Query,
   Review,
   ReviewsDocument,
@@ -228,7 +254,15 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
+import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
 dayjs.extend(relativeTime);
+const dailyData = ref();
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPurchaseModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
+const cartId = ref<number>();
 const router = useRouter();
 const route = useRoute();
 const segmentValue = ref('trainer');
@@ -256,6 +290,12 @@ const segmentTabs = [
         icon: "assets/icon/events.svg",
     },
 ];
+
+const { result: myDailys, loading: myDailysLoading, refetch: myRefetch } = useQuery(MyWorkoutsDocument, {
+  first: 1000,
+});
+
+const myWorkouts = computed(() => myDailys.value?.myWorkouts?.data || []);
 
 const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
   GetFacilityDocument,
@@ -390,9 +430,15 @@ const getDurationText = (value: number) => {
     return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
   }
 };
+
+const handleSubscribe = (id: number) => {
+    selectedDailyId.value = id;
+    purchaseWorkout();
+}
+
 const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
-const purchaseWorkout = (id: string) => {
+const purchaseWorkout = () => {
   addToCartMutation({
     input: {
       purchasable_id: id,
@@ -400,15 +446,10 @@ const purchaseWorkout = (id: string) => {
     },
   })
     .then((res) => {
-      router.push({
-        name: EntitiesEnum.WorkoutOrder,
-        params: {
-          id: id,
-        },
-        query: {
-          cart_id: res?.data?.addToCart?.id,
-        },
-      });
+        isOpenBlurredScreenModal.value = false;
+        isOpenPreviewModal.value = false;
+        cartId.value = res?.data?.addToCart?.id;
+        isOpenPurchaseModal.value = true;
     })
     .catch(async () => {
       const toast = await toastController.create({
@@ -421,8 +462,28 @@ const purchaseWorkout = (id: string) => {
     });
 };
 
-const previewDaily = (url: string) => {
-    dailyModal.value?.present({video: url, prview: true});
+const previewDaily = (daily: any) => {
+    dailyData.value = daily;
+    dailyModal.value?.present({daily: daily, preview: true})
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
+}
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onPurchase = () => {
+  isOpenPurchaseModal.value = false;
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: { orderId: selectedDailyId.value },
+    query: { cart_id: cartId.value },
+  });
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
 }
 // Dailys End
 
