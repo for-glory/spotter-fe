@@ -70,7 +70,7 @@ const handleRouting = () => {
 
 const handleBookBtn = () => {
   paymentProductsStore.clearCart();
-  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.BookTrainer : EntitiesEnum.BookTrainer, params: { id: props.trainer?.id } });
+  router.push({ name: Capacitor.isNativePlatform() ? EntitiesEnum.BookTrainer : EntitiesEnum.TrainerBooking, params: { id: props.trainer?.id } });
 }
 
 const address = computed(() => {
