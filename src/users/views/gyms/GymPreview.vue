@@ -58,14 +58,14 @@
                                 <ion-text class="section-title">Equipment</ion-text>
                                 <div class="doc-items">
                                     <advantage-item v-for="(item, index) in result?.facility?.equipments" :key="index"
-                                        :icon="item?.iconUrl" :title="item?.name" />
+                                        :icon="item?.iconUrl ??''" :title="item?.name ?? ''" />
                                 </div>
                             </div>
                             <div class="document-cards">
                                 <ion-text class="section-title">Amenities</ion-text>
                                 <div class="doc-items">
                                     <advantage-item v-for="(item, index) in result?.facility?.amenities" :key="index"
-                                        :icon="item?.iconUrl" :title="item?.name" />
+                                        :icon="item?.iconUrl ?? ''" :title="item?.name ?? ''" />
                                 </div>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
 						</div>
                         <div class="offer-item" :key="item.id" v-for="item in dailysData">
                             <div class="header-section">
-                                <div class="name">{{ item.title }}</div>
+                                <div class="name" @click="previewDaily(item.video)">{{ item.title }}</div>
                                 <div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
                             </div>
                             <div class="detail-section">
@@ -185,6 +185,8 @@
             </div>
         </div>
     </div>
+    <preview-daily-modal ref="dailyModal" />
+
 </template>
     
 <script setup lang="ts">
@@ -225,11 +227,12 @@ import {
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-
+import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 dayjs.extend(relativeTime);
 const router = useRouter();
 const route = useRoute();
 const segmentValue = ref('trainer');
+const dailyModal = ref<typeof PreviewDailyModal | null>(null);
 const activeSegment = ref<EntitiesEnum>(
     EntitiesEnum.Facilities
 );
@@ -389,7 +392,7 @@ const getDurationText = (value: number) => {
 };
 const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
-const purchaseWorkout = (id) => {
+const purchaseWorkout = (id: string) => {
   addToCartMutation({
     input: {
       purchasable_id: id,
@@ -417,6 +420,10 @@ const purchaseWorkout = (id) => {
       toast.present();
     });
 };
+
+const previewDaily = (url: string) => {
+    dailyModal.value?.present({video: url, prview: true});
+}
 // Dailys End
 
 // Passes start
@@ -718,6 +725,7 @@ const formatNumber = (num: number, type: string) => {
                 font-weight: 500;
                 line-height: 150%;
                 color: var(--ion-color-white);
+                cursor: pointer;
             }
 
             .trainer {
@@ -934,7 +942,6 @@ const formatNumber = (num: number, type: string) => {
                 margin: 0;
 
             }
-
             .review-date {
                 span {
                     color: var(--gray-600);

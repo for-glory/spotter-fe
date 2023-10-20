@@ -82,12 +82,12 @@
             <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.recommended_count, 'normal') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Likes</ion-text>
           </div>
-          <div class="split" />
+          <div class="split"></div>
           <div class="d-flex-col align-items-center">
             <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.views_count, 'normal') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Views</ion-text>
           </div>
-          <div class="split" />
+          <div class="split"></div>
           <div class="d-flex-col align-items-center">
             <ion-text class="font-medium color-fitness-white font-16">{{ formatNumber(workoutData.reviews_count, 'normal') }}</ion-text>
             <ion-text class="font-normal color-gold font-14">Reviews</ion-text>

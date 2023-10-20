@@ -19,7 +19,8 @@
             ref="videoRef"
             @click.stop="tooglePlay"
             class="w-100 h-100"
-          />
+          >
+          </video>
           <div class="absolute top-buttons w-100 d-flex justify-content-end">
             <span @click.stop="showSettingsModal">
               <ion-icon src="assets/icon/three-dot.svg" />
