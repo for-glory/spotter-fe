@@ -3,7 +3,7 @@ name: Build and Upload to Google Play Internal Testing
 on:
   push:
     branches:
-      - DEV # Replace with your specific branch name
+      - DEV
 
 jobs:
   build-and-upload:
@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm install
-          ionic build --prod      
+          ionic build --prod
 
       - name: Build Android .aab and .apk
         run: |
@@ -31,7 +31,8 @@ jobs:
           npx cap open android
 
       - name: Decrypt signing key
-        run: |          
+        run: |
+          mkdir -p app/keystore
           echo "$SIGNING_KEY" | base64 -d > app/keystore/spotter_dev.jks
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -39,6 +40,8 @@ jobs:
       - name: Assemble Release Bundle
         run: |
           ./gradlew bundleRelease
+        working-directory: ./android
+
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -48,20 +51,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-
       - name: Deploy to Google Play Internal Testing
-        uses: android-actions/setup-gcloud@v0.2.1
-        with:
-          service_account_key: ${{ secrets.GOOGLE_PLAY_JSON }}
-          project_id: spotter-fitness-d49be
-          service_account_email: webmaster@spotterfitness.com
-
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: android-artifacts
-
-      - name: Upload to Google Play Internal Testing
         run: |
           echo $GOOGLE_PLAY_JSON > key.json
           gcloud auth activate-service-account --key-file=key.json
