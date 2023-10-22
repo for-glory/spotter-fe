@@ -742,7 +742,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.GymOrderCalendar,
-        path: ":id/order-calendar",
+        path: ":id/:facility/order-calendar",
         component: () => import("@/users/views/gyms/OrderCalendar.vue"),
         meta: {
           middleware: [auth],
@@ -805,11 +805,11 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        name: EntitiesEnum.DropinsPassesList,
+        name: EntitiesEnum.DashboardDropinsPassesDetail,
         path: "pass-dropin/purchase/:id?",
         component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
         meta: {
-          middleware: [gymOwnerSubscription],
+          middleware: [auth],
         },
       },
       {

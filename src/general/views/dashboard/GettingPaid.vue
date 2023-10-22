@@ -73,7 +73,7 @@
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
-                      <div class="chain">{{ formatCurrency(revenue?.year_earn, "fixed") }}</div>
+                      <div class="chain">${{ formatCurrency(revenue?.year_earn, "fixed") }}</div>
                     </div>
                   </ion-col>
                 </ion-row>

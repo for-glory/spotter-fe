@@ -94,17 +94,20 @@ import {
   IonSpinner,
   IonGrid,
   IonRow,
-  IonCol
+  IonCol,
+  toastController
 } from "@ionic/vue";
 import {
   FacilityItemDocument,
 } from "@/generated/graphql";
-import PassDropinsList from "@/general/components/dashboard/pass-dropins-list/PassDropinsList.vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { chevronBackOutline } from "ionicons/icons";
+import { AddFacilityItemToCartDocument, FacilityDocument } from "@/generated/graphql";
+import dayjs from "dayjs";
+import { EntitiesEnum } from "@/const/entities";
 
 const router = useRouter();
 const route = useRoute();
@@ -137,8 +140,46 @@ const emptyImage = computed(() => {
   return facilityItem.value?.item_type === "PASS" ? "assets/icon/gym-user-icon.svg" : "assets/icon/dropin.svg";
 });
 
+const { mutate: addToCartMutation, loading: addToCartLoading } = useMutation(
+    AddFacilityItemToCartDocument
+);
+
 const handlePurchase = () => {
   console.log('purchase');
+  
+  router.push({
+    name: EntitiesEnum.GymOrderCalendar,
+    params: {
+      facility: facilityItem.value?.facility?.id,
+      id: facilityItem.value?.id
+    }
+  });
+  // addToCartMutation({
+  //   input: {
+  //     facility_item_id: route.params.id,
+  //     // start_date: dayjs(new Date(selectedDay.value as any)).utc(),
+  //   },
+  // })
+  //   .then((res) => {
+  //     router.push({
+  //       name: EntitiesEnum.FacilityOrder,
+  //       params: {
+  //         id: route.params.id,
+  //       },
+  //       query: {
+  //         cart_id: res?.data?.addFacilityItemToCart?.id,
+  //       },
+  //     });
+  //   })
+  //   .catch(async () => {
+  //     const toast = await toastController.create({
+  //       message: "Something went wrong. Try again.",
+  //       duration: 2000,
+  //       icon: "assets/icon/info.svg",
+  //       cssClass: "warning-toast",
+  //     });
+  //     toast.present();
+  //   });
 }
 
 const onBack = () => {

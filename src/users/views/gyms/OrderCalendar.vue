@@ -15,10 +15,11 @@
                     <base-calendar :showAdditionalContent="false" @change-day="onChangeDay" />
                 </div>
                 <div v-else>
-                    <order :orderDate="selectedDay" :orderTime="'sessionQuantity'" :hourlyRate="200" :type="EntitiesEnum.Facility"
+                    <order :orderDate="selectedDay" :orderTime="facilityItem?.title" :hourlyRate="formatCurrency(facilityItem?.price/100, 'fixed')" :type="EntitiesEnum.Facility"
                         :item="facility" timeSectionTitle="Session quantity" :isWaitingModalOpen="true"></order>
                 </div>
-                <IonButton class="ion-margin" @click="orderDetail = !orderDetail">Confirm</IonButton>
+                <IonButton class="ion-margin" v-if="!orderDetail" @click="orderDetail = !orderDetail">Confirm</IonButton>
+                <IonButton class="ion-margin" v-else @click="onNext">Confirm</IonButton>
             </div>
             <div class="flex-2 h-100 hide-scrollbar">
                 <BaseCustomCalendar class="web-custom-calendar" week-days-format="W" />
@@ -35,12 +36,13 @@ import { computed, ref } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
-import { AddFacilityItemToCartDocument, FacilityDocument } from "@/generated/graphql";
+import { AddFacilityItemToCartDocument, FacilityDocument, FacilityItemDocument } from "@/generated/graphql";
 import utc from "dayjs/plugin/utc";
 import { EntitiesEnum } from "@/const/entities";
 import { paymentGatewaysStore } from "@/users/store/paymentGatewaysStore";
 import FacilityItem from "@/general/components/FacilityItem.vue";
 import Order from "@/users/components/Order.vue";
+import { formatCurrency } from "@/helpers/currency-formater";
 
 dayjs.extend(utc);
 const router = useRouter();
@@ -51,7 +53,20 @@ const paymentProductsStore = paymentGatewaysStore();
 const orderDetail = ref<boolean>(false);
 
 const { result, loading } = useQuery(FacilityDocument, {
-    id: route.params.id,
+    id: route.params.facility,
+});
+
+// facility items
+const {
+  result: facilityItemResult,
+  loading: loadingFacilityPass,
+  onResult
+} = useQuery(FacilityItemDocument, {
+  id: route.params.id
+});
+
+const facilityItem = computed(() => {
+  return facilityItemResult.value?.facilityItemById;
 });
 
 const { mutate: addToCartMutation, loading: addToCartLoading } = useMutation(
@@ -68,14 +83,19 @@ const onNext = () => {
         },
     })
         .then((res) => {
+            // router.push({
+            //     name: EntitiesEnum.FacilityOrder,
+            //     params: {
+            //         id: route.params.id,
+            //     },
+            //     query: {
+            //         cart_id: res?.data?.addFacilityItemToCart?.id,
+            //     },
+            // });
             router.push({
-                name: EntitiesEnum.FacilityOrder,
-                params: {
-                    id: route.params.id,
-                },
-                query: {
-                    cart_id: res?.data?.addFacilityItemToCart?.id,
-                },
+                name: EntitiesEnum.PaymentsMethods,
+                params: { orderId: route.params.id },
+                query: { cart_id: res?.data?.addFacilityItemToCart?.id },
             });
         })
         .catch(async () => {
