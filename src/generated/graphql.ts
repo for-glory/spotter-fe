@@ -46,6 +46,8 @@ export enum AddToCartPurchasableEnum {
   Event = "EVENT",
   /** WORKOUT */
   Workout = "WORKOUT",
+  /** FACILITYITEM */
+  FacilityItem = "FACILITY_ITEM",
 }
 
 export type AddTrainingToCartInput = {
@@ -7064,6 +7066,13 @@ export const GetCartDocument = gql`
             id
             facility {
               name
+              score
+              address {
+                street
+              }
+              media {
+                pathUrl
+              }
             }
             qr_code_lifetime_value
             qr_code_lifetime_enum
