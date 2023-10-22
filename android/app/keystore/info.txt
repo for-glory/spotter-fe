@@ -1,0 +1,4 @@
+spotter_dev.jks
+pw: spotter
+alias: spotter
+alias pw: spotter
