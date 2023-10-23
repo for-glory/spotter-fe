@@ -46,6 +46,7 @@ jobs:
 
       - name: Assemble Release Bundle
         run: |
+          chmod +x ./gradlew     # Grant execution permissions
           ./gradlew bundleRelease
         working-directory: ./android
 
