@@ -431,7 +431,9 @@ const {
 });
 
 const events = computed(() => {
-  return eventResult.value?.events?.data;
+  return eventResult.value?.events?.data.filter(ev => {
+    return ev.max_participants !== ev.booked_count && dayjs().isBefore(ev.end_date)
+  });
 });
 const formatEventDate = (event) => {
   return dayjs(event.start_date).format(

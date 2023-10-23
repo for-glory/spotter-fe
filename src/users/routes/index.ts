@@ -403,7 +403,7 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    name: 'DISCOVER',
+    name: EntitiesEnum.Discover,
     path: "/users/discover",
     component: () => import("@/users/views/discover/Index.vue"),
     meta: {
