@@ -175,14 +175,14 @@
                 <div class="document-cards">
                     <ion-text class="section-title">Certifications</ion-text>
                     <div class="doc-items" v-if="user?.certificates?.length">
-                        <advantage-item v-for="(item, index) in user.certificates" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                        <advantage-item v-for="(item, index) in user.certificates" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'"
                             :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                                 </div>
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Waiver and Labilities</ion-text>
                     <div class="doc-items">
-                        <advantage-item v-for="(item, index) in user?.weiver_and_labilities" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                        <advantage-item v-for="(item, index) in user?.weiver_and_labilities" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'"
                             :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                     </div>
                 </div>

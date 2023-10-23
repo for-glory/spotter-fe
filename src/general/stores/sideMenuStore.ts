@@ -1,13 +1,17 @@
+import { CreateManagerInput } from "@/generated/graphql";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 interface SideMenuOption {
   showImg: boolean;
   title: string;
+  isEdit: boolean;
+  managerData?: CreateManagerInput | null;
 }
 export const useSideMenu = defineStore('sideMenu', () => {
   const options = ref<SideMenuOption>({
     showImg: true,
-    title: "Invite Team Member"
+    title: "Invite Team Member",
+    isEdit: false,
   });
   const values = ref();
 
@@ -18,7 +22,9 @@ export const useSideMenu = defineStore('sideMenu', () => {
   const setToDefault = () => {
     options.value = {
       showImg: true,
-      title: "Invite Team Member"
+      title: "Invite Team Member",
+      isEdit: false,
+      managerData: null
     }
   }
   return {

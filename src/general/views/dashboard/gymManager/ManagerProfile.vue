@@ -50,38 +50,54 @@
         </div>
       </div>
       <div class="d-flex flex-direction-column flex-1 btn-wrapper">
-        <ion-button>Edit</ion-button>
-        <ion-button class="add-gym-btn cursor-pointer" color="danger" fill="outline">Delete</ion-button>
+        <ion-menu-toggle :auto-hide="false" @click="editTeamMember">
+          <ion-button>Edit</ion-button>
+        </ion-menu-toggle>
+        <ion-button @click="showModal" class="add-gym-btn cursor-pointer" color="danger"
+          fill="outline">Delete</ion-button>
       </div>
     </div>
   </div>
+  <confirmation :is-visible="showConfirmationModal" title="Do you want to delete account"
+    description="Gym manager will be deleted" button-text="Delete" cancel-button-text="Cancel" @discard="onDeleteManager"
+    @decline="hideModal" />
 </template>
 
 <script setup lang="ts">
 import {
   IonButton,
   IonSpinner,
-  IonGrid,
   IonText,
   IonTitle,
   IonAvatar,
-  IonImg
+  IonImg,
+  IonLabel,
+  IonMenuToggle
 } from "@ionic/vue";
-import { EntitiesEnum } from "@/const/entities";
 import {
+  DeleteManagerDocument,
   UserDocument,
 } from "@/generated/graphql";
-import { useQuery } from "@vue/apollo-composable";
-import { ref, onMounted, computed } from "vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import dayjs from "dayjs";
+import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { useRouter } from "vue-router";
+import { useSideMenu } from "@/general/stores/sideMenuStore";
+
+const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
+const { mutate } = useMutation(DeleteManagerDocument);
 
 const route = useRoute();
+const router = useRouter();
+const menuStore = useSideMenu();
 
 const { result, loading } = useQuery(UserDocument, {
   id: route.params.id
 });
-console.log(result.value);
+
 const manager = computed(() => {
   return result.value?.user ?? {
     first_name: "",
@@ -90,6 +106,24 @@ const manager = computed(() => {
     employment_type: ""
   };
 });
+
+const editTeamMember = () => {
+  menuStore.setOption({ showImg: false, title: "Edit Team Member", isEdit:true });
+};
+
+const onDeleteManager = () => {
+  console.log("delete manager");
+  hideModal();
+  mutate({
+    id: route.params.id,
+  })
+    .then(() => {
+      router.back();
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+};
 </script>
 
 <style scoped lang="scss">
@@ -232,11 +266,13 @@ const manager = computed(() => {
   width: 94px;
   height: 94px;
 }
+
 .btn-wrapper {
   ion-button {
     width: fit-content;
     min-width: 173px;
   }
+
   align-items: flex-end;
 }
 </style>

@@ -673,7 +673,7 @@ const formatCurrency = (num: number, type: string) => {
     font-weight: 500;
     line-height: 1.5;
     margin-bottom: 2px;
-    max-width: calc(100% - 86px);
+    max-width: calc(100% - 140px);
     color: var(--ion-color-white);
 
     .event--time-hidden & {

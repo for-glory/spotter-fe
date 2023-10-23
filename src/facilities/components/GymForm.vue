@@ -398,7 +398,7 @@ const onSaveAndExit = () => {
     },
     equipments: facilityEquipments.value,
     amenities: facilityAmenities.value,
-  }, "exit");
+  }, "create_event");
 };
 
 const onNext = () => {
@@ -413,7 +413,7 @@ const onNext = () => {
     },
     equipments: facilityEquipments.value,
     amenities: facilityAmenities.value,
-  }, "create_event");
+  }, "edit_event");
 };
 
 const cancel = () => {

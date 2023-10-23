@@ -42,12 +42,13 @@
 
       <div class="tile ion-margin-bottom">
         <ion-label class="form-label"> Date of Birth </ion-label>
-        <choose-block title="Date of Birth" :value="managerBOD ? dayjs(managerBOD).format('D MMMM YYYY') : ''" @handle-click="
-          showDatePikerModal('DOB', managerBOD, {
-            min: 0,
-            title: 'Date of Birth',
-          })
-          " />
+        <choose-block title="Date of Birth" :value="managerBOD ? dayjs(managerBOD).format('D MMMM YYYY') : ''"
+          @handle-click="
+            showDatePikerModal('DOB', managerBOD, {
+              min: 0,
+              title: 'Date of Birth',
+            })
+            " />
       </div>
 
       <div class="tile ion-margin-bottom">
@@ -67,7 +68,8 @@
           class="form-row__input-web" :error-message="taxIdError" />
       </div>
 
-      <ion-button class="add-manager-btn" :disabled="!isValidForm" @click="addManager">Add Team Member</ion-button>
+      <ion-button class="add-manager-btn" :disabled="!isValidForm" @click="addManager">{{ sideMenuStore.options.isEdit ?
+        'Save' : 'Add Team Member' }}</ion-button>
     </ion-content>
   </ion-menu>
 
@@ -100,13 +102,14 @@ import {
   RoleEnum,
   CreateManagerDocument,
   Address,
-  EmploymentTypeEnum
+  EmploymentTypeEnum,
+  UserDocument
 } from "@/generated/graphql";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useField } from "vee-validate";
 import { requiredFieldSchema, emailSchema } from "@/validations/authValidations";
 import { City, State } from "@/generated/graphql";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { v4 as uuidv4 } from "uuid";
@@ -119,9 +122,11 @@ import DiscardChanges from "@/general/components/modals/confirmations/DiscardCha
 import { useSideMenu } from "@/general/stores/sideMenuStore";
 import { storeToRefs } from "pinia";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
+import { useRoute } from "vue-router";
 
 
 const isConfirmedModalOpen = ref(false);
+const route = useRoute();
 const selectedEmpType = ref({
   title: "Full Time",
   value: EmploymentTypeEnum.FullTime as string
@@ -143,6 +148,7 @@ const managerBOD = ref<any>();
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
+
 // const filter = ref<string>('profile');
 // const imageUrl = ref<string>('');
 

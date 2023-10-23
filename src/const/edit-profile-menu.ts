@@ -18,16 +18,16 @@ export const editProfileMenu: EditProfileMenu = {
       name: EntitiesEnum.ProfilePassword,
       label: "Change password",
     },
-    {
-      name: EntitiesEnum.ProfileLanguages,
-      label: "Language",
-      value: SettingsCodeEnum.Language,
-    },
-    {
-      name: EntitiesEnum.ProfileAppMode,
-      label: "App mode",
-      value: SettingsCodeEnum.AppMode,
-    },
+    // {
+    //   name: EntitiesEnum.ProfileLanguages,
+    //   label: "Language",
+    //   value: SettingsCodeEnum.Language,
+    // },
+    // {
+    //   name: EntitiesEnum.ProfileAppMode,
+    //   label: "App mode",
+    //   value: SettingsCodeEnum.AppMode,
+    // },
     {
       name: EntitiesEnum.ProfileNotifications,
       label: "Notifications",
@@ -67,16 +67,16 @@ export const editProfileMenu: EditProfileMenu = {
     //   name: EntitiesEnum.ProfilePronounce,
     //   label: "Pronounce",
     // },
-    {
-      name: EntitiesEnum.ProfileLanguages,
-      label: "Language",
-      value: EntitiesEnum.Language,
-    },
-    {
-      name: EntitiesEnum.ProfileAppMode,
-      label: "App mode",
-      value: EntitiesEnum.AppMode,
-    },
+    // {
+    //   name: EntitiesEnum.ProfileLanguages,
+    //   label: "Language",
+    //   value: EntitiesEnum.Language,
+    // },
+    // {
+    //   name: EntitiesEnum.ProfileAppMode,
+    //   label: "App mode",
+    //   value: EntitiesEnum.AppMode,
+    // },
     {
       name: EntitiesEnum.ProfileNotifications,
       label: "Notifications",
@@ -107,16 +107,16 @@ export const editProfileMenu: EditProfileMenu = {
       name: EntitiesEnum.ProfilePassword,
       label: "Change password",
     },
-    {
-      name: EntitiesEnum.ProfileLanguages,
-      label: "Language",
-      value: EntitiesEnum.Language,
-    },
-    {
-      name: EntitiesEnum.ProfileAppMode,
-      label: "App mode",
-      value: EntitiesEnum.AppMode,
-    },
+    // {
+    //   name: EntitiesEnum.ProfileLanguages,
+    //   label: "Language",
+    //   value: EntitiesEnum.Language,
+    // },
+    // {
+    //   name: EntitiesEnum.ProfileAppMode,
+    //   label: "App mode",
+    //   value: EntitiesEnum.AppMode,
+    // },
     {
       name: EntitiesEnum.ProfileNotifications,
       label: "Notifications",

@@ -6,21 +6,21 @@
     <div class="content-box content-box__top justify-content-between">
       <div class="d-flex align-items-center">
         <ion-avatar class="photo">
-					<ion-img v-if="store.avatarUrl" :src="store.avatarUrl"></ion-img>
+					<ion-img v-if="facilityStore.facility.media?.length" :src="facilityStore.facility.media[0]?.pathUrl"></ion-img>
 					<template v-else>
-						{{ store.first_name?.charAt(0) }}
+						{{ facilityStore.facility.name.charAt(0) }}
 					</template>
 				</ion-avatar>
         <div class="main-info-box">
-          <ion-title class="content-box__title">{{ store.first_name }} {{ store.last_name }}</ion-title>
+          <ion-title class="content-box__title">{{ facilityStore.facility.name }}</ion-title>
           <ion-label class="main-info-box__label" color="medium">{{ roleText }}</ion-label>
-          <ion-label class="main-info-box__label" color="medium">Arizona, Phoenix, USA</ion-label>
+          <ion-label class="main-info-box__label" color="medium">{{facilityStore.facility.address?.street}}</ion-label>
         </div>
       </div>
       <div class="d-flex align-items-center justify-content-center">
-        <ion-menu-toggle :auto-hide="false">
-          <ion-button fill="outline" class="content-box__button">Edit</ion-button>
-        </ion-menu-toggle>
+        <!-- <ion-menu-toggle :auto-hide="false">
+        </ion-menu-toggle> -->
+        <ion-button fill="outline" class="content-box__button" @click="goToGymEdit">Edit</ion-button>
       </div>
     </div>
     <!-- <div class="content-box">
@@ -89,6 +89,7 @@
       </ion-grid>
     </div> -->
   </div>
+  <create-facility-modal ref="createFacilityModal"/>
 </template>
 
 <script setup lang="ts">
@@ -111,15 +112,84 @@ import { EntitiesEnum } from "@/const/entities";
 import { useProfileStore } from "../../../stores/profile";
 import { requiredFieldSchema } from "@/validations/authValidations";
 import { v4 as uuidv4 } from "uuid";
-import { RoleEnum } from "@/generated/graphql";
+import { Query, RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { dataURItoFile } from "@/utils/fileUtils";
 import ChooseBlock from "@/general/components/blocks/Choose.vue";
 import { Emitter, EventType } from "mitt";
+import { useNewFacilityStore } from "@/facilities/store/new-facility";
+import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
+import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";
+import { useFacilityStore } from "@/general/stores/useFacilityStore";
 
-const store = useProfileStore();
-console.log("store", store);
+const facilityStore = useFacilityStore();
+const createFacilityModal = ref<typeof CreateFacilityModal | null>(null);
+
+const newFacilityStore = useNewFacilityStore();
+const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>(
+  GetFacilityDocument,
+  {
+    id: facilityStore.facility.id,
+  }
+);
+
+const goToGymEdit = () => {
+  newFacilityStore.clear();
+  const curFacility = result.value.facility;
+  newFacilityStore.setAddress(
+    curFacility?.address?.city?.state,
+    curFacility?.address?.city,
+    {
+      thoroughfare: curFacility?.address?.street,
+      subThoroughfare: curFacility?.address?.extra,
+      latitude: curFacility?.address?.lat,
+      longitude: curFacility?.address?.lng,
+    } as any
+  );
+
+  const amenities = curFacility?.amenities?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+  const equipments = curFacility?.equipments?.map((option) => {
+    return {
+      id: option.id,
+      label: option.name || "",
+      value: option.id || "",
+      isChecked: true,
+      iconUrl: option.iconUrl || undefined,
+    };
+  });
+
+  curFacility.media?.map((option) => {
+    newFacilityStore.addPhoto({
+      ...option,
+      url: option.pathUrl,
+    });
+  });
+  newFacilityStore.setAmenities(amenities);
+  newFacilityStore.setDescription(curFacility.description);
+  newFacilityStore.setEquipments(equipments);
+  newFacilityStore.setTitle(curFacility.name);
+
+  createFacilityModal.value?.present({
+    isEdit: true,
+    selectedFacilityId: result?.value?.facility?.id
+  });
+}
+
+const editFacility = () => {
+  createFacilityModal.value?.present({
+    isEdit: true,
+    selectedFacilityId: facilityStore.facility.id
+  });
+}
 
 
 const { role } = useRoles();
