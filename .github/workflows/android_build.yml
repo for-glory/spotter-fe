@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm install --legacy-peer-deps
+
+      - name: Install ionic
+        run: |
+          npm install -g ionic
           
       - name: Ionic production build
         run: |
