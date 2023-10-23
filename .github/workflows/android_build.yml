@@ -28,7 +28,7 @@ jobs:
           
       - name: Ionic production build
         run: |
-          ionic build --prod
+          npm run build
 
       - name: Build Android .aab and .apk
         run: |
