@@ -266,7 +266,6 @@ ion-label {
   gap: 15px;
 
   ion-button {
-    width: 6.313vw;
     cursor: pointer;
   }
 }

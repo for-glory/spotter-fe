@@ -82,17 +82,21 @@
 						</div>
 					</div>
 				</div>
-				<div class="offer-card" v-else-if="segmentValue === 'events'">
-					<div v-if="!offerEvents || !offerEvents.length">
-						<empty-block title="Events Empty" hideButton text="No Events available."
-							icon="assets/icon/events.svg" />
+				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
+					<div class="card-background"  v-if="!eventList || !eventList.length">
+						<empty-block
+							title="Events Empty"
+							hideButton
+							text="No Events available"
+							icon= "assets/icon/events.svg"
+						/>
 					</div>
-					<div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
+					<div class="offer-item" :key="item.id" v-for="item in eventList">
 						<div class="header-section events">
 							<div class="name">{{ item.name }}</div>
 							<div class="event-time">
 								<ion-icon src="assets/icon/time.svg"></ion-icon>
-								<ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+								<ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
 							</div>
 						</div>
 						<ion-label class="date-label">{{ item.date }}</ion-label>
@@ -141,7 +145,29 @@ import { IonText, IonButton, IonSegment, IonIcon, IonSegmentButton, actionSheetC
 import { useRoute, useRouter } from "vue-router";
 import Detail from "@/general/components/Detail.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, FollowDocument, FollowTypeEnum, MeDocument, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, RoleEnum, SettingsCodeEnum, SortOrder, TrainerTypeEnum, UserDocument, UnfollowDocument, WorkoutsDocument } from "@/generated/graphql";
+import {
+	AddToCartDocument,
+	AddToCartPurchasableEnum,
+	FeedbackEntityEnum,
+	FollowDocument,
+	FollowTypeEnum,
+	MeDocument,
+	MyWorkoutsDocument,
+	Query,
+	QueryWorkoutsOrderByColumn,
+	ReviewsDocument,
+	RoleEnum,
+	SettingsCodeEnum,
+	SortOrder,
+	TrainerTypeEnum,
+	UserDocument,
+	UnfollowDocument,
+	WorkoutsDocument,
+  EventsQueryVariables,
+  QueryEventsOrderByColumn,
+  EventsQuery,
+  EventsDocument
+} from "@/generated/graphql";
 import { computed, ref } from "vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import ReviewSlides from "@/general/components/blocks/ratings/ReviewSlides.vue";
@@ -157,6 +183,8 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { ellipse } from "ionicons/icons";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
+import dayjs from "dayjs";
+
 const route = useRoute();
 const router = useRouter();
 const { role } = useRoles();
@@ -470,6 +498,51 @@ const onClosePreview = () => {
     console.log("OOOO")
     isOpenPreviewModal.value = false;
 }
+
+// Events List
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    address: event?.address?.street
+  }
+}));
+// End Events
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 </script>
 
 <style scoped lang="scss">

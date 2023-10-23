@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div v-if="!offerEvents || !offerEvents.length">
+                        <div v-if="!eventList || !eventList.length">
                             <empty-block 
                                 title="Events Empty" 
                                 hideButton
@@ -150,12 +150,12 @@
                                 icon="assets/icon/events.svg" 
                             />
                         </div>
-                        <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div class="offer-item" :key="item.id" v-for="item in eventList">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
-                                    <ion-icon src="assets/icon/time.svg"></ion-icon>
-                                    <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                                    <!-- <ion-icon src="assets/icon/time.svg"></ion-icon> -->
+                                    <ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
                                 </div>
                             </div>
                             <ion-label class="date-label">{{ item.date }}</ion-label>
@@ -235,7 +235,22 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import {
+    AddToCartDocument,
+    AddToCartPurchasableEnum,
+    FeedbackEntityEnum,
+    MyWorkoutsDocument,
+    Query,
+    QueryWorkoutsOrderByColumn,
+    ReviewsDocument,
+    SortOrder,
+    UserDocument,
+    WorkoutsDocument,
+    QueryEventsOrderByColumn,
+    EventsQueryVariables,
+    EventsQuery,
+    EventsDocument,
+} from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
@@ -400,7 +415,6 @@ const reviews = computed(() =>
   )
 );
 
-const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
   return result.value?.user;
 });
@@ -429,6 +443,51 @@ const viewAllReview = () => {
     });
 }
 
+// Events List
+const eventsParams: EventsQueryVariables = {
+    first: 5,
+    page: 1,
+    orderBy: [
+        {
+        column: QueryEventsOrderByColumn.StartDate,
+        order: SortOrder.Asc,
+        },
+    ],
+    created_by_trainer: route.params.id
+};
+
+const {
+    result: eventResult,
+    loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+    return {
+        id: event?.id,
+        name: event?.title,
+        price: formatNumber(event?.price/100, "fixed"),
+        date: dayjs(event?.start_date).format('D MMMM'),
+        address: event?.address?.street,
+        totalUser: event?.booked_count
+    }
+}));
+// End Events
+const formatNumber = (num: number, type: string) => {
+    if (num < 1e3) {
+        if(type === 'normal') {
+        return num.toString();
+        } else {
+        return num.toFixed(2).toString();
+        }
+    } else if (num < 1e6) {
+        return (num / 1e3).toFixed(1) + 'k';
+    } else {
+        return (num / 1e6).toFixed(1) + 'M';
+    }
+};
 
 </script>
 
