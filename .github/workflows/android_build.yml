@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies and build
         run: |
-          npm install --force
+          npm install --legacy-peer-deps
           ionic build --prod
 
       - name: Build Android .aab and .apk
