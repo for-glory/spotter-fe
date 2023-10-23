@@ -2759,6 +2759,11 @@ export type UpdateUserInput = {
   settings?: InputMaybe<Array<SetSettingInput>>;
   trainer_type?: InputMaybe<TrainerTypeEnum>;
   weiver_and_labilities?: InputMaybe<Array<DocumentUploadInput>>;
+  employment_type?: InputMaybe<EmploymentTypeEnum>;
+  tax_id?: InputMaybe<Scalars["String"]>;
+  postal?: InputMaybe<Scalars["String"]>;
+  birth?: InputMaybe<Scalars["DateTime"]>;
+  phone?: InputMaybe<Scalars["String"]>;
 };
 
 export type CreateManagerInput = {
@@ -2773,6 +2778,7 @@ export type CreateManagerInput = {
   tax_id?: InputMaybe<Scalars["String"]>;
   postal?: InputMaybe<Scalars["String"]>;
   birth?: InputMaybe<Scalars["DateTime"]>;
+  phone?: InputMaybe<Scalars["String"]>;
 };
 
 export type User = {
