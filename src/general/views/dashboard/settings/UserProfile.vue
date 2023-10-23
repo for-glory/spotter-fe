@@ -66,7 +66,7 @@
                                 </ion-text>
                             </div>
                             <div class="end-content">
-                                <ion-text class="end-content__title">View All</ion-text>
+                                <ion-text class="end-content__title cursor-pointer" @click="viewAllReview">View All</ion-text>
                             </div>
                         </div>
                         <div class="review-cards">
@@ -175,7 +175,7 @@
                     <ion-text class="section-title">Certifications</ion-text>
                     <div class="doc-items" v-if="trainer?.certificates?.length">
                         <advantage-item v-for="(item, index) in trainer.certificates" :key="index"
-                            :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'" :title="(item.title as string)"
+                            :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'" :title="(item.title as string)"
                             @click="onOpenDocument(item.pathUrl)" />
                     </div>
                 </div>
@@ -183,7 +183,7 @@
                     <ion-text class="section-title">Waiver and Labilities</ion-text>
                     <div class="doc-items">
                         <advantage-item v-for="(item, index) in trainer?.weiver_and_labilities" :key="index"
-                            :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'" :title="(item.title as string)"
+                            :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'" :title="(item.title as string)"
                             @click="onOpenDocument(item.pathUrl)" />
                     </div>
                 </div>
@@ -337,6 +337,12 @@ const purchaseWorkout = (id: string) => {
             toast.present();
         });
 };
+const viewAllReview = () => {
+    router.push({
+        name: EntitiesEnum.DashboardTrainerReviews,
+        params: { id: trainer.id },
+    });
+}
 
 const onOpenDocument = async (url: string) => {
     await Browser.open({ url: url });

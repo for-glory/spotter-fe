@@ -9,7 +9,7 @@
         <ion-spinner v-if="reviewLoading" name="lines" class="spinner" />
         <template v-else>
             <div class="rating-wrapper">
-                <ion-button expand="block" color="primary" class="fixed-holder__button font-yantramanav"
+                <ion-button expand="block" v-if="role !== RoleEnum.Trainer" color="primary" class="fixed-holder__button font-yantramanav"
                     @click="isWriteReviewModal = true">
                     Add review
                 </ion-button>
@@ -139,6 +139,7 @@ import { useRoute } from "vue-router";
 import useRoles from "@/hooks/useRole";
 
 const route = useRoute();
+const {role} = useRoles();
 const isWriteReviewModal = ref<boolean>(false);
 const isAddReviewModal = ref<boolean>(false);
 

@@ -487,26 +487,23 @@
 import {
   IonButton,
   IonSpinner,
-  IonLabel,
   IonText,
   IonIcon,
   IonImg,
   IonTitle,
-  IonAvatar,
-  actionSheetController
+  actionSheetController,
+  IonItem,
+  IonCol,
+  IonRow,
 } from "@ionic/vue";
 import { EntitiesEnum } from "@/const/entities";
 import {
-  Facility,
   RoleEnum,
-  GetManagersByFacilityDocument,
   FeedbackEntityEnum,
   Query,
   Review,
   ReviewsDocument,
   ReviewTypeEnum,
-  SettingsCodeEnum,
-  UnfollowDocument,
   EventsQuery,
   EventsDocument,
   QueryEventsOrderByColumn,
@@ -517,26 +514,19 @@ import {
   DeleteFacilityDocument,
   FacilityItemsByFacilityIdAndTypeDocument
 } from "@/generated/graphql";
-import { TabItem } from "@/interfaces/TabItem";
 import { Review as UserReview } from "@/ts/types/user";
 import { useQuery } from "@vue/apollo-composable";
-import PageTabs from "@/general/components/PageTabs.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
-import { v4 as uuidv4 } from "uuid";
 import StarRating from "@/general/components/dashboard/StarRating.vue";
 import ReviewStatusBar from "@/general/components/dashboard/ReviewStatusBar.vue";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
-import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import Avatar from "@/general/components/blocks/Avatar.vue";
 import dayjs from "dayjs";
-import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { FreeMode } from "swiper";
-import { TabItemNew } from "@/interfaces/TabItemNew";
 import PageTabsNew from "@/general/components/PageTabsNew.vue";
 import { useNewFacilityStore } from "@/facilities/store/new-facility";
 import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";

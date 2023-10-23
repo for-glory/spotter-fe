@@ -14,7 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
+import {
+  IonText,
+  IonIcon,
+} from "@ionic/vue";
 
 const props = defineProps({
   positiveCount: {

@@ -50,7 +50,7 @@
                   <ion-text>{{ manager?.type ?? 'Full Time' }}</ion-text>
                 </td>
                 <td class="table-td">
-                  <ion-text>${{ manager.email }}</ion-text>
+                  <ion-text>{{ manager.email }}</ion-text>
                 </td>
                 <td class="table-td">
                   <ion-text>{{ manager?.phone ? manager.phone : 'N/A' }}</ion-text>
