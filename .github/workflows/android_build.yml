@@ -28,10 +28,7 @@ jobs:
 
       - name: Build Android .aab and .apk
         run: |
-          npx cap sync android
-          npx cap add android
-          npx cap copy android
-          npx cap open android
+          npm run android
 
       - name: Decrypt signing key
         run: |
