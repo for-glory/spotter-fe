@@ -12,10 +12,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies and build
+        run: |
+          npm install --legacy-peer-deps
+
+      - name: Install ionic
+        run: |
+          npm install -g ionic
+          
+      - name: Ionic production build
+        run: |
+          npm run build
+
+      - name: Build Android .aab and .apk
+        run: |
+          npm run android
+
       - name: Decrypt signing key
         run: |          
-          echo "$SIGNING_KEY" | base64 -d > android/app/keystore/spotter_dev.jks
+          echo "$SIGNING_KEY" | base64 -d > app/keystore/spotter_dev.jks
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
 
