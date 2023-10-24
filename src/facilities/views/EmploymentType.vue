@@ -5,14 +5,10 @@
     </template>
     <template #content>
       <div class="emp-container ion-padding">
-        <ion-radio-group value="Full Time">
-          <ion-item lines="none" class="radiobutton">
-            <ion-label class="radiobutton__label"> Full Time </ion-label>
-            <ion-radio slot="end" value="Full Time" />
-          </ion-item>
-          <ion-item lines="none" class="radiobutton">
-            <ion-label class="radiobutton__label"> Contract </ion-label>
-            <ion-radio slot="end" value="Contract" />
+        <ion-radio-group value="Full Time" @ion-change="changeOption">
+          <ion-item lines="none" class="radiobutton" v-for="option in empOptions">
+            <ion-label class="radiobutton__label">{{ option.title }}</ion-label>
+            <ion-radio slot="end" :value="option.value" />
           </ion-item>
         </ion-radio-group>
       </div>
@@ -23,6 +19,24 @@
 import { IonRadioGroup, IonItem, IonLabel, IonRadio } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { EmploymentTypeEnum } from "@/generated/graphql";
+import { useManagerStore } from "../store/manager";
+const managerStore = useManagerStore();
+
+const empOptions = [
+  {
+    title: "Full Time",
+    value: EmploymentTypeEnum.FullTime
+  },
+  {
+    title: "Contract",
+    value: EmploymentTypeEnum.PartTime
+  }
+];
+
+const changeOption = (e: any) => {
+  managerStore.setEmploymentType(e.detail.value);
+}
 </script>
 <style scoped lang="scss">
 .emp-container {

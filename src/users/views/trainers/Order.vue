@@ -66,6 +66,7 @@ import dayjs from "dayjs";
 import useRoles from "@/hooks/useRole";
 import { GetTrainerDocument } from "@/graphql/documents/userDocuments";
 import { getSumForPayment } from "@/general/helpers/getSumForPayment";
+import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 
 const isConfirmed = ref(false);
 const router = useRouter();
@@ -74,6 +75,7 @@ const store = paymentGatewaysStore();
 const loading = ref(true);
 const { role } = useRoles();
 const cart = ref<Cart | null>(null);
+const selectedAddress = useSelectedAddressStore();
 
 const stopLoading = debounce(() => {
   loading.value = false;
@@ -165,8 +167,8 @@ const getParams = () => {
     end_date: dayjs(new Date(store.getEndDate)).utc(),
   };
 
-  if (store.place?.value === PlaceType.UserGym) {
-    params.available_user_gym_id = store?.facility?.id;
+  if (getTrainingOptions() === AvailableTrainingOptionsEnum.InUserGym) {
+    params.available_user_gym_id = selectedAddress.assignedFacility?.id;
   }
   return params;
 };

@@ -5,7 +5,7 @@
     </template>
     <template #content>
       <div class="notification">
-        <base-toggle @change="changeNotificationSetting($event,notification.id)" v-for="notification in notifications" :value="notification.value"
+        <base-toggle @click="changeNotificationSetting(notification.value,notification.id)" v-for="notification in notifications" v-model:value="notification.value"
           :content="notification.title" />
       </div>
     </template>

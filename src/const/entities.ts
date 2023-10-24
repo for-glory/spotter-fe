@@ -1,6 +1,7 @@
 export enum EntitiesEnum {
   Profile = "PROFILE",
   ProfileEdit = "PROFILE_EDIT",
+  ProfileEditName = "PROFILE_EDIT_NAME",
   ProfileGettingPaid = "PROFILE_GETTING_PAID",
   ProfileEmail = "PROFILE_EMAIL",
   ProfilePassword = "PROFILE_PASSWORD",
@@ -241,6 +242,7 @@ export enum EntitiesEnum {
   ViewPassAndDropins = "VIEW_PASS_AND_DROPINS",
   ManagersOverview = "MANAGERS_OVERVIEW",
   AddManager = "ADD_MANAGER",
+  EditManager = "EDIT_MANAGER",
   ManagerProfile = "MANAGER_PROFILE",
   CreateItem = "CREATE_ITEM",
   CreateFacilitySuccess = "CREATE_FACILITY_SUCCESS",

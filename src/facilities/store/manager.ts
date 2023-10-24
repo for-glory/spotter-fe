@@ -1,7 +1,20 @@
+import { Address } from "@/generated/graphql";
 import { defineStore } from "pinia";
+export interface Manager {
+  avatarUrl: string;
+  first_name: string;
+  last_name: string;
+  address: Address;
+  tax_id: string;
+  email: string;
+  phone_number: string;
+  postal_code: string;
+  employment_type: string;
+  birth: string;
+}
 
 export const useManagerStore = defineStore("manager", {
-  state: (): any => {
+  state: (): Manager => {
     return {
       avatarUrl: "",
       first_name: "",
@@ -10,12 +23,14 @@ export const useManagerStore = defineStore("manager", {
         lat: null,
         lng: null,
         street: "",
+        id: "",
       },
       tax_id: "",
       email: "",
       phone_number: "",
       postal_code: "",
       employment_type: "",
+      birth: "",
     };
   },
   actions: {
@@ -26,12 +41,8 @@ export const useManagerStore = defineStore("manager", {
     setAvatarUrl(avatarUrl: string) {
       this.avatarUrl = avatarUrl;
     },
-    setAddress(
-      lat: any,
-      lng: any,
-      street: string | null
-    ) {
-      this.address = { lat, lng, street };
+    setAddress(lat: any, lng: any, street: string | null, id?: string) {
+      this.address = { lat, lng, street, id: id ? id : "" };
     },
     setTaxID(tax_id: string) {
       this.tax_id = tax_id;
@@ -48,6 +59,9 @@ export const useManagerStore = defineStore("manager", {
     setEmploymentType(employment_type: string) {
       this.employment_type = employment_type;
     },
+    setBirthDate(birth: string) {
+      this.birth = birth;
+    },
     clear() {
       this.first_name = "";
       this.last_name = "";
@@ -55,6 +69,7 @@ export const useManagerStore = defineStore("manager", {
         lat: null,
         lng: null,
         street: "",
+        id: "",
       };
     },
   },

@@ -6,15 +6,15 @@
     <div class="content-box content-box__top justify-content-between">
       <div class="d-flex align-items-center">
         <ion-avatar class="photo">
-					<ion-img v-if="facilityStore.facility.media?.length" :src="facilityStore.facility.media[0]?.pathUrl"></ion-img>
+					<ion-img v-if="result?.facility?.media?.length" :src="result?.facility?.media[0]?.pathUrl"></ion-img>
 					<template v-else>
-						{{ facilityStore.facility.name.charAt(0) }}
+						{{ result?.facility?.name.charAt(0) }}
 					</template>
 				</ion-avatar>
         <div class="main-info-box">
-          <ion-title class="content-box__title">{{ facilityStore.facility.name }}</ion-title>
+          <ion-title class="content-box__title">{{ result?.facility?.name }}</ion-title>
           <ion-label class="main-info-box__label" color="medium">{{ roleText }}</ion-label>
-          <ion-label class="main-info-box__label" color="medium">{{facilityStore.facility.address?.street}}</ion-label>
+          <ion-label class="main-info-box__label" color="medium">{{result?.facility?.address?.street}}</ion-label>
         </div>
       </div>
       <div class="d-flex align-items-center justify-content-center">
@@ -89,35 +89,20 @@
       </ion-grid>
     </div> -->
   </div>
-  <create-facility-modal ref="createFacilityModal"/>
+  <create-facility-modal ref="createFacilityModal" @close="reloadData"/>
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, ref, inject } from "vue";
+import { computed, ref } from "vue";
 import {
 	IonTitle,
   IonButton,
   IonLabel,
   IonAvatar,
-  IonImg,
-	IonGrid,
-	IonRow,
-	IonCol,
-  IonMenuToggle
-} from "@ionic/vue";
-import { useRouter } from "vue-router";
-import { minutesDuration } from "@/const/minutes-durations";
-import { useField } from "vee-validate";
-import { EntitiesEnum } from "@/const/entities";
-import { useProfileStore } from "../../../stores/profile";
-import { requiredFieldSchema } from "@/validations/authValidations";
-import { v4 as uuidv4 } from "uuid";
+  IonImg} from "@ionic/vue";
 import { Query, RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { dataURItoFile } from "@/utils/fileUtils";
-import ChooseBlock from "@/general/components/blocks/Choose.vue";
-import { Emitter, EventType } from "mitt";
+import { useQuery } from "@vue/apollo-composable";
 import { useNewFacilityStore } from "@/facilities/store/new-facility";
 import { GetFacilityDocument } from "@/graphql/documents/userDocuments";
 import CreateFacilityModal from "@/general/views/dashboard/gyms/CreateFacility.vue";
@@ -133,6 +118,10 @@ const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>
     id: facilityStore.facility.id,
   }
 );
+
+const reloadData = () =>{
+  refetch();
+}
 
 const goToGymEdit = () => {
   newFacilityStore.clear();
@@ -181,13 +170,6 @@ const goToGymEdit = () => {
   createFacilityModal.value?.present({
     isEdit: true,
     selectedFacilityId: result?.value?.facility?.id
-  });
-}
-
-const editFacility = () => {
-  createFacilityModal.value?.present({
-    isEdit: true,
-    selectedFacilityId: facilityStore.facility.id
   });
 }
 

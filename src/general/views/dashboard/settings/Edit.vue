@@ -89,7 +89,7 @@ withDefaults(
 );
 const { role } = useRoles();
 
-const filter = ref<EntitiesEnum>(role === RoleEnum.Trainer ? EntitiesEnum.ProfileEditTrainer : EntitiesEnum.ProfileEdit);
+const filter = ref<EntitiesEnum>(role === RoleEnum.Trainer ? EntitiesEnum.ProfileEditTrainer : EntitiesEnum.ProfileEditName);
 const previewOnLoading = ref<boolean>(false);
 const previewUrl = ref<string>("");
 const previewPath = ref<string>("");
@@ -101,7 +101,7 @@ const route = useRoute();
 const { type: subscriptionType } = useSubscription();
 
 const settingsCompo = {
-    [EntitiesEnum.ProfileEdit]: EditeProfile,
+    [EntitiesEnum.ProfileEditName]: EditeProfile,
     [EntitiesEnum.ProfileEmail]: Email,
     [EntitiesEnum.ProfilePassword]: ChangePassword,
     [EntitiesEnum.ProfileLanguages]: Languages,
