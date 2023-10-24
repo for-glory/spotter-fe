@@ -6970,6 +6970,7 @@ export const FacilityItemPassDocument = gql`
       facilityItem {
         title
         description
+        item_type
         facility {
           id
           name
@@ -8524,6 +8525,7 @@ export const MyFacilityItemPassesDocument = gql`
         facilityItem {
           title
           qr_code_lifetime_value
+          item_type
           facility {
             id
             name

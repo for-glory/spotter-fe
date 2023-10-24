@@ -14,7 +14,7 @@
               <div class="flex-container">
                 <ion-text class="content"
                   >Your available balance is
-                  <span class="fund">{{ formatCurrency(revenue?.year_earn, "fixed") }}</span>
+                  <span class="fund">${{ formatCurrency(revenue?.year_earn, "fixed") }}</span>
                 </ion-text>
                 <IonButton class="get" @click="handleGet"
                   >Get paid now</IonButton
@@ -47,7 +47,7 @@
                         0.8%
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
-                      <div class="chain">{{ formatCurrency(revenue?.today_earn, "fixed") }}</div>
+                      <div class="chain">${{ formatCurrency(revenue?.today_earn, "fixed") }}</div>
                     </div>
                   </ion-col>
                   <ion-col size="12" size-xl="12">
@@ -60,7 +60,7 @@
                         <ion-icon class="arrow" src="assets/icon/call_made.svg" />
                       </div>
                         <div class="chain">
-                          {{ formatCurrency(revenue?.earn_last_thirty_days, "fixed") }}
+                          ${{ formatCurrency(revenue?.earn_last_thirty_days, "fixed") }}
                         </div>
                       </div>
                     </div>

@@ -90,11 +90,17 @@ const imgPath = computed(() => {
       return props.item?.trainer?.avatarUrl;
 
     case EntitiesEnum.Facilities: 
-    const data = props.item?.facilityItem?.facility.media
-    if (data?.length) {
-      return data[0].pathUrl;
-    }
-    break;
+      const data = props.item?.facilityItem?.facility.media
+      if (data?.length) {
+        return data[0].pathUrl;
+      }
+      break;
+    
+    case EntitiesEnum.FacilityDropins: 
+      if (props.item?.facilityItem?.facility.media?.length) {
+        return props.item?.facilityItem?.facility.media[0].pathUrl;
+      }
+      break;
     
   default:
       break;
@@ -107,6 +113,9 @@ const title = computed(() => {
       return props.item?.title;
 
     case EntitiesEnum.Facilities:
+      return props.item?.facilityItem?.title;
+
+    case EntitiesEnum.FacilityDropins:
       return props.item?.facilityItem?.title;
 
     case EntitiesEnum.Trainings:
@@ -122,9 +131,12 @@ const avatarTitle = computed(() => {
     case EntitiesEnum.Events:
     case EntitiesEnum.Facilities:
       return title.value?.charAt(0);
+    
+    case EntitiesEnum.FacilityDropins:
+      return title.value?.charAt(0);
 
-      case EntitiesEnum.Trainings:
-        return props.item?.trainer?.first_name.charAt(0) + ' ' + props.item?.trainer?.last_name.charAt(0)
+    case EntitiesEnum.Trainings:
+      return props.item?.trainer?.first_name.charAt(0) + ' ' + props.item?.trainer?.last_name.charAt(0)
   
     default:
       break;
@@ -140,6 +152,16 @@ const rightDate = computed(() => {
       }
       break;
     case EntitiesEnum.Facilities:
+      if (props.item?.start_date) {
+        timeIcon.value = false;
+        const currDate = dayjs(new Date());
+        const startDate = dayjs(props.item?.start_date);
+        const diff = startDate.diff(currDate, "days");
+        return `${diff} days left`;
+      }
+      break;
+    
+    case EntitiesEnum.FacilityDropins:
       if (props.item?.start_date) {
         timeIcon.value = false;
         const currDate = dayjs(new Date());
@@ -165,6 +187,9 @@ const subTitle = computed(() => {
 
     case EntitiesEnum.Facilities:
       return null;
+      
+    case EntitiesEnum.FacilityDropins:
+      return null;
 
     default:
       break;
@@ -177,6 +202,9 @@ const address = computed(() => {
       return props.item?.address?.street;
 
     case EntitiesEnum.Facilities:
+      return props.item?.facilityItem?.facility?.address?.street;
+      
+    case EntitiesEnum.FacilityDropins:
       return props.item?.facilityItem?.facility?.address?.street;
 
     case EntitiesEnum.Trainings:
@@ -197,16 +225,17 @@ const itemType = computed(() => {
         }
       }
       break;
-    case EntitiesEnum.Facilities:
-      if (props.item?.start_date) {
-        if (new Date() < new Date(props.item?.start_date)) {
-          return "premium";
-        } else {
-          return "expired";
-        }
-      }
-      break;
+    // case EntitiesEnum.Facilities:
+    //   if (props.item?.start_date) {
+    //     if (new Date() < new Date(props.item?.start_date)) {
+    //       return "premium";
+    //     } else {
+    //       return "expired";
+    //     }
+    //   }
+    //   break;
     default:
+      return ""
       break;
   }
 });

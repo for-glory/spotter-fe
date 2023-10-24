@@ -76,7 +76,7 @@
           <div class="training-preview__row">
             <strong class="training-preview__row__title">Total</strong>
             <span class="training-preview__row__data">
-              ${{ trainingTotal || 20 }}
+              ${{ trainingTotal }}
             </span>
           </div>
         </div>
@@ -251,9 +251,9 @@ const sessionTypeName = computed<string>(() => {
 });
 const planType = computed(() => {
   if (compSessionType === EntitiesEnum.Facility) {
-    return "Premium";
+    return facilityResult.value?.facilityItemPass?.facilityItem.title
   } else if (compSessionType === EntitiesEnum.FacilityDropins) {
-    return "One Day Access";
+    return facilityResult.value?.facilityItemPass?.facilityItem.title
   }
 });
 const showTime = computed(() => {
@@ -334,6 +334,10 @@ onMounted(async () => {
   loadingStart.value = true;
   switch (compSessionType) {
     case EntitiesEnum.Facility:
+      getFacility();
+      break;
+
+    case EntitiesEnum.FacilityDropins:
       getFacility();
       break;
 
@@ -495,6 +499,11 @@ const trainingStartDate = computed(() => {
       return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
         "DD/MM/YYYY"
       );
+    
+    case EntitiesEnum.FacilityDropins:
+      return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
+        "DD/MM/YYYY"
+      );
 
     case EntitiesEnum.Training:
       return dayjs(trainingResult.value?.training?.start_date).format(
@@ -512,6 +521,11 @@ const trainingStartDate = computed(() => {
 const trainingStartTime = computed(() => {
   switch (compSessionType) {
     case EntitiesEnum.Facility:
+      return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
+        "hh:mm A"
+      );
+
+    case EntitiesEnum.FacilityDropins:
       return dayjs(facilityResult.value?.facilityItemPass.start_date).format(
         "hh:mm A"
       );
@@ -536,6 +550,11 @@ const trainingEndTime = computed(() => {
         "hh:mm A"
       );
 
+    case EntitiesEnum.FacilityDropins:
+      return dayjs(facilityResult.value?.facilityItemPass.end_date).format(
+        "hh:mm A"
+      );
+
     case EntitiesEnum.Training:
       return dayjs(trainingResult.value?.training?.end_date).format(
         "hh:mm A"
@@ -553,6 +572,10 @@ const trainingTotal = computed(() => {
   switch (compSessionType) {
     case EntitiesEnum.Facility:
       return facilityResult.value?.facilityItemPass.order.front_total;
+      
+    case EntitiesEnum.FacilityDropins:
+      return facilityResult.value?.facilityItemPass.order.front_total;
+
 
     case EntitiesEnum.Training: {
       const rate = trainingResult.value?.training.trainer?.settings?.find(

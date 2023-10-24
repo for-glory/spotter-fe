@@ -43,7 +43,7 @@
           </template>
         </div>
         <ion-title class="separator text-align-center"
-          >Products you've chosen are free. Click "Confirm" button to
+          >Click "Confirm" button to
           continue.</ion-title
         >
       </template>
