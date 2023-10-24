@@ -1,4 +1,4 @@
-name: Build and Deploy to Google Play Internal Testing
+name: Build and Upload to Google Play Internal Testing
 
 on:
   push:
@@ -32,33 +32,27 @@ jobs:
           npm install --legacy-peer-deps
           npm install -g ionic
           npm run build
-          npm run android
+          npm run android        
 
       - name: Load signing key content into environment variable
         run: |
           export SIGNING_KEY=$(cat android/app/keystore/spotter_dev.jks | base64 -w 0)
         shell: bash
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
 
       - name: Assemble Release Bundle
         run: |
           chmod +x ./gradlew
-          ./gradlew bundleRelease
-        working-directory: ./android
-
-      - name: Sign Release
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: android/app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          ./gradlew bundleRelease --no-daemon -Pandroid.injected.signing.store.file=android/app/keystore/spotter_dev.jks -Pandroid.injected.signing.store.password=spotter -Pandroid.injected.signing.key.alias=spotter -Pandroid.injected.signing.key.password=spotter
+          working-directory: ./android
 
       - name: Deploy to Google Play Internal Testing
         run: |
           echo $GOOGLE_PLAY_JSON > key.json
           gcloud auth activate-service-account --key-file=key.json
-          gcloud config set project spotter-fitness-d49be
-          gcloud app android-apps upload android/app/build/outputs/bundle/release/app-release.aab --internal-testing
+          gcloud config set project your-project-id
+          gcloud app android-apps upload path/to/your/project/android/app/build/outputs/bundle/release/app-release.aab --internal-testing
+          gcloud app android-apps upload path/to/your/project/android/app/build/outputs/apk/release/app-release.apk --internal-testing
         env:
           GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_JSON }}
