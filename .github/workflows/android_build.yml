@@ -1,4 +1,4 @@
-name: Build and Upload to Google Play Internal Testing
+name: Build and Deploy to Google Play Internal Testing
 
 on:
   push:
@@ -30,17 +30,8 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm install --legacy-peer-deps
-
-      - name: Install ionic
-        run: |
           npm install -g ionic
-          
-      - name: Ionic production build
-        run: |
           npm run build
-
-      - name: Build Android .aab and .apk
-        run: |
           npm run android
 
       - name: Load signing key content into environment variable
@@ -48,13 +39,9 @@ jobs:
           export SIGNING_KEY=$(cat android/app/keystore/spotter_dev.jks | base64 -w 0)
         shell: bash
 
-      - name: Print SIGNING_KEY
-        run: |
-          echo "My SIGNING_KEY $SIGNING_KEY"
-
       - name: Assemble Release Bundle
         run: |
-          chmod +x ./gradlew     # Grant execution permissions
+          chmod +x ./gradlew
           ./gradlew bundleRelease
         working-directory: ./android
 
@@ -73,6 +60,5 @@ jobs:
           gcloud auth activate-service-account --key-file=key.json
           gcloud config set project spotter-fitness-d49be
           gcloud app android-apps upload android/app/build/outputs/bundle/release/app-release.aab --internal-testing
-          gcloud app android-apps upload android/app/build/outputs/apk/release/app-release.apk --internal-testing
         env:
           GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_JSON }}
