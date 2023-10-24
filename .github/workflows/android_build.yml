@@ -45,7 +45,7 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew bundleRelease --no-daemon -Pandroid.injected.signing.store.file=android/app/keystore/spotter_dev.jks -Pandroid.injected.signing.store.password=spotter -Pandroid.injected.signing.key.alias=spotter -Pandroid.injected.signing.key.password=spotter
-          working-directory: ./android
+        working-directory: ./android
 
       - name: Deploy to Google Play Internal Testing
         run: |
