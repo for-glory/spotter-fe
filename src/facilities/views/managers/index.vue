@@ -86,35 +86,23 @@ import {
   IonSpinner,
   IonRow,
   IonCol,
-  IonText
+  IonText,
+  IonTitle,
+  IonGrid
 } from "@ionic/vue";
 import {
-  Query,
-  GetManagersByFacilityDocument,
-  UserDocument,
-  RoleEnum
-} from "@/generated/graphql";
-import { useLazyQuery } from "@vue/apollo-composable";
-import { chevronBackOutline } from "ionicons/icons";
-import { computed, onMounted, ref } from "vue";
+  GetManagersByFacilityDocument} from "@/generated/graphql";
+import { onMounted, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter } from "vue-router";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import useFacilityId from "@/hooks/useFacilityId";
-import useRoles from "@/hooks/useRole";
-import { v4 as uuidv4 } from "uuid";
 import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import { useQuery } from "@vue/apollo-composable";
-import useId from "@/hooks/useId";
 import { useManagerStore } from "@/facilities/store/manager";
 import { useUserStore } from "@/general/stores/user";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 
 const router = useRouter();
-const activeTab = ref("subscribers");
-const currentFacility = useFacilityStore();
-const selectedTab = ref("All");
-const { role } = useRoles();
-const { id } = useId();
 const store = useManagerStore();
 const userStore = useUserStore();
 
@@ -135,9 +123,16 @@ const handleAddGymManager = () => {
 }
 
 const handleViewProfile = (manager: any) => {
+  console.log('manager',manager);
   store.setName(manager?.first_name, manager?.last_name);
   store.setAddress(manager?.address?.lat, manager?.address?.lng, manager?.address?.street);
   store.setAvatarUrl(manager?.avatarUrl);
+  store.setEmail(manager?.email);
+  store.setPhoneNumber(manager?.phone);
+  store.setEmploymentType(manager?.employment_type);
+  store.setPostalCode(manager?.postal);
+  store.setTaxID(manager?.tax_id);
+  store.setBirthDate(manager?.birth);
   router.push({ name: EntitiesEnum.ManagerProfile, params: { id: manager.id } });
 }
 

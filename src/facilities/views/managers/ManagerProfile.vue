@@ -1,7 +1,7 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Gym Manager Profile">
+      <page-header back-btn @back="onBack" title="Gym Manager Profile" :edit-btn="true" @edit-click="handleAddGymManager">
       </page-header>
     </template>
     <template #content>
@@ -16,32 +16,32 @@
               {{ name }}
               <ion-icon slot="icon-only" src="assets/icon/arrow-down-light.svg"></ion-icon>
             </ion-label>
-            <ion-text class="contact">{{"Gym Manager"}}</ion-text>
-            <ion-text class="contact">{{"gymmanager@spotterfitness.com"}}</ion-text>
-            <ion-text class="contact">{{"(+1)70 8750 9216"}}</ion-text>
+            <ion-text class="contact">{{ "Gym Manager" }}</ion-text>
+            <ion-text class="contact">{{ "gymmanager@spotterfitness.com" }}</ion-text>
+            <ion-text class="contact">{{ "(+1)70 8750 9216" }}</ion-text>
           </div>
-          <div class="gym-info d-flex-col gap-16">            
+          <div class="gym-info d-flex-col gap-16">
             <div class="data-box d-flex align-items-center justify-content-between">
               <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{40}}</ion-text>
+                <ion-text id="main">{{ 40 }}</ion-text>
                 <ion-text class="field-label">Age</ion-text>
               </div>
-              <div class="vertical-line"/>
+              <div class="vertical-line" />
               <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"Full-Time"}}</ion-text>
+                <ion-text id="main">{{ "Full-Time" }}</ion-text>
                 <ion-text class="field-label">Employment type</ion-text>
               </div>
-              <div class="vertical-line"/>
+              <div class="vertical-line" />
               <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"Manager"}}</ion-text>
+                <ion-text id="main">{{ "Manager" }}</ion-text>
                 <ion-text class="field-label">Position</ion-text>
               </div>
             </div>
-            <div class="horizontal-line"/>
+            <div class="horizontal-line" />
             <div class="d-flex-col align-items-center">
-                <ion-text id="main">{{"23 Lantly South Carolina, USA"}}</ion-text>
-                <ion-text class="field-label">Address</ion-text>
-              </div>
+              <ion-text id="main">{{ "23 Lantly South Carolina, USA" }}</ion-text>
+              <ion-text class="field-label">Address</ion-text>
+            </div>
           </div>
         </div>
         <!-- <week-calendar
@@ -79,15 +79,9 @@
       </div>
     </template>
   </base-layout>
-  <confirmation
-    :is-visible="showConfirmationModal"
-    title="Do you want to delete account"
-    description="Gym manager will be deleted"
-    button-text="Delete"
-    cancel-button-text="Cancel"
-    @discard="onDeleteManager"
-    @decline="hideModal"
-  />
+  <confirmation :is-visible="showConfirmationModal" title="Do you want to delete account"
+    description="Gym manager will be deleted" button-text="Delete" cancel-button-text="Cancel" @discard="onDeleteManager"
+    @decline="hideModal" />
 </template>
 
 <script setup lang="ts">
@@ -95,96 +89,53 @@ import {
   IonButton,
   IonIcon,
   IonLabel,
-  IonSegment,
-  IonSegmentButton,
 } from "@ionic/vue";
 import {
-  Query,
-  GetManagersByFacilityDocument,
-  UserDocument,
-  RoleEnum,
-  UserAvailabilityDocument,
-  DeleteManagerDocument,
+  DeleteManagerDocument, GetManagersByFacilityDocument,
 } from "@/generated/graphql";
-import { useLazyQuery } from "@vue/apollo-composable";
-import { chevronBackOutline } from "ionicons/icons";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { EntitiesEnum } from "@/const/entities";
 import { useRouter, useRoute } from "vue-router";
-import { useFacilityStore } from "@/general/stores/useFacilityStore";
-import useFacilityId from "@/hooks/useFacilityId";
-import useRoles from "@/hooks/useRole";
-import { v4 as uuidv4 } from "uuid";
-import { useQuery, useMutation } from "@vue/apollo-composable";
-import dayjs, { Dayjs } from "dayjs";
-import useId from "@/hooks/useId";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useManagerStore } from "@/facilities/store/manager";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
-import Calendar from "@/general/components/dashboard/Calendar.vue";
-import WeekCalendar from "@/general/components/blocks/calendar/WeekCalendar.vue";
-import SummaryItem from "@/general/components/dashboard/SummaryItem.vue";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
+import BaseLayout from "@/general/components/base/BaseLayout.vue";
+import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { useUserStore } from "@/general/stores/user";
 
 const router = useRouter();
 const route = useRoute();
-const currentFacility = useFacilityStore();
-const { role } = useRoles();
-const { id } = useId();
-const store = useManagerStore();
+const managerStore = useManagerStore();
+const userStore = useUserStore();
 const managerId = computed(() => route.params.id);
 
 const name = computed(() => {
-  if (store?.first_nametion || store?.last_name) {
-    return store.first_name + ' ' + store.last_name;
+  if (managerStore?.first_name || managerStore?.last_name) {
+    return managerStore.first_name + ' ' + managerStore.last_name;
   }
   return "N/A";
 });
-const avatarUrl = computed(() => store.avatarUrl);
-const address = computed(() => store.address);
-const selectedDate = ref<Dayjs | null>(dayjs());
-
-const onViewCalendar = () => {
-  router.push({ name: EntitiesEnum.DashboardCalendar });
-};
-
-const { result: calendarWidgetResult } = useQuery(
-  UserAvailabilityDocument,
-  {
-    id,
-    from: dayjs().startOf("d").format("YYYY-MM-DD HH:mm:ss"),
-    to: dayjs().day(6).endOf("d").format("YYYY-MM-DD HH:mm:ss"),
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
-
+const avatarUrl = computed(() => managerStore.avatarUrl);
 const { showConfirmationModal, showModal, hideModal } = useConfirmationModal();
 const { mutate } = useMutation(DeleteManagerDocument);
 
-const bookings = computed(() => {
-  const availability = [];
-  if (calendarWidgetResult && calendarWidgetResult?.value) {
-    const userAvailability = calendarWidgetResult?.value?.userAvailability;
+const managerData = ref<any>();
 
-    if (userAvailability && userAvailability?.events) {
-      const { events } = userAvailability;
-      const bookedEvents = events.map((event: any) => ({
-        start_date: event?.start_date || null,
-      }));
-
-      availability.push(...bookedEvents);
-    }
-  }
-  return availability;
+const {
+  result: managersResult,
+  loading: loadingManagersData,
+  refetch,
+  onResult: gotManagers,
+} = useQuery<any>(GetManagersByFacilityDocument, {
+  role: "MANAGER",
+  facilities: userStore.owned_facilities.map((facility: any) => facility.id),
 });
 
-onMounted(() => {
-  console.log("id:", currentFacility.facility.id);
-  console.log({ name });
-  console.log({ avatarUrl });
-  console.log({ address });
-});
+gotManagers(({data}) => {  
+  console.log({data});
+  managerData.value = data.managers.data;
+})
 
 const onDeleteManager = () => {
   console.log("delete manager");
@@ -199,9 +150,12 @@ const onDeleteManager = () => {
     .catch((err) => {
       console.log(err);
     });
-}
+};
 const onBack = () => {
   router.go(-1);
+};
+const handleAddGymManager = () => {
+  router.push({ name: EntitiesEnum.EditManager, params: { id: managerId.value}});
 };
 </script>
 
@@ -211,6 +165,7 @@ const onBack = () => {
   width: 100%;
   height: 100%;
 }
+
 .vertical-line {
   border: solid;
   border-width: 1px;
@@ -219,10 +174,11 @@ const onBack = () => {
   padding: 23px 0;
   border-color: var(--main-color);
 }
+
 .profile-field {
   display: flex;
   flex-direction: column;
-  gap:22px;
+  gap: 22px;
 
   .calendar-title {
     font: 20px/1 var(--ion-font-family);
@@ -230,9 +186,11 @@ const onBack = () => {
     padding: 0;
   }
 }
+
 .data-field {
   flex: auto;
 }
+
 .contact-field {
   display: flex;
   flex-direction: column;
@@ -243,7 +201,8 @@ const onBack = () => {
     font: 500 24px/1 var(--ion-font-family);
     color: var(--fitnesswhite);
   }
-  .contact{
+
+  .contact {
     font: 16px/1 var(--ion-font-family);
     color: var(--gray-400);
   }
@@ -258,11 +217,13 @@ img#avatar {
   width: 86px;
   height: 86px;
 }
+
 .horizontal-line {
   height: 1px;
   background: var(--main-color);
   margin: 8px;
 }
+
 .gym-info {
   background-color: var(--gray-700);
   padding-top: 15px;
@@ -271,19 +232,23 @@ img#avatar {
   padding-left: 28px;
   border-radius: 8px;
 }
-  .field-label {
-    font: 300 14px/1 var(--ion-font-family);
-    color: var(--gray-400);
-    padding-top: 4px;
-  }
+
+.field-label {
+  font: 300 14px/1 var(--ion-font-family);
+  color: var(--gray-400);
+  padding-top: 4px;
+}
+
 .d-flex-col {
   display: flex;
   flex-direction: column;
 }
+
 ion-text#main {
   font: 500 18px/1 Yantramanav;
   color: #EFEFEF;
 }
+
 ion-button#delete {
   width: 100%;
   margin-top: 24px;
@@ -298,15 +263,18 @@ ion-button#delete {
     padding-left: 0.6rem;
     font-weight: bold;
   }
+
   .period {
     font-size: 1rem;
     color: grey;
     padding-bottom: 0.6rem;
   }
+
   .time {
     font-size: 0.875rem;
     color: var(--gold);
   }
+
   .content {
     font-size: 1rem;
     color: #797979;
@@ -317,6 +285,7 @@ ion-button#delete {
     gap: 24px;
   }
 }
+
 .block {
   width: 100%;
   background-color: #262626;
@@ -329,6 +298,7 @@ ion-button#delete {
     padding-bottom: 4px;
   }
 }
+
 .title {
   padding: 8px 0px;
   font-size: 1.6rem;
@@ -348,5 +318,4 @@ ion-button#delete {
   font-size: 26px;
   font-style: normal;
   font-weight: 900;
-}
-</style>
+}</style>

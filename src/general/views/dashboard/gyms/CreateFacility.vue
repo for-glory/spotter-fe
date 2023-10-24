@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonModal } from "@ionic/vue";
+import { IonButton, IonModal, modalController } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import GymForm from "@/facilities/components/GymForm.vue";
 import { newFacilityStoreTypes } from "@/ts/types/store";
@@ -143,10 +143,11 @@ const createNewFacility = (data: newFacilityStoreTypes, mode: string) => {
   }
 };
 
-facilityCreated((res) => {
+facilityCreated(async (res) => {
   gymForm.value?.clearStore();
   facilityStore.setFacility(res.data?.createFacility);
   setSelectedGym(res.data?.createFacility?.id);
+  await modalController.dismiss();
   router.push({
     name: EntitiesEnum.DashboardOverview,
   });

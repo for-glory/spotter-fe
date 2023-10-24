@@ -38,6 +38,9 @@
       <ion-button v-if="moreBtn" class="chat-btn" @click="$emit('more-click')">
         <ion-icon :icon="ellipsisVertical" />
       </ion-button>
+      <ion-button v-if="editBtn" class="chat-btn" @click="$emit('edit-click')">
+        <ion-icon slot="icon-only" src="assets/icon/pencil.svg" />
+      </ion-button>
     </ion-buttons>
     <ion-title :class="titleClass">{{ title }}</ion-title>
   </ion-toolbar>
@@ -76,6 +79,7 @@ withDefaults(
     moreBtn?: boolean;
     title?: string | null;
     titleClass?: string;
+    editBtn?: boolean
   }>(),
   {
     transparent: false,
@@ -88,6 +92,7 @@ withDefaults(
     moreBtn: false,
     title: null,
     titleClass: "header__title",
+    editBtn: false
   }
 );
 
@@ -97,6 +102,7 @@ const emits = defineEmits<{
   (e: "scan"): void;
   (e: "chat-click"): void;
   (e: "more-click"): void;
+  (e: "edit-click"): void;
 }>();
 </script>
 

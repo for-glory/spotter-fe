@@ -8734,6 +8734,9 @@ export const GetManagersByFacilityDocument = gql`
         avatarUrl
         is_followed
         trainer_type
+        phone
+        tax_id
+        postal
         address {
           lat
           lng

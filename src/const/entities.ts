@@ -242,6 +242,7 @@ export enum EntitiesEnum {
   ViewPassAndDropins = "VIEW_PASS_AND_DROPINS",
   ManagersOverview = "MANAGERS_OVERVIEW",
   AddManager = "ADD_MANAGER",
+  EditManager = "EDIT_MANAGER",
   ManagerProfile = "MANAGER_PROFILE",
   CreateItem = "CREATE_ITEM",
   CreateFacilitySuccess = "CREATE_FACILITY_SUCCESS",
