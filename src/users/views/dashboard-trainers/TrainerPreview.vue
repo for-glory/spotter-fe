@@ -164,10 +164,7 @@
                                     <ion-icon src="assets/icon/location.svg"></ion-icon>
                                     <ion-text>{{ item.address }}</ion-text>
                                 </div>
-                                <div class="total">
-                                    <ion-icon src="assets/icon/profile.svg"></ion-icon>
-                                    <ion-text>{{ item.totalUser }}</ion-text>
-                                </div>
+                                <ion-button @click="goToEventDetail(item.id)">Register</ion-button>
                             </div>
                         </div>
                     </div>
@@ -259,6 +256,7 @@ import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
+import { Capacitor } from "@capacitor/core";
 
 const dailyData = ref();
 const isOpenBlurredScreenModal = ref(false);
@@ -474,6 +472,15 @@ const eventList = computed(() => eventResult.value?.events?.data.map((event: any
         totalUser: event?.booked_count
     }
 }));
+
+const goToEventDetail = (id) => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: id,
+    },
+  });
+}
 // End Events
 const formatNumber = (num: number, type: string) => {
     if (num < 1e3) {

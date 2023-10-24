@@ -75,12 +75,12 @@
       </div>
     </div>
     <div class="w-100" style="padding: 0 24px 24px;">
-      <ion-button v-if="type === AddToCartPurchasableEnum.Workout" class="w-100" @click="router.push({ name: EntitiesEnum.UserPurchasedWorkouts })">My Library</ion-button>
+      <ion-button v-if="type === AddToCartPurchasableEnum.Workout" class="w-100" @click="goToLibrary">My Library</ion-button>
       <ion-button
         v-else
         @click="handleClick"
         class="w-100">
-        Got it
+        Continue
       </ion-button>
     </div>
   </div>
@@ -196,6 +196,11 @@ const getDurationText = (value: number) => {
   }
 };
 
+const goToLibrary = () => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserPurchasedWorkouts : EntitiesEnum.DashboardClientPurchasedDailys
+  })
+}
 const handleClick = () => {
   if(type.value === AddToCartPurchasableEnum.Event){
     return router.push({

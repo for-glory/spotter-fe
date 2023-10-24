@@ -105,7 +105,7 @@
 								<ion-icon src="assets/icon/location.svg"></ion-icon>
 								<ion-text>{{ item.address }}</ion-text>
 							</div>
-							<ion-button>Register</ion-button>
+							<ion-button @click="goToEventDetail(item.id)">Register</ion-button>
 						</div>
 					</div>
 				</div>
@@ -184,6 +184,7 @@ import { ellipse } from "ionicons/icons";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 import dayjs from "dayjs";
+import { Capacitor } from "@capacitor/core";
 
 const route = useRoute();
 const router = useRouter();
@@ -529,6 +530,15 @@ const eventList = computed(() => eventResult.value?.events?.data.map((event: any
     address: event?.address?.street
   }
 }));
+
+const goToEventDetail = (id) => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: id,
+    },
+  });
+}
 // End Events
 const formatNumber = (num: number, type: string) => {
   if (num < 1e3) {

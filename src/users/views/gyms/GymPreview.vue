@@ -101,7 +101,7 @@
                                 <!-- <div class="only-address">
                                     {{ item.address }}
                                 </div> -->
-                                <ion-button @click="handleBuy">Buy</ion-button>
+                                <ion-button @click="handleBuy(item.id)">Buy</ion-button>
                             </div>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                                 <!-- <div class="only-address">
                                     {{ item.address }}
                                 </div> -->
-                                <ion-button @click="handleBuy">Subscribe</ion-button>
+                                <ion-button @click="handleBuy(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
@@ -181,7 +181,7 @@
                                     <ion-icon src="assets/icon/location.svg"></ion-icon>
                                     <ion-text>{{ event?.address?.street }}</ion-text>
                                 </div>
-                                <ion-button>Register</ion-button>
+                                <ion-button @click="goToEventDetail(event.id)">Register</ion-button>
                             </div>
                         </div>
                     </div>
@@ -256,6 +256,8 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
 import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
+import { Capacitor } from "@capacitor/core";
+import useRoles from "@/hooks/useRole";
 dayjs.extend(relativeTime);
 const dailyData = ref();
 const isOpenBlurredScreenModal = ref(false);
@@ -305,10 +307,17 @@ const { result, loading, onResult, refetch } = useQuery<Pick<Query, "facility">>
 );
 
 const handleMore = async () => {
-    const actionSheet = await actionSheetController.create({
-        mode: "ios",
-        cssClass: 'profile-action-sheet',
-        buttons: [
+    const { role:userRole } = useRoles();
+    const buttons = userRole===RoleEnum.User ? [
+            {
+                text: "Share profile",
+                role: "share",
+            },
+            {
+                text: "Cancel",
+                role: "cancel",
+            },
+        ] : [
             {
                 text: "Edit profile",
                 role: "edit",
@@ -321,7 +330,11 @@ const handleMore = async () => {
                 text: "Cancel",
                 role: "cancel",
             },
-        ],
+        ]
+    const actionSheet = await actionSheetController.create({
+        mode: "ios",
+        cssClass: 'profile-action-sheet',
+        buttons: buttons
     });
 
     await actionSheet.present();
@@ -386,12 +399,13 @@ const specialNeeds = computed<string | null>(() => {
     const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
     return answers ? answers : null;
 });
-const handleBuy = () => {
-    // router.push({
-    //     name: EntitiesEnum.GymOrderCalendar, params: {
-    //         id: 52,
-    //     },
-    // });
+const handleBuy = (id: number) => {
+  router.push({
+    name: Capacitor.isNativePlatform()?EntitiesEnum.DropinsPassesDetail:EntitiesEnum.DashboardDropinsPassesDetail,
+    params: {
+      id
+    },
+  });
 };
 
 const viewAllReview = () => {
@@ -441,7 +455,7 @@ const { mutate: addToCartMutation, loading: addToCartLoading } =
 const purchaseWorkout = () => {
   addToCartMutation({
     input: {
-      purchasable_id: id,
+      purchasable_id: selectedDailyId.value,
       purchasable: AddToCartPurchasableEnum.Workout,
     },
   })
@@ -542,6 +556,14 @@ const {
 const allEvents = computed(() => {
   return eventResult.value?.events?.data;
 });
+const goToEventDetail = (id) => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: id,
+    },
+  });
+}
 // End Events
 const formatNumber = (num: number, type: string) => {
   if (num < 1e3) {

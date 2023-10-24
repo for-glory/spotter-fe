@@ -145,52 +145,6 @@ date;
 date.setDate(date.getDate() + 5);
 date;
 
-const passes = [
-  {
-    id: "1",
-    start_date: date,
-    end_date: new Date(),
-    is_active_pass: false,
-    facilityItem: {
-      title: "Fantastic Gym",
-      qr_code_lifetime_value: 12,
-      facility: {
-        id: 22,
-        name: "test",
-        media: [
-          {
-            pathUrl:
-              "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
-            __typename: "Media",
-          },
-        ],
-        address: {
-          street: "2340 North Interstate 35 Frontage Road,",
-          __typename: "Address",
-        },
-      },
-    },
-  },
-];
-
-const training = [
-  {
-    id: "1",
-    state: "state",
-    start_date: new Date(),
-    trainer: {
-      avatarUrl:
-        "https://spotter-production-space.sfo3.cdn.digitaloceanspaces.com/events/r9GQARG589Rn9Wk71rAK6yiNsLVNmbl4C3hxSGnB.png",
-      first_name: "Tamra",
-      last_name: "dae",
-      address: {
-        street: "2340 North Interstate 35 Frontage Road,",
-        __typename: "Address",
-      },
-    },
-  },
-];
-
 const {
   result: eventsResult,
   loading: isEventsLoading,
@@ -242,30 +196,30 @@ const {
   }
 );
 
-const {
-  result: dropinsResult,
-  loading: isDropinsLoading,
-  refetch: refetchDropins,
-} = useQuery(
-  MyTrainingsDocument,
-  {
-    page: 1,
-    first: 4,
-    start_date: {
-      from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
-    },
-    orderBy: [
-      {
-        column: QueryMyTrainingsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-      },
-    ],
-  },
-  {
-    fetchPolicy: "no-cache",
-  }
-);
+// const {
+//   result: dropinsResult,
+//   loading: isDropinsLoading,
+//   refetch: refetchDropins,
+// } = useQuery(
+//   MyTrainingsDocument,
+//   {
+//     page: 1,
+//     first: 4,
+//     start_date: {
+//       from: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+//       to: dayjs().add(1, "M").format("YYYY-MM-DD HH:mm:ss"),
+//     },
+//     orderBy: [
+//       {
+//         column: QueryMyTrainingsOrderByColumn.StartDate,
+//         order: SortOrder.Asc,
+//       },
+//     ],
+//   },
+//   {
+//     fetchPolicy: "no-cache",
+//   }
+// );
 
 const {
   result: facilitiesResult,
@@ -380,34 +334,26 @@ const events = computed<EventPaginator["data"]>(() =>
 
 const trainings = computed(() => trainingsResult?.value?.myTrainings?.data);
 
-const dropins = computed(() =>
-  dropinsResult?.value?.myTrainings?.data
-    ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
-        ...training,
-        title: `${training.trainer.first_name} ${training.trainer.last_name}`,
-        address: training.trainer.address,
-        media: [{ pathUrl: training.trainer.avatarUrl }],
-      }))
+// const dropins = computed(() =>
+//   dropinsResult?.value?.myTrainings?.data
+//     ? trainingsResult.value.myTrainings.data.map((training: Training) => ({
+//         ...training,
+//         title: `${training.trainer.first_name} ${training.trainer.last_name}`,
+//         address: training.trainer.address,
+//         media: [{ pathUrl: training.trainer.avatarUrl }],
+//       }))
+//     : []
+// );
+
+const dropins = computed<UserPaginator["data"]>(() =>
+  facilitiesResult?.value?.myFacilityItemPasses?.data
+    ? facilitiesResult.value.myFacilityItemPasses.data.filter((item: FacilityItemPass) => item?.facilityItem?.item_type === "DROPIN")
     : []
 );
 
 const facilities = computed<UserPaginator["data"]>(() =>
   facilitiesResult?.value?.myFacilityItemPasses?.data
-    ? facilitiesResult.value.myFacilityItemPasses.data.map(
-        (facilityPass: FacilityItemPass) => ({
-          id: facilityPass.id,
-          title: facilityPass.facilityItem.facility.name,
-          end_date: facilityPass.end_date,
-          start_date: dayjs(facilityPass.end_date)
-            .subtract(
-              facilityPass.facilityItem.qr_code_lifetime_value ?? 0,
-              "d"
-            )
-            .format("YYYY-MM-DD HH:mm:ss"),
-          media: facilityPass.facilityItem.facility.media,
-          address: facilityPass.facilityItem.facility.address,
-        })
-      )
+    ? facilitiesResult.value.myFacilityItemPasses.data.filter((item: FacilityItemPass) => item?.facilityItem?.item_type === "PASS")
     : []
 );
 
@@ -421,7 +367,7 @@ const selectedEvents = computed(() => {
   }
 
   if (activeTab.value === EntitiesEnum.FacilityDropins) {
-    return [];
+    return dropins.value;
   }
   return trainings.value;
 });
@@ -515,7 +461,7 @@ const onDateChange = () => {
       break;
 
     case EntitiesEnum.FacilityDropins:
-      refetchDropins({
+      refetchFacilities({
         page: 1,
         first: 4,
         start_date: {
@@ -526,7 +472,7 @@ const onDateChange = () => {
         },
         orderBy: [
           {
-            column: QueryMyTrainingsOrderByColumn.StartDate,
+            column: QueryMyFacilityItemPassesOrderByColumn.StartDate,
             order: SortOrder.Asc,
           },
         ],
