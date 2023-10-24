@@ -64,6 +64,7 @@ import { PlaceType } from "@/ts/enums/user";
 import Waiting from "@/general/components/modals/approval/Waiting.vue";
 import { GetTrainerDocument } from "@/graphql/documents/userDocuments";
 import { date } from "yup";
+import { useSelectedAddressStore } from "@/trainers/store/selected-address";
 
 dayjs.extend(utc);
 const router = useRouter();
@@ -77,6 +78,7 @@ const isConfirmed = ref<boolean>(true);
 const isExpanded = ref<boolean>(false);
 const selectedHourDifferent = ref<number>(1);
 const cart = ref<Cart | null>(null);
+const selectedAddress = useSelectedAddressStore();
 
 const { mutate: createChatMutation } = useMutation(CreateChatDocument);
 
@@ -143,6 +145,9 @@ const hasFreeHours = computed(
 
 const disabledBtn = computed(
     () => {
+        if(paymentStore.place?.value === PlaceType.UserGym){
+            return !selectedAddress.assignedFacility?.id
+        }
         if (orderDetail?.value) {
             return !paymentStore.place?.text;
         }
@@ -286,9 +291,6 @@ const getTrainingOptions = () => {
     if (paymentStore?.place?.value === PlaceType.UserGym) {
         return AvailableTrainingOptionsEnum.InUserGym;
     }
-
-    console.log('userType', user.value?.trainer_type);
-
     return AvailableTrainingOptionsEnum.InTrainerGym;
 };
 const getTrainerParams = () => {
@@ -304,9 +306,9 @@ const getTrainerParams = () => {
         start_date: dayjs(new Date(paymentStore.getStartDate)).utc().toDate(),
         end_date: dayjs(new Date(paymentStore.getEndDate)).utc().toDate(),
     };
-
-    if (paymentStore.place?.value === PlaceType.UserGym) {
-        params.available_user_gym_id = paymentStore?.facility?.id;
+    
+    if (getTrainingOptions() === AvailableTrainingOptionsEnum.InUserGym) {
+        params.available_user_gym_id = selectedAddress.assignedFacility?.id;
     }
     return params;
 };

@@ -52,7 +52,7 @@
         <week-calendar
             v-model="selectedDate"
             :bookings="bookings"
-            :featureSelectionOnly="true"
+            :featureSelectionOnly="false"
             @handle-view="onViewCalendar"
             @handle-date-change="onDateChange"
         />

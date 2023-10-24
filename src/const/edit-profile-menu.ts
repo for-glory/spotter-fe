@@ -7,8 +7,8 @@ type EditProfileMenu = Record<string, EditProfileMenuItem[]>;
 export const editProfileMenu: EditProfileMenu = {
   USER: [
     {
-      name: EntitiesEnum.ProfileEdit,
-      label: "Edit profile picture"
+      name: EntitiesEnum.ProfileEditName,
+      label: "Edit profile"
     },
     {
       name: EntitiesEnum.ProfileEmail,

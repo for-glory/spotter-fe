@@ -115,6 +115,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileEditName,
+    path: "/profile/edit",
+    component: () => import("@/general/views/profile/UserName.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileGettingPaid,
     path: "/profile/getting-paid",
     component: () => import("@/general/views/profile/GettingPaid.vue"),

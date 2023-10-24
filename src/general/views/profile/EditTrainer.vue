@@ -163,8 +163,8 @@
       </div>
       <div class="grid">
         <div class="form-row">
-          <base-input label="What’s your full name" v-model:value="firstName" :error-message="firstNameError"
-            placeholder="Full Name" name="firstName" class="form-row__input-web" required />
+          <base-input label="What’s your full name" v-model:value="fullName" :error-message="fullNameError"
+            placeholder="Full Name" name="fullName" class="form-row__input-web" required />
         </div>
         <div class="form-row">
             <base-input label="Description" v-model:value="description" :error-message="descriptionError"
@@ -394,6 +394,11 @@ const workingInGym = ref(false);
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 const trainerAddress = ref<Address>();
 
+const { value: fullName, errorMessage: fullNameError } = useField<string>(
+  "fullName",
+  requiredFieldSchema
+);
+
 const { value: firstName, errorMessage: firstNameError } = useField<string>(
   "firstName",
   requiredFieldSchema
@@ -562,6 +567,7 @@ onResult(async ({ data }) => {
     return rate?.value ? (rate.value / 100).toFixed(2) : "0.00";
   };
 
+  fullName.value = (data?.me?.first_name + ' ' + data?.me?.last_name) || "";
   firstName.value = data?.me?.first_name || "";
   lastName.value = data?.me?.last_name || "";
   description.value = data?.me?.description || "";
@@ -688,6 +694,11 @@ const getSettings = () => {
 const handleSubmit = () => {
   if (isValidForm.value) {
     const newMedia = getMedia(media.value, savedMedia.value);
+    if(fullName.value && props.isWebView){
+      const [first, ...last] = fullName.value.split(' ');
+      firstName.value = first;
+      lastName.value = last.join(' ');
+    }
     mutate({
       id,
       input: {
