@@ -3,7 +3,7 @@
     <template #header>
       <page-header back-btn title="Drop-ins" @back="$router.go(-1)">
         <template #custom-btn>
-          <ion-button @click="handleCreate" class="header-btn">
+          <ion-button v-if="(role !== RoleEnum.FacilityOwner)" @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge"></span>
           </ion-button>
@@ -37,10 +37,14 @@ import { IonButton, IonIcon } from "@ionic/vue";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import { EntitiesEnum } from "@/const/entities";
 import router from "@/router";
+import { RoleEnum} from "@/generated/graphql";
+import useRoles from "@/hooks/useRole";
 
 const handleCreate = () => {
   router.push({ name: EntitiesEnum.CreateItem, params: { type: "drop-ins" } });
 };
+
+const { role } = useRoles();
 
 const openQR = () => {
   router.push({ name: EntitiesEnum.ProfileScan });
