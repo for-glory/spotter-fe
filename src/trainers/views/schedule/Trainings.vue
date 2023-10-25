@@ -248,7 +248,7 @@ gotTrainings((response) => {
       address: training.trainer.facilities?.length
         ? training.trainer.facilities[0]?.address
         : "",
-      media: training.user.media,
+      media: training.user.media?.length ? training.user.media : [{pathUrl:training.user.avatarUrl}],
       start_date: training.start_date,
     })) ?? [];
 

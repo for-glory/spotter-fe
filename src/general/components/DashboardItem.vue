@@ -58,7 +58,7 @@ const itemsWithIds = computed(() =>
     border-radius: 8px;
     display: flex;
     flex: 0 0 calc(50% - 7px);
-    align-items: center;
+    // align-items: center;
     padding: 12px 16px;
   }
   &__title {
@@ -74,15 +74,17 @@ const itemsWithIds = computed(() =>
   }
 
   &__content {
+    flex-wrap: wrap;
     &-value {
       font-family: "Yantramanav", serif;
       font-style: normal;
       font-weight: 500;
       font-size: 20px;
-      line-height: 150%;
+      line-height: 20px;
       color: var(--ion-color-white);
       padding-right: 8px;
     }
+    margin-bottom: 4px;
 
     &-descr {
       font-family: "Yantramanav", serif;

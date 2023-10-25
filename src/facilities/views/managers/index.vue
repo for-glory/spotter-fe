@@ -37,7 +37,7 @@
               <ion-text class="color-60">{{ manager?.type ?? 'Full Time' }}</ion-text>
             </ion-col>
             <ion-col size="3" class="table-td" id="status">
-              <ion-text>N/A</ion-text>
+              <ion-text>{{manager?.phone ? manager?.phone : 'N/A'}}</ion-text>
               <!-- <span
                 class="status-text"
                 :class="manager?.availability==='available'?'available':'unavailable'"
@@ -125,7 +125,7 @@ const handleAddGymManager = () => {
 const handleViewProfile = (manager: any) => {
   console.log('manager',manager);
   store.setName(manager?.first_name, manager?.last_name);
-  store.setAddress(manager?.address?.lat, manager?.address?.lng, manager?.address?.street);
+  store.setAddress(manager?.address?.lat, manager?.address?.lng, manager?.address?.street,manager.address.id);
   store.setAvatarUrl(manager?.avatarUrl);
   store.setEmail(manager?.email);
   store.setPhoneNumber(manager?.phone);

@@ -24,17 +24,17 @@
           <div class="data-box">
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex-col align-items-center data-box__item">
-                <ion-text>{{ dayjs(manager.birth).format("D MMMM YY") }}</ion-text>
+                <ion-text class="field">{{ dayjs(manager.birth).format("D MMMM YY") }}</ion-text>
                 <ion-text class="field-label">Birthday</ion-text>
               </div>
               <div class="vertical-line" />
               <div class="d-flex-col align-items-center data-box__item">
-                <ion-text>{{ manager.tax_id }}</ion-text>
+                <ion-text class="field">{{ manager.tax_id }}</ion-text>
                 <ion-text class="field-label">Tax ID</ion-text>
               </div>
               <div class="vertical-line" />
               <div class="d-flex-col align-items-center data-box__item">
-                <ion-text>{{ manager.postal }}</ion-text>
+                <ion-text class="field">{{ manager.postal }}</ion-text>
                 <ion-text class="field-label">Postal Code</ion-text>
               </div>
             </div>
@@ -220,12 +220,6 @@ const onDeleteManager = () => {
 
   &__item {
     width: 140px;
-  }
-
-  .field-label {
-    font: 300 14px/1 var(--ion-font-family);
-    color: var(--gray-400);
-    padding-top: 4px;
   }
 }
 

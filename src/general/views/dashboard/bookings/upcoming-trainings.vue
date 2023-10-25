@@ -13,9 +13,7 @@
             <template v-else>
                 <div class="bookings-items">
                         <EventItem v-for="training in trainings" :key="training.id" :item="(training as any)" rounded
-                        class="trainer-event-item" @click="
-                            onViewCalendar
-                            " />
+                        class="trainer-event-item"/>
                     </div>
             </template>
         </div>
@@ -102,7 +100,7 @@ const trainings = computed(() =>
             address: {
               street: training.user.address?.street,
             },
-            media: training.user.media,
+            media: training.user.media?.length ? training.user.media : [{pathUrl:training.user.avatarUrl}],
             start_date: training.start_date,
             state: training.state,
             userId: training.user.id,

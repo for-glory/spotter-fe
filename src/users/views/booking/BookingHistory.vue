@@ -66,7 +66,7 @@ const { result, onResult, refetch } = useQuery<OrdersQuery>(
   {
     first: quantity.value,
     page: page.value,
-    state: [TransactionStatesEnum.Canceled],
+    state: [TransactionStatesEnum.Success],
   },
   () => ({
     enabled: role === RoleEnum.User,
@@ -102,64 +102,6 @@ onResult(({ data }) => {
   });
 
   orders.value = [...orders.value, ...ordersData];
-  if (role === RoleEnum.User) {
-    orders.value = [
-      {
-        id: "1",
-        title: "Tamara Dae",
-        date: "30 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/tamra.png",
-      },
-      {
-        id: "2",
-        title: "Amazon Gym",
-        date: "20 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_1.png",
-      },
-      {
-        id: "3",
-        title: "Alice James",
-        date: "17 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/women4.png",
-      },
-      {
-        id: "4",
-        title: "Diamond Gym",
-        date: "16 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_2.png",
-      },
-      {
-        id: "5",
-        title: "Victoria Maria",
-        date: "14 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/women3.png",
-      },
-      {
-        id: "6",
-        title: "Summer Gym",
-        date: "12 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_3.png",
-      },
-    ];
-  }
   loading.value = false;
 });
 

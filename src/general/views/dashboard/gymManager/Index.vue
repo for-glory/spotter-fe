@@ -56,7 +56,7 @@
                   <ion-text>{{ manager?.phone ? manager.phone : 'N/A' }}</ion-text>
                 </td>
                 <td class="table-td edit-btn">
-                  <ion-button expand="block" fill="outline" @click="handleEdit(manager.id)" class="edit-button ion-no-padding">
+                  <ion-button expand="block" fill="outline" @click="handleEdit(manager)" class="edit-button ion-no-padding">
                     <ion-icon :icon="ellipsisVertical" />
                   </ion-button>
                   <!-- <ion-button class="more-btn" fill="clear" color="light" @click="handleMore">
@@ -178,13 +178,15 @@ import { useFacilityStore } from "@/general/stores/useFacilityStore";
 import { useSideMenu } from "@/general/stores/sideMenuStore";
 import { ellipsisVertical } from "ionicons/icons";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
+import { useManagerStore } from "@/facilities/store/manager";
 
 
 const filter = ref<string>('profile');
 const currentFacility = useFacilityStore();
+const managerStore = useManagerStore();
 const menuStore = useSideMenu();
 
-const { result, loading } = useQuery(GetManagersByFacilityDocument, {
+const { result, loading, refetch } = useQuery(GetManagersByFacilityDocument, {
   facilities: [currentFacility.facility?.id],
   role: RoleEnum.Manager,
   first: 100,
@@ -198,15 +200,25 @@ const managers = computed(() => {
 const router = useRouter();
 
 const onMenuClick = () => {
+  managerStore.clear();
   menuStore.setOption({ showImg: false, title: "Add New Team Member" })
 }
 
-const handleEdit = (id) => {
-  console.log(id)
+const handleEdit = (manager: any) => {
+  console.log("manager",manager);
+  managerStore.setName(manager?.first_name, manager?.last_name);
+  managerStore.setAddress(manager?.address?.lat, manager?.address?.lng, manager?.address?.street,manager.address.id);
+  managerStore.setAvatarUrl(manager?.avatarUrl);
+  managerStore.setEmail(manager?.email);
+  managerStore.setPhoneNumber(manager?.phone);
+  managerStore.setEmploymentType(manager?.employment_type);
+  managerStore.setPostalCode(manager?.postal);
+  managerStore.setTaxID(manager?.tax_id);
+  managerStore.setBirthDate(manager?.birth);
   router.push({
     name: EntitiesEnum.DashboardGymManagerProfile,
     params: {
-      id: id as string,
+      id: manager.id as string,
     },
   })
 }

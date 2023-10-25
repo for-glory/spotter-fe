@@ -26,7 +26,7 @@
 
           <div class="info flex-2">
             <div class="info-item">
-              <strong class="info-item__title"> 12</strong>
+              <strong class="info-item__title"> {{ user?.trainings_count }}</strong>
               <ion-text color="secondary" class="font-light">Trainings</ion-text>
             </div>
             <div class="info-item">
@@ -36,7 +36,7 @@
               <ion-text color="secondary" class="font-light">in Spotter</ion-text>
             </div>
             <div class="info-item">
-              <strong class="info-item__title"> 12</strong>
+              <strong class="info-item__title">{{ user?.reviews_count }}</strong>
               <ion-text color="secondary" class="font-light">Feedbacks</ion-text>
             </div>
           </div>
@@ -55,9 +55,9 @@
             {{ user?.negative_reviews_count }}
           </ion-text>
         </div>
-        <div class="info-section" v-if="specialNeeds?.length">
-          <ion-text class="info-section__title">Special needs or other conditions</ion-text>
-          <ion-text class="info-section__desc">{{ specialNeeds }}</ion-text>
+        <div class="info-section">
+          <ion-text class="info-section__title">description</ion-text>
+          <ion-text class="info-section__desc">{{ user?.description }}</ion-text>
         </div>
       </div>
     </div>
@@ -70,32 +70,43 @@ import { useRouter } from "vue-router";
 import { computed } from "vue";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { User, UserDocument } from "@/generated/graphql";
+import { useQuery } from "@vue/apollo-composable";
+import { Query } from "firebase/database";
+import { useRoute } from "vue-router";
 dayjs.extend(relativeTime);
 const router = useRouter();
-const user = computed(() => {
-  // return result.value?.user;
-  return {
-    id: "1",
-    title: "Nick Fox",
-    address: {
-      street: "Arizona, Phoenix, USA",
-    },
-    start_date: "10 month",
-    userId: "5328",
-    first_name: "Nick",
-    last_name: "Fox",
-    avatarUrl: "https://picsum.photos/200/300",
-    created_at: new Date().setFullYear(2022, 10),
-    positive_reviews_count: 160,
-    negative_reviews_count: 48,
-    quizzes: [
-      {
-        code: "DISCOVER_YOUR_NEEDS",
-        answers:
-          "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
-      }
-    ]
-  };
+const route = useRoute();
+
+const {
+  result,
+  loading: loadingUser,
+} = useQuery<Pick<Query, "user">>(UserDocument, { id: route.params.id });
+
+const user = computed<User>(() => {
+  return result.value?.user;
+  // return {
+  //   id: "1",
+  //   title: "Nick Fox",
+  //   address: {
+  //     street: "Arizona, Phoenix, USA",
+  //   },
+  //   start_date: "10 month",
+  //   userId: "5328",
+  //   first_name: "Nick",
+  //   last_name: "Fox",
+  //   avatarUrl: "https://picsum.photos/200/300",
+  //   created_at: new Date().setFullYear(2022, 10),
+  //   positive_reviews_count: 160,
+  //   negative_reviews_count: 48,
+  //   quizzes: [
+  //     {
+  //       code: "DISCOVER_YOUR_NEEDS",
+  //       answers:
+  //         "De-stress with this 10 minute calming yoga routine that includes light and easy full body stretches for stress relief and anxiety and much more interesting!",
+  //     }
+  //   ]
+  // };
 });
 
 const symbols = computed(() => {
@@ -105,10 +116,10 @@ const symbols = computed(() => {
   );
 });
 
-const specialNeeds = computed<string | null>(() => {
-  const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
-  return answers ? answers : null;
-});
+// const specialNeeds = computed<string | null>(() => {
+//   const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
+//   return answers ? answers : null;
+// });
 
 </script>
 
