@@ -15,7 +15,10 @@
 
       <div class="tile" v-if="options.showImg">
         <IonLabel>Choose profile photo</IonLabel>
-        <photos-loader />
+        <!-- <photos-loader @upload="photoSelected" :photos=""/> -->
+        <photos-loader @upload="photoSelected" @change="photoSelected" :circle-shape="false"
+              :photos="media" :loading="previewOnLoading" :progress="percentLoaded"
+              :disabled="previewOnLoading" />
       </div>
 
       <div class="tile">
@@ -31,6 +34,11 @@
       <div class="tile">
         <base-input label="Phone" gray-input v-model:value="phoneNumber" name="phone" class="form-row__input-web"
           placeholder="Enter phone number" />
+      </div>
+
+      <div class="tile">
+        <base-input label="Postal code" gray-input v-model:value="postalCode" name="postal" class="form-row__input-web"
+          placeholder="Enter postal code" />
       </div>
 
       <!-- <div class="tile ion-margin-bottom">
@@ -103,13 +111,12 @@ import {
   CreateManagerDocument,
   Address,
   EmploymentTypeEnum,
-  UserDocument
+  UpdateUserDocument
 } from "@/generated/graphql";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import { useField } from "vee-validate";
 import { requiredFieldSchema, emailSchema } from "@/validations/authValidations";
-import { City, State } from "@/generated/graphql";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import dayjs from "dayjs";
 import { dataURItoFile } from "@/utils/fileUtils";
 import { v4 as uuidv4 } from "uuid";
@@ -123,6 +130,7 @@ import { useSideMenu } from "@/general/stores/sideMenuStore";
 import { storeToRefs } from "pinia";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { useRoute } from "vue-router";
+import { useManagerStore } from "@/facilities/store/manager";
 
 
 const isConfirmedModalOpen = ref(false);
@@ -143,6 +151,7 @@ const empOptions = [
 ];
 
 const sideMenuStore = useSideMenu();
+const managerStore = useManagerStore();
 const { options, values } = storeToRefs(sideMenuStore);
 const managerBOD = ref<any>();
 
@@ -193,13 +202,27 @@ const { value: emailInput, errorMessage: emailInputError, setValue: setEmailValu
 );
 
 const { value: phoneNumber } = useField<string>(
-  "phoneNumber",
+  "phone",
+);
+
+const { value: postalCode } = useField<string>(
+  "postal",
 );
 
 const { value: taxId, errorMessage: taxIdError } = useField<string>(
   "taxId",
   requiredFieldSchema
 );
+const media = ref<
+  Array<{
+    __typename?: "Media";
+    pathUrl?: string;
+    path?: string;
+    id?: string;
+    title?: string;
+    url?: string;
+  }>
+>([]);
 
 const isValidForm = computed(
   () =>
@@ -215,6 +238,18 @@ const isValidForm = computed(
 
 let abort: any;
 
+watch(() => sideMenuStore.options.isEdit, () => {
+  if (sideMenuStore.options.isEdit && route.params.id) {
+    console.log('managerStore', managerStore);
+    fullName.value = managerStore?.first_name + ' ' + managerStore?.last_name;
+    emailInput.value = managerStore?.email;
+    managerBOD.value = managerStore?.birth;
+    phoneNumber.value = managerStore?.phone_number;
+    taxId.value = managerStore?.tax_id;
+    postalCode.value = managerStore?.postal_code;
+    selectedAddress.value = managerStore.address;
+  }
+});
 const { mutate: filePreload } = useMutation(FilePreloadDocument, {
   context: {
     fetchOptions: {
@@ -230,8 +265,13 @@ const { mutate: filePreload } = useMutation(FilePreloadDocument, {
 });
 
 const { mutate } = useMutation(CreateManagerDocument);
+const { mutate: updateUser, loading: updateUserLoading } = useMutation(UpdateUserDocument);
 
 const addManager = () => {
+  if (route.params.id) {
+    updateManager();
+    return;
+  }
   if (isValidForm.value) {
     mutate({
       input: {
@@ -241,7 +281,7 @@ const addManager = () => {
           street: selectedAddress.value?.street,
           city_id: selectedAddress.value?.city?.id,
         },
-        avatar: previewPath.value,
+        avatar: media.value.length ? media.value[0].path : null,
         email: emailInput.value,
         facility_id: currentFacility.facility.id,
         first_name: fullName.value.split(' ')[0],
@@ -250,6 +290,8 @@ const addManager = () => {
         employment_type: selectedEmpType.value.value,
         tax_id: taxId.value,
         birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+        postal: postalCode.value,
+        phone: phoneNumber.value
       },
     })
       .then(async () => {
@@ -272,6 +314,55 @@ const addManager = () => {
         toast.present();
         console.error(error);
       }).finally(() => menuController.close());
+  }
+};
+
+const updateManager = () => {
+  if (isValidForm.value) {
+    updateUser({
+      id: route.params.id,
+      input: {
+        address: {
+          lat: selectedAddress.value?.lat,
+          lng: selectedAddress.value?.lng,
+          street: selectedAddress.value?.street,
+          city_id: selectedAddress.value?.id,
+        },
+        email: emailInput.value,
+        facility_id: currentFacility.facility.id,
+        first_name: fullName.value.split(' ')[0],
+        last_name: fullName.value.split(' ')[1],
+        role: RoleEnum.Manager,
+        employment_type: selectedEmpType.value.value,
+        tax_id: taxId.value,
+        birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+        postal: postalCode.value,
+        phone: phoneNumber.value
+      },
+    }).then(async (data: any) => {
+      if (data?.errors?.length) {
+        throw data.errors;
+      }
+      const toast = await toastController.create({
+        message: "Update manager successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+    }).catch(async (error: any) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+
+      throw new Error(error);
+    }).finally(() => {
+      menuController.close();
+    });
   }
 };
 
@@ -307,8 +398,17 @@ const photoSelected = async (value: string): Promise<void> => {
   percentLoaded.value = 0;
   await filePreload({ file })
     .then((res) => {
-      previewPath.value = res?.data.filePreload.path;
-      previewUrl.value = `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`;
+      // previewPath.value = res?.data.filePreload.path;
+      // previewUrl.value = `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`;
+
+      media.value = [
+        {
+          path: res?.data.filePreload.path,
+          url: `${process.env.VUE_APP_MEDIA_URL}${res?.data.filePreload.path}`,
+          id: `_${uuidv4()}`,
+          title: uuidv4(),
+        }
+      ];
 
       previewOnLoading.value = false;
       percentLoaded.value = undefined;

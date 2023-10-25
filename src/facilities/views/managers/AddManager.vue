@@ -42,8 +42,8 @@
           </div>
 
           <div class="form-row">
-            <ion-label class="label"> Employement Type </ion-label>
-            <choose-block :title="managerType" @handle-click="$router.push({ name: EntitiesEnum.EmploymentType })"
+            <ion-label class="label"> Employment Type </ion-label>
+            <choose-block :title="managerType" @handle-click="isEmploymentTypeModal = true"
               class="form-row__control" />
           </div>
 
@@ -60,6 +60,9 @@
         <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
         <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
         <date-picker-modal ref="datePickerModal" @select="dateSelected" />
+        <IonModal :is-open="isEmploymentTypeModal" @didDismiss="isEmploymentTypeModal = false">
+          <employment-type :is-modal="true" @dismiss="isEmploymentTypeModal = false"/>
+        </IonModal>
       </div>
     </template>
   </base-layout>
@@ -69,7 +72,8 @@
 import {
   IonLabel,
   IonButton,
-  toastController
+  toastController,
+IonModal
 } from "@ionic/vue";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -104,6 +108,7 @@ import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import { useManagerStore } from "@/facilities/store/manager";
 import { useRoute } from "vue-router";
+import EmploymentType from "../EmploymentType.vue";
 
 const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
@@ -123,7 +128,6 @@ const managerName = ref<string>("");
 const managerEmail = ref<string>("");
 const managerPostalCode = ref<string>("");
 const managerBOD = ref<any>();
-const managerType = ref<string>();
 const managerTaxID = ref<string>();
 const managerPhoneNumber = ref<string>();
 const media = ref<
@@ -137,6 +141,7 @@ const media = ref<
   }>
 >([]);
 const error = ref<string>();
+const managerType = computed(()=>managerStore?.employment_type == EmploymentTypeEnum.PartTime ? 'Contract' : 'Full Time');
 
 // const selectedState = computed(() => store.address.state);
 // const selectedCity = computed(() => store.address.city);
@@ -149,12 +154,13 @@ const percentPhotoLoaded = ref<number | undefined>();
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const currentFacility = useFacilityStore();
 const managerStore = useManagerStore();
+const isEmploymentTypeModal = ref(false)
 const { mutate: updateUser, loading: updateUserLoading } = useMutation(UpdateUserDocument);
 
 const isValidForm = computed(
   () => {
    return !!(
-      managerName.value && managerEmail.value && managerBOD.value && managerPhoneNumber.value && managerType.value
+      managerName.value && managerEmail.value && managerBOD.value && managerPhoneNumber.value && managerType.value && managerTaxID.value
     )
 }
 );
@@ -166,7 +172,6 @@ if (route.params.id) {
   managerEmail.value = managerStore?.email;
   managerBOD.value = managerStore?.birth;
   managerPhoneNumber.value = managerStore?.phone_number;
-  managerType.value = managerStore?.employment_type;
   managerTaxID.value = managerStore?.tax_id;
   managerPostalCode.value = managerStore?.postal_code;
   selectedAddress.value = managerStore.address;
@@ -326,7 +331,8 @@ const addManager = () => {
       tax_id: managerTaxID.value,
       postal: managerPostalCode.value,
       facility_id: currentFacility?.facility.id,
-      birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss")
+      birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+      phone: managerPhoneNumber.value
     }
   }).then(async () => {
     const toast = await toastController.create({
@@ -351,30 +357,33 @@ const addManager = () => {
 
 const updateManager = () => {
   const newMedia = getMedia(media.value, savedMedia.value);
-  if (isValidForm) {
+  if (isValidForm.value) {
     updateUser({
+      id: route.params.id,
       input: {
-        id: route.params.id,
         avatar:
           newMedia && getMedia(media.value, savedMedia.value)?.pop()?.file,
         first_name: managerName.value.split(" ")[0],
         last_name: managerName.value.split(" ")[1],
         email: managerEmail.value,
         address: {
-          lat: Number(store.$state.address.address?.latitude),
-          lng: Number(store.$state.address.address?.longitude),
-          street: store.$state.address.address?.thoroughfare,
-          city_id: store.$state.address.city?.id,
-          extra: store.$state.address.address?.subThoroughfare,
+          lat: selectedAddress.value?.lat,
+          lng: selectedAddress.value?.lng,
+          street: selectedAddress.value?.street,
+          city_id: selectedAddress.value?.id,
         },
         role: 'MANAGER',
         employment_type: managerType.value?.toLocaleLowerCase() === 'full time' ? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.PartTime,
         tax_id: managerTaxID.value,
         postal: managerPostalCode.value,
         facility_id: currentFacility?.facility.id,
-        birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss")
+        birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+        phone: managerPhoneNumber.value
       }
-    }).then(async () => {
+    }).then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
       const toast = await toastController.create({
         message: "Update manager successfully",
         duration: 2000,
@@ -382,7 +391,7 @@ const updateManager = () => {
         cssClass: "success-toast",
       });
       toast.present();
-      refetch();
+      router.back();
     }).catch(async (error) => {
       const toast = await toastController.create({
         message: "Something went wrong. Please try again.",

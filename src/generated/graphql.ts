@@ -8737,7 +8737,9 @@ export const GetManagersByFacilityDocument = gql`
         phone
         tax_id
         postal
+        birth
         address {
+          id
           lat
           lng
           street
