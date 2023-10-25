@@ -73,10 +73,10 @@
           <ion-icon src="assets/icon/add-user.svg" />
           <ion-text>Membership</ion-text>
         </div>
-        <div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
+        <!-- <div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
           <ion-icon src="assets/icon/email.svg" />
           <ion-text>Message</ion-text>
-        </div>
+        </div> -->
       </div>
       <div class="main-menu" v-if="role === RoleEnum.User">
         <div
