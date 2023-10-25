@@ -1,4 +1,3 @@
-
 <template>
     <div class="dashboard">
         <div class="d-flex align-items-center page-header">
@@ -48,7 +47,9 @@
                         </div>
                         <div class="info-section">
                             <ion-text class="info-section__title mb-10">Description:</ion-text>
-                            <ion-text class="info-section__desc">{{ user?.description }}</ion-text>
+                            <ion-text class="info-section__desc">Want your body to be healthy? Join our program with
+                                directions according to body’s goals. Increasing physical strength is the goal of strenght
+                                training.</ion-text>
                         </div>
                         <div class="reviews d-flex justify-content-between">
                             <div class="d-flex align-items-center flex-2">
@@ -121,7 +122,7 @@
                         </div>
                         <div v-else class="offer-item" :key="item.id" v-for="item in offerList">
                             <div class="header-section">
-                                <div class="name" @click="previewDaily(item.video)">{{ item.name }}</div>
+                                <div class="name" @click="previewDaily(item)">{{ item.name }}</div>
                                 <div class="trainer">{{ item.trainer }}</div>
                             </div>
                             <div class="detail-section">
@@ -131,11 +132,11 @@
                                     <ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
                                     <ion-text>{{ item.type }}</ion-text>
                                 </div>
-                                <div v-if="item.purchases > 0" class="total">
+                                <div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
                                     <ion-icon src="assets/icon/profile.svg"></ion-icon>
                                     <ion-text>{{ item.totalUser }}</ion-text>
                                 </div>
-                                <ion-button v-else @click="purchaseWorkout(item.id)">Subscribe</ion-button>
+                                <ion-button v-else @click="handleSubscribe(item.id)">Subscribe</ion-button>
                             </div>
                         </div>
                     </div>
@@ -197,7 +198,28 @@
           </ion-button>
         </div>
     </div>
-    <preview-daily-modal ref="dailyModal"/>
+    <preview-daily-modal 
+        :daily="dailyData"  
+        :isOpen="isOpenPreviewModal"
+        @closeModal="onClosePreview"
+        :duration="myWorkouts.some((my: any) => my.id === selectedDailyId) ? 0 : 10"
+        @trialEnd="onTrialEnd"
+    />
+    <blurred-screen-modal
+        id="blur"
+        :is-open="isOpenBlurredScreenModal"
+        :preview-url="dailyData?.previewUrl"
+        @visibility="isOpenBlurredScreenModal = false"
+        @purchase-daily="purchaseWorkout"
+        :disabled="addToCartLoading"
+    />
+    <purchase-modal 
+        id="full"
+        :isOpen="isOpenPurchaseModal"
+        :dailyId="selectedDailyId"
+        :cartId="cartId"
+        @purchase-daily="onPurchase"
+    />
 </template>
     
 <script setup lang="ts">
@@ -212,13 +234,22 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
+import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
+
+const dailyData = ref();
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPurchaseModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
+const cartId = ref<number>();
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -230,6 +261,12 @@ const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
     id: route.params.id,
   }
 );
+
+const { result: myDailys, loading: myDailysLoading, refetch } = useQuery(MyWorkoutsDocument, {
+  first: 1000,
+});
+
+const myWorkouts = computed(() => myDailys.value?.myWorkouts?.data || []);
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
   WorkoutsDocument,{
@@ -293,25 +330,24 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
   }
 }));
 
+const handleSubscribe = (id: number) => {
+    selectedDailyId.value = id;
+    purchaseWorkout();
+}
 const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
-const purchaseWorkout = (id: string) => {
+const purchaseWorkout = () => {
   addToCartMutation({
     input: {
-      purchasable_id: id,
+      purchasable_id: selectedDailyId.value,
       purchasable: AddToCartPurchasableEnum.Workout,
     },
   })
     .then((res) => {
-      router.push({
-        name: EntitiesEnum.WorkoutOrder,
-        params: {
-          id: id,
-        },
-        query: {
-          cart_id: res?.data?.addToCart?.id,
-        },
-      });
+        isOpenBlurredScreenModal.value = false;
+        isOpenPreviewModal.value = false;
+        cartId.value = res?.data?.addToCart?.id;
+        isOpenPurchaseModal.value = true;
     })
     .catch(async () => {
       const toast = await toastController.create({
@@ -323,8 +359,28 @@ const purchaseWorkout = (id: string) => {
       toast.present();
     });
 };
-const previewDaily = (url: string) => {
-    dailyModal.value?.present({video: url, preview: true})
+const previewDaily = (daily: any) => {
+    dailyData.value = daily;
+    dailyModal.value?.present({daily: daily, preview: true})
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
+}
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onPurchase = () => {
+  isOpenPurchaseModal.value = false;
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: { orderId: selectedDailyId.value },
+    query: { cart_id: cartId.value },
+  });
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
 }
 const reviews = computed(() =>
   reviewsResult?.value?.reviews?.data.reduce(
@@ -372,8 +428,9 @@ const viewAllReview = () => {
     });
 }
 
+
 </script>
-  
+
 <style scoped lang="scss">
 .banner__title {
     margin-top: -3px;
