@@ -4,7 +4,8 @@
       <slot name="custom-header-btn"></slot>
     </template>
   </page-header>
-  <!-- <video-player
+  <video-player
+    v-if="!Capacitor.isNativePlatform()"
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
@@ -20,13 +21,23 @@
     @play="handlePlay"
     @pause="handlePlause"
     @ended="handleVideoEnded"
-  /> -->
-  <div class="w-100 h-100" style="padding: 12px;">
+  />
+  <div v-else class="w-100 h-100" style="padding: 12px;">
     <video 
+      v-if="freeDuration === 0 || showControl" 
+      controls
       class="video-player vjs-big-play-centered" 
       :src="`${VUE_APP_CDN}${daily?.video}`"
-      :controls="freeDuration === 0 || showControl" 
       :poster="daily?.previewUrl"
+      style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%">
+    </video>
+    <video 
+      v-else
+      class="video-player vjs-big-play-centered" 
+      :src="`${VUE_APP_CDN}${daily?.video}`"
+      :poster="daily?.previewUrl"
+      @timeupdate="handleTimeUpdate"
+      autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%">
     </video>
   </div>
@@ -126,6 +137,15 @@ watch(() => props.autoplay,
 const timer = ref<any>(null);
 const totalTime = ref<number>(0);
 const router = useRouter();
+
+const handleTimeUpdate = (event: Event) => {
+  const videoElement = event.target as HTMLVideoElement;
+  if (videoElement.currentTime > props.freeDuration) {
+    videoElement.pause();
+    videoElement.currentTime = 0;
+    emits('trialEnd');
+  }
+}
 
 const handlePlay = () => {
   timer.value = window.setInterval(function() {

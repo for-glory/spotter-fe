@@ -40,7 +40,6 @@
     daily.value = props;
     daily.value.video = `${process.env.VUE_APP_MEDIA_URL}${props.video}`;
     daily.value.preview = `${process.env.VUE_APP_MEDIA_URL}${props.preview}`;
-    console.log(daily.value.id);
     workoutModal?.value?.$el.present();
   };
   

@@ -7,10 +7,12 @@
       :slidesOffsetAfter="16"
       :slidesOffsetBefore="0"
       :modules="[FreeMode]"
+      :direction="'vertical'"
+      :centeredSlides="true"
       @swiper="onSwiper"
       class="w-100 h-100"
     >
-      <swiper-slide v-for="workout in workouts" :key="workout.id" class="w-100 h-100">
+      <swiper-slide v-for="workout in workouts" :key="workout.id" class="w-100 h-100" style="margin: 0 auto;">
         <my-video-player
           ref="trialVideoPlayer"
           :pathUrl="workout?.video || ''"
