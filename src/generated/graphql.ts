@@ -8439,6 +8439,8 @@ export const TrainerTrainingsDocument = gql`
           address {
             street
           }
+          positive_reviews_count
+          negative_reviews_count
         }
         order {
           id

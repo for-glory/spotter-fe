@@ -22,7 +22,7 @@
             </template>
           </base-item>
         </template>
-        <ion-infinite-scroll
+        <!-- <ion-infinite-scroll
           threshold="100px"
           @ionInfinite="loadData"
           v-if="page * quantity < Number(total)"
@@ -32,7 +32,7 @@
             loading-text="Loading more data..."
           >
           </ion-infinite-scroll-content>
-        </ion-infinite-scroll>
+        </ion-infinite-scroll> -->
       </div>
     </template>
   </base-layout>
@@ -87,39 +87,39 @@ const { result, onResult, refetch } = useQuery<OrdersQuery>(
   {
     first: quantity.value,
     page: page.value,
-    state: [TransactionStatesEnum.Canceled],
+    state: [TransactionStatesEnum.Success],
   },
   () => ({
     enabled: role === RoleEnum.User,
   })
 );
 
-const { result: trainerTrainingsResult, onResult: onTrainerTrainingsResult } =
-  useQuery<TrainerTrainingsQuery>(
-    TrainerTrainingsDocument,
-    {
-      first: quantity.value,
-      page: page.value,
-      states: [TrainingStatesEnum.Finished],
-      orderBy: [
-        {
-          column: QueryTrainerTrainingsOrderByColumn.StartDate,
-          order: SortOrder.Desc,
-        },
-      ],
-    },
-    () => ({
-      enabled: role === RoleEnum.Trainer,
-    })
-  );
+// const { result: trainerTrainingsResult, onResult: onTrainerTrainingsResult } =
+//   useQuery<TrainerTrainingsQuery>(
+//     TrainerTrainingsDocument,
+//     {
+//       first: quantity.value,
+//       page: page.value,
+//       states: [TrainingStatesEnum.Finished],
+//       orderBy: [
+//         {
+//           column: QueryTrainerTrainingsOrderByColumn.StartDate,
+//           order: SortOrder.Desc,
+//         },
+//       ],
+//     },
+//     () => ({
+//       enabled: role === RoleEnum.User,
+//     })
+//   );
 
-const userTotal = computed(() => result.value?.orders?.paginatorInfo.total);
+// const userTotal = computed(() => result.value?.orders?.paginatorInfo.total);
 
-const trainerTotal = computed(
-  () => trainerTrainingsResult.value?.trainerTrainings?.paginatorInfo?.total
-);
+// const trainerTotal = computed(
+//   () => trainerTrainingsResult.value?.trainerTrainings?.paginatorInfo?.total
+// );
 
-const total = computed(() => userTotal.value || trainerTotal.value);
+// const total = computed(() => userTotal.value || trainerTotal.value);
 
 onResult(({ data }) => {
   const ordersData: OrderHistoryType[] = [];
@@ -131,93 +131,35 @@ onResult(({ data }) => {
   });
 
   orders.value = [...orders.value, ...ordersData];
-  if (role === RoleEnum.User) {
-    orders.value = [
-      {
-        id: "1",
-        title: "Tamara Dae",
-        date: "30 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/tamra.png",
-      },
-      {
-        id: "2",
-        title: "Amazon Gym",
-        date: "20 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_1.png",
-      },
-      {
-        id: "3",
-        title: "Alice James",
-        date: "17 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/women4.png",
-      },
-      {
-        id: "4",
-        title: "Diamond Gym",
-        date: "16 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_2.png",
-      },
-      {
-        id: "5",
-        title: "Victoria Maria",
-        date: "14 June",
-        address: "Dallas walla street, 24",
-        price: "80,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/women3.png",
-      },
-      {
-        id: "6",
-        title: "Summer Gym",
-        date: "12 June",
-        address: "Dallas walla street, 24",
-        price: "200,00",
-        rating: 4.9,
-        previewUrl: "assets/backgrounds/Gym_3.png",
-      },
-    ];
-  }
   loading.value = false;
 });
 
-onTrainerTrainingsResult(({ data }) => {
-  const ordersData: OrderHistoryType[] = [];
+// onTrainerTrainingsResult(({ data }) => {
+//   const ordersData: OrderHistoryType[] = [];
 
-  data?.trainerTrainings?.data?.forEach((training: Training) => {
-    ordersData.push({
-      id: training.id,
-      date: dayjs(training.start_date).format("DD MMM"),
-      rating: "",
-      title: `${training.user?.first_name} ${training.user?.last_name}`,
-      previewUrl: training.user?.avatarUrl,
-      address: training?.address_string || "",
-      price: training.order?.total / 100,
-    });
-  });
-  orders.value = [...orders.value, ...ordersData];
+//   data?.trainerTrainings?.data?.forEach((training: Training) => {
+//     ordersData.push({
+//       id: training.id,
+//       date: dayjs(training.start_date).format("DD MMM"),
+//       rating: "",
+//       title: `${training.user?.first_name} ${training.user?.last_name}`,
+//       previewUrl: training.user?.avatarUrl,
+//       address: training?.address_string || "",
+//       price: training.order?.total / 100,
+//     });
+//   });
+//   orders.value = [...orders.value, ...ordersData];
 
-  loading.value = false;
-});
+//   loading.value = false;
+// });
 
-const loadData = (ev: InfiniteScrollCustomEvent) => {
-  if (page.value * quantity.value < Number(total.value)) {
-    page.value = page.value + 1;
-    refetch({ first: quantity.value, page: page.value });
-    ev.target.complete();
-  }
-};
+// const loadData = (ev: InfiniteScrollCustomEvent) => {
+//   if (page.value * quantity.value < Number(total.value)) {
+//     page.value = page.value + 1;
+//     refetch({ first: quantity.value, page: page.value });
+//     ev.target.complete();
+//   }
+// };
 </script>
 <style scoped lang="scss">
 .booking-items {

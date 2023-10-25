@@ -97,7 +97,7 @@ const {
         },
         orderBy: [
             {
-                column: QueryTrainerTrainingsOrderByColumn.CreatedAt,
+                column: QueryTrainerTrainingsOrderByColumn.StartDate,
                 order: SortOrder.Asc,
             },
         ],

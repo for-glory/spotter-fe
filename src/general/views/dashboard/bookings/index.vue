@@ -62,13 +62,7 @@
                     activeTab === EntitiesEnum.Events ? 'Events' : 'Sessions'
                 }`"
                 @handle-view="onViewTrainings"
-                :hide-view-more="
-                    trainingsLoading ||
-                    eventsLoading ||
-                    (activeTab === EntitiesEnum.Trainings &&
-                        !trainings?.length) ||
-                    (activeTab === EntitiesEnum.Events && !events?.length)
-                "
+                :hide-view-more="trainings?.length"
             />
             <ion-spinner
                 name="lines"
@@ -96,6 +90,7 @@
                         <event-item
                             v-for="training in trainings"
                             :key="training.id"
+                            :hide-tag="true"
                             :item="({
                                 ...training,
                                 title: training.user.last_name + ' '  + training.user.last_name,

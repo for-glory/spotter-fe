@@ -38,7 +38,7 @@
         <week-calendar
           v-model="selectedDate"
           :bookings="bookings"
-          :featureSelectionOnly="true"
+          :featureSelectionOnly="false"
           @handle-view="onViewCalendar"
           @handle-date-change="onDateChange"
         />
@@ -48,12 +48,6 @@
               activeTab === EntitiesEnum.Events ? 'events' : 'Sessions'
             }`"
             @handle-view="onViewAllEvents"
-            :hide-view-more="
-              trainingsLoading ||
-              eventsLoading ||
-              (activeTab === EntitiesEnum.Trainings && !trainings?.length) ||
-              (activeTab === EntitiesEnum.Events && !events?.length)
-            "
           />
           <ion-spinner
             name="lines"

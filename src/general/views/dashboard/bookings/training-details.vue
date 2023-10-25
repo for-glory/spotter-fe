@@ -1,9 +1,8 @@
 <template>
     <div class="holder-content ion-padding-horizontal">
         <ion-text class="content__title">Training details #{{ training.id }}</ion-text>
-        <training-detail v-if="training" :event="(training as any)" :type="EntitiesEnum.Training"
-            @click="openProfile(training?.user.id ?? '')" :training-address="training?.user.address?.street ?? ''" />
-        <ion-button class="secondary" expand="block" @click="openQR">
+        <training-detail v-if="training" :event="(training as any)" :type="EntitiesEnum.Training"/>
+        <ion-button class="secondary" v-if="Capacitor.isNativePlatform()" expand="block" @click="openQR">
             Open QR-code reader
         </ion-button>
     </div>
@@ -39,6 +38,7 @@ import {
 } from "@/generated/graphql";
 import Confirmation from "@/general/components/modals/confirmations/Confirmation.vue";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
+import { Capacitor } from "@capacitor/core";
 
 const router = useRouter();
 

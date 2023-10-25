@@ -182,9 +182,6 @@ const { result: trainingsResult, loading: trainingsLoading } = useQuery(
       start_date: route.params?.date
         ? dayjs(Number(route.params.date)).format("YYYY-MM-DD HH:mm:ss")
         : dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      end_date: route.params?.date
-        ? dayjs(Number(route.params.date)).format("YYYY-MM-DD HH:mm:ss")
-        : dayjs().format("YYYY-MM-DD HH:mm:ss"),
       states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
     },
     orderBy: [
