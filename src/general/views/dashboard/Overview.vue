@@ -20,7 +20,7 @@
           <ion-text class="content">Event counts</ion-text>
           <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
-        <div>
+        <div v-if="role !== RoleEnum.FacilityOwner">
           <div class="time">Today's</div>
           <ion-text class="content">Message counts</ion-text>
           <span class="count">{{ widgetInfo?.message_count }}</span>
