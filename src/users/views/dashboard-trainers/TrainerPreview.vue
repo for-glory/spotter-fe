@@ -1,4 +1,3 @@
-
 <template>
     <div class="dashboard">
         <div class="d-flex align-items-center page-header">
@@ -232,38 +231,13 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import {
-    AddToCartDocument,
-    AddToCartPurchasableEnum,
-    FeedbackEntityEnum,
-    MyWorkoutsDocument,
-    Query,
-    QueryWorkoutsOrderByColumn,
-    ReviewsDocument,
-    SortOrder,
-    UserDocument,
-    WorkoutsDocument,
-    QueryEventsOrderByColumn,
-    EventsQueryVariables,
-    EventsQuery,
-    EventsDocument,
-} from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
-import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
-import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
-import { Capacitor } from "@capacitor/core";
-
-const dailyData = ref();
-const isOpenBlurredScreenModal = ref(false);
-const isOpenPurchaseModal = ref(false);
-const isOpenPreviewModal = ref(false);
-const selectedDailyId = ref<number>();
-const cartId = ref<number>();
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -341,6 +315,7 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
     purchases: daily?.purchases,
     type: daily?.type.name,
     video: daily?.video,
+    previewUrl: daily?.previewUrl
   }
 }));
 
@@ -440,61 +415,6 @@ const viewAllReview = () => {
         params: { id: route.params.id },
     });
 }
-
-// Events List
-const eventsParams: EventsQueryVariables = {
-    first: 5,
-    page: 1,
-    orderBy: [
-        {
-        column: QueryEventsOrderByColumn.StartDate,
-        order: SortOrder.Asc,
-        },
-    ],
-    created_by_trainer: route.params.id
-};
-
-const {
-    result: eventResult,
-    loading: eventsLoading,
-} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "no-cache",
-});
-
-const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
-    return {
-        id: event?.id,
-        name: event?.title,
-        price: formatNumber(event?.price/100, "fixed"),
-        date: dayjs(event?.start_date).format('D MMMM'),
-        address: event?.address?.street,
-        totalUser: event?.booked_count
-    }
-}));
-
-const goToEventDetail = (id) => {
-  router.push({
-    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
-    params: {
-      id: id,
-    },
-  });
-}
-// End Events
-const formatNumber = (num: number, type: string) => {
-    if (num < 1e3) {
-        if(type === 'normal') {
-        return num.toString();
-        } else {
-        return num.toFixed(2).toString();
-        }
-    } else if (num < 1e6) {
-        return (num / 1e3).toFixed(1) + 'k';
-    } else {
-        return (num / 1e6).toFixed(1) + 'M';
-    }
-};
 
 </script>
 

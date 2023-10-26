@@ -101,7 +101,7 @@
 					</div>
 					<div class="offer-item" v-else :key="item.id" v-for="item in dailysData">
 						<div class="header-section">
-							<div class="name">{{ item.title }}</div>
+							<div class="name" @click="previewDaily(item)">{{ item.title }}</div>
 							<div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
 						</div>
 						<div class="detail-section">
@@ -111,7 +111,11 @@
 								<ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
 								<ion-text>{{ item.type.name }}</ion-text>
 							</div>
-							<ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
+							<div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
+								<ion-icon src="assets/icon/profile.svg"></ion-icon>
+								<ion-text>{{ item.totalUser }}</ion-text>
+							</div>
+							<ion-button v-else  @click="handleSubscribe(item.id)">Subscribe</ion-button>
 						</div>
 					</div>
 				</div>
@@ -151,6 +155,21 @@
 			</div>
 		</template>
 	</detail>
+	<preview-daily-modal 
+        :daily="dailyData"  
+        :isOpen="isOpenPreviewModal"
+        @closeModal="onClosePreview"
+        :duration="myWorkouts.some((my: any) => my.id === selectedDailyId) ? 0 : 10"
+        @trialEnd="onTrialEnd"
+    />
+    <blurred-screen-modal
+        id="blur"
+        :is-open="isOpenBlurredScreenModal"
+        :preview-url="dailyData?.previewUrl"
+        @visibility="isOpenBlurredScreenModal = false"
+        @purchase-daily="purchaseWorkout"
+        :disabled="addToCartLoading"
+    />
 </template>
 
 <script setup lang="ts">
@@ -170,6 +189,7 @@ import {
 	FollowDocument,
 	FollowTypeEnum,
 	MeDocument,
+	MyWorkoutsDocument,
 	Query,
 	QueryEventsOrderByColumn,
 	QueryFacilityWorkoutsOrderByColumn,
@@ -197,6 +217,11 @@ const route = useRoute();
 const router = useRouter();
 const isFollowed = ref(false);
 const isTrusted = ref(false);
+const dailyData = ref();
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
+const cartId = ref<number>();
 const activeSegment = ref<EntitiesEnum>(
 	EntitiesEnum.Facilities
 );
@@ -229,6 +254,12 @@ const { result, loading, onResult } = useQuery<Pick<Query, "facility">>(
 );
 
 const facility = computed(() => result.value?.facility);
+
+const { result: myDailys, loading: myDailysLoading, refetch: myRefetch } = useQuery(MyWorkoutsDocument, {
+  first: 1000,
+});
+
+const myWorkouts = computed(() => myDailys.value?.myWorkouts?.data || []);
 
 // Dropins start
 const {
@@ -322,35 +353,39 @@ const getDurationText = (value: number) => {
 		return (value / 60).toFixed(0) + ' h ' + (value % 3600) / 60 + ' min';
 	}
 };
+
+const handleSubscribe = (id: number) => {
+    selectedDailyId.value = id;
+    purchaseWorkout();
+}
+
 const { mutate: addToCartMutation, loading: addToCartLoading } =
-	useMutation(AddToCartDocument);
-const purchaseWorkout = (id: string) => {
-	addToCartMutation({
-		input: {
-			purchasable_id: id,
-			purchasable: AddToCartPurchasableEnum.Workout,
-		},
-	})
-		.then((res) => {
-			router.push({
-				name: EntitiesEnum.WorkoutOrder,
-				params: {
-					id: id,
-				},
-				query: {
-					cart_id: res?.data?.addToCart?.id,
-				},
-			});
-		})
-		.catch(async () => {
-			const toast = await toastController.create({
-				message: "Something went wrong. Try again.",
-				duration: 2000,
-				icon: "assets/icon/info.svg",
-				cssClass: "warning-toast",
-			});
-			toast.present();
-		});
+  useMutation(AddToCartDocument);
+const purchaseWorkout = () => {
+  addToCartMutation({
+    input: {
+      purchasable_id: selectedDailyId.value,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+        isOpenBlurredScreenModal.value = false;
+        isOpenPreviewModal.value = false;
+		router.push({
+		name: EntitiesEnum.PaymentsMethods,
+		params: { orderId: selectedDailyId.value },
+		query: { cart_id: cartId.value },
+  });
+    })
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
 };
 // Dailys End
 
@@ -499,6 +534,22 @@ const formatNumber = (num: number, type: string) => {
 		return (num / 1e6).toFixed(1) + 'M';
 	}
 };
+
+const previewDaily = (daily: any) => {
+	dailyData.value = daily;
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
+}
+
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
+}
+
 </script>
 
 <style scoped lang="scss">
