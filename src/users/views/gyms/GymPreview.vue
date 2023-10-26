@@ -474,8 +474,27 @@ const purchaseWorkout = () => {
     });
 };
 
-const previewDaily = (url: string) => {
-    dailyModal.value?.present({video: url, prview: true});
+const previewDaily = (daily: any) => {
+    dailyData.value = daily;
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
+}
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onPurchase = () => {
+  isOpenPurchaseModal.value = false;
+  router.push({
+    name: EntitiesEnum.PaymentsMethods,
+    params: { orderId: selectedDailyId.value },
+    query: { cart_id: cartId.value },
+  });
+}
+
+const onClosePreview = () => {
+    console.log("OOOO")
+    isOpenPreviewModal.value = false;
 }
 // Dailys End
 
