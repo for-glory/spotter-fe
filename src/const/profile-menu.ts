@@ -15,11 +15,11 @@ export const profileMenu: ProfileMenu = {
       label: "Edit profile",
       icon: "edit",
     },
-    {
-      name: EntitiesEnum.ProfileCalendar,
-      label: "Calendar",
-      icon: "calendar-outline",
-    },
+    // {
+    //   name: EntitiesEnum.ProfileCalendar,
+    //   label: "Calendar",
+    //   icon: "calendar-outline",
+    // },
     {
       name: EntitiesEnum.ProfilePaymentMethods,
       label: "Payment methods",
