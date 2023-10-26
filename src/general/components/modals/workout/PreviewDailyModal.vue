@@ -33,10 +33,6 @@ import { defineExpose, defineEmits, ref, computed } from "vue";
 
 const workoutModal = ref();
 
-const daily = computed(() => props.daily);
-const isOpen = computed(() => props.isOpen);
-const duration = computed(() => props.duration);
-
 const props = defineProps<{
   daily: any;
   isOpen: boolean;

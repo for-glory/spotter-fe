@@ -140,7 +140,7 @@
 						</div>
                         <div class="offer-item" :key="item.id" v-for="item in dailysData">
                             <div class="header-section">
-                                <div class="name" @click="previewDaily(item.video)">{{ item.title }}</div>
+                                <div class="name" @click="previewDaily(item)">{{ item.title }}</div>
                                 <div class="trainer">{{ `${item.trainer?.first_name} ${item.trainer?.last_name}` }}</div>
                             </div>
                             <div class="detail-section">
@@ -265,7 +265,6 @@ const cartId = ref<number>();
 const router = useRouter();
 const route = useRoute();
 const segmentValue = ref('trainer');
-const dailyModal = ref<typeof PreviewDailyModal | null>(null);
 const activeSegment = ref<EntitiesEnum>(
     EntitiesEnum.Facilities
 );
@@ -440,7 +439,7 @@ const { mutate: addToCartMutation, loading: addToCartLoading } =
 const purchaseWorkout = () => {
   addToCartMutation({
     input: {
-      purchasable_id: id,
+      purchasable_id: selectedDailyId.value,
       purchasable: AddToCartPurchasableEnum.Workout,
     },
   })
@@ -463,7 +462,6 @@ const purchaseWorkout = () => {
 
 const previewDaily = (daily: any) => {
     dailyData.value = daily;
-    dailyModal.value?.present({daily: daily, preview: true})
     isOpenPreviewModal.value = true;
     selectedDailyId.value = daily.id;
 }

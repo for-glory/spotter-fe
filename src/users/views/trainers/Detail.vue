@@ -233,7 +233,8 @@ const handleSubscribe = (id: number) => {
 const { mutate: addToCartMutation, loading: addToCartLoading } =
 	useMutation(AddToCartDocument);
 const purchaseWorkout = () => {
-	console.log("selectedID", selectedDailyId)
+	isOpenBlurredScreenModal.value = false;
+	isOpenPreviewModal.value = false;
 	addToCartMutation({
 		input: {
 			purchasable_id: selectedDailyId.value,

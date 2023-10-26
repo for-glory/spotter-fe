@@ -5,7 +5,6 @@
     </template>
   </page-header>
   <video-player
-    v-if="!Capacitor.isNativePlatform()"
     class="video-player vjs-big-play-centered"
     :src="`${VUE_APP_CDN}${daily?.video}`"
     crossorigin="anonymous"
@@ -22,7 +21,7 @@
     @pause="handlePlause"
     @ended="handleVideoEnded"
   />
-  <div v-else class="w-100 h-100" style="padding: 12px;">
+  <!-- <div class="w-100 h-100" style="padding: 12px;">
     <video 
       v-if="freeDuration === 0 || showControl" 
       controls
@@ -40,7 +39,7 @@
       autoplay
       style="max-width: 100%; width: 100%; max-height: calc(100vh - 40px); height: 100%">
     </video>
-  </div>
+  </div> -->
   <div v-if="freeDuration > 0" class="d-flex-col justify-content-end align-items-start details__left">
     <ion-label class="font-medium font-18 color-white"> {{ daily?.title }}</ion-label>
     <ion-text class="daily-info">
@@ -140,9 +139,9 @@ const router = useRouter();
 
 const handleTimeUpdate = (event: Event) => {
   const videoElement = event.target as HTMLVideoElement;
+  console.log("time=>>>>", videoElement.currentTime)
   if (videoElement.currentTime > props.freeDuration) {
     videoElement.pause();
-    videoElement.currentTime = 0;
     emits('trialEnd');
   }
 }

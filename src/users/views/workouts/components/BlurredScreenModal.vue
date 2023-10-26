@@ -54,6 +54,7 @@ const isTrusted = ref(false);
 const props = defineProps<{
   previewUrl: string;
   disabled: boolean;
+  isOpen: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -64,9 +65,8 @@ const emits = defineEmits<{
 
 const router = useRouter();
 
-const isOpen = ref(true);
+// const isOpen = ref(false);
 const blurredModal = ref(null);
-
 const bgImage = ref(
   `background: no-repeat center/cover url(${props.previewUrl})`
 );
@@ -146,7 +146,6 @@ const handleTouchEnd = () => {
 };
 
 const purchaseDaily = () => {
-  isOpen.value = false;
   emits("purchaseDaily");
 };
 
@@ -165,7 +164,7 @@ gotMe(async (response) => {
 });
 
 const onBack = () => {
-  isOpen.value = false;
+  // isOpen.value = false;
   emits("visibility", false);
   if(Capacitor.isNativePlatform()){
     router.push({ name: EntitiesEnum.UserWorkouts });
@@ -175,7 +174,7 @@ const onBack = () => {
 };
 
 const watchTrialVideo = () => {
-  isOpen.value = false;
+  // isOpen.value = false;
   emits("visibility", false);
   emits("watchTrialVideo");
 };
