@@ -327,6 +327,7 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
     purchases: daily?.purchases,
     type: daily?.type.name,
     video: daily?.video,
+    previewUrl: daily?.previewUrl
   }
 }));
 

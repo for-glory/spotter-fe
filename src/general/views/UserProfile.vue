@@ -112,7 +112,7 @@
                         </div>
 						<div v-else class="offer-item" :key="item.id" v-for="item in offerList">
 							<div class="header-section">
-								<div class="name">{{ item.name }}</div>
+								<div class="name"  @click="previewDaily(item)">{{ item.name }}</div>
 								<div class="trainer">{{ item.trainer }}</div>
 							</div>
 							<div class="detail-section">
@@ -122,11 +122,11 @@
 									<ion-icon class="dot-icon" :icon="ellipse"></ion-icon>
 									<ion-text>{{ item.type }}</ion-text>
 								</div>
-								<ion-button @click="purchaseWorkout(item.id)">Subscribe</ion-button>
-								<!-- <div class="total">
-                  <ion-icon src="assets/icon/profile.svg"></ion-icon>
-                  <ion-text>{{ item.totalUser }}</ion-text>
-                </div> -->
+								<div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
+									<ion-icon src="assets/icon/profile.svg"></ion-icon>
+									<ion-text>{{ item.totalUser }}</ion-text>
+								</div>
+								<ion-button v-else  @click="handleSubscribe(item.id)">Subscribe</ion-button>
 							</div>
 						</div>
 					</div>
@@ -184,6 +184,21 @@
 			</div>
 		</template>
 	</base-layout>
+	<preview-daily-modal 
+        :daily="dailyData"  
+        :isOpen="isOpenPreviewModal"
+        @closeModal="onClosePreview"
+        :duration="myWorkouts.some((my: any) => my.id === selectedDailyId) ? 0 : 10"
+        @trialEnd="onTrialEnd"
+    />
+    <blurred-screen-modal
+        id="blur"
+        :is-open="isOpenBlurredScreenModal"
+        :preview-url="dailyData?.previewUrl"
+        @visibility="isOpenBlurredScreenModal = false"
+        @purchase-daily="purchaseWorkout"
+        :disabled="addToCartLoading"
+    />
 </template>
 
 <script setup lang="ts">
@@ -204,7 +219,7 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, MyWorkoutsDocument, QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -213,6 +228,8 @@ import { TrainerProfileViewEnum } from "@/const/TrainerSelectOption";
 import { ellipse } from "ionicons/icons";
 import { Share } from "@capacitor/share";
 import { useTrainerStore } from "@/general/stores/useTrainerStore"
+import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 
 dayjs.extend(relativeTime);
 
@@ -220,11 +237,21 @@ const router = useRouter();
 const segmentValue = ref('trainer');
 
 const trainer = useTrainerStore();
+const dailyData = ref();
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
+const cartId = ref<number>();
 
-console.log(trainer.trainer);
 const handleBack = () => {
 	router.go(-1);
 };
+
+const { result: myDailys, loading: myDailysLoading, refetch: myRefetch } = useQuery(MyWorkoutsDocument, {
+  first: 1000,
+});
+
+const myWorkouts = computed(() => myDailys.value?.myWorkouts?.data || []);
 
 const { result: dailysResult, loading: dailysLoading, refetch: refetchDailys, onResult: gotDailysData } = useQuery(
 	WorkoutsDocument, {
@@ -284,9 +311,12 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
 		trainer: `${daily?.trainer?.first_name} ${daily?.trainer?.first_name}`,
 		time: daily?.duration,
 		totalUser: daily?.views_count,
-		type: daily?.type.name
+		type: daily?.type.name,
+		video: daily?.video,
+        previewUrl: daily?.previewUrl
 	}
 }));
+
 const offerEvents = [{
 	id: 1,
 	name: "Run competition",
@@ -314,34 +344,32 @@ const offerEvents = [{
 	address: "Light Street, 1",
 }]
 const { mutate: addToCartMutation, loading: addToCartLoading } =
-	useMutation(AddToCartDocument);
-const purchaseWorkout = (id: string) => {
-	addToCartMutation({
-		input: {
-			purchasable_id: id,
-			purchasable: AddToCartPurchasableEnum.Workout,
-		},
+  useMutation(AddToCartDocument);
+const purchaseWorkout = () => {
+  addToCartMutation({
+    input: {
+      purchasable_id: selectedDailyId.value,
+      purchasable: AddToCartPurchasableEnum.Workout,
+    },
+  })
+    .then((res) => {
+        isOpenBlurredScreenModal.value = false;
+        isOpenPreviewModal.value = false;
+		router.push({
+		name: EntitiesEnum.PaymentsMethods,
+		params: { orderId: selectedDailyId.value },
+		query: { cart_id: cartId.value },
 	})
-		.then((res) => {
-			router.push({
-				name: EntitiesEnum.WorkoutOrder,
-				params: {
-					id: id,
-				},
-				query: {
-					cart_id: res?.data?.addToCart?.id,
-				},
-			});
-		})
-		.catch(async () => {
-			const toast = await toastController.create({
-				message: "Something went wrong. Try again.",
-				duration: 2000,
-				icon: "assets/icon/info.svg",
-				cssClass: "warning-toast",
-			});
-			toast.present();
-		});
+	})
+    .catch(async () => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Try again.",
+        duration: 2000,
+        icon: "assets/icon/info.svg",
+        cssClass: "warning-toast",
+      });
+      toast.present();
+    });
 };
 const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 
@@ -384,6 +412,21 @@ const specialNeeds = computed<string | null>(() => {
 	const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
 	return answers ? answers : null;
 });
+
+const previewDaily = (daily: any) => {
+	dailyData.value = daily;
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
+}
+
+const onTrialEnd = () => {
+    isOpenBlurredScreenModal.value = true;
+}
+
+const onClosePreview = () => {
+    isOpenPreviewModal.value = false;
+}
+
 </script>
 
 <style scoped lang="scss">

@@ -112,9 +112,9 @@
 								<ion-text>{{ item.type.name }}</ion-text>
 							</div>
 							<div v-if="myWorkouts.some((my: any) => my.id === item.id)" class="total">
-                                    <ion-icon src="assets/icon/profile.svg"></ion-icon>
-                                    <ion-text>{{ item.totalUser }}</ion-text>
-                                </div>
+								<ion-icon src="assets/icon/profile.svg"></ion-icon>
+								<ion-text>{{ item.totalUser }}</ion-text>
+							</div>
 							<ion-button v-else  @click="handleSubscribe(item.id)">Subscribe</ion-button>
 						</div>
 					</div>
