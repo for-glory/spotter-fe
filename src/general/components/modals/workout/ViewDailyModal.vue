@@ -166,35 +166,24 @@
 import {
   IonModal,
   IonButton,
-  IonContent,
-  IonRadio,
-  IonRadioGroup,
-  IonItem,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  InfiniteScrollCustomEvent,
-  IonSearchbar,
   IonIcon,
   IonLabel,
   toastController,
   IonSpinner,
   IonSegment,
   IonSegmentButton,
-  SegmentCustomEvent
+  SegmentCustomEvent,
+  IonText
 } from "@ionic/vue";
 import {
-  ReviewTypeEnum,
   FeedbackEntityEnum,
   ReviewsDocument,
   DeleteDailyDocument,
   DailyViewsAndPurchasesDocument
 } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { defineExpose, defineEmits, ref, defineProps, computed } from "vue";
-import { Capacitor } from '@capacitor/core';
-import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { defineExpose, defineEmits, ref, computed } from "vue";
 import { EntitiesEnum } from "@/const/entities";
-import { useLazyQuery } from "@vue/apollo-composable";
 import { useRoute, useRouter } from "vue-router";
 import { useConfirmationModal } from "@/hooks/useConfirmationModal";
 import { Share } from "@capacitor/share";

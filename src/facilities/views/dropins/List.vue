@@ -11,7 +11,7 @@
           </ion-avatar>
         </template>
         <template #custom-btn>
-          <ion-button @click="handleCreate" class="header-btn">
+          <ion-button v-if="(role !== RoleEnum.FacilityOwner)" @click="handleCreate" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span class="header-btn__badge" v-if="unreadMessages.length"></span>
           </ion-button>
@@ -121,6 +121,7 @@ import {
 } from "@ionic/vue";
 import {
   GetCustomersByFacilityItemsDocument,
+  RoleEnum
 } from "@/generated/graphql";
 import { useQuery } from "@vue/apollo-composable";
 import { computed, onMounted, ref } from "vue";

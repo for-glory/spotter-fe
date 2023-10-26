@@ -1,12 +1,12 @@
 <template>
   <base-layout>
     <template #header>
-      <page-header back-btn @back="onBack" title="Add New Manager">
+      <page-header back-btn @back="onBack" :title="route.params.id ? 'Edit Manager' : 'Add New Manager'">
       </page-header>
     </template>
     <template #content>
       <div class="main-content">
-        <div class="inputs-form" :class="{ 'inputs-form--footer-fixed': footerFixed }">
+        <div class="inputs-form">
           <div class="form-row">
             <base-input required v-model:value="managerName" placeholder="First name, Last name" label="Full name" />
           </div>
@@ -17,7 +17,7 @@
             <base-input label="Phone number" v-model:value="managerPhoneNumber" placeholder="Phone number" />
           </div>
           <div class="form-row">
-            <base-input required v-model:value="managerCode" placeholder="" label="Postal Code" />
+            <base-input required v-model:value="managerPostalCode" placeholder="" label="Postal Code" />
           </div>
           <div class="form-row">
             <ion-label class="label"> Date of Birth </ion-label>
@@ -32,9 +32,7 @@
 
           <div class="form-row">
             <ion-label class="label"> Address </ion-label>
-            <choose-block title="Address"
-              :value="selectedAddress ? `${selectedAddress?.thoroughfare} ${selectedAddress?.subThoroughfare}` : ''"
-              @handle-click="onChooseLocation" />
+            <choose-block title="Address" :value="selectedAddress?.street" @handle-click="onChooseLocation" />
             <!-- <choose-block
               title="Address"
               class="form-row__control"
@@ -44,8 +42,8 @@
           </div>
 
           <div class="form-row">
-            <ion-label class="label"> Employement Type </ion-label>
-            <choose-block title="Full Time" @handle-click="$router.push({ name: EntitiesEnum.EmploymentType })"
+            <ion-label class="label"> Employment Type </ion-label>
+            <choose-block :title="managerType" @handle-click="isEmploymentTypeModal = true"
               class="form-row__control" />
           </div>
 
@@ -53,15 +51,18 @@
             <base-input label="Tax ID" v-model:value="managerTaxID" placeholder="Tax ID" />
           </div>
 
-          <div class="actions-wrapper" :class="{ 'actions-wrapper--fixed': footerFixed }">
-            <ion-button expand="block" fill="solid" @click="addManager">
-              Send Invitation
+          <div class="actions-wrapper">
+            <ion-button expand="block" fill="solid" @click="addManager" :disabled="!isValidForm">
+              {{ route.params.id ? 'Update Manager' : 'Add New Manager' }}
             </ion-button>
           </div>
         </div>
         <!-- <choose-address-modal ref="chooseAddressModal" @select="addressSelected" /> -->
         <choose-location-modal ref="chooseLocationModal" @select="addressSelected" />
         <date-picker-modal ref="datePickerModal" @select="dateSelected" />
+        <IonModal :is-open="isEmploymentTypeModal" @didDismiss="isEmploymentTypeModal = false">
+          <employment-type :is-modal="true" @dismiss="isEmploymentTypeModal = false"/>
+        </IonModal>
       </div>
     </template>
   </base-layout>
@@ -71,7 +72,8 @@
 import {
   IonLabel,
   IonButton,
-  toastController
+  toastController,
+IonModal
 } from "@ionic/vue";
 import PhotosLoader from "@/general/components/PhotosLoader.vue";
 import { EntitiesEnum } from "@/const/entities";
@@ -86,6 +88,8 @@ import {
   MeDocument,
   EmploymentTypeEnum,
   CreateManagerDocument,
+  Address,
+  UpdateUserDocument,
 } from "@/generated/graphql";
 import { ChooseAddresModalResult } from "@/interfaces/ChooseAddressModalOption";
 import { v4 as uuidv4 } from "uuid";
@@ -102,6 +106,9 @@ import BaseInput from "@/general/components/base/BaseInput.vue";
 import ChooseLocationModal from "@/facilities/components/ChooseLocationModal.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { useManagerStore } from "@/facilities/store/manager";
+import { useRoute } from "vue-router";
+import EmploymentType from "../EmploymentType.vue";
 
 const { load: getCities, refetch: getCityByName } = useLazyQuery(
   CitiesDocument,
@@ -114,13 +121,13 @@ const { load: getCities, refetch: getCityByName } = useLazyQuery(
 getCities();
 
 const router = useRouter();
+const route = useRoute();
 const store = useNewFacilityStore();
 
 const managerName = ref<string>("");
 const managerEmail = ref<string>("");
-const managerCode = ref<string>("");
+const managerPostalCode = ref<string>("");
 const managerBOD = ref<any>();
-const managerType = ref<string>();
 const managerTaxID = ref<string>();
 const managerPhoneNumber = ref<string>();
 const media = ref<
@@ -134,10 +141,11 @@ const media = ref<
   }>
 >([]);
 const error = ref<string>();
+const managerType = computed(()=>managerStore?.employment_type == EmploymentTypeEnum.PartTime ? 'Contract' : 'Full Time');
 
 // const selectedState = computed(() => store.address.state);
 // const selectedCity = computed(() => store.address.city);
-const selectedAddress = computed(() => store.address.address);
+const selectedAddress = ref<Address>();
 const chooseLocationModal = ref<typeof ChooseLocationModal | null>(null);
 
 const photoOnLoad = ref<boolean>(false);
@@ -145,6 +153,29 @@ const percentPhotoLoaded = ref<number | undefined>();
 
 const datePickerModal = ref<typeof DatePickerModal | null>(null);
 const currentFacility = useFacilityStore();
+const managerStore = useManagerStore();
+const isEmploymentTypeModal = ref(false)
+const { mutate: updateUser, loading: updateUserLoading } = useMutation(UpdateUserDocument);
+
+const isValidForm = computed(
+  () => {
+   return !!(
+      managerName.value && managerEmail.value && managerBOD.value && managerPhoneNumber.value && managerType.value && managerTaxID.value
+    )
+}
+);
+
+
+if (route.params.id) {
+  console.log('managerStore', managerStore);
+  managerName.value = managerStore?.first_name + ' ' + managerStore?.last_name;
+  managerEmail.value = managerStore?.email;
+  managerBOD.value = managerStore?.birth;
+  managerPhoneNumber.value = managerStore?.phone_number;
+  managerTaxID.value = managerStore?.tax_id;
+  managerPostalCode.value = managerStore?.postal_code;
+  selectedAddress.value = managerStore.address;
+}
 
 const { mutate } = useMutation(CreateManagerDocument);
 
@@ -161,7 +192,15 @@ const onChooseLocation = () => {
 };
 
 const addressSelected = (selected: ChooseAddresModalResult) => {
+  console.log('selected address', selected);
   store.setAddress(selected.state, selected.city, selected.address);
+  selectedAddress.value = {
+    city: { ...selected.city as any },
+    street: selected.address?.thoroughfare ? selected.address?.thoroughfare : selected.address?.subThoroughfare,
+    lat: Number(selected.address?.latitude),
+    lng: Number(selected.address?.longitude),
+    id: selected.city?.id as string
+  };
 };
 
 const savedMedia = computed(() =>
@@ -268,6 +307,10 @@ const getMedia = (media: any, savedMedia: any) => {
 // }
 
 const addManager = () => {
+  if(route.params.id){
+    updateManager();
+    return;
+  }
   const newMedia = getMedia(media.value, savedMedia.value);
   mutate({
     input: {
@@ -286,9 +329,10 @@ const addManager = () => {
       role: 'MANAGER',
       employment_type: managerType.value?.toLocaleLowerCase() === 'full time' ? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.PartTime,
       tax_id: managerTaxID.value,
-      postal: managerCode.value,
+      postal: managerPostalCode.value,
       facility_id: currentFacility?.facility.id,
-      birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss")
+      birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+      phone: managerPhoneNumber.value
     }
   }).then(async () => {
     const toast = await toastController.create({
@@ -309,6 +353,56 @@ const addManager = () => {
 
     throw new Error(error);
   });
+};
+
+const updateManager = () => {
+  const newMedia = getMedia(media.value, savedMedia.value);
+  if (isValidForm.value) {
+    updateUser({
+      id: route.params.id,
+      input: {
+        avatar:
+          newMedia && getMedia(media.value, savedMedia.value)?.pop()?.file,
+        first_name: managerName.value.split(" ")[0],
+        last_name: managerName.value.split(" ")[1],
+        email: managerEmail.value,
+        address: {
+          lat: selectedAddress.value?.lat,
+          lng: selectedAddress.value?.lng,
+          street: selectedAddress.value?.street,
+          city_id: selectedAddress.value?.id,
+        },
+        role: 'MANAGER',
+        employment_type: managerType.value?.toLocaleLowerCase() === 'full time' ? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.PartTime,
+        tax_id: managerTaxID.value,
+        postal: managerPostalCode.value,
+        facility_id: currentFacility?.facility.id,
+        birth: dayjs(managerBOD.value).format("YYYY-MM-DD HH:mm:ss"),
+        phone: managerPhoneNumber.value
+      }
+    }).then(async (data) => {
+      if(data?.errors?.length){
+        throw data.errors
+      }
+      const toast = await toastController.create({
+        message: "Update manager successfully",
+        duration: 2000,
+        icon: "assets/icon/success.svg",
+        cssClass: "success-toast",
+      });
+      toast.present();
+      router.back();
+    }).catch(async (error) => {
+      const toast = await toastController.create({
+        message: "Something went wrong. Please try again.",
+        icon: "assets/icon/info.svg",
+        cssClass: "danger-toast",
+      });
+      toast.present();
+
+      throw new Error(error);
+    });
+  }
 };
 
 const onBack = () => {

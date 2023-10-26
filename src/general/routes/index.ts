@@ -115,6 +115,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: EntitiesEnum.ProfileEditName,
+    path: "/profile/edit",
+    component: () => import("@/general/views/profile/UserName.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
     name: EntitiesEnum.ProfileGettingPaid,
     path: "/profile/getting-paid",
     component: () => import("@/general/views/profile/GettingPaid.vue"),
@@ -742,7 +750,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         name: EntitiesEnum.GymOrderCalendar,
-        path: ":id/order-calendar",
+        path: ":id/:facility/order-calendar",
         component: () => import("@/users/views/gyms/OrderCalendar.vue"),
         meta: {
           middleware: [auth],
@@ -805,11 +813,11 @@ export const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        name: EntitiesEnum.DropinsPassesList,
+        name: EntitiesEnum.DashboardDropinsPassesDetail,
         path: "pass-dropin/purchase/:id?",
         component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
         meta: {
-          middleware: [gymOwnerSubscription],
+          middleware: [auth],
         },
       },
       {

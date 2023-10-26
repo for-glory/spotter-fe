@@ -82,17 +82,21 @@
 						</div>
 					</div>
 				</div>
-				<div class="offer-card" v-else-if="segmentValue === 'events'">
-					<div v-if="!offerEvents || !offerEvents.length">
-						<empty-block title="Events Empty" hideButton text="No Events available."
-							icon="assets/icon/events.svg" />
+				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
+					<div class="card-background"  v-if="!eventList || !eventList.length">
+						<empty-block
+							title="Events Empty"
+							hideButton
+							text="No Events available"
+							icon= "assets/icon/events.svg"
+						/>
 					</div>
-					<div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
+					<div class="offer-item" :key="item.id" v-for="item in eventList">
 						<div class="header-section events">
 							<div class="name">{{ item.name }}</div>
 							<div class="event-time">
 								<ion-icon src="assets/icon/time.svg"></ion-icon>
-								<ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+								<ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
 							</div>
 						</div>
 						<ion-label class="date-label">{{ item.date }}</ion-label>
@@ -101,7 +105,7 @@
 								<ion-icon src="assets/icon/location.svg"></ion-icon>
 								<ion-text>{{ item.address }}</ion-text>
 							</div>
-							<ion-button>Register</ion-button>
+							<ion-button @click="goToEventDetail(item.id)">Register</ion-button>
 						</div>
 					</div>
 				</div>
@@ -141,7 +145,7 @@ import { IonText, IonButton, IonSegment, IonIcon, IonSegmentButton, actionSheetC
 import { useRoute, useRouter } from "vue-router";
 import Detail from "@/general/components/Detail.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, FollowDocument, FollowTypeEnum, MeDocument, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, RoleEnum, SettingsCodeEnum, SortOrder, TrainerTypeEnum, UserDocument, UnfollowDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, FollowDocument, FollowTypeEnum, MeDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, RoleEnum, SettingsCodeEnum, SortOrder, TrainerTypeEnum, UserDocument, UnfollowDocument, WorkoutsDocument } from "@/generated/graphql";
 import { computed, ref } from "vue";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import ReviewSlides from "@/general/components/blocks/ratings/ReviewSlides.vue";
@@ -247,6 +251,7 @@ const purchaseWorkout = () => {
 				name: EntitiesEnum.WorkoutOrder,
 				params: {
 					id: selectedDailyId.value,
+					id: selectedDailyId.value,
 				},
 				query: {
 					cart_id: res?.data?.addToCart?.id,
@@ -263,6 +268,10 @@ const purchaseWorkout = () => {
 			toast.present();
 		});
 };
+const previewDaily = (daily: any) => {
+	dailyData.value = daily;
+    isOpenPreviewModal.value = true;
+    selectedDailyId.value = daily.id;
 const previewDaily = (daily: any) => {
 	dailyData.value = daily;
     isOpenPreviewModal.value = true;

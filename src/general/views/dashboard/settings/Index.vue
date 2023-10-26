@@ -22,12 +22,12 @@
         >
           Password and Security
         </div>
-        <div
+        <!-- <div
           :class="filter === 'services' ? 'menu-item__active' : 'menu-item'"
           @click="handleClick('services')"
         >
           Connected Services
-        </div>
+        </div> -->
         <div
           class="menu-item__delete"
           @click="onDeleteAccount"

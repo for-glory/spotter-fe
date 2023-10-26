@@ -315,7 +315,7 @@ const refetchBooking = () => {
 
 const goToGymPassDropinDetail = (id) => {
   router.push({
-    name: EntitiesEnum.DropinsPassesList,
+    name: Capacitor.isNativePlatform()?EntitiesEnum.DropinsPassesDetail:EntitiesEnum.DashboardDropinsPassesDetail,
     params: {
       id
     },
@@ -431,7 +431,9 @@ const {
 });
 
 const events = computed(() => {
-  return eventResult.value?.events?.data;
+  return eventResult.value?.events?.data.filter(ev => {
+    return ev.max_participants !== ev.booked_count && dayjs().isBefore(ev.end_date)
+  });
 });
 const formatEventDate = (event) => {
   return dayjs(event.start_date).format(
@@ -673,7 +675,7 @@ const formatCurrency = (num: number, type: string) => {
     font-weight: 500;
     line-height: 1.5;
     margin-bottom: 2px;
-    max-width: calc(100% - 86px);
+    max-width: calc(100% - 140px);
     color: var(--ion-color-white);
 
     .event--time-hidden & {

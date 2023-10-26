@@ -93,6 +93,7 @@ import {
   IonLabel,
   IonSpinner,
   modalController,
+  IonButton
 } from "@ionic/vue";
 import { PlaceType } from "@/ts/enums/user";
 import Choose from "@/general/components/blocks/Choose.vue";

@@ -141,7 +141,7 @@
                         </div>
                     </div>
                     <div class="offer-card" v-else-if="segmentValue == 'events'">
-                        <div v-if="!offerEvents || !offerEvents.length">
+                        <div v-if="!eventList || !eventList.length">
                             <empty-block 
                                 title="Events Empty" 
                                 hideButton
@@ -149,12 +149,12 @@
                                 icon="assets/icon/events.svg" 
                             />
                         </div>
-                        <div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
+                        <div class="offer-item" :key="item.id" v-for="item in eventList">
                             <div class="header-section events">
                                 <div class="name">{{ item.name }}</div>
                                 <div class="event-time">
-                                    <ion-icon src="assets/icon/time.svg"></ion-icon>
-                                    <ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+                                    <!-- <ion-icon src="assets/icon/time.svg"></ion-icon> -->
+                                    <ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
                                 </div>
                             </div>
                             <ion-label class="date-label">{{ item.date }}</ion-label>
@@ -163,10 +163,7 @@
                                     <ion-icon src="assets/icon/location.svg"></ion-icon>
                                     <ion-text>{{ item.address }}</ion-text>
                                 </div>
-                                <div class="total">
-                                    <ion-icon src="assets/icon/profile.svg"></ion-icon>
-                                    <ion-text>{{ item.totalUser }}</ion-text>
-                                </div>
+                                <ion-button @click="goToEventDetail(item.id)">Register</ion-button>
                             </div>
                         </div>
                     </div>
@@ -174,14 +171,14 @@
                 <div class="document-cards">
                     <ion-text class="section-title">Certifications</ion-text>
                     <div class="doc-items" v-if="user?.certificates?.length">
-                        <advantage-item v-for="(item, index) in user.certificates" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                        <advantage-item v-for="(item, index) in user.certificates" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'"
                             :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                                 </div>
                 </div>
                 <div class="document-cards">
                     <ion-text class="section-title">Waiver and Labilities</ion-text>
                     <div class="doc-items">
-                        <advantage-item v-for="(item, index) in user?.weiver_and_labilities" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/gym.svg'"
+                        <advantage-item v-for="(item, index) in user?.weiver_and_labilities" :key="index" :icon="item?.iconUrl || 'assets/icon/advantages/certificate.svg'"
                             :title="(item.title as string)" @click="onOpenDocument(item.pathUrl)"/>
                     </div>
                 </div>
@@ -234,22 +231,13 @@ import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, MyWorkoutsDocument, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
-import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
-import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
-
-const dailyData = ref();
-const isOpenBlurredScreenModal = ref(false);
-const isOpenPurchaseModal = ref(false);
-const isOpenPreviewModal = ref(false);
-const selectedDailyId = ref<number>();
-const cartId = ref<number>();
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
@@ -400,7 +388,6 @@ const reviews = computed(() =>
   )
 );
 
-const docList = ["Advance Trainer ISSA2022", "SEES 2018", "RTEE COO 2015"];
 const user = computed(() => {
   return result.value?.user;
 });
@@ -428,7 +415,6 @@ const viewAllReview = () => {
         params: { id: route.params.id },
     });
 }
-
 
 </script>
 

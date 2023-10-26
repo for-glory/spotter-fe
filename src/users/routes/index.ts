@@ -403,7 +403,7 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    name: 'DISCOVER',
+    name: EntitiesEnum.Discover,
     path: "/users/discover",
     component: () => import("@/users/views/discover/Index.vue"),
     meta: {
@@ -414,6 +414,14 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'Events_detail',
     path: "/users/discover/event_detail",
     component: () => import("@/users/views/discover/event_detail.vue"),
+    meta: {
+      middleware: [auth],
+    },
+  },
+  {
+    name: EntitiesEnum.DropinsPassesDetail,
+    path: "/users/pass-dropin/purchase/:id?",
+    component: () => import("@/general/views/dashboard/pass/PassesDetail.vue"),
     meta: {
       middleware: [auth],
     },

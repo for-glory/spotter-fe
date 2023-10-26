@@ -31,7 +31,7 @@
         <address-item class="event__address" v-if="item?.address?.street">
           {{ item.address?.street }}
         </address-item>
-        <ion-text v-if="props.item?.end_date && props?.item.start_date"
+        <ion-text v-if="props.item?.end_date && props?.item.start_date && !hideTag"
           class="status-text"
           :class="formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? 'ongoing' : 'finished'">
           {{ formatTime(props.item.end_date) >= formatTime(props.item.start_date) ? "Ongoing" : "Finished" }}
@@ -58,10 +58,12 @@ const props = withDefaults(
     dateRange?: boolean;
     hideTime?: boolean;
     hideEventTime?:boolean;
+    hideTag?:boolean
   }>(),
   {
     rounded: false,
-    hideEventTime: false
+    hideEventTime: false,
+    hideTag: false
   }
 );
 const date = computed(() =>
@@ -146,7 +148,7 @@ const formatTime = (date: number, time: string): string => {
     font-weight: 500;
     line-height: 1.5;
     margin-bottom: 2px;
-    max-width: calc(100% - 86px);
+    max-width: calc(100% - 140px);
     color: var(--ion-color-white);
 
     .event--time-hidden & {

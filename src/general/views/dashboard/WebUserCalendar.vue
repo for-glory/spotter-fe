@@ -94,6 +94,8 @@ const route = useRoute();
 const type = computed(() => {
   if (route.params?.type === EntitiesEnum.Facilities) {
     return EntitiesEnum.Facility;
+  } else if (route.params?.type === EntitiesEnum.FacilityDropins) {
+    return EntitiesEnum.FacilityDropins;
   } else if (route.params?.type === EntitiesEnum.Trainings) {
     return EntitiesEnum.Training;
   } else if (route.params?.type === EntitiesEnum.Events) {

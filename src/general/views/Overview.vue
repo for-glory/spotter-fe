@@ -15,7 +15,7 @@
           </ion-avatar>
         </template>
         <template #custom-btn>
-          <ion-button v-if="!loadingUser || !loadingDashboarData" @click="onViewChat" class="header-btn">
+          <ion-button v-if="(role !== RoleEnum.FacilityOwner) && (!loadingUser || !loadingDashboarData)" @click="onViewChat" class="header-btn">
             <ion-icon src="assets/icon/chat.svg" />
             <span v-if="unreadMessages.length || role === RoleEnum.Trainer" class="header-btn__badge"></span>
           </ion-button>

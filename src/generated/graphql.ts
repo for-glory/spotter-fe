@@ -46,6 +46,8 @@ export enum AddToCartPurchasableEnum {
   Event = "EVENT",
   /** WORKOUT */
   Workout = "WORKOUT",
+  /** FACILITYITEM */
+  FacilityItem = "FACILITY_ITEM",
 }
 
 export type AddTrainingToCartInput = {
@@ -2757,6 +2759,11 @@ export type UpdateUserInput = {
   settings?: InputMaybe<Array<SetSettingInput>>;
   trainer_type?: InputMaybe<TrainerTypeEnum>;
   weiver_and_labilities?: InputMaybe<Array<DocumentUploadInput>>;
+  employment_type?: InputMaybe<EmploymentTypeEnum>;
+  tax_id?: InputMaybe<Scalars["String"]>;
+  postal?: InputMaybe<Scalars["String"]>;
+  birth?: InputMaybe<Scalars["DateTime"]>;
+  phone?: InputMaybe<Scalars["String"]>;
 };
 
 export type CreateManagerInput = {
@@ -2771,6 +2778,7 @@ export type CreateManagerInput = {
   tax_id?: InputMaybe<Scalars["String"]>;
   postal?: InputMaybe<Scalars["String"]>;
   birth?: InputMaybe<Scalars["DateTime"]>;
+  phone?: InputMaybe<Scalars["String"]>;
 };
 
 export type User = {
@@ -6962,6 +6970,7 @@ export const FacilityItemPassDocument = gql`
       facilityItem {
         title
         description
+        item_type
         facility {
           id
           name
@@ -7064,6 +7073,13 @@ export const GetCartDocument = gql`
             id
             facility {
               name
+              score
+              address {
+                street
+              }
+              media {
+                pathUrl
+              }
             }
             qr_code_lifetime_value
             qr_code_lifetime_enum
@@ -8424,6 +8440,8 @@ export const TrainerTrainingsDocument = gql`
           address {
             street
           }
+          positive_reviews_count
+          negative_reviews_count
         }
         order {
           id
@@ -8509,6 +8527,7 @@ export const MyFacilityItemPassesDocument = gql`
         facilityItem {
           title
           qr_code_lifetime_value
+          item_type
           facility {
             id
             name
@@ -8719,7 +8738,12 @@ export const GetManagersByFacilityDocument = gql`
         avatarUrl
         is_followed
         trainer_type
+        phone
+        tax_id
+        postal
+        birth
         address {
+          id
           lat
           lng
           street

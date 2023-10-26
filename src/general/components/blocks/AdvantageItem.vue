@@ -28,6 +28,8 @@ defineProps<{
   margin-right: 12px;
   margin-bottom: 12px;
   box-shadow: inset 0 0 0 1px var(--gray-600);
+  cursor: pointer;
+  line-height: 14px;
 
   &-icon {
     width: 1em;

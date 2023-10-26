@@ -53,7 +53,7 @@ const dates = computed(() =>
 );
 
 const onClick = (e: CustomEvent, date: Dayjs) => {
-  if(featureSelectionOnly && dayjs().isAfter(dayjs(date.toString()), 'date' )) {
+  if(featureSelectionOnly.value && dayjs().isAfter(dayjs(date.toString()), 'date' )) {
     return;
   }
   selectedDate.value = date;

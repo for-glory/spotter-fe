@@ -1,18 +1,14 @@
 <template>
   <BaseLayout hide-navigation-menu>
     <template #header>
-      <PageHeader back-btn @back="$router.back()" title="Employment Type" />
+      <PageHeader back-btn @back="handleBack" title="Employment Type" />
     </template>
     <template #content>
       <div class="emp-container ion-padding">
-        <ion-radio-group value="Full Time">
-          <ion-item lines="none" class="radiobutton">
-            <ion-label class="radiobutton__label"> Full Time </ion-label>
-            <ion-radio slot="end" value="Full Time" />
-          </ion-item>
-          <ion-item lines="none" class="radiobutton">
-            <ion-label class="radiobutton__label"> Contract </ion-label>
-            <ion-radio slot="end" value="Contract" />
+        <ion-radio-group :value="selectedType" @ion-change="changeOption">
+          <ion-item lines="none" class="radiobutton" v-for="option in empOptions">
+            <ion-label class="radiobutton__label">{{ option.title }}</ion-label>
+            <ion-radio slot="end" :value="option.value" />
           </ion-item>
         </ion-radio-group>
       </div>
@@ -23,6 +19,51 @@
 import { IonRadioGroup, IonItem, IonLabel, IonRadio } from "@ionic/vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
+import { EmploymentTypeEnum } from "@/generated/graphql";
+import { useManagerStore } from "../store/manager";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+
+const router = useRouter();
+const props = withDefaults(
+  defineProps<{
+    isModal?: boolean;
+  }>(), {
+  isModal: false,
+}
+);
+
+const emits = defineEmits<{
+  (e: "dismiss"): void;
+}>();
+
+const managerStore = useManagerStore();
+const selectedType = ref(managerStore.employment_type ? managerStore.employment_type : EmploymentTypeEnum.FullTime)
+
+const empOptions = [
+  {
+    title: "Full Time",
+    value: EmploymentTypeEnum.FullTime
+  },
+  {
+    title: "Contract",
+    value: EmploymentTypeEnum.PartTime
+  }
+];
+
+const handleBack = () => {
+  if(props?.isModal) {
+    emits('dismiss');
+  }
+  else {
+    router.back();
+  }
+}
+
+const changeOption = (e: any) => {
+  managerStore.setEmploymentType(e.detail.value);
+};
+
 </script>
 <style scoped lang="scss">
 .emp-container {

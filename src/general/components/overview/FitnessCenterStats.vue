@@ -15,11 +15,14 @@
           <td>
             <summary-item title="Today's" keyText="Event counts" :value="eventsCount" />
           </td>
-          <td>
+          <td v-if="role !== RoleEnum.FacilityOwner">
             <summary-item title="Today's" keyText="Message counts" :value="messageCount" />
           </td>
+          <td v-if="role === RoleEnum.FacilityOwner">
+            <summary-item title="Total" keyText="Dailys" :value="dailyCount" />
+          </td>
         </tr>
-        <tr>
+        <tr v-if="role !== RoleEnum.FacilityOwner">
           <td colspan="1">
             <summary-item title="Total" keyText="Dailys" :value="dailyCount" />
           </td>
@@ -29,7 +32,7 @@
     </div>
     <div class="block trainer-block" v-else>
         <summary-item title="Total" keyText="Trainings" :value="14" />
-        <summary-item title="Total" keyText="Message counts" :value="10" />
+        <summary-item v-if="role !== RoleEnum.FacilityOwner" title="Total" keyText="Message counts" :value="10" />
         <summary-item title="Total" keyText="Event counts" :value="23" />
         <summary-item title="Total" keyText="Dailys" :value="10" />
       </div>

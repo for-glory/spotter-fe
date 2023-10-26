@@ -60,7 +60,7 @@
               </div> -->
 							<ion-label class="date-label">{{ item.duration }} {{ item.duration > 1 ? "Days" : "Day"
 							}}</ion-label>
-							<ion-button @click="handleBuy">Buy</ion-button>
+							<ion-button @click="handleBuy(item.id)">Buy</ion-button>
 						</div>
 					</div>
 				</div>
@@ -86,7 +86,7 @@
 							<!-- <div class="only-address">
                 {{ item.address }}
               </div> -->
-							<ion-button @click="handleBuy">Subscribe</ion-button>
+							<ion-button @click="handleBuy(item.id)">Subscribe</ion-button>
 						</div>
 					</div>
 				</div>
@@ -141,7 +141,7 @@
 								<ion-icon src="assets/icon/location.svg"></ion-icon>
 								<ion-text>{{ event?.address?.street }}</ion-text>
 							</div>
-							<ion-button>Register</ion-button>
+							<ion-button @click="goToEventDetail(event.id)">Register</ion-button>
 						</div>
 					</div>
 				</div>
@@ -211,8 +211,8 @@ import { EntitiesEnum } from "@/const/entities";
 import useRoles from "@/hooks/useRole";
 import Rating from "@/general/components/blocks/ratings/Rating.vue";
 import { ellipse } from "ionicons/icons";
-import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
-import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
+import { Capacitor } from "@capacitor/core";
+
 const route = useRoute();
 const router = useRouter();
 const isFollowed = ref(false);
@@ -313,6 +313,15 @@ const {
 const allEvents = computed(() => {
 	return eventResult.value?.events?.data;
 });
+
+const goToEventDetail = (id) => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: id,
+    },
+  });
+}
 // End Events
 
 // Dailys data
@@ -442,8 +451,13 @@ const handleFollow = () => {
 	}
 };
 
-const handleBuy = () => {
-	// router.push({ name: EntitiesEnum.FacilitySubscription });
+const handleBuy = (id: number) => {
+  router.push({
+    name: Capacitor.isNativePlatform()?EntitiesEnum.DropinsPassesDetail:EntitiesEnum.DashboardDropinsPassesDetail,
+    params: {
+      id
+    },
+  });
 };
 
 const { role } = useRoles();

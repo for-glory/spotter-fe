@@ -131,7 +131,7 @@
 						</div>
 					</div>
 					<div class="offer-card" v-else-if="segmentValue == 'events'">
-						<div v-if="!offerEvents || !offerEvents.length">
+						<div v-if="!eventList || !eventList.length">
                             <empty-block 
                                 title="Events Empty" 
                                 hideButton
@@ -139,12 +139,12 @@
                                 icon="assets/icon/events.svg" 
                             />
                         </div>
-						<div v-else class="offer-item" :key="item.id" v-for="item in offerEvents">
+						<div class="offer-item" :key="item.id" v-for="item in eventList">
 							<div class="header-section events">
 								<div class="name">{{ item.name }}</div>
 								<div class="event-time">
 									<ion-icon src="assets/icon/time.svg"></ion-icon>
-									<ion-text class="color-fitness-white fs-14">{{ item.time }}</ion-text>
+									<ion-text class="color-fitness-white fs-14">{{ item.price }}</ion-text>
 								</div>
 							</div>
 							<ion-label class="date-label">{{ item.date }}</ion-label>
@@ -219,7 +219,7 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, MyWorkoutsDocument, QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { AddToCartDocument, AddToCartPurchasableEnum, QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -316,7 +316,6 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
         previewUrl: daily?.previewUrl
 	}
 }));
-
 const offerEvents = [{
 	id: 1,
 	name: "Run competition",

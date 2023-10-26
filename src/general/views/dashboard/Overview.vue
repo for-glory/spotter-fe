@@ -20,7 +20,7 @@
           <ion-text class="content">Event counts</ion-text>
           <span class="count">{{ widgetInfo?.event_count }}</span>
         </div>
-        <div>
+        <div v-if="role !== RoleEnum.FacilityOwner">
           <div class="time">Today's</div>
           <ion-text class="content">Message counts</ion-text>
           <span class="count">{{ widgetInfo?.message_count }}</span>
@@ -120,7 +120,7 @@
                     />
                   </div>
                 </div>
-                <span class="chain">${{ revenue.amount }}</span>
+                <span class="chain">${{ formatCurrency(revenue.amount, "fixed") }}</span>
               </div>
             </div>
           </ion-col>
@@ -522,6 +522,7 @@ import { useRouter } from "vue-router";
 import { getFacilitySubscription } from "@/router/middleware/gymOwnerSubscription";
 import _default from "chart.js/dist/plugins/plugin.legend";
 import useRoles from "@/hooks/useRole";
+import { formatCurrency } from "@/helpers/currency-formater";
 import labels = _default.defaults.labels;
 import {
   Chart as ChartJS,

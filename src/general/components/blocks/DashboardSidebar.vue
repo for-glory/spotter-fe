@@ -73,10 +73,10 @@
           <ion-icon src="assets/icon/add-user.svg" />
           <ion-text>Membership</ion-text>
         </div>
-        <div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
+        <!-- <div class="menu-item" @click="onHandleClickMenu(EntitiesEnum.DashboardMessage)">
           <ion-icon src="assets/icon/email.svg" />
           <ion-text>Message</ion-text>
-        </div>
+        </div> -->
       </div>
       <div class="main-menu" v-if="role === RoleEnum.User">
         <div
@@ -125,12 +125,12 @@
           <ion-icon src="assets/icon/Card.svg" />
           <ion-text>Payment Method</ion-text>
         </div>
-        <div
+        <!-- <div
           :class="getMenuItemClass(role === RoleEnum.User ? EntitiesEnum.UserDashboardCalendar : EntitiesEnum.DashboardCalendar)"
           @click="onHandleClickMenu(role === RoleEnum.User ? EntitiesEnum.UserDashboardCalendar : EntitiesEnum.DashboardCalendar)">
           <ion-icon src="assets/icon/calendar.svg" />
           <ion-text>Calender</ion-text>
-        </div>
+        </div> -->
         <div :class="getMenuItemClass(EntitiesEnum.DashboardSettings)"
           @click="onHandleClickMenu(EntitiesEnum.DashboardSettings)">
           <ion-icon src="assets/icon/Setting.svg" />
