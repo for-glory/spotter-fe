@@ -82,8 +82,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="offer-card" v-else-if="activeSegment === EntitiesEnum.Events">
-					<div class="card-background"  v-if="!eventList || !eventList.length">
+				<div class="offer-card" v-else-if="segmentValue === 'events'">
+					<div class="card-background" v-if="!eventList || !eventList.length">
 						<empty-block
 							title="Events Empty"
 							hideButton

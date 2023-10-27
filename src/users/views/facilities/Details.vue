@@ -212,7 +212,8 @@ import useRoles from "@/hooks/useRole";
 import Rating from "@/general/components/blocks/ratings/Rating.vue";
 import { ellipse } from "ionicons/icons";
 import { Capacitor } from "@capacitor/core";
-
+import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
 const route = useRoute();
 const router = useRouter();
 const isFollowed = ref(false);

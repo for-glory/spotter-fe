@@ -219,7 +219,19 @@ import PageHeader from "@/general/components/blocks/headers/PageHeader.vue";
 import BaseLayout from "@/general/components/base/BaseLayout.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { AddToCartDocument, AddToCartPurchasableEnum, QueryWorkoutsOrderByColumn, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { 
+	AddToCartDocument, 
+	AddToCartPurchasableEnum,   
+	EventsQueryVariables,
+	QueryEventsOrderByColumn,
+	EventsQuery,
+	EventsDocument, 
+	MyWorkoutsDocument, 
+	QueryWorkoutsOrderByColumn, 
+	SortOrder, 
+	UserDocument, 
+	WorkoutsDocument 
+} from "@/generated/graphql";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -316,32 +328,35 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
         previewUrl: daily?.previewUrl
 	}
 }));
-const offerEvents = [{
-	id: 1,
-	name: "Run competition",
-	trainer: "Tamra Dae",
-	time: "8 min",
-	totalUser: 30,
-	date: "17 June",
-	address: "Light Street, 1",
-}, {
-	id: 2,
-	name: "Run competition",
-	trainer: "Tamra Dae",
-	time: "8 min",
-	totalUser: 30,
-	date: "17 June",
-	address: "Light Street, 1",
 
-}, {
-	id: 3,
-	name: "Run competition",
-	trainer: "Tamra Dae",
-	time: "8 min",
-	totalUser: 30,
-	date: "17 June",
-	address: "Light Street, 1",
-}]
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    address: event?.address?.street
+  }
+}));
 const { mutate: addToCartMutation, loading: addToCartLoading } =
   useMutation(AddToCartDocument);
 const purchaseWorkout = () => {
@@ -355,10 +370,14 @@ const purchaseWorkout = () => {
         isOpenBlurredScreenModal.value = false;
         isOpenPreviewModal.value = false;
 		router.push({
-		name: EntitiesEnum.PaymentsMethods,
-		params: { orderId: selectedDailyId.value },
-		query: { cart_id: cartId.value },
-	})
+			name: EntitiesEnum.WorkoutOrder,
+			params: {
+				id: selectedDailyId.value,
+			},
+			query: {
+				cart_id: res?.data?.addToCart?.id,
+			},
+		});
 	})
     .catch(async () => {
       const toast = await toastController.create({
@@ -411,6 +430,10 @@ const specialNeeds = computed<string | null>(() => {
 	const answers = user.value?.quizzes.find(e => e.code === 'DISCOVER_YOUR_NEEDS')?.answers;
 	return answers ? answers : null;
 });
+const handleSubscribe = (id: number) => {
+    selectedDailyId.value = id;
+    purchaseWorkout();
+}
 
 const previewDaily = (daily: any) => {
 	dailyData.value = daily;
@@ -425,6 +448,20 @@ const onTrialEnd = () => {
 const onClosePreview = () => {
     isOpenPreviewModal.value = false;
 }
+
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 
 </script>
 
