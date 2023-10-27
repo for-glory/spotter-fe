@@ -148,7 +148,7 @@ const formatTime = (date: number, time: string): string => {
     font-weight: 500;
     line-height: 1.5;
     margin-bottom: 2px;
-    max-width: calc(100% - 140px);
+    max-width: calc(100% - 100px);
     color: var(--ion-color-white);
 
     .event--time-hidden & {

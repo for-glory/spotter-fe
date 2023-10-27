@@ -165,6 +165,12 @@
         </div>
       </div>
       <div class="setting-menu trainer-setting-menu" v-if="role === RoleEnum.Trainer">
+        <div
+          :class="getMenuItemClass(EntitiesEnum.DashboardBookingsHistory)"
+          @click="onHandleClickMenu(EntitiesEnum.DashboardBookingsHistory)">
+          <ion-icon src="assets/icon/add-user.svg" />
+          <ion-text>Booking History</ion-text>
+        </div>
         <div :class="getMenuItemClass(EntitiesEnum.DashboardMembership)"
           @click="onHandleClickMenu(EntitiesEnum.DashboardMembership)">
           <ion-icon src="assets/icon/add-user.svg" />
