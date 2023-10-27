@@ -252,6 +252,7 @@ const offerList = computed(() => dailysResult.value.workouts.data.map((daily: an
 		purchases: daily?.purchases,
 		type: daily?.type.name,
 		video: daily?.video,
+		previewUrl: daily?.previewUrl
 	}
 }));
 
@@ -262,7 +263,8 @@ const handleSubscribe = (id: number) => {
 const { mutate: addToCartMutation, loading: addToCartLoading } =
 	useMutation(AddToCartDocument);
 const purchaseWorkout = () => {
-	console.log("selectedID", selectedDailyId)
+	isOpenBlurredScreenModal.value = false;
+	isOpenPreviewModal.value = false;
 	addToCartMutation({
 		input: {
 			purchasable_id: selectedDailyId.value,

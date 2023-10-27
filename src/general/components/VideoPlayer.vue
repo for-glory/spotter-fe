@@ -118,6 +118,15 @@ const timer = ref<any>(null);
 const totalTime = ref<number>(0);
 const router = useRouter();
 
+const handleTimeUpdate = (event: Event) => {
+  const videoElement = event.target as HTMLVideoElement;
+  console.log("time=>>>>", videoElement.currentTime)
+  if (videoElement.currentTime > props.freeDuration) {
+    videoElement.pause();
+    emits('trialEnd');
+  }
+}
+
 const handlePlay = () => {
   timer.value = window.setInterval(function() {
     totalTime.value += 1;

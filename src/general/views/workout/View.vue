@@ -12,9 +12,11 @@
             </span>
           </div>
           <swiper 
+            :direction="'vertical'"
+            :centeredSlides="true"
             :slidesPerView="1"
             :spaceBetween="16"
-            class="w-100"
+            class="w-100 h-100"
             style="max-height: 100vh"
             @swiper="onSwiper"
           >
@@ -216,9 +218,9 @@ onMounted(() => {
   let currentIndex = dailysItems.value.findIndex((daily: any) => daily.id === id.value);
   activeIndex.value = currentIndex;
   swiperRef.value?.slideTo(currentIndex);
-  swipeContainer.value.addEventListener('touchstart', handleTouchStart);
-  swipeContainer.value.addEventListener('touchmove', handleTouchMove);
-  swipeContainer.value.addEventListener('touchend', handleTouchEnd);
+  // swipeContainer.value.addEventListener('touchstart', handleTouchStart);
+  // swipeContainer.value.addEventListener('touchmove', handleTouchMove);
+  // swipeContainer.value.addEventListener('touchend', handleTouchEnd);
 });
 
 const handleTouchStart = (event: any) => {
@@ -238,7 +240,7 @@ const handleTouchMove = (event: any) => {
 const handleTouchEnd = () => {
   if (isSwiping) {
     console.log('Swipe-up detected');
-    router.go(-1);
+    // router.go(-1);
   }
   startX = 0;
   startY = 0;
