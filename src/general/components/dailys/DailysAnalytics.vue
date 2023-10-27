@@ -48,7 +48,7 @@
         Revenue
         <ion-icon src="assets/icon/dollar-circle.svg" class="dollar-icon"></ion-icon>
       </div>
-      {{ daily?.total_revenue * daily?.price / 100 }}
+      $ {{ daily?.total_revenue * daily?.price / 100 }}
     </div>
   </div>
 </template>

@@ -1,3 +1,4 @@
+
 <template>
     <div class="dashboard">
         <div class="d-flex align-items-center page-header">
@@ -227,21 +228,45 @@ import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Share } from "@capacitor/share";
+import { Capacitor } from "@capacitor/core";
 import EmptyBlock from "@/general/components/EmptyBlock.vue";
 import BaseCarousel from "@/general/components/base/BaseCarousel.vue";
 import { ellipsisVertical } from "ionicons/icons";
 import { useTrainerStore } from "@/general/stores/useTrainerStore";
-import { AddToCartDocument, AddToCartPurchasableEnum, FeedbackEntityEnum, Query, QueryWorkoutsOrderByColumn, ReviewsDocument, SortOrder, UserDocument, WorkoutsDocument } from "@/generated/graphql";
+import { 
+    AddToCartDocument, 
+    AddToCartPurchasableEnum, 
+    EventsQuery,
+    EventsDocument,
+    QueryEventsOrderByColumn,
+    EventsQueryVariables,
+    FeedbackEntityEnum, 
+    MyWorkoutsDocument,
+    Query, 
+    QueryWorkoutsOrderByColumn, 
+    ReviewsDocument, 
+    SortOrder, 
+    UserDocument, 
+    WorkoutsDocument 
+} from "@/generated/graphql";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { Browser } from "@capacitor/browser";
 import AdvantageItem from "@/general/components/blocks/AdvantageItem.vue";
 import { EntitiesEnum } from "@/const/entities";
 import ReviewItem from "@/general/components/blocks/ratings/ReviewItem.vue";
 import PreviewDailyModal from "@/general/components/modals/workout/PreviewDailyModal.vue"
+import BlurredScreenModal from "@/users/views/workouts/components/BlurredScreenModal.vue";
+import PurchaseModal from "@/users/views/workouts/components/PurchaseModal.vue";
 dayjs.extend(relativeTime);
 const router = useRouter();
 const segmentValue = ref('trainer');
 const dailyModal = ref<typeof PreviewDailyModal | null>(null);
+const dailyData = ref();
+const isOpenPurchaseModal = ref(false);
+const isOpenBlurredScreenModal = ref(false);
+const isOpenPreviewModal = ref(false);
+const selectedDailyId = ref<number>();
+const cartId = ref<number>();
 const route = useRoute();
 const { result, loading, onResult } = useQuery<Pick<Query, "user">>(
   UserDocument,
@@ -368,7 +393,6 @@ const onPurchase = () => {
 }
 
 const onClosePreview = () => {
-    console.log("OOOO")
     isOpenPreviewModal.value = false;
 }
 const reviews = computed(() =>
@@ -416,6 +440,58 @@ const viewAllReview = () => {
     });
 }
 
+// Event list
+const eventsParams: EventsQueryVariables = {
+  first: 5,
+  page: 1,
+  orderBy: [
+    {
+      column: QueryEventsOrderByColumn.StartDate,
+      order: SortOrder.Asc,
+    },
+  ],
+  created_by_trainer: route.params.id
+};
+const {
+  result: eventResult,
+  loading: eventsLoading,
+} = useQuery<EventsQuery>(EventsDocument, eventsParams, {
+  notifyOnNetworkStatusChange: true,
+  fetchPolicy: "no-cache",
+});
+
+const eventList = computed(() => eventResult.value?.events?.data.map((event: any) => {
+  return {
+    id: event?.id,
+    name: event?.title,
+    price: formatNumber(event?.price/100, "fixed"),
+    date: dayjs(event?.start_date).format('D MMMM'),
+    address: event?.address?.street
+  }
+}));
+
+const goToEventDetail = (id) => {
+  router.push({
+    name: Capacitor.isNativePlatform() ? EntitiesEnum.UserEventDetail : EntitiesEnum.DashboardEventDetail,
+    params: {
+      id: id,
+    },
+  });
+}
+
+const formatNumber = (num: number, type: string) => {
+  if (num < 1e3) {
+    if(type === 'normal') {
+      return num.toString();
+    } else {
+      return num.toFixed(2).toString();
+    }
+  } else if (num < 1e6) {
+    return (num / 1e3).toFixed(1) + 'k';
+  } else {
+    return (num / 1e6).toFixed(1) + 'M';
+  }
+};
 </script>
 
 <style scoped lang="scss">
