@@ -72,7 +72,7 @@ const { result: calendarWidgetResult } = useQuery(UserAvailabilityDocument, {
 });
 
 const selectedDate = computed(() =>
-    route.params.date ? dayjs(String(route.params.date)).format("YYYY-MM-DD HH:mm:ss") : dayjs().format("YYYY-MM-DD HH:mm:ss")
+    (route.params.date ? dayjs(String(route.params.date)) : dayjs()).format("YYYY-MM-DD 00:00:00")
 );
 
 // watch(
@@ -93,6 +93,7 @@ const {
         first: 4,
         filters: {
             start_date: selectedDate,
+            end_date: (route.params.date ? dayjs(String(route.params.date)) : dayjs()).format("YYYY-MM-DD 23:59:59"),
             states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
         },
         orderBy: [
@@ -188,7 +189,8 @@ const onDateChange = (date: any)=> {
     page: 0,
     first: 4,
     filters: {
-        start_date: date?.format("YYYY-MM-DD HH:mm:ss"),
+        start_date: date?.format("YYYY-MM-DD 00:00:00"),
+        end_date: date?.format("YYYY-MM-DD 23:59:59"),
         states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
     },
     orderBy: [

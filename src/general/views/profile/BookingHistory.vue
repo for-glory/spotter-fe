@@ -14,6 +14,8 @@
             :avatarUrl="order.previewUrl"
             :address="order.address"
             :price="order.price"
+            :start_date="order.start_date"
+            :end_date="order.end_date"
           >
             <template #end>
               <ion-text :class="['booking-item__price', { 'native-app': role === RoleEnum.User }]">
@@ -94,24 +96,24 @@ const { result, onResult, refetch } = useQuery<OrdersQuery>(
   })
 );
 
-// const { result: trainerTrainingsResult, onResult: onTrainerTrainingsResult } =
-//   useQuery<TrainerTrainingsQuery>(
-//     TrainerTrainingsDocument,
-//     {
-//       first: quantity.value,
-//       page: page.value,
-//       states: [TrainingStatesEnum.Finished],
-//       orderBy: [
-//         {
-//           column: QueryTrainerTrainingsOrderByColumn.StartDate,
-//           order: SortOrder.Desc,
-//         },
-//       ],
-//     },
-//     () => ({
-//       enabled: role === RoleEnum.User,
-//     })
-//   );
+const { result: trainerTrainingsResult, onResult: onTrainerTrainingsResult } =
+  useQuery<TrainerTrainingsQuery>(
+    TrainerTrainingsDocument,
+    {
+      first: quantity.value,
+      page: page.value,
+      states: [TrainingStatesEnum.Finished],
+      orderBy: [
+        {
+          column: QueryTrainerTrainingsOrderByColumn.StartDate,
+          order: SortOrder.Desc,
+        },
+      ],
+    },
+    () => ({
+      enabled: role === RoleEnum.Trainer,
+    })
+  );
 
 // const userTotal = computed(() => result.value?.orders?.paginatorInfo.total);
 
@@ -134,24 +136,26 @@ onResult(({ data }) => {
   loading.value = false;
 });
 
-// onTrainerTrainingsResult(({ data }) => {
-//   const ordersData: OrderHistoryType[] = [];
+onTrainerTrainingsResult(({ data }) => {
+  const ordersData: OrderHistoryType[] = [];
 
-//   data?.trainerTrainings?.data?.forEach((training: Training) => {
-//     ordersData.push({
-//       id: training.id,
-//       date: dayjs(training.start_date).format("DD MMM"),
-//       rating: "",
-//       title: `${training.user?.first_name} ${training.user?.last_name}`,
-//       previewUrl: training.user?.avatarUrl,
-//       address: training?.address_string || "",
-//       price: training.order?.total / 100,
-//     });
-//   });
-//   orders.value = [...orders.value, ...ordersData];
+  data?.trainerTrainings?.data?.forEach((training: Training) => {
+    ordersData.push({
+      id: training.id,
+      date: dayjs(training.start_date).format("DD MMM YYYY"),
+      start_date: training.start_date,
+      end_date: training.end_date,
+      rating: "",
+      title: `${training.user?.first_name} ${training.user?.last_name}`,
+      previewUrl: training.user?.avatarUrl,
+      address: training?.address_string || training?.user?.address?.street,
+      price: training.order?.total / 100,
+    });
+  });
+  orders.value = [...orders.value, ...ordersData];
 
-//   loading.value = false;
-// });
+  loading.value = false;
+});
 
 // const loadData = (ev: InfiniteScrollCustomEvent) => {
 //   if (page.value * quantity.value < Number(total.value)) {

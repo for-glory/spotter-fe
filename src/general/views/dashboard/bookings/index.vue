@@ -195,7 +195,8 @@ const {
         page: 0,
         first: 4,
         filters: {
-            start_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+            start_date: dayjs().format("YYYY-MM-DD 00:00:00"),
+            end_date: dayjs().format("YYYY-MM-DD 23:59:59"),
             states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
         },
         orderBy: [
@@ -388,7 +389,8 @@ const onDateChange = () =>{
             page: 0,
             first: 4,
             filters: {
-                start_date: selectedDate.value? selectedDate.value.format("YYYY-MM-DD HH:mm:ss") : dayjs().format("YYYY-MM-DD HH:mm:ss"),
+                start_date: (selectedDate.value? selectedDate.value : dayjs()).format("YYYY-MM-DD 00:00:00"),
+                end_date: (selectedDate.value? selectedDate.value : dayjs()).format("YYYY-MM-DD 23:59:59"),
                 states: [TrainingStatesEnum.Accepted, TrainingStatesEnum.Started],
             },
             orderBy: [

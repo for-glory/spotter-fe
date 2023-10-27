@@ -79,12 +79,12 @@ export const profileMenu: ProfileMenu = {
     //   icon: "payment",
     //   isTrusted: true,
     // },
-    // {
-    //   name: EntitiesEnum.ProfileBookingHistory,
-    //   label: "Booking history",
-    //   icon: "history",
-    //   isTrusted: true,
-    // },
+    {
+      name: EntitiesEnum.ProfileBookingHistory,
+      label: "Booking history",
+      icon: "history",
+      // isTrusted: true,
+    },
   ],
   FACILITY: [
     {

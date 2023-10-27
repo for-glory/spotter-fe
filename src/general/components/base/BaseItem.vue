@@ -16,7 +16,16 @@
       <div class="item__end" v-if="$slots.end">
         <slot name="end"></slot>
       </div>
-      <ion-text v-if="date" class="item__date">{{ date }}</ion-text>
+      <ion-text v-if="date && role !== RoleEnum.Trainer" class="item__date">{{ date }}</ion-text>
+      <div v-else-if="date" class="item__date time">
+        <div class="date-wrapper">
+          <ion-icon class="calendar-icon" src="assets/icon/calendar.svg"></ion-icon>{{ date }}
+        </div>
+        <div class="time-wrapper">
+          <ion-icon src="assets/icon/time-light.svg"></ion-icon>{{ (dayjs(start_date).format("h:mm A") + ' - ' +
+            dayjs(end_date).format("h:mm A")) }}
+        </div>
+      </div>
       <address-item class="item__address" v-if="address">
         {{ address }}
       </address-item>
@@ -25,21 +34,24 @@
 </template>
 
 <script setup lang="ts">
-import { IonThumbnail, IonItem, IonLabel, IonText } from "@ionic/vue";
+import { IonThumbnail, IonItem, IonLabel, IonText, IonIcon } from "@ionic/vue";
 import AddressItem from "@/general/components/AddressItem.vue";
 import { defineProps } from "vue";
 import RatingNumber from "@/general/components/RatingNumber.vue";
 import { RoleEnum } from "@/generated/graphql";
 import useRoles from "@/hooks/useRole";
+import dayjs from "dayjs";
 defineProps<{
   title: string;
   avatarUrl?: string;
   address: string;
   date?: string;
   rating?: number | string;
+  start_date?: string | Date;
+  end_date?: string | Date;
 }>();
 
-const { role } = useRoles()
+const { role } = useRoles();
 </script>
 
 <style scoped lang="scss">
@@ -93,6 +105,32 @@ const { role } = useRoles()
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
+
+    .date-wrapper,
+    .time-wrapper {
+      display: flex;
+    }
+    .date-wrapper {
+      margin-right: 6px;
+    }
+
+    &.time {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+
+      ion-icon {
+        margin-left: -3px;
+        margin-right: 4px;
+        font-size: 24px;
+
+        &.calendar-icon {
+          margin-left: -2px;
+          margin-right: 5px;
+          font-size: 22px;
+        }
+      }
+    }
   }
 
   &__end {
@@ -109,8 +147,9 @@ const { role } = useRoles()
 }
 
 .user-item {
-  .item__title, .item__date {
+
+  .item__title,
+  .item__date {
     font-family: Yantramanav;
   }
-}
-</style>
+}</style>

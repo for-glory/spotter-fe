@@ -15,6 +15,8 @@
             :avatarUrl="order.previewUrl"
             :address="order.address"
             :price="order.price"
+            :start_date="order.start_date"
+            :end_date="order.end_date"
           >
             <template #end>
               <ion-text
@@ -54,6 +56,7 @@ import {
 } from "@/generated/graphql";
 import { getHistoryOrdersData } from "@/helpers/history-orders-data";
 import BaseItem from "@/general/components/base/BaseItem.vue";
+import dayjs from "dayjs";
 
 const orders = ref<OrderHistoryType[]>([]);
 const quantity = ref(50);
@@ -111,11 +114,13 @@ onTrainerTrainingsResult(({ data }) => {
   data?.trainerTrainings?.data?.forEach((training: Training) => {
     ordersData.push({
       id: training.id,
-      date: dayjs(training.start_date).format("DD MMM"),
+      date: dayjs(training.start_date).format("DD MMM YYYY"),
+      start_date: training.start_date,
+      end_date: training.end_date,
       rating: "",
       title: `${training.user?.first_name} ${training.user?.last_name}`,
       previewUrl: training.user?.avatarUrl,
-      address: training?.address_string || "",
+      address: training?.address_string || training?.user?.address?.street,
       price: training.order?.total / 100,
     });
   });
